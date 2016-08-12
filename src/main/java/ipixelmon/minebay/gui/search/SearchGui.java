@@ -1,4 +1,4 @@
-package ipixelmon.minebay.gui;
+package ipixelmon.minebay.gui.search;
 
 import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;

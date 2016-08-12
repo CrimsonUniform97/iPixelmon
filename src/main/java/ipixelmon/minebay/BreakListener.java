@@ -1,7 +1,8 @@
 package ipixelmon.minebay;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.gui.SearchGui;
+import ipixelmon.minebay.gui.search.SearchGui;
+import ipixelmon.minebay.gui.sell.SellGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -21,7 +22,6 @@ public final class BreakListener {
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if(pong.isPressed()) {
-            System.out.println("CALLED");
             Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, SearchGui.ID, null, 0, 0, 0);
         }
     }

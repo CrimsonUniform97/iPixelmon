@@ -1,4 +1,4 @@
-package ipixelmon.minebay.gui;
+package ipixelmon.minebay.gui.search;
 
 import ipixelmon.GuiList;
 import net.minecraft.client.gui.GuiButton;
@@ -26,16 +26,4 @@ public final class SearchList extends GuiList {
         return true;
     }
 
-//    @Override
-//    public final void renderSelectionBox() {
-//        if (this.getSelectedObject() == null) return;
-//
-//        if (!this.getCurrentPage().getObjects().contains(this.getSelectedObject())) return;
-//
-//        glDisable(GL_TEXTURE_2D);
-//        glEnable(GL_BLEND);
-//        glColor4f(1, 1, 1, 50f / 255f);
-//        this.drawTexturedModalRect(this.getScreenX() - 1, this.getScreenY() + this.getSelectedObject().getY() - 1, 0, 0, this.getWidth() - 2, this.getSelectedObject().getHeight());
-//        glEnable(GL_TEXTURE_2D);
-//    }
 }

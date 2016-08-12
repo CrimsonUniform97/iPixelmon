@@ -1,4 +1,4 @@
-package ipixelmon.minebay.gui;
+package ipixelmon.minebay.gui.search;
 
 import ipixelmon.GuiList;
 import ipixelmon.uuidmanager.UUIDManager;
