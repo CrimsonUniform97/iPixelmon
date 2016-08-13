@@ -38,6 +38,8 @@ public final class SearchListPopulator implements Runnable {
         }
     }
 
+    // TODO: Only show a set amount of results. If we show too much it could cause huge hangs for the client.
+
     public final void populatePokemon() throws SQLException {
         PixelmonData pData;
         long startTime = System.currentTimeMillis();

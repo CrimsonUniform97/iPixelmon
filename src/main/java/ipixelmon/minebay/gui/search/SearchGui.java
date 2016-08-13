@@ -23,7 +23,7 @@ public final class SearchGui extends GuiScreen {
     private final ResultSet resultPokemon, resultItem;
     private SearchListPopulator populator;
 
-    // TODO: Add purchasing and showing enchantments when hovering over item in search.
+    // TODO: Add purchasing and showing enchantments when hovering over item in search. Also make search list populate on first open. Right now I have to resize screen.
 
     public SearchGui() {
         this.searchListObjects = new ArrayList<>();
