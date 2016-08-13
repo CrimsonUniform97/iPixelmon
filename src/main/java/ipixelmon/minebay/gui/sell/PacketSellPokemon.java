@@ -10,6 +10,8 @@ import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.iPixelmon;
+import ipixelmon.minebay.Minebay;
+import ipixelmon.mysql.InsertForm;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -27,9 +29,9 @@ public final class PacketSellPokemon implements IMessage {
     }
 
     private PixelmonData pokeData;
-    private int price;
+    private long price;
 
-    public PacketSellPokemon(final PixelmonData pixelmonData, final int price) {
+    public PacketSellPokemon(final PixelmonData pixelmonData, final long price) {
         this.pokeData = pixelmonData;
         this.price = price;
     }
@@ -39,7 +41,7 @@ public final class PacketSellPokemon implements IMessage {
         this.pokeData = new PixelmonData();
         pokeData.decodeInto(buf);
 
-        price = Integer.parseInt(ByteBufUtils.readUTF8String(buf));
+        price = Long.parseLong(ByteBufUtils.readUTF8String(buf));
     }
 
     @Override
@@ -66,7 +68,16 @@ public final class PacketSellPokemon implements IMessage {
                 if (!pixelmon.getOwner().getUniqueID().equals(player.getUniqueID()))
                     throw new Exception("You are not the owner");
 
-//                iPixelmon.myss
+                final InsertForm pokeForm = new InsertForm("Pokemon");
+                pokeForm.add("seller", player.getUniqueID().toString());
+                pokeForm.add("name", message.pokeData.name);
+                pokeForm.add("isShiny", "" + message.pokeData.isShiny);
+                pokeForm.add("lvl", "" + message.pokeData.lvl);
+                pokeForm.add("xp", "" + message.pokeData.xp);
+                pokeForm.add("price", "" + message.price);
+
+
+                iPixelmon.mysql.insert(Minebay.class, pokeForm);
 
                 MinecraftServer.getServer().addScheduledTask(() -> {
                     PCServer.deletePokemon(player, -1, message.pokeData.order);

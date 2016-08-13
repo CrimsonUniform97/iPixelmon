@@ -13,7 +13,13 @@ public final class InsertForm {
         this.tableName = parTable;
     }
 
-    public final InsertForm add(final String key, final String value) {
+    public final InsertForm add(final String key, String value) {
+        if(value.equalsIgnoreCase("false")) {
+            value = "0";
+        } else if (value.equalsIgnoreCase("true")) {
+            value = "1";
+        }
+
         this.valueMap.put(key, value);
         return this;
     }

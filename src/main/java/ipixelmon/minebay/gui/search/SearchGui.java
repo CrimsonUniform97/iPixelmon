@@ -6,6 +6,9 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import ipixelmon.GuiList;
+import ipixelmon.iPixelmon;
+import ipixelmon.minebay.Minebay;
+import ipixelmon.mysql.SelectionForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -16,6 +19,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,19 +30,26 @@ public final class SearchGui extends GuiScreen {
     public static final int ID = 9745;
 
     private GuiTextField searchField;
-    private GuiButton searchBtn;
     private SearchList searchList;
     private List<GuiList.ListObject> searchListObjects;
+    private final ResultSet resultPokemon, resultItem;
+    private final SearchListPopulator populator;
 
     public SearchGui() {
         this.searchListObjects = new ArrayList<>();
+
+        resultPokemon = iPixelmon.mysql.selectAllFrom(Minebay.class, new SelectionForm("Pokemon"));
+        resultItem = iPixelmon.mysql.selectAllFrom(Minebay.class, new SelectionForm("Item"));
+
+        new Thread(populator = new SearchListPopulator(resultPokemon, resultItem, searchListObjects)).start();
     }
 
     @Override
     public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         this.drawDefaultBackground();
 
-        this.searchList.draw(mc, mouseX, mouseY);
+        if(populator.done) this.searchList.draw(mc, mouseX, mouseY);
+
         this.searchField.drawTextBox();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -48,7 +60,8 @@ public final class SearchGui extends GuiScreen {
         super.keyTyped(typedChar, keyCode);
 
         this.searchField.textboxKeyTyped(typedChar, keyCode);
-        this.searchList.keyTyped(typedChar, keyCode);
+
+        if(populator.done) this.searchList.keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -56,7 +69,8 @@ public final class SearchGui extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         this.searchField.mouseClicked(mouseX, mouseY, mouseButton);
-        this.searchList.mouseClicked(mc, mouseX, mouseY);
+
+        if(populator.done) this.searchList.mouseClicked(mc, mouseX, mouseY);
     }
 
     @Override
@@ -75,25 +89,13 @@ public final class SearchGui extends GuiScreen {
 
         final int listWidth = this.width - 50, listHeight = this.height - 50;
 
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.apple), Minecraft.getMinecraft().thePlayer.getUniqueID(), 20, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.iron_axe), Minecraft.getMinecraft().thePlayer.getUniqueID(), 80, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.gold_ingot), Minecraft.getMinecraft().thePlayer.getUniqueID(), 100, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.sign), Minecraft.getMinecraft().thePlayer.getUniqueID(), 25, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.magma_cream), Minecraft.getMinecraft().thePlayer.getUniqueID(), 436, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.bucket), Minecraft.getMinecraft().thePlayer.getUniqueID(), 45, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.boat), Minecraft.getMinecraft().thePlayer.getUniqueID(), 57, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.diamond_helmet), Minecraft.getMinecraft().thePlayer.getUniqueID(), 23, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.golden_apple), Minecraft.getMinecraft().thePlayer.getUniqueID(), 75, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.cooked_chicken), Minecraft.getMinecraft().thePlayer.getUniqueID(), 34, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.coal), Minecraft.getMinecraft().thePlayer.getUniqueID(), 12, this.itemRender));
-
         this.searchList = new SearchList((this.width - listWidth) / 2, (this.height - listHeight) / 2, listWidth, listHeight, this.searchListObjects);
     }
 
     @Override
     public final void updateScreen() {
         super.updateScreen();
-
+        System.out.println(searchListObjects.size());
         if(this.searchField != null) this.searchField.updateCursorCounter();
     }
 
