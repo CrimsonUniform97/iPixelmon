@@ -15,11 +15,11 @@ public final class PlayerListener {
     @SubscribeEvent
     public final void login(final PlayerEvent.PlayerLoggedInEvent event) {
         try {
-            final ResultSet result = iPixelmon.db.selectAllFrom(UUIDManager.class, new SelectionForm("Players").add("uuid", event.player.getUniqueID().toString()));
+            final ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").add("uuid", event.player.getUniqueID().toString()));
             if (result.next())
-                iPixelmon.db.update(UUIDManager.class, new UpdateForm("Players").set("name", event.player.getGameProfile().getName()).set("nameLower", event.player.getGameProfile().getName().toLowerCase()).where("uuid", event.player.getUniqueID().toString()));
+                iPixelmon.mysql.update(UUIDManager.class, new UpdateForm("Players").set("name", event.player.getGameProfile().getName()).set("nameLower", event.player.getGameProfile().getName().toLowerCase()).where("uuid", event.player.getUniqueID().toString()));
             else
-                iPixelmon.db.insert(UUIDManager.class, new InsertForm("Players")
+                iPixelmon.mysql.insert(UUIDManager.class, new InsertForm("Players")
                         .add("uuid", event.player.getUniqueID().toString())
                         .add("name", event.player.getGameProfile().getName())
                         .add("nameLower", event.player.getGameProfile().getName().toLowerCase()));

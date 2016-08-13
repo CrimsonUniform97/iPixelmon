@@ -2,12 +2,13 @@ package ipixelmon.minebay.gui.search;
 
 import ipixelmon.GuiList;
 import ipixelmon.uuidmanager.UUIDManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 
 import java.util.UUID;
 
-public final class SearchListObject extends GuiList.GuiObject {
+public final class SearchListObject extends GuiList.ListObject {
 
     private final ItemStack itemStack;
     private final String seller;
@@ -26,10 +27,12 @@ public final class SearchListObject extends GuiList.GuiObject {
 
     @Override
     public final void draw(final int x, final int y) {
-        this.mc.fontRendererObj.drawString("Soled by: " + this.seller, x + 20, y, 0xFFFFFF);
-        this.mc.fontRendererObj.drawString("Price: $" + price, x + 20, y + 11, 0x00ff00);
+        RenderHelper.enableGUIStandardItemLighting();
+        this.itemRender.renderItemAndEffectIntoGUI(itemStack, this.xPos, this.yPos);
+        RenderHelper.disableStandardItemLighting();
 
-        this.itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
+        this.mc.fontRendererObj.drawString("Soled by: " + this.seller, this.xPos + 20, this.yPos, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("Price: $" + price, this.xPos + 20, this.yPos + 11, 0x00ff00);
     }
 
 }

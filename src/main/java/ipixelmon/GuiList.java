@@ -3,6 +3,7 @@ package ipixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.RenderHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,13 @@ public abstract class GuiList extends Gui {
 
     private Page CURRENT_PAGE;
 
-    private List<GuiObject> OBJECTS;
+    private List<ListObject> OBJECTS;
 
     private Page[] PAGES;
 
-    private GuiObject SELECTED;
+    private ListObject SELECTED;
 
-    public GuiList(final int screenX, final int screenY, final int width, final int height, final List<GuiObject> objects) {
+    public GuiList(final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
         this.SCREEN_X = screenX;
         this.SCREEN_Y = screenY;
         this.WIDTH = width;
@@ -46,10 +47,16 @@ public abstract class GuiList extends Gui {
     public final void draw(final Minecraft mc, final int x, final int y) {
         this.drawBackground();
         if (this.drawSelectionBox()) this.renderSelectionBox();
-        this.drawList();
+        this.drawList(x, y);
 
         this.BTN_RIGHT.drawButton(mc, x, y);
         this.BTN_LEFT.drawButton(mc, x, y);
+    }
+
+    public final void updateScreen() {
+        for(ListObject object : this.CURRENT_PAGE.objects) {
+            object.updateScreen();
+        }
     }
 
     public final void drawBackground() {
@@ -71,16 +78,31 @@ public abstract class GuiList extends Gui {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glColor4f(1, 1, 1, 50f / 255f);
-        this.drawTexturedModalRect(this.SCREEN_X - 1, this.SCREEN_Y + this.SELECTED.getY() - 1, 0, 0, this.WIDTH - 2, this.SELECTED.HEIGHT + 1);
+        this.drawTexturedModalRect(this.SCREEN_X - 1, this.SCREEN_Y + this.SELECTED.getY(), 0, 0, this.WIDTH - 2, this.SELECTED.height);
         glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
     }
 
-    public final void drawList() {
-        this.CURRENT_PAGE.objects.forEach(object -> object.draw(this.SCREEN_X, this.SCREEN_Y + object.getY()));
+    public final void drawList(final int mouseX, final int mouseY) {
+        for(ListObject listObject : this.CURRENT_PAGE.objects) {
+            listObject.xPos = this.SCREEN_X;
+            listObject.yPos = this.SCREEN_Y + listObject.getY();
+            listObject.draw(mouseX, mouseY);
+        }
     }
 
     public final void mouseClicked(final Minecraft mc, final int x, final int y) {
-        this.SELECTED = this.CURRENT_PAGE.objects.stream().filter(object -> y - this.SCREEN_Y >= object.getY() && y - this.SCREEN_Y <= object.getY() + object.HEIGHT && x - this.SCREEN_X > 0 && x - this.SCREEN_X < this.WIDTH).findFirst().orElse(this.SELECTED != null ? this.SELECTED : null);
+        if(this.SELECTED != null) this.SELECTED.isSelected = false;
+
+        this.SELECTED = this.CURRENT_PAGE.objects.stream().filter(object -> y - this.SCREEN_Y >= object.getY() && y - this.SCREEN_Y <= object.getY() + object.height && x - this.SCREEN_X > 0 && x - this.SCREEN_X < this.WIDTH).findFirst().orElse(this.SELECTED != null ? this.SELECTED : null);
+
+        if(this.SELECTED != null) {
+            this.SELECTED.isSelected = true;
+        }
+
+        for(ListObject object : this.CURRENT_PAGE.objects) {
+            object.mouseClicked(x, y);
+        }
 
         if (this.BTN_LEFT.mousePressed(mc, x, y))
             this.CURRENT_PAGE = this.CURRENT_PAGE.getPageNumber() < 1 ? this.PAGES[0] : this.PAGES[this.CURRENT_PAGE.getPageNumber() - 1];
@@ -88,11 +110,13 @@ public abstract class GuiList extends Gui {
             this.CURRENT_PAGE = this.CURRENT_PAGE.getPageNumber() > this.PAGES.length - 2 ? this.PAGES[this.PAGES.length - 1] : this.PAGES[this.CURRENT_PAGE.getPageNumber() + 1];
     }
 
-    public void keyTyped(char c, int i){}
+    public final void keyTyped(final char c, final int i){
+        if(this.SELECTED != null) this.SELECTED.keyTyped(c, i);
+    }
 
     public final int getPages() {
         int totalHeight = 0;
-        for (GuiObject object : this.OBJECTS) totalHeight += object.HEIGHT;
+        for (ListObject object : this.OBJECTS) totalHeight += object.height;
         int pages = totalHeight / this.HEIGHT;
         if (totalHeight % this.HEIGHT != 0) pages++;
 
@@ -107,9 +131,13 @@ public abstract class GuiList extends Gui {
 
             totalHeight = 0;
             for (int i = index; i < this.OBJECTS.size(); i++) {
-                totalHeight += this.OBJECTS.get(i).HEIGHT;
+                totalHeight += this.OBJECTS.get(i).height;
                 if (totalHeight < this.HEIGHT) {
-                    this.OBJECTS.get(i).Y = totalHeight - this.OBJECTS.get(i).HEIGHT;
+                    this.OBJECTS.get(i).yInList = totalHeight - this.OBJECTS.get(i).height;
+                    this.OBJECTS.get(i).listX = this.SCREEN_X;
+                    this.OBJECTS.get(i).listY = this.SCREEN_Y;
+                    this.OBJECTS.get(i).listWidth = this.WIDTH;
+                    this.OBJECTS.get(i).listHeight = this.HEIGHT;
                     this.PAGES[page].objects.add(this.OBJECTS.get(i));
                 } else {
                     break;
@@ -131,7 +159,7 @@ public abstract class GuiList extends Gui {
 
     public abstract GuiButton getRightBtn();
 
-    public final GuiObject getSelectedObject() {
+    public final ListObject getSelectedObject() {
         return this.SELECTED;
     }
 
@@ -154,7 +182,7 @@ public abstract class GuiList extends Gui {
     public abstract boolean drawSelectionBox();
 
     public final class Page {
-        private List<GuiObject> objects;
+        private List<ListObject> objects;
         private int number;
 
         private Page(int number) {
@@ -166,33 +194,46 @@ public abstract class GuiList extends Gui {
             return this.number;
         }
 
-        public final List<GuiObject> getObjects() {
+        public final List<ListObject> getObjects() {
             return objects;
         }
     }
 
-    public static abstract class GuiObject extends Gui {
+    public static abstract class ListObject extends Gui {
 
-        private int WIDTH, HEIGHT, Y;
+        protected int width, height, xPos, yPos, yInList;
         protected final Minecraft mc = Minecraft.getMinecraft();
+        protected int listX, listY, listWidth, listHeight;
+        protected boolean isSelected = false;
 
-        public GuiObject(final int width, final int height) {
-            this.WIDTH = width;
-            this.HEIGHT = height;
+        public ListObject(final int width, final int height) {
+            this.width = width;
+            this.height = height;
         }
 
-        public abstract void draw(int x, int y);
+        public abstract void draw(final int mouseX, final int mouseY);
 
-        public final int getY() {
-            return this.Y;
+        public void mouseClicked(final int mouseX, final int mouseY) {}
+
+        public void keyTyped(final char typedChar, final int keyCode) {}
+
+        public void updateScreen() {}
+
+        public final int getY() { return this.yInList; }
+
+        public final int getYPos() {
+            return this.yPos;
         }
+
+        public final int getXPos() { return this.xPos; }
 
         public final int getWidth() {
-            return this.WIDTH;
+            return this.width;
         }
 
         public final int getHeight() {
-            return this.HEIGHT;
+            return this.height;
         }
+
     }
 }

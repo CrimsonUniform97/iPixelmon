@@ -27,7 +27,7 @@ public final class ServerProxy extends CommonProxy {
         playersForm.add("name", DataType.TEXT);
         playersForm.add("nameLower", DataType.TEXT);
 
-        iPixelmon.db.createTable(UUIDManager.class, playersForm);
+        iPixelmon.mysql.createTable(UUIDManager.class, playersForm);
 
         new Thread(new CacheThread()).start();
     }
@@ -42,7 +42,7 @@ public final class ServerProxy extends CommonProxy {
         public final void run() {
             while (true) {
                 try {
-                    final ResultSet result = iPixelmon.db.query("SELECT * FROM uuidmanagerPlayers LIMIT " + lastRun + "," + (lastRun + limit) + ";");
+                    final ResultSet result = iPixelmon.mysql.query("SELECT * FROM uuidmanagerPlayers LIMIT " + lastRun + "," + (lastRun + limit) + ";");
                     lastRun += limit;
                     final List<UUID> uuids = new ArrayList<>();
                     int i = 0;
@@ -59,7 +59,7 @@ public final class ServerProxy extends CommonProxy {
                     final Map<UUID, String> map = fetcher.call();
 
                     map.forEach((uuid, name) -> {
-                        if(uuid != null && name != null && !uuid.toString().isEmpty() && !name.isEmpty()) iPixelmon.db.update(UUIDManager.class, new UpdateForm("Players").set("name", name).set("nameLower", name.toLowerCase()).where("uuid", uuid.toString()));
+                        if(uuid != null && name != null && !uuid.toString().isEmpty() && !name.isEmpty()) iPixelmon.mysql.update(UUIDManager.class, new UpdateForm("Players").set("name", name).set("nameLower", name.toLowerCase()).where("uuid", uuid.toString()));
                     });
 
                     if (i < limit) {

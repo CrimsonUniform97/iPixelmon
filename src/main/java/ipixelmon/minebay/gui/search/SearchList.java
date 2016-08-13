@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class SearchList extends GuiList {
 
-    public SearchList(final int screenX, final int screenY, final int width, final int height, final List<GuiObject> objects) {
+    public SearchList(final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
         super(screenX, screenY, width, height, objects);
     }
 

@@ -27,7 +27,7 @@ public final class SearchGui extends GuiScreen {
     private GuiTextField searchField;
     private GuiButton searchBtn;
     private SearchList searchList;
-    private List<GuiList.GuiObject> searchListObjects;
+    private List<GuiList.ListObject> searchListObjects;
 
     public SearchGui() {
         this.searchListObjects = new ArrayList<>();
@@ -87,10 +87,6 @@ public final class SearchGui extends GuiScreen {
         this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.cooked_chicken), Minecraft.getMinecraft().thePlayer.getUniqueID(), 34, this.itemRender));
         this.searchListObjects.add(new SearchListObject(listWidth, 20, new ItemStack(Items.coal), Minecraft.getMinecraft().thePlayer.getUniqueID(), 12, this.itemRender));
 
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, makePokemonItem(EnumPokemon.Aggron), Minecraft.getMinecraft().thePlayer.getUniqueID(), 12, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, makePokemonItem(EnumPokemon.Rayquaza), Minecraft.getMinecraft().thePlayer.getUniqueID(), 12, this.itemRender));
-        this.searchListObjects.add(new SearchListObject(listWidth, 20, makePokemonItem(EnumPokemon.Aerodactyl), Minecraft.getMinecraft().thePlayer.getUniqueID(), 12, this.itemRender));
-
         this.searchList = new SearchList((this.width - listWidth) / 2, (this.height - listHeight) / 2, listWidth, listHeight, this.searchListObjects);
     }
 
@@ -99,18 +95,6 @@ public final class SearchGui extends GuiScreen {
         super.updateScreen();
 
         if(this.searchField != null) this.searchField.updateCursorCounter();
-    }
-
-    private final ItemStack makePokemonItem(EnumPokemon pokemon) {
-        ItemStack stack = new ItemStack(PixelmonItems.itemPixelmonSprite);
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        Optional stats = Entity3HasStats.getBaseStats(pokemon.name);
-        tagCompound.setString("SpriteName", "pixelmon:sprites/pokemon/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats)stats.get()).nationalPokedexNumber)}));
-        NBTTagCompound display = new NBTTagCompound();
-        display.setString("Name", EntityPixelmon.getLocalizedName(pokemon.name) + " " + StatCollector.translateToLocal("item.PixelmonSprite.name"));
-        tagCompound.setTag("display", display);
-        stack.setTagCompound(tagCompound);
-        return stack;
     }
 
 }

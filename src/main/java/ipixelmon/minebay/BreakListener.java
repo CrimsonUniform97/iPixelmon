@@ -12,10 +12,13 @@ import org.lwjgl.input.Keyboard;
 
 public final class BreakListener {
 
-    public static KeyBinding pong;
+    // TODO: Players access Minebay to sell items through tellers in a building. NPC's
+
+    public static KeyBinding pong, ping;
 
     public BreakListener() {
         pong = new KeyBinding("key.pong", Keyboard.KEY_P, "key.categories.mymod");
+        ping = new KeyBinding("key.ping", Keyboard.KEY_O, "key.categories.mymod");
         ClientRegistry.registerKeyBinding(pong);
     }
 
@@ -24,5 +27,10 @@ public final class BreakListener {
         if(pong.isPressed()) {
             Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, SearchGui.ID, null, 0, 0, 0);
         }
+
+        if(ping.isPressed()) {
+            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, SellGui.ID, null, 0, 0, 0);
+        }
+
     }
 }

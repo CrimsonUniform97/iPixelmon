@@ -8,6 +8,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,12 @@ public final class iPixelmon {
     @SidedProxy(clientSide = "ipixelmon.ClientProxy", serverSide = "ipixelmon.ServerProxy")
     public static CommonProxy proxy;
 
-    public static MySQLHandler db;
+    public static MySQLHandler mysql;
     public static Config config;
+
+    public static SimpleNetworkWrapper network;
+
+    private static int packetID = 0;
 
     @Mod.Instance(MOD_ID)
     public static iPixelmon instance;
@@ -35,8 +41,10 @@ public final class iPixelmon {
 
     @Mod.EventHandler
     public final void preInit(final FMLPreInitializationEvent event) {
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
+
         config = proxy.getConfig();
-        db = proxy.getMySQL();
+        mysql = proxy.getMySQL();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
@@ -50,6 +58,10 @@ public final class iPixelmon {
         for(IMod mod : mods) mod.init();
 
         proxy.init();
+    }
+
+    public static final void registerPacket(final Class handlerClass, final Class messageClass, final Side side) {
+        network.registerMessage(handlerClass, messageClass, packetID++, side);
     }
 
 }
