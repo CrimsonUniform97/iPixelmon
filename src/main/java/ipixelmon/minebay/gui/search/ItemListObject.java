@@ -1,6 +1,5 @@
 package ipixelmon.minebay.gui.search;
 
-import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import ipixelmon.GuiList;
 import ipixelmon.minebay.gui.sell.SellBtn;
 import ipixelmon.uuidmanager.UUIDManager;

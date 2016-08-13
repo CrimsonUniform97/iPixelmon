@@ -1,29 +1,17 @@
 package ipixelmon.minebay.gui.search;
 
-import com.pixelmonmod.pixelmon.config.PixelmonItems;
-import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
-import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import ipixelmon.GuiList;
 import ipixelmon.iPixelmon;
 import ipixelmon.minebay.Minebay;
 import ipixelmon.mysql.SelectionForm;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
 
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public final class SearchGui extends GuiScreen {
 
@@ -33,7 +21,9 @@ public final class SearchGui extends GuiScreen {
     private SearchList searchList;
     private List<GuiList.ListObject> searchListObjects;
     private final ResultSet resultPokemon, resultItem;
-    private final SearchListPopulator populator;
+    private SearchListPopulator populator;
+
+    // TODO: Add purchasing and showing enchantments when hovering over item in search.
 
     public SearchGui() {
         this.searchListObjects = new ArrayList<>();
@@ -49,6 +39,7 @@ public final class SearchGui extends GuiScreen {
         this.drawDefaultBackground();
 
         if(populator.done) this.searchList.draw(mc, mouseX, mouseY);
+
 
         this.searchField.drawTextBox();
 
@@ -87,15 +78,16 @@ public final class SearchGui extends GuiScreen {
         final int fieldWidth = 75, fieldHeight = 20;
         this.searchField = new GuiTextField(0, this.fontRendererObj, (this.width - fieldWidth) / 2, (this.height - fieldHeight) / 2, fieldWidth, fieldHeight);
 
-        final int listWidth = this.width - 50, listHeight = this.height - 50;
+        int listWidth = this.width - 50, listHeight = this.height - 50;
 
         this.searchList = new SearchList((this.width - listWidth) / 2, (this.height - listHeight) / 2, listWidth, listHeight, this.searchListObjects);
+
     }
 
     @Override
     public final void updateScreen() {
         super.updateScreen();
-        System.out.println(searchListObjects.size());
+
         if(this.searchField != null) this.searchField.updateCursorCounter();
     }
 
