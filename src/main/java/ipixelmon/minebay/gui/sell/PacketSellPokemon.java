@@ -66,7 +66,7 @@ public final class PacketSellPokemon implements IMessage {
                 if (!pixelmon.getOwner().getUniqueID().equals(player.getUniqueID()))
                     throw new Exception("You are not the owner");
 
-//                iPixelmon.mys
+//                iPixelmon.myss
 
                 MinecraftServer.getServer().addScheduledTask(() -> {
                     PCServer.deletePokemon(player, -1, message.pokeData.order);
