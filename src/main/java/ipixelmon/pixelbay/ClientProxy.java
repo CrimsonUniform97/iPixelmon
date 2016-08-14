@@ -1,4 +1,4 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
 import ipixelmon.CommonProxy;
 import net.minecraftforge.fml.common.FMLCommonHandler;

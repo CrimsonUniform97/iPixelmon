@@ -1,17 +1,14 @@
-package ipixelmon.minebay.gui.search;
+package ipixelmon.pixelbay.gui.search;
 
-import ipixelmon.GuiList;
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.Minebay;
 import ipixelmon.mysql.SelectionForm;
+import ipixelmon.pixelbay.Pixelbay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SearchGui extends GuiScreen {
 
@@ -19,27 +16,23 @@ public final class SearchGui extends GuiScreen {
 
     private GuiTextField searchField;
     private SearchList searchList;
-    private List<GuiList.ListObject> searchListObjects;
     private final ResultSet resultPokemon, resultItem;
     private SearchListPopulator populator;
 
     // TODO: Add purchasing and showing enchantments when hovering over item in search. Also make search list populate on first open. Right now I have to resize screen.
 
     public SearchGui() {
-        this.searchListObjects = new ArrayList<>();
+        resultPokemon = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Pokemon"));
+        resultItem = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Item"));
 
-        resultPokemon = iPixelmon.mysql.selectAllFrom(Minebay.class, new SelectionForm("Pokemon"));
-        resultItem = iPixelmon.mysql.selectAllFrom(Minebay.class, new SelectionForm("Item"));
-
-        new Thread(populator = new SearchListPopulator(resultPokemon, resultItem, searchListObjects)).start();
+        new Thread(populator = new SearchListPopulator(resultPokemon, resultItem)).start();
     }
 
     @Override
     public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         this.drawDefaultBackground();
 
-        if(populator.done) this.searchList.draw(mc, mouseX, mouseY);
-
+        this.searchList.draw(mc, mouseX, mouseY);
 
         this.searchField.drawTextBox();
 
@@ -52,7 +45,7 @@ public final class SearchGui extends GuiScreen {
 
         this.searchField.textboxKeyTyped(typedChar, keyCode);
 
-        if(populator.done) this.searchList.keyTyped(typedChar, keyCode);
+        this.searchList.keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -61,7 +54,7 @@ public final class SearchGui extends GuiScreen {
 
         this.searchField.mouseClicked(mouseX, mouseY, mouseButton);
 
-        if(populator.done) this.searchList.mouseClicked(mc, mouseX, mouseY);
+        this.searchList.mouseClicked(mc, mouseX, mouseY);
     }
 
     @Override
@@ -79,8 +72,7 @@ public final class SearchGui extends GuiScreen {
         this.searchField = new GuiTextField(0, this.fontRendererObj, (this.width - fieldWidth) / 2, (this.height - fieldHeight) / 2, fieldWidth, fieldHeight);
 
         int listWidth = this.width - 50, listHeight = this.height - 50;
-
-        this.searchList = new SearchList((this.width - listWidth) / 2, (this.height - listHeight) / 2, listWidth, listHeight, this.searchListObjects);
+        this.searchList = new SearchList((this.width - listWidth) / 2, (this.height - listHeight) / 2, listWidth, listHeight, populator.listObjects);
 
     }
 
@@ -88,7 +80,13 @@ public final class SearchGui extends GuiScreen {
     public final void updateScreen() {
         super.updateScreen();
 
-        if(this.searchField != null) this.searchField.updateCursorCounter();
+        if (populator != null && populator.done) {
+            this.searchList.setupPages();
+            populator = null;
+            System.out.println("CALLED");
+        }
+
+        if (this.searchField != null) this.searchField.updateCursorCounter();
     }
 
 }

@@ -1,4 +1,4 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.iPixelmon;
@@ -22,14 +22,14 @@ public final class ServerProxy extends CommonProxy {
         pokemonForm.add("xp", DataType.INT);
         pokemonForm.add("price", DataType.LONG);
 
-        iPixelmon.mysql.createTable(Minebay.class, pokemonForm);
+        iPixelmon.mysql.createTable(Pixelbay.class, pokemonForm);
 
         final CreateForm itemForm = new CreateForm("Item");
         itemForm.add("seller", DataType.TEXT);
         itemForm.add("item", DataType.TEXT);
         itemForm.add("price", DataType.LONG);
 
-        iPixelmon.mysql.createTable(Minebay.class, itemForm);
+        iPixelmon.mysql.createTable(Pixelbay.class, itemForm);
 
         MinecraftForge.EVENT_BUS.register(new ServerBreakListener());
     }

@@ -1,9 +1,9 @@
-package ipixelmon.minebay.gui.search;
+package ipixelmon.pixelbay.gui.search;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import ipixelmon.GuiList;
-import ipixelmon.minebay.gui.sell.SellBtn;
+import ipixelmon.pixelbay.gui.sell.SellBtn;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.renderer.GlStateManager;
 

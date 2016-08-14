@@ -1,4 +1,4 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;

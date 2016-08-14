@@ -1,27 +1,20 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
-import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.pokedex.EnumPokedexRegisterStatus;
-import com.pixelmonmod.pixelmon.pokedex.Pokedex;
 import com.pixelmonmod.pixelmon.storage.PCServer;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
-import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.Minebay;
+import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.InsertForm;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import java.util.Optional;
 
 public final class PacketSellPokemon implements IMessage {
 
@@ -77,7 +70,7 @@ public final class PacketSellPokemon implements IMessage {
                 pokeForm.add("price", "" + message.price);
 
 
-                iPixelmon.mysql.insert(Minebay.class, pokeForm);
+                iPixelmon.mysql.insert(Pixelbay.class, pokeForm);
 
                 MinecraftServer.getServer().addScheduledTask(() -> {
                     PCServer.deletePokemon(player, -1, message.pokeData.order);

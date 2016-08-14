@@ -1,15 +1,11 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
-import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Add;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.ItemSerializer;
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.Minebay;
+import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.InsertForm;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -46,6 +42,7 @@ public final class PacketSellItem implements IMessage {
 
     public static final class Handler implements IMessageHandler<PacketSellItem, IMessage> {
 
+        // TODO: Take item from players inventory.
         @Override
         public final IMessage onMessage(final PacketSellItem message, final MessageContext ctx) {
 
@@ -65,7 +62,7 @@ public final class PacketSellItem implements IMessage {
                 itemForm.add("item", ItemSerializer.itemToString(message.itemStack));
                 itemForm.add("price", "" + message.price);
 
-                iPixelmon.mysql.insert(Minebay.class, itemForm);
+                iPixelmon.mysql.insert(Pixelbay.class, itemForm);
 
             } catch(Exception e) {
                 e.printStackTrace();

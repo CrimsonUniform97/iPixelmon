@@ -1,19 +1,18 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.gui.sell.PacketSellItem;
-import ipixelmon.minebay.gui.sell.PacketSellPokemon;
-import net.minecraft.network.Packet;
+import ipixelmon.pixelbay.gui.sell.PacketSellItem;
+import ipixelmon.pixelbay.gui.sell.PacketSellPokemon;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-public final class Minebay implements IMod {
+public final class Pixelbay implements IMod {
 
     @Override
     public final String getID() {
-        return "minebay";
+        return "pixelbay";
     }
 
     @Override
@@ -29,17 +28,17 @@ public final class Minebay implements IMod {
 
     @Override
     public final Class<? extends CommonProxy> clientProxyClass() {
-        return ipixelmon.minebay.ClientProxy.class;
+        return ipixelmon.pixelbay.ClientProxy.class;
     }
 
     @Override
     public final Class<? extends CommonProxy> serverProxyClass() {
-        return ipixelmon.minebay.ServerProxy.class;
+        return ipixelmon.pixelbay.ServerProxy.class;
     }
 
     @Override
     public final IGuiHandler getGuiHandler() {
-        return new ipixelmon.minebay.GuiHandler();
+        return new ipixelmon.pixelbay.GuiHandler();
     }
 
 }

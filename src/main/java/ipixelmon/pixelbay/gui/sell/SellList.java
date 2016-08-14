@@ -1,4 +1,4 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
 import ipixelmon.GuiList;
 import net.minecraft.client.gui.GuiButton;

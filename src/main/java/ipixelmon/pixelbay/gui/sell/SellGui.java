@@ -1,16 +1,12 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import ipixelmon.GuiList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.IOException;
 import java.util.ArrayList;

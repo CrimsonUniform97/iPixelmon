@@ -1,8 +1,8 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.minebay.gui.search.SearchGui;
-import ipixelmon.minebay.gui.sell.SellGui;
+import ipixelmon.pixelbay.gui.search.SearchGui;
+import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -12,7 +12,7 @@ import org.lwjgl.input.Keyboard;
 
 public final class BreakListener {
 
-    // TODO: Players access Minebay to sell items through tellers in a building. NPC's
+    // TODO: Players access Pixelbay to sell items through tellers in a building. NPC's
 
     public static KeyBinding pong, ping;
 

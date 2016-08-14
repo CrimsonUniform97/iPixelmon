@@ -1,7 +1,7 @@
-package ipixelmon.minebay.gui.search;
+package ipixelmon.pixelbay.gui.search;
 
 import ipixelmon.GuiList;
-import ipixelmon.minebay.gui.sell.SellBtn;
+import ipixelmon.pixelbay.gui.sell.SellBtn;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -41,6 +41,11 @@ public final class ItemListObject extends GuiList.ListObject {
             this.renderItem.renderItemOverlayIntoGUI(this.mc.fontRendererObj, this.itemStack, this.xPos, this.yPos, "" + this.itemStack.stackSize);
         }
         RenderHelper.disableStandardItemLighting();
+
+        this.mc.fontRendererObj.drawString("Item: " + this.itemStack.getDisplayName(), this.xPos + 30, this.yPos + 1, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("Amount: " + this.itemStack.stackSize, this.xPos + 30, this.yPos + 10, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("Seller: " + playerName, this.xPos + 150, this.yPos + 1, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("Price: $" + price, this.xPos + 150, this.yPos + 10, 0xFFFFFF);
     }
 
     @Override

@@ -1,11 +1,9 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-
-import java.awt.*;
 
 public final class SellBtn extends GuiButton{
 

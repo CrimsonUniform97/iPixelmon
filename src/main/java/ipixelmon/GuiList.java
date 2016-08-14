@@ -11,15 +11,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public abstract class GuiList extends Gui {
 
-    public int xPos, yPos, width, height;
+    private int xPos, yPos, width, height;
     private GuiButton pageLeftBtn, pageRightBtn;
-
     private Page currentPage;
-
     private List<ListObject> objectList;
-
     private Page[] pages;
-
     private ListObject selectedObject;
 
     public GuiList(final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
@@ -145,7 +141,7 @@ public abstract class GuiList extends Gui {
             }
         }
 
-        this.currentPage = this.currentPage == null && this.pages.length > 0 ? this.pages[0] : this.currentPage;
+        this.currentPage = this.pages[0];
 
         if (this.currentPage == null) this.currentPage = new Page(0);
     }

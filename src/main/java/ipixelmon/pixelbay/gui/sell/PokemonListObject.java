@@ -1,26 +1,27 @@
-package ipixelmon.minebay.gui.sell;
+package ipixelmon.pixelbay.gui.sell;
 
+import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
+import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.storage.PCClientStorage;
 import ipixelmon.GuiList;
+import ipixelmon.PixelmonUtility;
 import ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
-public final class ItemListObject extends GuiList.ListObject {
+public final class PokemonListObject extends GuiList.ListObject {
 
-    private final RenderItem renderItem;
-    private final ItemStack itemStack;
+    private final PixelmonData pokemon;
     private final SellBtn sellBtn;
     private final GuiTextField priceField;
 
-    public ItemListObject(final int width, final int height, final ItemStack itemStack) {
+    public PokemonListObject(final int width, final int height, final PixelmonData pixelmonData) {
         super(width, height);
-        this.renderItem = Minecraft.getMinecraft().getRenderItem();
-        this.itemStack = itemStack;
+        this.pokemon = pixelmonData;
         this.sellBtn = new SellBtn(0, this.xPos + 300, this.yPos, "Sell");
         this.priceField = new GuiTextField(0, this.mc.fontRendererObj, this.xPos, this.yPos, 100, 13);
         this.priceField.setText("$");
@@ -28,7 +29,6 @@ public final class ItemListObject extends GuiList.ListObject {
 
     @Override
     public final void draw(final int x, final int y) {
-
         this.sellBtn.xPosition = this.xPos + 300;
         this.sellBtn.yPosition = this.yPos + ((this.height - this.sellBtn.height) / 2);
         this.priceField.xPosition =  this.sellBtn.xPosition + this.sellBtn.width + 10;
@@ -37,14 +37,14 @@ public final class ItemListObject extends GuiList.ListObject {
             this.sellBtn.drawButton(this.mc, x, y);
             this.priceField.drawTextBox();
         }
+        GlStateManager.disableBlend();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GuiHelper.bindPokemonSprite(pokemon, this.mc);
+        GuiHelper.drawImageQuad(this.xPos, this.yPos, 26.0D, 26.0F, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
 
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.enableBlend();
-        if (renderItem != null && itemStack != null) {
-            this.renderItem.renderItemAndEffectIntoGUI(itemStack, this.xPos, this.yPos);
-            this.renderItem.renderItemOverlayIntoGUI(this.mc.fontRendererObj, itemStack, this.xPos, this.yPos, "" + itemStack.stackSize);
-        }
-        RenderHelper.disableStandardItemLighting();
+        this.mc.fontRendererObj.drawString("Pokemon: " + this.pokemon.name, this.xPos + 30, this.yPos + 1, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("Level: " + this.pokemon.lvl, this.xPos + 30, this.yPos + 10, 0xFFFFFF);
+        this.mc.fontRendererObj.drawString("XP: " + this.pokemon.xp, this.xPos + 30, this.yPos + 20, 0xFFFFFF);
     }
 
     @Override
@@ -52,7 +52,17 @@ public final class ItemListObject extends GuiList.ListObject {
         this.priceField.mouseClicked(mouseX, mouseY, 0);
 
         if(this.sellBtn.isMouseOver() && this.sellBtn.enabled) {
-            iPixelmon.network.sendToServer(new PacketSellItem(itemStack, Long.parseLong(this.priceField.getText().replaceAll("\\$", ""))));
+            // DON'T REMOVE IF IT IS THE ONLY POKEMON THEY HAVE IN THEIR HANDS
+
+            if(PixelmonUtility.getPokemonCountClient() == 1) {
+                Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("You cannot sell your only pokemon."));
+                return;
+            }
+
+            iPixelmon.network.sendToServer(new PacketSellPokemon(pokemon, Integer.parseInt(this.priceField.getText().replaceAll("\\$", ""))));
+
+            ServerStorageDisplay.changePokemon(pokemon.order, (PixelmonData) null);
+            PCClientStorage.refreshStore();
         }
     }
 
@@ -69,7 +79,7 @@ public final class ItemListObject extends GuiList.ListObject {
 
         if(String.valueOf(typedChar).matches("[0-9]+") || keyCode == Keyboard.KEY_LEFT || keyCode == Keyboard.KEY_RIGHT) {
             if(!this.priceField.getSelectedText().contains("$")) {
-                this.priceField.textboxKeyTyped(typedChar, keyCode);
+                    this.priceField.textboxKeyTyped(typedChar, keyCode);
             }
         }
     }
@@ -88,4 +98,5 @@ public final class ItemListObject extends GuiList.ListObject {
 
         this.sellBtn.enabled = !this.priceField.getText().replaceAll("\\$", "").isEmpty();
     }
+
 }

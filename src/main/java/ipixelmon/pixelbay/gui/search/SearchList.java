@@ -1,4 +1,4 @@
-package ipixelmon.minebay.gui.search;
+package ipixelmon.pixelbay.gui.search;
 
 import ipixelmon.GuiList;
 import net.minecraft.client.gui.GuiButton;

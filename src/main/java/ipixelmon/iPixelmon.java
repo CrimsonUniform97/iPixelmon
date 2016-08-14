@@ -1,6 +1,6 @@
 package ipixelmon;
 
-import ipixelmon.minebay.Minebay;
+import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.MySQLHandler;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +35,7 @@ public final class iPixelmon {
     public static iPixelmon instance;
 
     public iPixelmon() {
-        mods.add(new Minebay());
+        mods.add(new Pixelbay());
         mods.add(new UUIDManager());
     }
 

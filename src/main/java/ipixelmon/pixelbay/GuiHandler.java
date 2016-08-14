@@ -1,7 +1,7 @@
-package ipixelmon.minebay;
+package ipixelmon.pixelbay;
 
-import ipixelmon.minebay.gui.search.SearchGui;
-import ipixelmon.minebay.gui.sell.SellGui;
+import ipixelmon.pixelbay.gui.search.SearchGui;
+import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
