@@ -2,13 +2,14 @@ package ipixelmon.pixelbay.gui.sell;
 
 import ipixelmon.GuiList;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
 
 public final class SellList extends GuiList {
 
-    public SellList(final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
-        super(screenX, screenY, width, height, objects);
+    public SellList(final GuiScreen parentScreen, final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
+        super(parentScreen, screenX, screenY, width, height, objects);
     }
 
     @Override

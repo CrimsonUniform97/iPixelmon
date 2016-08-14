@@ -3,6 +3,7 @@ package ipixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +12,16 @@ import static org.lwjgl.opengl.GL11.*;
 
 public abstract class GuiList extends Gui {
 
-    private int xPos, yPos, width, height;
+    protected final GuiScreen parentScreen;
+    protected int xPos, yPos, width, height;
     private GuiButton pageLeftBtn, pageRightBtn;
     private Page currentPage;
     private List<ListObject> objectList;
     private Page[] pages;
     private ListObject selectedObject;
 
-    public GuiList(final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
+    public GuiList(final GuiScreen parentScreen, final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
+        this.parentScreen = parentScreen;
         this.xPos = screenX;
         this.yPos = screenY;
         this.width = width;
@@ -73,7 +76,7 @@ public abstract class GuiList extends Gui {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glColor4f(1, 1, 1, 50f / 255f);
-        this.drawTexturedModalRect(this.xPos - 1, this.yPos + this.selectedObject.getY(), 0, 0, this.width - 2, this.selectedObject.height);
+        this.drawTexturedModalRect(this.xPos - 1, this.yPos + this.selectedObject.yInList, 0, 0, this.width - 2, this.selectedObject.height);
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
     }
@@ -81,7 +84,7 @@ public abstract class GuiList extends Gui {
     public final void drawList(final int mouseX, final int mouseY) {
         for(ListObject listObject : this.currentPage.objects) {
             listObject.xPos = this.xPos;
-            listObject.yPos = this.yPos + listObject.getY();
+            listObject.yPos = this.yPos + listObject.yInList;
             listObject.draw(mouseX, mouseY);
         }
     }
@@ -89,7 +92,7 @@ public abstract class GuiList extends Gui {
     public final void mouseClicked(final Minecraft mc, final int x, final int y) {
         if(this.selectedObject != null) this.selectedObject.isSelected = false;
 
-        this.selectedObject = this.currentPage.objects.stream().filter(object -> y - this.yPos >= object.getY() && y - this.yPos <= object.getY() + object.height && x - this.xPos > 0 && x - this.xPos < this.width).findFirst().orElse(this.selectedObject != null ? this.selectedObject : null);
+        this.selectedObject = this.currentPage.objects.stream().filter(object -> y - this.yPos >= object.yInList && y - this.yPos <= object.yInList + object.height && x - this.xPos > 0 && x - this.xPos < this.width).findFirst().orElse(this.selectedObject != null ? this.selectedObject : null);
 
         if(this.selectedObject != null) {
             this.selectedObject.isSelected = true;
@@ -196,12 +199,14 @@ public abstract class GuiList extends Gui {
 
     public static abstract class ListObject extends Gui {
 
+        protected final GuiList parentList;
         protected int width, height, xPos, yPos, yInList;
         protected final Minecraft mc = Minecraft.getMinecraft();
         protected int listX, listY, listWidth, listHeight;
         protected boolean isSelected = false;
 
-        public ListObject(final int width, final int height) {
+        public ListObject(final GuiList parentList, final int width, final int height) {
+            this.parentList = parentList;
             this.width = width;
             this.height = height;
         }
@@ -213,22 +218,6 @@ public abstract class GuiList extends Gui {
         public void keyTyped(final char typedChar, final int keyCode) {}
 
         public void updateScreen() {}
-
-        public final int getY() { return this.yInList; }
-
-        public final int getYPos() {
-            return this.yPos;
-        }
-
-        public final int getXPos() { return this.xPos; }
-
-        public final int getWidth() {
-            return this.width;
-        }
-
-        public final int getHeight() {
-            return this.height;
-        }
 
     }
 }

@@ -19,8 +19,8 @@ public final class PokemonListObject extends GuiList.ListObject {
     private final SellBtn sellBtn;
     private final GuiTextField priceField;
 
-    public PokemonListObject(final int width, final int height, final PixelmonData pixelmonData) {
-        super(width, height);
+    public PokemonListObject(final GuiList parentList, final int width, final int height, final PixelmonData pixelmonData) {
+        super(parentList, width, height);
         this.pokemon = pixelmonData;
         this.sellBtn = new SellBtn(0, this.xPos + 300, this.yPos, "Sell");
         this.priceField = new GuiTextField(0, this.mc.fontRendererObj, this.xPos, this.yPos, 100, 13);

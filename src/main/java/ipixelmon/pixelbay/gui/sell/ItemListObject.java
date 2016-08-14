@@ -17,8 +17,8 @@ public final class ItemListObject extends GuiList.ListObject {
     private final SellBtn sellBtn;
     private final GuiTextField priceField;
 
-    public ItemListObject(final int width, final int height, final ItemStack itemStack) {
-        super(width, height);
+    public ItemListObject(final GuiList parentList, final int width, final int height, final ItemStack itemStack) {
+        super(parentList, width, height);
         this.renderItem = Minecraft.getMinecraft().getRenderItem();
         this.itemStack = itemStack;
         this.sellBtn = new SellBtn(0, this.xPos + 300, this.yPos, "Sell");

@@ -10,7 +10,6 @@ public final class SellBtn extends GuiButton{
     @Override
     public void drawButton(final Minecraft mc, final int mouseX, final int mouseY) {
         this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-
         GlStateManager.color(1f, 1f, 1f, 1f);
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();

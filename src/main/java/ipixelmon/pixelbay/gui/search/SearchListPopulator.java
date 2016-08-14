@@ -1,26 +1,23 @@
 package ipixelmon.pixelbay.gui.search;
 
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import ipixelmon.GuiList;
 import ipixelmon.ItemSerializer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public final class SearchListPopulator implements Runnable {
 
     private final ResultSet resultPokemon, resultItem;
-    public final List<GuiList.ListObject> listObjects;
-    public boolean done = false;
+    public final SearchList searchList;
 
-    public SearchListPopulator(final ResultSet resultPokemon, final ResultSet resultItem) {
+    public SearchListPopulator(final ResultSet resultPokemon, final ResultSet resultItem, final SearchList searchList) {
         this.resultPokemon = resultPokemon;
         this.resultItem = resultItem;
-        this.listObjects = new ArrayList<>();
+        this.searchList = searchList;
     }
 
     @Override
@@ -45,14 +42,13 @@ public final class SearchListPopulator implements Runnable {
                 pData.xp = resultPokemon.getInt("xp");
                 pData.lvl = resultPokemon.getInt("lvl");
                 pData.isShiny = resultPokemon.getBoolean("isShiny");
-                listObjects.add(new PokemonListObject(30, 28, pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getLong("price")));
+                this.searchList.addObject(new PokemonSearchObject(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getLong("price")));
             }
         }
         long endTime = System.currentTimeMillis();
 
         System.out.println("populatePokemon() took " + (endTime - startTime) + " milliseconds.");
-
-        this.done = true;
+        this.searchList.initGui();
     }
 
     public final void populateItem() throws SQLException {
@@ -61,7 +57,7 @@ public final class SearchListPopulator implements Runnable {
         while (resultItem.next()) {
             item = ItemSerializer.itemFromString(resultItem.getString("item"));
             if (item != null)
-                listObjects.add(new ItemListObject(30, 20, item, UUID.fromString(resultItem.getString("seller")), resultItem.getLong("price")));
+                this.searchList.addObject(new ItemSearchObject(item, UUID.fromString(resultItem.getString("seller")), resultItem.getLong("price")));
         }
         long endTime = System.currentTimeMillis();
 

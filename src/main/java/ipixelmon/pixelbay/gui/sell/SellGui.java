@@ -59,15 +59,15 @@ public final class SellGui extends GuiScreen {
         final PixelmonData[] pixelList = ServerStorageDisplay.pokemon;
 
         // Add Pokemon
-        for(PixelmonData pData : pixelList) if(pData != null) this.listObjects.add(new PokemonListObject(30, 28, pData));
+        for(PixelmonData pData : pixelList) if(pData != null) this.listObjects.add(new PokemonListObject(this.guiList, 30, 28, pData));
 
         // Add Items
-        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) if(stack != null) this.listObjects.add(new ItemListObject(30, 20, stack));
+        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) if(stack != null) this.listObjects.add(new ItemListObject(this.guiList, 30, 20, stack));
 
         // Add Armor
-        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.armorInventory) if(stack != null) this.listObjects.add(new ItemListObject(30, 20, stack));
+        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.armorInventory) if(stack != null) this.listObjects.add(new ItemListObject(this.guiList, 30, 20, stack));
 
-        this.guiList = new SellList(listX, listY, listWidth, listHeight, this.listObjects);
+        this.guiList = new SellList(this, listX, listY, listWidth, listHeight, this.listObjects);
     }
 
     @Override

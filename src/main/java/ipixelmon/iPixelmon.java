@@ -14,10 +14,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod(modid = iPixelmon.MOD_ID, name = iPixelmon.NAME, version = iPixelmon.VERSION)
+@Mod(modid = iPixelmon.id, name = iPixelmon.name, version = iPixelmon.version)
 public final class iPixelmon {
 
-    public static final String MOD_ID = "ipixelmon", NAME = "iPixelmon", VERSION = "dev";
+    public static final String id = "ipixelmon", name = "iPixelmon", version = "dev";
 
     public static final List<IMod> mods = new ArrayList<IMod>();
 
@@ -31,7 +31,7 @@ public final class iPixelmon {
 
     private static int packetID = 0;
 
-    @Mod.Instance(MOD_ID)
+    @Mod.Instance(id)
     public static iPixelmon instance;
 
     public iPixelmon() {
@@ -41,7 +41,7 @@ public final class iPixelmon {
 
     @Mod.EventHandler
     public final void preInit(final FMLPreInitializationEvent event) {
-        network = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(id);
 
         config = proxy.getConfig();
         mysql = proxy.getMySQL();
