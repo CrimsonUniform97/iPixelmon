@@ -28,6 +28,7 @@ public final class ItemListObject extends GuiList.ListObject {
         this.playerName = UUIDManager.getPlayerName(seller);
     }
 
+    // TODO: Draw enchantments while hovering over item.
     @Override
     public final void draw(final int x, final int y) {
         this.buyBtn.xPosition = this.xPos + 300;

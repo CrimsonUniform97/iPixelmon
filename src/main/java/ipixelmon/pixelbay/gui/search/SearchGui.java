@@ -19,8 +19,6 @@ public final class SearchGui extends GuiScreen {
     private final ResultSet resultPokemon, resultItem;
     private SearchListPopulator populator;
 
-    // TODO: Add purchasing and showing enchantments when hovering over item in search. Also make search list populate on first open. Right now I have to resize screen.
-
     public SearchGui() {
         resultPokemon = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Pokemon"));
         resultItem = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Item"));
@@ -83,7 +81,6 @@ public final class SearchGui extends GuiScreen {
         if (populator != null && populator.done) {
             this.searchList.setupPages();
             populator = null;
-            System.out.println("CALLED");
         }
 
         if (this.searchField != null) this.searchField.updateCursorCounter();
