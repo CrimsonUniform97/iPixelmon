@@ -27,7 +27,6 @@ public final class PokemonListObject extends GuiList.ListObject {
         this.priceField.setText("$");
     }
 
-    // TODO: Add Price Box next to sell Btn
     @Override
     public final void draw(final int x, final int y) {
         this.sellBtn.xPosition = this.xPos + 300;

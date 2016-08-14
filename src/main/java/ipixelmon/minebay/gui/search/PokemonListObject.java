@@ -24,7 +24,6 @@ public final class PokemonListObject extends GuiList.ListObject {
         this.playerName = UUIDManager.getPlayerName(seller);
     }
 
-    // TODO: Add Price Box next to sell Btn
     @Override
     public final void draw(final int x, final int y) {
         this.buyBtn.xPosition = this.xPos + 300;

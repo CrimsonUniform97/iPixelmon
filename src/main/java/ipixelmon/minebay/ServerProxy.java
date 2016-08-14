@@ -14,9 +14,6 @@ public final class ServerProxy extends CommonProxy {
 
     @Override
     public final void init() {
-        // TODO: Implement search algorithm, and create table, and update PacketSellPokemon to insert into the table
-//        PixelmonData data = new PixelmonData();
-
         final CreateForm pokemonForm = new CreateForm("Pokemon");
         pokemonForm.add("seller", DataType.TEXT);
         pokemonForm.add("name", DataType.TEXT);
