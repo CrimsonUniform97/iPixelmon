@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 public abstract class IGuiList extends Gui {
 
     private GuiButton pageUpBtn, pageDownBtn;
-    private Rectangle bounds;
+    private Rectangle bounds, boundsBg;
     private final GuiScreen parentScreen;
     private IListObject[] objects;
     private IListObject selected;
@@ -26,11 +26,13 @@ public abstract class IGuiList extends Gui {
     public IGuiList(GuiScreen parentScreen) {
         this.parentScreen = parentScreen;
         this.bounds = this.getBounds();
+        this.boundsBg = new Rectangle(bounds.getX() - 2, bounds.getY() - 2, bounds.getWidth() + 4, bounds.getHeight() + 4);
         this.objects = new IListObject[1000];
         this.pageUpBtn = new GuiButton(1, this.bounds.getX() + this.bounds.getWidth(), this.bounds.getY(), 20, 20, ">");
         this.pageDownBtn = new GuiButton(0, this.bounds.getX() + this.bounds.getWidth(), this.bounds.getY() + 20, 20, 20, "<");
     }
 
+    // TODO: Put back to using boundsBg.
     public void drawList(final int mouseX, final int mouseY, final Minecraft mc) {
         this.drawRect(this.bounds, ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
 
@@ -60,7 +62,7 @@ public abstract class IGuiList extends Gui {
 
     public void mouseClicked(final int mouseX, final int mouseY, final int btn) {
         if(this.pageUpBtn.isMouseOver() && this.pageUpBtn.enabled) {
-            this.page = this.page + 1 < this.getMaxPages() ? this.page + 1 : this.page;
+            this.page = this.page < this.getMaxPages() ? this.page + 1 : this.page;
             this.pageDownBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             return;
         } else if(this.pageDownBtn.isMouseOver() && this.pageDownBtn.enabled) {
@@ -103,6 +105,7 @@ public abstract class IGuiList extends Gui {
         while(iterator.hasNext()) iterator.next().update();
     }
 
+    // TODO: Not adding last page correctly. Drawing over the bounds on the bottom.
     public final void addObject(IListObject object) {
         int pageNum = 0;
         int combinedHeight = 0;
@@ -110,6 +113,11 @@ public abstract class IGuiList extends Gui {
         object.initGui();
         for (int i = 0; i < this.objects.length; i++) {
             if (this.objects[i] == null) {
+                combinedHeight += object.getHeight();
+                System.out.println(combinedHeight + "," + this.bounds.getHeight());
+                if(combinedHeight > this.bounds.getHeight()) {
+                    pageNum++;
+                }
                 object.page = pageNum;
                 this.objects[i] = object;
                 break;
@@ -134,6 +142,7 @@ public abstract class IGuiList extends Gui {
         int combinedHeight = 0;
 
         this.bounds = this.getBounds();
+        this.boundsBg = new Rectangle(bounds.getX() - 2, bounds.getY() - 2, bounds.getWidth() + 4, bounds.getHeight() + 4);
         Iterator<IListObject> iterator = this.getIterator();
         IListObject listObject;
         while(iterator.hasNext()) {
@@ -147,6 +156,8 @@ public abstract class IGuiList extends Gui {
 
             listObject.initGui();
         }
+
+        if(this.page > this.getMaxPages()) this.page = this.getMaxPages();
     }
 
     public void drawRect(Rectangle rect, Color bgColor, Color trimColor) {

@@ -17,14 +17,17 @@ public final class SellGui extends GuiScreen {
     public static final int ID = 987;
 
     private SellList guiList;
-    private List<GuiList.ListObject> listObjects;
+
+    public SellGui() {
+        this.guiList = new SellList(this);
+    }
 
     @Override
     public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         this.drawDefaultBackground();
-        this.guiList.draw(this.mc, mouseX, mouseY);
+        this.guiList.drawList(mouseX, mouseY, this.mc);
     }
 
     @Override
@@ -38,7 +41,7 @@ public final class SellGui extends GuiScreen {
     protected final void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
-        this.guiList.mouseClicked(this.mc, mouseX, mouseY);
+        this.guiList.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -50,29 +53,23 @@ public final class SellGui extends GuiScreen {
     public final void initGui() {
         super.initGui();
         this.buttonList.clear();
-        this.listObjects = new ArrayList<>();
-
-        final int listWidth = this.width - 50, listHeight = this.height - 50;
-        final int listX = (this.width - listWidth) /2, listY = (this.height - listHeight) / 2;
-
 
         final PixelmonData[] pixelList = ServerStorageDisplay.pokemon;
-
         // Add Pokemon
-        for(PixelmonData pData : pixelList) if(pData != null) this.listObjects.add(new PokemonListObject(this.guiList, 30, 28, pData));
+        for(PixelmonData pData : pixelList) if(pData != null) this.guiList.addObject(new PokemonSellObject(pData));
 
         // Add Items
-        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) if(stack != null) this.listObjects.add(new ItemListObject(this.guiList, 30, 20, stack));
+        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) if(stack != null) this.guiList.addObject(new ItemSellObject(stack));
 
         // Add Armor
-        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.armorInventory) if(stack != null) this.listObjects.add(new ItemListObject(this.guiList, 30, 20, stack));
+        for(ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.armorInventory) if(stack != null) this.guiList.addObject(new ItemSellObject(stack));
 
-        this.guiList = new SellList(this, listX, listY, listWidth, listHeight, this.listObjects);
+        this.guiList.initGui();
     }
 
     @Override
     public final void updateScreen() {
         super.updateScreen();
-        this.guiList.updateScreen();
+        this.guiList.update();
     }
 }

@@ -1,29 +1,18 @@
 package ipixelmon.pixelbay.gui.sell;
 
-import ipixelmon.GuiList;
-import net.minecraft.client.gui.GuiButton;
+import ipixelmon.guiList.IGuiList;
 import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.util.Rectangle;
 
-import java.util.List;
+public final class SellList extends IGuiList {
 
-public final class SellList extends GuiList {
-
-    public SellList(final GuiScreen parentScreen, final int screenX, final int screenY, final int width, final int height, final List<ListObject> objects) {
-        super(parentScreen, screenX, screenY, width, height, objects);
+    public SellList(GuiScreen parentScreen) {
+        super(parentScreen);
     }
 
     @Override
-    public final GuiButton getLeftBtn() {
-        return new GuiButton(0, this.getScreenX() + this.getWidth(), this.getScreenY() + 22, 20, 20, "<");
-    }
-
-    @Override
-    public final GuiButton getRightBtn() {
-        return new GuiButton(1, this.getScreenX() + this.getWidth(), this.getScreenY(), 20, 20, ">");
-    }
-
-    @Override
-    public final boolean drawSelectionBox() {
-        return true;
+    public Rectangle getBounds() {
+        int listWidth = this.getParentScreen().width - 50, listHeight = this.getParentScreen().height - 50;
+        return new Rectangle((this.getParentScreen().width - listWidth) / 2, ((this.getParentScreen().height - listHeight) / 2) + 40, listWidth, listHeight - 40);
     }
 }

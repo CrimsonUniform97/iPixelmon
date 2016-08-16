@@ -20,11 +20,10 @@ public final class ItemSearchObject extends IListObject {
     private SellBtn buyBtn;
     private final long price;
     private final String playerName;
-    private final RenderItem itemRender;
+    private final int sections = 3;
 
     public ItemSearchObject(final ItemStack itemStack, final UUID seller, final long price) {
         this.itemStack = itemStack;
-        this.itemRender = Minecraft.getMinecraft().getRenderItem();
         this.price = price;
         this.playerName = UUIDManager.getPlayerName(seller);
     }
@@ -36,29 +35,29 @@ public final class ItemSearchObject extends IListObject {
 
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.enableBlend();
-        if (this.itemRender != null && this.itemStack != null) {
-            this.itemRender.renderItemAndEffectIntoGUI(this.itemStack, 0, 0);
-            this.itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, this.itemStack, 0, 0, "" + this.itemStack.stackSize);
+        if (mc.getRenderItem() != null && this.itemStack != null) {
+            mc.getRenderItem().renderItemAndEffectIntoGUI(this.itemStack, 4, 2);
+            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, this.itemStack, 4, 2, "" + this.itemStack.stackSize);
 
             if (mouseX < 16 && mouseY < this.getHeight()) this.renderToolTip(this.itemStack, mouseX, mouseY, mc);
 
             RenderHelper.disableStandardItemLighting();
 
-            int sections = 3;
             int x = this.getList().getBounds().getWidth() / sections;
-            // TODO: Fix placement of text if screen shrinks.
-            mc.fontRendererObj.drawString("Item: " + this.itemStack.getDisplayName(), x * 1 - 100 , 1, 0xFFFFFF);
-            mc.fontRendererObj.drawString("Amount: " + this.itemStack.stackSize, x * 1 - 100, 10, 0xFFFFFF);
-            mc.fontRendererObj.drawString("Seller: " + playerName, x * 2 - 100, 1, 0xFFFFFF);
-            mc.fontRendererObj.drawString("Price: $" + price, x * 2 - 100, 10, 0xFFFFFF);
+            mc.fontRendererObj.drawString("Item: " + this.itemStack.getDisplayName(), getX(30, x * 1 - 100) , 2, 0xFFFFFF);
+            mc.fontRendererObj.drawString("Seller: " + playerName, getX(200, x * 2 - 100), 2, 0xFFFFFF);
+            mc.fontRendererObj.drawString("Price: $" + price, getX(200, x * 2 - 100), 11, 0xFFFFFF);
         }
+    }
+
+    private int getX(int min, int x) {
+        return x < min ? min : x;
     }
 
     @Override
     public void initGui() {
-        int sections = 3;
         int x = this.getList().getBounds().getWidth() / sections;
-        this.buyBtn = new SellBtn(0, x * 3 - 100, 0, "Buy");
+        this.buyBtn = new SellBtn(0, getX(300, x * 3 - 100), 3, "Buy");
     }
 
     @Override
@@ -96,10 +95,10 @@ public final class ItemSearchObject extends IListObject {
         }
 
         FontRenderer font = stack.getItem().getFontRenderer(stack);
-        this.drawHoveringText(list, x, y, (font == null ? mc.fontRendererObj : font));
+        this.drawHoveringText(list, x, y, (font == null ? mc.fontRendererObj : font), mc);
     }
 
-    protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
+    protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font, Minecraft mc) {
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
@@ -132,7 +131,7 @@ public final class ItemSearchObject extends IListObject {
             }
 
             this.zLevel = 300.0F;
-            this.itemRender.zLevel = 300.0F;
+            mc.getRenderItem().zLevel = 300.0F;
             int l = -267386864;
             this.drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
             this.drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
@@ -158,7 +157,7 @@ public final class ItemSearchObject extends IListObject {
             }
 
             this.zLevel = 0.0F;
-            this.itemRender.zLevel = 0.0F;
+            mc.getRenderItem().zLevel = 0.0F;
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
             RenderHelper.enableStandardItemLighting();

@@ -16,6 +16,7 @@ public final class PokemonSearchObject extends IListObject {
     private SellBtn buyBtn;
     private final long price;
     private final String playerName;
+    private final int sections = 3;
 
     public PokemonSearchObject(final PixelmonData pixelmonData, final UUID seller, final long price) {
         this.pokemon = pixelmonData;
@@ -32,16 +33,22 @@ public final class PokemonSearchObject extends IListObject {
         GuiHelper.bindPokemonSprite(pokemon, mc);
         GuiHelper.drawImageQuad(0, 0, 26.0D, 26.0F, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
 
-        mc.fontRendererObj.drawString("Pokemon: " + this.pokemon.name, 30, 1, 0xFFFFFF);
-        mc.fontRendererObj.drawString("Level: " + this.pokemon.lvl, 30, 10, 0xFFFFFF);
-        mc.fontRendererObj.drawString("XP: " + this.pokemon.xp, 30, 20, 0xFFFFFF);
-        mc.fontRendererObj.drawString("Seller: " + playerName, 150, 1, 0xFFFFFF);
-        mc.fontRendererObj.drawString("Price: $" + price, 150, 10, 0xFFFFFF);
+        int x = this.getList().getBounds().getWidth() / sections;
+        mc.fontRendererObj.drawString("Pokemon: " + this.pokemon.name, getX(30, x * 1 - 100), 2, 0xFFFFFF);
+        mc.fontRendererObj.drawString("Level: " + this.pokemon.lvl, getX(30, x * 1 - 100), 11, 0xFFFFFF);
+        mc.fontRendererObj.drawString("XP: " + this.pokemon.xp, getX(30, x * 1 - 100), 20, 0xFFFFFF);
+        mc.fontRendererObj.drawString("Seller: " + playerName, getX(200, x * 2 - 100), 2, 0xFFFFFF);
+        mc.fontRendererObj.drawString("Price: $" + price, getX(200, x * 2 - 100), 11, 0xFFFFFF);
     }
 
     @Override
     public void initGui() {
-        this.buyBtn = new SellBtn(0, this.getList().getBounds().getWidth() - 200, 5, "Buy");
+        int x = this.getList().getBounds().getWidth() / sections;
+        this.buyBtn = new SellBtn(0, getX(300, x * 3 - 100), 2, "Buy");
+    }
+
+    private int getX(int min, int x) {
+        return x < min ? min : x;
     }
 
     @Override
@@ -63,7 +70,7 @@ public final class PokemonSearchObject extends IListObject {
 
     @Override
     public int getHeight() {
-        return 20;
+        return 28;
     }
 
 }

@@ -23,9 +23,8 @@ public final class SearchList extends IGuiList{
         int logoHeight = 108 / 2;
         GuiHelper.drawImageQuad(this.getBounds().getX() + ((this.getBounds().getWidth() - logoWidth) / 2), this.getBounds().getY() - logoHeight, logoWidth, logoHeight, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
 
-        String pageString = "Page (" + this.getPage() + "/" + this.maxPages + ")";
+        String pageString = "Page (" + (this.getPage() + 1) + "/" + (this.maxPages + 1) + ")";
         int pageStringWidth = mc.fontRendererObj.getStringWidth(pageString);
-        // Draw pages and current page
         mc.fontRendererObj.drawString(pageString, this.getBounds().getX() + (this.getBounds().getWidth() - pageStringWidth), this.getBounds().getY() - 10, 0xFFFFFF);
 
         super.drawList(mouseX, mouseY, mc);
