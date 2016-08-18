@@ -16,16 +16,17 @@ public final class ItemSellObject extends IListObject {
     private SellBtn sellBtn;
     private final int sections = 3;
     private GuiTextField priceField;
-    private ItemRenderer itemRenderer;
 
     public ItemSellObject(ItemStack item) {
         this.item = item;
-        this.itemRenderer = Minecraft.getMinecraft().getItemRenderer();
     }
 
     @Override
     public void drawObject(int mouseX, int mouseY, Minecraft mc) {
-        if (this.isSelected()) this.sellBtn.drawButton(mc, mouseX, mouseY);
+        if (this.isSelected()) {
+            this.priceField.drawTextBox();
+            this.sellBtn.drawButton(mc, mouseX, mouseY);
+        }
 
 
         RenderHelper.enableGUIStandardItemLighting();
@@ -50,13 +51,13 @@ public final class ItemSellObject extends IListObject {
         this.priceField.setText(priceFieldText);
     }
 
-    // TODO: Auto update screen list when removing item.
     @Override
     public void mouseClicked(int mouseX, int mouseY, int btn) {
         this.priceField.mouseClicked(mouseX, mouseY, 0);
 
         if(this.sellBtn.isMouseOver() && this.sellBtn.enabled) {
             iPixelmon.network.sendToServer(new PacketSellItem(this.item, Long.parseLong(this.priceField.getText().replaceAll("\\$", ""))));
+            this.getList().removeObject(this);
         }
     }
 

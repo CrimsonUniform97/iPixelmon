@@ -32,9 +32,8 @@ public abstract class IGuiList extends Gui {
         this.pageDownBtn = new GuiButton(0, this.bounds.getX() + this.bounds.getWidth(), this.bounds.getY() + 20, 20, 20, "<");
     }
 
-    // TODO: Put back to using boundsBg.
     public void drawList(final int mouseX, final int mouseY, final Minecraft mc) {
-        this.drawRect(this.bounds, ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
+        this.drawRect(this.boundsBg, ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
 
         Iterator<IListObject> iterator = this.getIterator();
 
@@ -105,7 +104,6 @@ public abstract class IGuiList extends Gui {
         while(iterator.hasNext()) iterator.next().update();
     }
 
-    // TODO: Not adding last page correctly. Drawing over the bounds on the bottom.
     public final void addObject(IListObject object) {
         int pageNum = 0;
         int combinedHeight = 0;
@@ -114,7 +112,6 @@ public abstract class IGuiList extends Gui {
         for (int i = 0; i < this.objects.length; i++) {
             if (this.objects[i] == null) {
                 combinedHeight += object.getHeight();
-                System.out.println(combinedHeight + "," + this.bounds.getHeight());
                 if(combinedHeight > this.bounds.getHeight()) {
                     pageNum++;
                 }
@@ -134,7 +131,8 @@ public abstract class IGuiList extends Gui {
     public final void removeObject(IListObject object) {
         List<IListObject> list = new ArrayList<>(Arrays.asList(this.objects));
         list.remove(object);
-        this.objects = (IListObject[]) list.toArray();
+        this.objects = list.toArray(new IListObject[list.size()]);
+        this.initGui();
     }
 
     public void initGui() {
@@ -143,16 +141,18 @@ public abstract class IGuiList extends Gui {
 
         this.bounds = this.getBounds();
         this.boundsBg = new Rectangle(bounds.getX() - 2, bounds.getY() - 2, bounds.getWidth() + 4, bounds.getHeight() + 4);
+
         Iterator<IListObject> iterator = this.getIterator();
         IListObject listObject;
         while(iterator.hasNext()) {
             listObject = iterator.next();
 
-            if ((combinedHeight += listObject.getHeight()) > this.bounds.getHeight()) {
+            if (listObject.getHeight() + combinedHeight > this.bounds.getHeight()) {
                 pageNum++;
                 combinedHeight = 0;
             }
             listObject.page = pageNum;
+            combinedHeight += listObject.getHeight();
 
             listObject.initGui();
         }
@@ -223,7 +223,7 @@ public abstract class IGuiList extends Gui {
 
             @Override
             public boolean hasNext() {
-                return objects[i] != null;
+                return i < objects.length && objects[i] != null;
             }
 
             @Override

@@ -51,7 +51,6 @@ public final class PokemonSellObject extends IListObject {
         this.priceField.setText(priceFieldText);
     }
 
-    // TODO: Auto update screen list when removing Pokemon.
     @Override
     public void mouseClicked(int mouseX, int mouseY, int btn) {
         this.priceField.mouseClicked(mouseX, mouseY, 0);
@@ -65,6 +64,7 @@ public final class PokemonSellObject extends IListObject {
             }
 
             iPixelmon.network.sendToServer(new PacketSellPokemon(pokemon, Integer.parseInt(this.priceField.getText().replaceAll("\\$", ""))));
+            this.getList().removeObject(this);
 
             ServerStorageDisplay.changePokemon(pokemon.order, (PixelmonData) null);
             PCClientStorage.refreshStore();

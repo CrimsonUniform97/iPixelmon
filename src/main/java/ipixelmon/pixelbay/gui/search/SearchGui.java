@@ -15,6 +15,7 @@ public final class SearchGui extends GuiScreen {
 
     private SearchList searchList;
 
+    // TODO: Implement searching... may take a little.
     public SearchGui() {
         this.searchList = new SearchList(this);
 
