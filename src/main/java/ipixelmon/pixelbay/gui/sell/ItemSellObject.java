@@ -21,6 +21,7 @@ public final class ItemSellObject extends IListObject {
         this.item = item;
     }
 
+    // TODO: Fix textField and button placement.
     @Override
     public void drawObject(int mouseX, int mouseY, Minecraft mc) {
         if (this.isSelected()) {

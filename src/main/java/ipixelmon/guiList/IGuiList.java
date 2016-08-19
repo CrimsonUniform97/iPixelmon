@@ -27,7 +27,7 @@ public abstract class IGuiList extends Gui {
         this.parentScreen = parentScreen;
         this.bounds = this.getBounds();
         this.boundsBg = new Rectangle(bounds.getX() - 2, bounds.getY() - 2, bounds.getWidth() + 4, bounds.getHeight() + 4);
-        this.objects = new IListObject[1000];
+        this.objects = new IListObject[250];
         this.pageUpBtn = new GuiButton(1, this.bounds.getX() + this.bounds.getWidth(), this.bounds.getY(), 20, 20, ">");
         this.pageDownBtn = new GuiButton(0, this.bounds.getX() + this.bounds.getWidth(), this.bounds.getY() + 20, 20, 20, "<");
     }
@@ -44,7 +44,8 @@ public abstract class IGuiList extends Gui {
             if (listObject.page == this.page) {
                 glPushMatrix();
                 glTranslatef(this.getBounds().getX(), this.getBounds().getY() + combinedHeight, 0f);
-                if(listObject.isSelected()) this.drawRect(new Rectangle(-2, 0, this.bounds.getWidth() + 4, listObject.getHeight()), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
+                if (listObject.isSelected())
+                    this.drawRect(new Rectangle(-4, 0, this.bounds.getWidth() + 8, listObject.getHeight()), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
                 listObject.drawObject(mouseX - this.bounds.getX(), mouseY - (this.bounds.getY() + combinedHeight), mc);
                 combinedHeight += listObject.getHeight();
                 glPopMatrix();
@@ -60,13 +61,13 @@ public abstract class IGuiList extends Gui {
     }
 
     public void mouseClicked(final int mouseX, final int mouseY, final int btn) {
-        if(this.pageUpBtn.isMouseOver() && this.pageUpBtn.enabled) {
+        if (this.pageUpBtn.isMouseOver() && this.pageUpBtn.enabled) {
             this.page = this.page < this.getMaxPages() ? this.page + 1 : this.page;
-            this.pageDownBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
-            return;
-        } else if(this.pageDownBtn.isMouseOver() && this.pageDownBtn.enabled) {
-            this.page = this.page -1 > -1 ? this.page - 1 : this.page;
             this.pageUpBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+            return;
+        } else if (this.pageDownBtn.isMouseOver() && this.pageDownBtn.enabled) {
+            this.page = this.page - 1 > -1 ? this.page - 1 : this.page;
+            this.pageDownBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             return;
         }
 
@@ -93,15 +94,13 @@ public abstract class IGuiList extends Gui {
     }
 
     public void keyTyped(final char typedChar, final int keyCode) {
-        Iterator<IListObject> iterator = this.getIterator();
-
-        while(iterator.hasNext()) iterator.next().keyTyped(typedChar, keyCode);
+        if (this.getSelected() != null) this.getSelected().keyTyped(typedChar, keyCode);
     }
 
     public void update() {
         Iterator<IListObject> iterator = this.getIterator();
 
-        while(iterator.hasNext()) iterator.next().update();
+        while (iterator.hasNext()) iterator.next().update();
     }
 
     public final void addObject(IListObject object) {
@@ -112,7 +111,7 @@ public abstract class IGuiList extends Gui {
         for (int i = 0; i < this.objects.length; i++) {
             if (this.objects[i] == null) {
                 combinedHeight += object.getHeight();
-                if(combinedHeight > this.bounds.getHeight()) {
+                if (combinedHeight > this.bounds.getHeight()) {
                     pageNum++;
                 }
                 object.page = pageNum;
@@ -144,11 +143,11 @@ public abstract class IGuiList extends Gui {
 
         Iterator<IListObject> iterator = this.getIterator();
         IListObject listObject;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             listObject = iterator.next();
 
             if (listObject.getHeight() + combinedHeight > this.bounds.getHeight()) {
-                pageNum++;
+                pageNum = pageNum + 1;
                 combinedHeight = 0;
             }
             listObject.page = pageNum;
@@ -157,7 +156,7 @@ public abstract class IGuiList extends Gui {
             listObject.initGui();
         }
 
-        if(this.page > this.getMaxPages()) this.page = this.getMaxPages();
+        if (this.page > this.getMaxPages()) this.page = this.getMaxPages();
     }
 
     public void drawRect(Rectangle rect, Color bgColor, Color trimColor) {
@@ -191,7 +190,9 @@ public abstract class IGuiList extends Gui {
         this.selected = listObject;
     }
 
-    public final void setPage(int page) { this.page = page; }
+    public final void setPage(int page) {
+        this.page = page > this.getMaxPages() ? this.getMaxPages() : page < 0 ? 0 : page;
+    }
 
     /**
      * GETTERS
@@ -211,11 +212,35 @@ public abstract class IGuiList extends Gui {
         return pageNum;
     }
 
+    public List<IListObject> getObjectsOnPage(int page) {
+        if(page > getMaxPages()) return null;
+
+        List<IListObject> array = new ArrayList<>();
+
+        Iterator<IListObject> iterator = this.getIterator();
+
+        IListObject listObject;
+        while(iterator.hasNext()) {
+            listObject = iterator.next();
+            if(listObject.page == page) {
+                array.add(listObject);
+            }
+        }
+
+        return array;
+    }
+
+    public GuiButton getPageUpBtn() { return this.pageUpBtn; }
+
+    public GuiButton getPageDownBtn() { return this.pageDownBtn; }
+
     public final IListObject getSelected() {
         return this.selected;
     }
 
-    public final int getPage() { return this.page; }
+    public final int getPage() {
+        return this.page;
+    }
 
     public final Iterator<IListObject> getIterator() {
         return new Iterator<IListObject>() {

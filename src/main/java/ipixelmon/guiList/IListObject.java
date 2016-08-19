@@ -27,4 +27,7 @@ public abstract class IListObject extends Gui {
         return list.getSelected() != null && list.getSelected() == this;
     }
 
+    public int getPage() {
+        return page;
+    }
 }

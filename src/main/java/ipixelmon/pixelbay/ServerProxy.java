@@ -27,6 +27,7 @@ public final class ServerProxy extends CommonProxy {
         final CreateForm itemForm = new CreateForm("Item");
         itemForm.add("seller", DataType.TEXT);
         itemForm.add("item", DataType.TEXT);
+        itemForm.add("itemName", DataType.TEXT);
         itemForm.add("price", DataType.LONG);
 
         iPixelmon.mysql.createTable(Pixelbay.class, itemForm);

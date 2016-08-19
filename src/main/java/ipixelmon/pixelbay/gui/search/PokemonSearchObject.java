@@ -51,6 +51,7 @@ public final class PokemonSearchObject extends IListObject {
         return x < min ? min : x;
     }
 
+    // TODO: Implement buying
     @Override
     public void mouseClicked(int mouseX, int mouseY, int btn) {
         if (this.buyBtn.isMouseOver()) {

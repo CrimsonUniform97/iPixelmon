@@ -60,6 +60,7 @@ public final class ItemSearchObject extends IListObject {
         this.buyBtn = new SellBtn(0, getX(300, x * 3 - 100), 3, "Buy");
     }
 
+    // TODO: Implement buying.
     @Override
     public void mouseClicked(int mouseX, int mouseY, int btn) {
         if (this.buyBtn.isMouseOver()) {

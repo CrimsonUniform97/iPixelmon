@@ -24,6 +24,7 @@ public final class PokemonSellObject extends IListObject {
         this.pokemon = pData;
     }
 
+    // TODO: Fix textField and button placement.
     @Override
     public void drawObject(int mouseX, int mouseY, Minecraft mc) {
         if (this.isSelected()) {

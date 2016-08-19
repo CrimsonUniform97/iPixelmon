@@ -68,6 +68,7 @@ public final class PacketSellItem implements IMessage {
                 final InsertForm itemForm = new InsertForm("Item");
                 itemForm.add("seller", player.getUniqueID().toString());
                 itemForm.add("item", ItemSerializer.itemToString(message.itemStack));
+                itemForm.add("itemName", message.itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
                 itemForm.add("price", "" + message.price);
 
                 iPixelmon.mysql.insert(Pixelbay.class, itemForm);

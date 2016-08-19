@@ -109,7 +109,7 @@ public final class MySQLHandler {
 
         try {
             if (form.selectionForms.isEmpty()) {
-                return database.query("SELECT * FROM " + mod.getID() + form.tableName + ";");
+                return database.query("SELECT * FROM " + mod.getID() + form.tableName + "" + (form.limit > 0 ? " LIMIT " + form.limit : "") + ";");
             } else {
                 String toSearch = "";
                 for (String key : form.selectionForms.keySet()) {
@@ -119,7 +119,8 @@ public final class MySQLHandler {
                         toSearch += " AND " + key + "='" + form.selectionForms.get(key) + "'";
                     }
                 }
-                return database.query("SELECT * FROM " + mod.getID() + form.tableName + " WHERE " + toSearch + ";");
+
+                return database.query("SELECT * FROM " + mod.getID() + form.tableName + " WHERE " + toSearch + "" + (form.limit > 0 ? " LIMIT " + form.limit : "") + ";");
             }
         } catch (SQLException e) {
             e.printStackTrace();
