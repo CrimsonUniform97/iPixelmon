@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public final class ItemSearchObject extends IListObject {
 
-    private final ItemStack itemStack;
+    public final ItemStack itemStack;
     private SellBtn buyBtn;
     private final long price;
     private final String playerName;
@@ -39,6 +39,7 @@ public final class ItemSearchObject extends IListObject {
             mc.getRenderItem().renderItemAndEffectIntoGUI(this.itemStack, 4, 2);
             mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, this.itemStack, 4, 2, "" + this.itemStack.stackSize);
 
+            // TODO: Fix the tool tip
             if (mouseX < 16 && mouseY < this.getHeight()) this.renderToolTip(this.itemStack, mouseX, mouseY, mc);
 
             RenderHelper.disableStandardItemLighting();

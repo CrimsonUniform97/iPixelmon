@@ -1,5 +1,6 @@
 package ipixelmon.guiList;
 
+import ipixelmon.pixelbay.gui.search.ItemSearchObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -60,14 +61,22 @@ public abstract class IGuiList extends Gui {
         this.pageUpBtn.drawButton(mc, mouseX, mouseY);
     }
 
+    public void pageUp() {
+        this.page = this.page < this.getMaxPages() ? this.page + 1 : this.page;
+        this.pageUpBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+    }
+
+    public void pageDown() {
+        this.page = this.page - 1 > -1 ? this.page - 1 : this.page;
+        this.pageDownBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+    }
+
     public void mouseClicked(final int mouseX, final int mouseY, final int btn) {
         if (this.pageUpBtn.isMouseOver() && this.pageUpBtn.enabled) {
-            this.page = this.page < this.getMaxPages() ? this.page + 1 : this.page;
-            this.pageUpBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+            this.pageUp();
             return;
         } else if (this.pageDownBtn.isMouseOver() && this.pageDownBtn.enabled) {
-            this.page = this.page - 1 > -1 ? this.page - 1 : this.page;
-            this.pageDownBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+            this.pageDown();
             return;
         }
 
