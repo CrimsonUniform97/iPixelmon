@@ -4,7 +4,6 @@ import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import ipixelmon.guiList.QueryType;
-import ipixelmon.guiList.SearchList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;

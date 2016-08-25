@@ -1,5 +1,8 @@
-package ipixelmon.guiList;
+package ipixelmon.pixelbay.gui.search;
 
+import ipixelmon.guiList.IGuiList;
+import ipixelmon.guiList.IListObject;
+import ipixelmon.guiList.QueryType;
 import ipixelmon.pixelbay.gui.search.ItemSearchObject;
 import ipixelmon.pixelbay.gui.search.SearchGui;
 import ipixelmon.pixelbay.gui.search.SearchListItem;
@@ -46,6 +49,7 @@ public abstract class SearchList extends IGuiList {
 
     // TODO: May need a little optimization where we can. Such as the getMaxTotalEntries should be saved to a variable, etc...
     // TODO: Work on what happens when resizing screen. Make it to where we find the object at the top and find it through the list again... may be difficult and not worth it.
+    // actually easy. Just get it's index number... duh.
 
     public final void search(String str, QueryType queryType) {
         if (queryType == QueryType.NEW_SEARCH) {

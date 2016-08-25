@@ -2,7 +2,6 @@ package ipixelmon.pixelbay.gui.search;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import ipixelmon.guiList.QueryType;
-import ipixelmon.guiList.SearchList;
 import ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;

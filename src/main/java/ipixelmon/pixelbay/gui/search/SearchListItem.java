@@ -34,7 +34,7 @@ public class SearchListItem extends BasicSearchList {
 
     @Override
     public int getQueryLimit() {
-        return 100;
+        return 250;
     }
 
     @Override
