@@ -189,7 +189,7 @@ public final class MySQLHandler {
         }
 
         try {
-            database.query("DELETE FROM " + mod.getID() + deleteForm.tableName + " WHERE " + deleteStr + ";");
+            database.query("DELETE FROM " + mod.getID() + deleteForm.tableName + " WHERE " + deleteStr + (deleteForm.limit > 0 ? " LIMIT " + deleteForm.limit : "") + ";");
         }catch(SQLException e) {
             e.printStackTrace();
         }

@@ -57,12 +57,19 @@ public final class PacketSellItem implements IMessage {
 
                 Iterator<ItemUtil.ItemStackInfo> iterator = ItemUtil.getPlayerInvIterator(player);
                 ItemUtil.ItemStackInfo itemStackInfo;
+                boolean foundItemStack = false;
                 while(iterator.hasNext()) {
                     itemStackInfo = iterator.next();
                     if(itemStackInfo.itemStackEquals(message.itemStack)) {
                         itemStackInfo.removeFromPlayersInventory(player);
+                        foundItemStack = true;
                         break;
                     }
+                }
+
+                if(!foundItemStack) {
+                    player.addChatComponentMessage(new ChatComponentText("Could not find item within your inventory. Notify an admin."));
+                    return null;
                 }
 
                 final InsertForm itemForm = new InsertForm("Item");

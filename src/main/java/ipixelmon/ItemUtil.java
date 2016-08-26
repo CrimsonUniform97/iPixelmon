@@ -16,9 +16,9 @@ public final class ItemUtil {
         List<ItemStackInfo> itemStackList = new ArrayList();
         for (int i = 0; i < itemStacks.length; i++) {
             if (i < player.inventory.mainInventory.length) {
-                itemStackList.add(new ItemStackInfo(player.inventory.mainInventory[i], i));
+                itemStackList.add(new ItemStackInfo(player.inventory.mainInventory[i], i, InventoryType.MAIN_INVENTORY));
             } else {
-                itemStackList.add(new ItemStackInfo(player.inventory.armorInventory[i - player.inventory.mainInventory.length], i));
+                itemStackList.add(new ItemStackInfo(player.inventory.armorInventory[i - player.inventory.mainInventory.length], i, InventoryType.ARMOR));
             }
         }
 
@@ -44,10 +44,12 @@ public final class ItemUtil {
     public static class ItemStackInfo {
         private ItemStack itemStack;
         private int index;
+        private InventoryType inventoryType;
 
-        public ItemStackInfo(ItemStack itemStack, int index) {
+        public ItemStackInfo(ItemStack itemStack, int index, InventoryType inventoryType) {
             this.itemStack = itemStack;
             this.index = index;
+            this.inventoryType = inventoryType;
         }
 
         public ItemStack getItemStack() {
@@ -65,6 +67,14 @@ public final class ItemUtil {
         public void removeFromPlayersInventory(EntityPlayerMP player) {
             player.inventory.removeStackFromSlot(index);
         }
+
+        public InventoryType getInventoryType() {
+            return inventoryType;
+        }
+    }
+
+    public enum InventoryType {
+        MAIN_INVENTORY, ARMOR;
     }
 
 }

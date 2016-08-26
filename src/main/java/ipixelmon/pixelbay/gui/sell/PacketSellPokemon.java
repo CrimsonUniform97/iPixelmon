@@ -33,14 +33,13 @@ public final class PacketSellPokemon implements IMessage {
     public final void fromBytes(final ByteBuf buf) {
         this.pokeData = new PixelmonData();
         pokeData.decodeInto(buf);
-
-        price = Long.parseLong(ByteBufUtils.readUTF8String(buf));
+        price = buf.readLong();
     }
 
     @Override
     public final void toBytes(final ByteBuf buf) {
         pokeData.encodeInto(buf);
-        ByteBufUtils.writeUTF8String(buf, "" + price);
+        buf.writeLong(price);
     }
 
     public static final class Handler implements IMessageHandler<PacketSellPokemon, IMessage> {

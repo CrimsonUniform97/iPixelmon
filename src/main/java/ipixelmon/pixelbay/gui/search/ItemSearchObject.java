@@ -1,6 +1,8 @@
 package ipixelmon.pixelbay.gui.search;
 
 import ipixelmon.guiList.IListObject;
+import ipixelmon.iPixelmon;
+import ipixelmon.pixelbay.PacketBuyItem;
 import ipixelmon.pixelbay.gui.sell.SellBtn;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
@@ -18,6 +20,7 @@ public final class ItemSearchObject extends IListObject {
 
     public final ItemStack itemStack;
     private SellBtn buyBtn;
+    private UUID seller;
     private final long price;
     private final String playerName;
     private final int sections = 3;
@@ -26,6 +29,7 @@ public final class ItemSearchObject extends IListObject {
         this.itemStack = itemStack;
         this.price = price;
         this.playerName = UUIDManager.getPlayerName(seller);
+        this.seller = seller;
     }
 
     @Override
@@ -65,7 +69,7 @@ public final class ItemSearchObject extends IListObject {
     @Override
     public void mouseClicked(int mouseX, int mouseY, int btn) {
         if (this.buyBtn.isMouseOver()) {
-            System.out.println("BOOM");
+            iPixelmon.network.sendToServer(new PacketBuyItem(itemStack, seller, price));
         }
     }
 

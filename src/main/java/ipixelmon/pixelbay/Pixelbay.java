@@ -24,6 +24,8 @@ public final class Pixelbay implements IMod {
     public final void init() {
         iPixelmon.registerPacket(PacketSellPokemon.Handler.class, PacketSellPokemon.class, Side.SERVER);
         iPixelmon.registerPacket(PacketSellItem.Handler.class, PacketSellItem.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketBuyItem.Handler.class, PacketBuyItem.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketBuyPokemon.Handler.class, PacketBuyPokemon.class, Side.SERVER);
     }
 
     @Override

@@ -7,6 +7,7 @@ public final class DeleteForm {
 
     protected Map<String, String> deleteForms;
     protected String tableName;
+    protected int limit = -1;
 
     public DeleteForm(final String tableName) {
         this.tableName = tableName;
@@ -15,6 +16,11 @@ public final class DeleteForm {
 
     public final DeleteForm add(final String key, final String value) {
         this.deleteForms.put(key, value);
+        return this;
+    }
+
+    public final DeleteForm setLimit(final int limit) {
+        this.limit = limit;
         return this;
     }
 
