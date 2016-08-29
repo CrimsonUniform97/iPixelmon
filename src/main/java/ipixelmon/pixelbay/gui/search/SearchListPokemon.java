@@ -31,7 +31,7 @@ public class SearchListPokemon extends BasicSearchList {
                 pData.xp = resultPokemon.getInt("xp");
                 pData.lvl = resultPokemon.getInt("lvl");
                 pData.isShiny = resultPokemon.getBoolean("isShiny");
-                this.addObject(new PokemonSearchObject(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getLong("price")));
+                this.addObject(new PokemonSearchObject(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getInt("price")));
             }
         }
     }

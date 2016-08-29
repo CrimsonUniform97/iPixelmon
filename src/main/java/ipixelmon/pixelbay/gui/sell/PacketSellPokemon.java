@@ -22,9 +22,9 @@ public final class PacketSellPokemon implements IMessage {
     }
 
     private PixelmonData pokeData;
-    private long price;
+    private int price;
 
-    public PacketSellPokemon(final PixelmonData pixelmonData, final long price) {
+    public PacketSellPokemon(final PixelmonData pixelmonData, final int price) {
         this.pokeData = pixelmonData;
         this.price = price;
     }
@@ -33,13 +33,13 @@ public final class PacketSellPokemon implements IMessage {
     public final void fromBytes(final ByteBuf buf) {
         this.pokeData = new PixelmonData();
         pokeData.decodeInto(buf);
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public final void toBytes(final ByteBuf buf) {
         pokeData.encodeInto(buf);
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static final class Handler implements IMessageHandler<PacketSellPokemon, IMessage> {

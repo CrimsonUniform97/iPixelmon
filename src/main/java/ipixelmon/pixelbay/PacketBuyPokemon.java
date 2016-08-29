@@ -16,9 +16,9 @@ public class PacketBuyPokemon implements IMessage {
 
     private PixelmonData pixelmonData;
     private UUID seller;
-    private long price;
+    private int price;
 
-    public PacketBuyPokemon(PixelmonData pixelmonData, UUID seller, long price) {
+    public PacketBuyPokemon(PixelmonData pixelmonData, UUID seller, int price) {
         this.pixelmonData = pixelmonData;
         this.seller = seller;
         this.price = price;
@@ -29,14 +29,14 @@ public class PacketBuyPokemon implements IMessage {
         this.pixelmonData = new PixelmonData();
         pixelmonData.decodeInto(buf);
         seller = UUID.fromString(ByteBufUtils.readUTF8String(buf));
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         pixelmonData.encodeInto(buf);
         ByteBufUtils.writeUTF8String(buf, seller.toString());
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static class Handler implements IMessageHandler<PacketBuyPokemon, IMessage> {

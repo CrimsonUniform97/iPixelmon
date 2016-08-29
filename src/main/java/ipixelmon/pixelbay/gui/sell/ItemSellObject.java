@@ -57,7 +57,7 @@ public final class ItemSellObject extends IListObject {
         this.priceField.mouseClicked(mouseX, mouseY, 0);
 
         if(this.sellBtn.isMouseOver() && this.sellBtn.enabled) {
-            iPixelmon.network.sendToServer(new PacketSellItem(this.item, Long.parseLong(this.priceField.getText().replaceAll("\\$", ""))));
+            iPixelmon.network.sendToServer(new PacketSellItem(this.item, Integer.parseInt(this.priceField.getText().replaceAll("\\$", ""))));
             this.getList().removeObject(this);
         }
     }

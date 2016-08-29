@@ -21,11 +21,11 @@ public final class ItemSearchObject extends IListObject {
     public final ItemStack itemStack;
     private SellBtn buyBtn;
     private UUID seller;
-    private final long price;
+    private final int price;
     private final String playerName;
     private final int sections = 3;
 
-    public ItemSearchObject(final ItemStack itemStack, final UUID seller, final long price) {
+    public ItemSearchObject(final ItemStack itemStack, final UUID seller, final int price) {
         this.itemStack = itemStack;
         this.price = price;
         this.playerName = UUIDManager.getPlayerName(seller);

@@ -22,9 +22,9 @@ public final class PacketSellItem implements IMessage {
     }
 
     private ItemStack itemStack;
-    private long price;
+    private int price;
 
-    public PacketSellItem(final ItemStack item, final long price) {
+    public PacketSellItem(final ItemStack item, final int price) {
         this.itemStack = item;
         this.price = price;
     }
@@ -32,13 +32,13 @@ public final class PacketSellItem implements IMessage {
     @Override
     public final void fromBytes(final ByteBuf buf) {
         itemStack = ByteBufUtils.readItemStack(buf);
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public final void toBytes(final ByteBuf buf) {
         ByteBufUtils.writeItemStack(buf, itemStack);
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static final class Handler implements IMessageHandler<PacketSellItem, IMessage> {

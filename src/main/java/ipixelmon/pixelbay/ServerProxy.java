@@ -20,7 +20,7 @@ public final class ServerProxy extends CommonProxy {
         pokemonForm.add("isShiny", DataType.BOOLEAN);
         pokemonForm.add("lvl", DataType.INT);
         pokemonForm.add("xp", DataType.INT);
-        pokemonForm.add("price", DataType.LONG);
+        pokemonForm.add("price", DataType.INT);
 
         iPixelmon.mysql.createTable(Pixelbay.class, pokemonForm);
 
@@ -28,7 +28,7 @@ public final class ServerProxy extends CommonProxy {
         itemForm.add("seller", DataType.TEXT);
         itemForm.add("item", DataType.TEXT);
         itemForm.add("itemName", DataType.TEXT);
-        itemForm.add("price", DataType.LONG);
+        itemForm.add("price", DataType.INT);
 
         iPixelmon.mysql.createTable(Pixelbay.class, itemForm);
 

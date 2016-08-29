@@ -27,7 +27,7 @@ public class SearchListItem extends BasicSearchList {
         while (resultItem.next()) {
             item = ItemSerializer.itemFromString(resultItem.getString("item"));
             if (item != null)
-                this.addObject(new ItemSearchObject(item, UUID.fromString(resultItem.getString("seller")), resultItem.getLong("price")));
+                this.addObject(new ItemSearchObject(item, UUID.fromString(resultItem.getString("seller")), resultItem.getInt("price")));
         }
 
     }

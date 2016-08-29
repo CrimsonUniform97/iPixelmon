@@ -14,11 +14,11 @@ public final class PokemonSearchObject extends IListObject {
 
     private final PixelmonData pokemon;
     private SellBtn buyBtn;
-    private final long price;
+    private final int price;
     private final String playerName;
     private final int sections = 3;
 
-    public PokemonSearchObject(final PixelmonData pixelmonData, final UUID seller, final long price) {
+    public PokemonSearchObject(final PixelmonData pixelmonData, final UUID seller, final int price) {
         this.pokemon = pixelmonData;
         this.price = price;
         this.playerName = UUIDManager.getPlayerName(seller);

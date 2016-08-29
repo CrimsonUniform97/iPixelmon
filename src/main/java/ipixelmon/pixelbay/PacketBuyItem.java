@@ -27,9 +27,9 @@ public class PacketBuyItem implements IMessage {
 
     private String itemStack;
     private UUID seller;
-    private long price;
+    private int price;
 
-    public PacketBuyItem(ItemStack itemStack, UUID seller, long price) {
+    public PacketBuyItem(ItemStack itemStack, UUID seller, int price) {
         this.itemStack = ItemSerializer.itemToString(itemStack);
         this.seller = seller;
         this.price = price;
@@ -39,14 +39,14 @@ public class PacketBuyItem implements IMessage {
     public void fromBytes(ByteBuf buf) {
         itemStack = ByteBufUtils.readUTF8String(buf);
         seller = UUID.fromString(ByteBufUtils.readUTF8String(buf));
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, itemStack);
         ByteBufUtils.writeUTF8String(buf, seller.toString());
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static class Handler implements IMessageHandler<PacketBuyItem, IMessage> {
