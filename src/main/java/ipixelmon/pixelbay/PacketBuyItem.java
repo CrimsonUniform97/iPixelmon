@@ -62,6 +62,8 @@ public class PacketBuyItem implements IMessage {
 
                 if (message.seller == null) throw new Exception("Seller is null.");
 
+                if(message.price > PixelmonUtility.getBalance(player)) throw new Exception("Insufficient funds.");
+
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Item")
                         .add("seller", message.seller.toString())
                         .add("item", message.itemStack)
@@ -91,9 +93,6 @@ public class PacketBuyItem implements IMessage {
                         .add("seller", message.seller.toString())
                         .add("item", message.itemStack)
                         .add("price", "" + message.price));
-                // TODO: Works, need to check if player has the money now. Also need to update the list once purchased
-                // TODO: What are we going to do about someone else purchasing an item??? I guess once the player trys to buy it check
-                // if its been purchased and tell them it has.
             } catch (Exception e) {
                 e.printStackTrace();
                 player.addChatComponentMessage(new ChatComponentText(e.getLocalizedMessage()));

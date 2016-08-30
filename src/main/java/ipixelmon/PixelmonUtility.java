@@ -41,6 +41,18 @@ public final class PixelmonUtility {
         }
     }
 
+    @SideOnly(Side.SERVER)
+    public static final int getBalance(final EntityPlayerMP player) {
+        try {
+            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorage(player);
+            return targetStorage.getCurrency();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public static final ItemStack makePokemonItem(final EnumPokemon pokemon) {
         final ItemStack stack = new ItemStack(PixelmonItems.itemPixelmonSprite);
         final NBTTagCompound tagCompound = new NBTTagCompound();
