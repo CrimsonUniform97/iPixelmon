@@ -14,7 +14,14 @@ public final class MySQLHandler {
 
     public MySQLHandler(final Database database) {
         this.database = database;
+        try {
+            if (this.database == null) throw new Exception("DATABASE CONNECTION IS NULL!");
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         this.database.open();
+
+        if(this.database.isOpen()) System.out.println("DATABASE CONNECTION ESTABLISH");
     }
 
     public final Database getDatabase() { return database; }

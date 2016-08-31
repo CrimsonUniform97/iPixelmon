@@ -20,7 +20,7 @@ public abstract class CommonProxy {
         if(!config.hasKey("dbName")) config.setString("dbName", "");
         if(!config.hasKey("dbUser")) config.setString("dbUser", "");
         if(!config.hasKey("dbPass")) config.setString("dbPass", "");
-        return new MySQLHandler(new MySQL(Logger.getLogger("Minecraft"), "[" + id + "]", config.getString("dbHost"), config.getInt("dbPort"), config.getString("dbName"), config.getString("dbUser"), config.getString("dbPass")));
+         return new MySQLHandler(new MySQL(Logger.getLogger("Minecraft"), "[" + id + "]", config.getString("dbHost"), config.getInt("dbPort"), config.getString("dbName"), config.getString("dbUser"), config.getString("dbPass")));
     }
 
     public final Config getConfig() {
