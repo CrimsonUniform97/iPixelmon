@@ -35,8 +35,8 @@ public final class iPixelmon {
     public static iPixelmon instance;
 
     public iPixelmon() {
-        mods.add(new Pixelbay());
         mods.add(new UUIDManager());
+        mods.add(new Pixelbay());
     }
 
     @Mod.EventHandler

@@ -3,11 +3,7 @@ package ipixelmon.pixelbay.gui.search;
 import ipixelmon.guiList.IGuiList;
 import ipixelmon.guiList.IListObject;
 import ipixelmon.guiList.QueryType;
-import ipixelmon.pixelbay.gui.search.ItemSearchObject;
-import ipixelmon.pixelbay.gui.search.SearchGui;
-import ipixelmon.pixelbay.gui.search.SearchListItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.util.Rectangle;
 
 import java.sql.SQLException;
@@ -20,8 +16,8 @@ public abstract class SearchList extends IGuiList {
     }
 
     private int maxPages = 1;
-    private Map<Integer, Integer> rows = new HashMap<>();
-    private Map<Integer, Integer> entries = new HashMap<>();
+    private Map</* rowIndex */ Integer, /* row to start from Ex. 0,250,500,750 */ Integer> rows = new HashMap<>();
+    private Map</* rowIndex */ Integer, /* amount of entries */ Integer> entries = new HashMap<>();
     private Map<Integer, Integer> pages = new HashMap<>();
     private int rowIndex = 0;
     private int row = 0;
@@ -47,10 +43,6 @@ public abstract class SearchList extends IGuiList {
         return (SearchGui) super.getParentScreen();
     }
 
-    // TODO: May need a little optimization where we can. Such as the getMaxTotalEntries should be saved to a variable, etc...
-    // TODO: Work on what happens when resizing screen. Make it to where we find the object at the top and find it through the list again... may be difficult and not worth it.
-    // actually easy. Just get it's index number... duh.
-
     public final void search(String str, QueryType queryType) {
         if (queryType == QueryType.NEW_SEARCH) {
             this.maxPages = 1;
@@ -63,6 +55,12 @@ public abstract class SearchList extends IGuiList {
         }
 
         if (queryType == QueryType.UP) {
+
+            // this fixes the rowIndex from going up to infinity.
+            if (this.getMaxPages() == 0 && this.getPage() == 0 && this.rowIndex > 0) {
+                return;
+            }
+
             this.setObjects(new IListObject[this.getQueryLimit()]);
 
             if (rows.containsKey(rowIndex)) {
@@ -83,7 +81,7 @@ public abstract class SearchList extends IGuiList {
 
             showPlus = removeEntriesOnLastPage();
 
-            if(!prevShowPlus) showPlus = false;
+            if (!prevShowPlus) showPlus = false;
 
             entries.put(rowIndex, entries() - this.getObjectsOnPage(this.getMaxPages()).size());
 
@@ -97,19 +95,19 @@ public abstract class SearchList extends IGuiList {
             rowIndex += 1;
         } else if (queryType == QueryType.DOWN) {
             List<Integer> toRemove = new ArrayList<>();
-            for(int i = 0; i < this.entries.size(); i++) {
-                if(this.entries.get(i) == 0) toRemove.add(i);
+            for (int i = 0; i < this.entries.size(); i++) {
+                if (this.entries.get(i) != null && this.entries.get(i) == 0) toRemove.add(i);
             }
-            for(int i : toRemove) {
+            for (int i : toRemove) {
                 this.entries.remove(i);
             }
 
-            if(getDisplayPage() == 1 && this.getPage() == 0) {
+            if (getDisplayPage() == 1 && this.getPage() == 0) {
                 return;
             }
 
             rowIndex = rowIndex - 1 > 0 ? rowIndex - 1 : 0;
-            if(rowIndex > entries.size()) rowIndex = entries.size();
+            if (rowIndex > entries.size()) rowIndex = entries.size();
             row = rows.get(rowIndex - 1 > 0 ? rowIndex - 1 : 0);
             this.setObjects(new IListObject[this.getQueryLimit()]);
 
@@ -160,7 +158,8 @@ public abstract class SearchList extends IGuiList {
     }
 
     private boolean removeEntriesOnLastPage() {
-        if (totalEntries() != getMaxTotalEntries()) {
+//        if (totalEntries() != getMaxTotalEntries()) {
+        if (totalEntries() >= getQueryLimit()) {
             this.getObjectsOnPage(this.getMaxPages()).forEach(this::removeObject);
             return true;
         }

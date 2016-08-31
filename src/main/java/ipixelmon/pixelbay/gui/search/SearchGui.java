@@ -23,7 +23,13 @@ public final class SearchGui extends GuiScreen {
     protected SearchPopup popupWindow;
 
     @Override
-    public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
+    public final void drawScreen(int mouseX, int mouseY, final float partialTicks) {
+
+        if(this.popupWindow.visible) {
+            mouseX = 0;
+            mouseY = 0;
+        }
+
         this.drawDefaultBackground();
         this.searchList.drawList(mouseX, mouseY, this.mc);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -89,6 +95,8 @@ public final class SearchGui extends GuiScreen {
         } else if (button == this.itemBtn && !(this.searchList instanceof SearchListItem)) {
             this.searchList = new SearchListItem(this);
             this.searchList.search(null, QueryType.NEW_SEARCH);
+            // TODO: While having searched for Ruby, when clicking item it does not reset the list back to default... fix.
+            System.out.println("CALLED");
         }
 
         if (button == this.searchBtn) {

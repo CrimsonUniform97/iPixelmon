@@ -41,17 +41,17 @@ public final class ServerProxy extends CommonProxy {
 
         MinecraftForge.EVENT_BUS.register(new ServerBreakListener());
 
-        Iterator<Item> itemIterator = Item.itemRegistry.iterator();
-        for(int i = 0; i < 275; i++) {
-            final InsertForm insertForm = new InsertForm("Item");
-            ItemStack itemStack = new ItemStack(itemIterator.next());
-
-            insertForm.add("seller", UUIDManager.getUUID("CMcHenry").toString());
-            insertForm.add("item", ItemSerializer.itemToString(itemStack));
-            insertForm.add("itemName", itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
-            insertForm.add("price", "" + (int) (Math.random() * 100));
-
-            iPixelmon.mysql.insert(Pixelbay.class, insertForm);
-        }
+//        Iterator<Item> itemIterator = Item.itemRegistry.iterator();
+//        for(int i = 0; i < 275; i++) {
+//            final InsertForm insertForm = new InsertForm("Item");
+//            ItemStack itemStack = new ItemStack(itemIterator.next());
+//
+//            insertForm.add("seller", UUIDManager.getUUID("CMcHenry").toString());
+//            insertForm.add("item", ItemSerializer.itemToString(itemStack));
+//            insertForm.add("itemName", itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
+//            insertForm.add("price", "" + (int) (Math.random() * 100));
+//
+//            iPixelmon.mysql.insert(Pixelbay.class, insertForm);
+//        }
     }
 }
