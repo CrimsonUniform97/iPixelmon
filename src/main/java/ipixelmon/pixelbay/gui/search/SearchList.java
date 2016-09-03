@@ -57,7 +57,7 @@ public abstract class SearchList extends IGuiList {
         if (queryType == QueryType.UP) {
 
             // this fixes the rowIndex from going up to infinity.
-            if (this.getMaxPages() == 0 && this.getPage() == 0 && this.rowIndex > 0) {
+            if (this.getLastPage() == 0 && this.getPage() == 0 && this.rowIndex > 0) {
                 return;
             }
 
@@ -83,14 +83,14 @@ public abstract class SearchList extends IGuiList {
 
             if (!prevShowPlus) showPlus = false;
 
-            entries.put(rowIndex, entries() - this.getObjectsOnPage(this.getMaxPages()).size());
+            entries.put(rowIndex, entries() - this.getObjectsOnPage(this.getLastPage()).size());
 
             if (!rows.containsKey(rowIndex))
-                maxPages += this.getMaxPages();
+                maxPages += this.getLastPage();
 
             rows.put(rowIndex, row);
-            pages.put(rowIndex, this.getMaxPages());
-            row += entries() - this.getObjectsOnPage(this.getMaxPages()).size();
+            pages.put(rowIndex, this.getLastPage());
+            row += entries() - this.getObjectsOnPage(this.getLastPage()).size();
             this.setPage(0);
             rowIndex += 1;
         } else if (queryType == QueryType.DOWN) {
@@ -121,16 +121,16 @@ public abstract class SearchList extends IGuiList {
 
             entries.put(rowIndex - 1, entries());
             removeEntriesOnLastPage();
-            entries.put(rowIndex - 1, entries() - this.getObjectsOnPage(this.getMaxPages()).size());
+            entries.put(rowIndex - 1, entries() - this.getObjectsOnPage(this.getLastPage()).size());
 
-            this.setPage(this.getMaxPages());
+            this.setPage(this.getLastPage());
         }
     }
 
     public int entries() {
-        List<IListObject> list = new ArrayList<>(Arrays.asList(this.getObjects()));
-        list.removeAll(Collections.singleton(null));
-        return list.size();
+//        List<IListObject> list = new ArrayList<>(Arrays.asList(this.getObjects()));
+//        list.removeAll(Collections.singleton(null));
+        return 0;
     }
 
     public int totalEntries() {
@@ -160,7 +160,7 @@ public abstract class SearchList extends IGuiList {
     private boolean removeEntriesOnLastPage() {
 //        if (totalEntries() != getMaxTotalEntries()) {
         if (totalEntries() >= getQueryLimit()) {
-            this.getObjectsOnPage(this.getMaxPages()).forEach(this::removeObject);
+            this.getObjectsOnPage(this.getLastPage()).forEach(this::removeObject);
             return true;
         }
 

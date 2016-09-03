@@ -25,7 +25,7 @@ public abstract class BasicSearchList extends SearchList {
     }
     @Override
     public void pageUp() {
-        if (this.getPage() == this.getMaxPages())
+        if (this.getPage() == this.getLastPage())
             this.search(this.getParentScreen().popupWindow.textField.getText(), QueryType.UP);
         super.pageUp();
     }

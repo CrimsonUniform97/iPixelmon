@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.GuiScrollingList;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public final class SearchGui extends GuiScreen {
     public static final int ID = 9745;
 
     private GuiButton searchBtn, pokemonBtn, itemBtn;
-    private SearchList searchList;
+    private GuiSearchList searchList;
     protected SearchPopup popupWindow;
 
     @Override
@@ -51,7 +52,7 @@ public final class SearchGui extends GuiScreen {
             if (keyCode == Keyboard.KEY_ESCAPE)
                 this.popupWindow.visible = false;
             else if (keyCode == Keyboard.KEY_RETURN) {
-                this.searchList.search(this.popupWindow.textField.getText(), QueryType.NEW_SEARCH);
+                this.searchList.search(this.popupWindow.textField.getText(), true, true);
                 this.popupWindow.visible = false;
             }
             else
@@ -69,7 +70,7 @@ public final class SearchGui extends GuiScreen {
         if (this.popupWindow.visible) {
 
             if (this.popupWindow.searchBtn.mousePressed(mc, mouseX, mouseY)) {
-                this.searchList.search(this.popupWindow.textField.getText(), QueryType.NEW_SEARCH);
+                this.searchList.search(this.popupWindow.textField.getText(), true, true);
                 this.popupWindow.visible = false;
             } else
                 this.popupWindow.textField.mouseClicked(mouseX, mouseY, mouseButton);
@@ -91,10 +92,10 @@ public final class SearchGui extends GuiScreen {
 
         if(button == this.pokemonBtn && !(this.searchList instanceof SearchListPokemon)) {
             this.searchList = new SearchListPokemon(this);
-            this.searchList.search(null, QueryType.NEW_SEARCH);
+            this.searchList.search(null, true, true);
         } else if (button == this.itemBtn && !(this.searchList instanceof SearchListItem)) {
             this.searchList = new SearchListItem(this);
-            this.searchList.search(null, QueryType.NEW_SEARCH);
+            this.searchList.search(null, true, true);
             // TODO: While having searched for Ruby, when clicking item it does not reset the list back to default... fix.
             System.out.println("CALLED");
         }
@@ -114,7 +115,7 @@ public final class SearchGui extends GuiScreen {
 
         if (this.searchList == null) {
             this.searchList = new SearchListItem(this);
-            this.searchList.search(null, QueryType.NEW_SEARCH);
+            this.searchList.search(null, true, true);
         }
 
         this.searchList.initGui();

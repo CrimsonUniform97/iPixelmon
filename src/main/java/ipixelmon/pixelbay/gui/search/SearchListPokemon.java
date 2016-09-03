@@ -12,37 +12,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class SearchListPokemon extends BasicSearchList {
+public class SearchListPokemon extends GuiSearchList {
 
     public SearchListPokemon(final SearchGui parentScreen) {
         super(parentScreen);
     }
 
     @Override
-    public void doSearch(final String str) throws SQLException {
-        ResultSet resultPokemon = iPixelmon.mysql.query("SELECT * FROM pixelbayPokemon"
-                + (str != null && !str.isEmpty() ? " WHERE name LIKE '%" + str + "%' " : " ") + "LIMIT " + this.getRow() + "," + this.getQueryLimit() + ";");
+    public void search(final String str)  {
+        try {
+            ResultSet resultPokemon = iPixelmon.mysql.query("SELECT * FROM pixelbayPokemon"
+                    + (str != null && !str.isEmpty() ? " WHERE name LIKE '%" + str + "%' " : " ") + "LIMIT " + this.rowInTable + "," + this.maxSearchSize + ";");
 
-        PixelmonData pData;
-        while (resultPokemon.next()) {
-            pData = new PixelmonData();
-            if (pData != null) {
-                pData.name = resultPokemon.getString("name");
-                pData.xp = resultPokemon.getInt("xp");
-                pData.lvl = resultPokemon.getInt("lvl");
-                pData.isShiny = resultPokemon.getBoolean("isShiny");
-                this.addObject(new PokemonSearchObject(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getInt("price")));
+            PixelmonData pData;
+            while (resultPokemon.next()) {
+                pData = new PixelmonData();
+                if (pData != null) {
+                    pData.name = resultPokemon.getString("name");
+                    pData.xp = resultPokemon.getInt("xp");
+                    pData.lvl = resultPokemon.getInt("lvl");
+                    pData.isShiny = resultPokemon.getBoolean("isShiny");
+                    this.addObject(new PokemonSearchObject(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getInt("price")));
+                }
             }
+        }catch(SQLException e) {
+            e.printStackTrace();
         }
     }
 
+//    @Override
+//    public int getQueryLimit() {
+//        return 250;
+//    }
+//
     @Override
-    public int getQueryLimit() {
-        return 250;
-    }
-
-    @Override
-    public int getMaxTotalEntries() {
+    public int getTableEntries() {
         ResultSet result = iPixelmon.mysql.query("SELECT COUNT(*) AS totalRows FROM pixelbayPokemon;");
         try {
             if (result.next())

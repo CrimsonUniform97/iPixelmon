@@ -12,34 +12,37 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class SearchListItem extends BasicSearchList {
+public class SearchListItem extends GuiSearchList {
 
     public SearchListItem(final SearchGui parentScreen) {
         super(parentScreen);
     }
 
     @Override
-    public void doSearch(final String str) throws SQLException {
-        ResultSet resultItem = iPixelmon.mysql.query("SELECT * FROM pixelbayItem"
-                + (str != null && !str.isEmpty() ? " WHERE itemName LIKE '%" + str + "%' " : " ") + "LIMIT " + this.getRow() + "," + this.getQueryLimit() + ";");
+    public void search(final String str) {
+        try {
+            ResultSet resultItem = iPixelmon.mysql.query("SELECT * FROM pixelbayItem"
+                    + (str != null && !str.isEmpty() ? " WHERE itemName LIKE '%" + str + "%' " : " ") + "LIMIT " + this.rowInTable + "," + this.maxSearchSize + ";");
 
-        ItemStack item;
-        while (resultItem.next()) {
-            item = ItemSerializer.itemFromString(resultItem.getString("item"));
-            if (item != null) {
-                this.addObject(new ItemSearchObject(item, UUID.fromString(resultItem.getString("seller")), resultItem.getInt("price")));
+            ItemStack item;
+            while (resultItem.next()) {
+                item = ItemSerializer.itemFromString(resultItem.getString("item"));
+                if (item != null) {
+                    this.addObject(new ItemSearchObject(item, UUID.fromString(resultItem.getString("seller")), resultItem.getInt("price")));
+                }
             }
+        }catch(SQLException e) {
+            e.printStackTrace();
         }
-
     }
 
-    @Override
-    public int getQueryLimit() {
-        return 250;
-    }
+//    @Override
+//    public int getQueryLimit() {
+//        return 250;
+//    }
 
     @Override
-    public int getMaxTotalEntries() {
+    public int getTableEntries() {
         ResultSet result = iPixelmon.mysql.query("SELECT COUNT(*) AS totalRows FROM pixelbayItem;");
         try {
             if (result.next())

@@ -1,6 +1,5 @@
 package ipixelmon.guiList;
 
-import ipixelmon.pixelbay.gui.search.ItemSearchObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -8,9 +7,7 @@ import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.util.Rectangle;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -62,7 +59,7 @@ public abstract class IGuiList extends Gui {
     }
 
     public void pageUp() {
-        this.page = this.page < this.getMaxPages() ? this.page + 1 : this.page;
+        this.page = this.page < this.getLastPage() ? this.page + 1 : this.page;
         this.pageUpBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
     }
 
@@ -165,7 +162,7 @@ public abstract class IGuiList extends Gui {
             listObject.initGui();
         }
 
-        if (this.page > this.getMaxPages()) this.page = this.getMaxPages();
+        if (this.page > this.getLastPage()) this.page = this.getLastPage();
     }
 
     public void drawRect(Rectangle rect, Color bgColor, Color trimColor) {
@@ -200,17 +197,19 @@ public abstract class IGuiList extends Gui {
     }
 
     public final void setPage(int page) {
-        this.page = page > this.getMaxPages() ? this.getMaxPages() : page < 0 ? 0 : page;
+        this.page = page > this.getLastPage() ? this.getLastPage() : page < 0 ? 0 : page;
     }
 
     /**
      * GETTERS
      */
-    public final IListObject[] getObjects() {
-        return this.objects;
+    public final List<IListObject> getObjects() {
+        List<IListObject> list = new ArrayList<>(Arrays.asList(this.objects));
+        list.removeAll(Collections.singleton(null));
+        return list;
     }
 
-    public final int getMaxPages() {
+    public final int getLastPage() {
         Iterator<IListObject> iterator = this.getIterator();
 
         int pageNum = 0;
@@ -222,16 +221,16 @@ public abstract class IGuiList extends Gui {
     }
 
     public List<IListObject> getObjectsOnPage(int page) {
-        if(page > getMaxPages()) return null;
+        if (page > getLastPage()) return null;
 
         List<IListObject> array = new ArrayList<>();
 
         Iterator<IListObject> iterator = this.getIterator();
 
         IListObject listObject;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             listObject = iterator.next();
-            if(listObject.page == page) {
+            if (listObject.page == page) {
                 array.add(listObject);
             }
         }
@@ -239,9 +238,13 @@ public abstract class IGuiList extends Gui {
         return array;
     }
 
-    public GuiButton getPageUpBtn() { return this.pageUpBtn; }
+    public GuiButton getPageUpBtn() {
+        return this.pageUpBtn;
+    }
 
-    public GuiButton getPageDownBtn() { return this.pageDownBtn; }
+    public GuiButton getPageDownBtn() {
+        return this.pageDownBtn;
+    }
 
     public final IListObject getSelected() {
         return this.selected;
