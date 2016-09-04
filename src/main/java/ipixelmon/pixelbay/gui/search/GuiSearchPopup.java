@@ -44,6 +44,10 @@ public class GuiSearchPopup extends InputWindow
     {
         if(this.visible)
         {
+            return;
+        }
+
+        // TODO: Fix placement of searchIcon, should not be where actionBtn is, easy fix.
             mc.getTextureManager().bindTexture(searchIcon);
             GlStateManager.enableBlend();
             int iconWidth = 16, iconHeight = 16;
@@ -56,7 +60,6 @@ public class GuiSearchPopup extends InputWindow
 
             GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1f);
             GuiHelper.drawImageQuad(actionBtn.xPosition + ((actionBtn.width - iconWidth) / 2), actionBtn.yPosition + ((actionBtn.height - iconHeight) / 2), iconWidth, iconHeight, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
-        }
     }
 
 

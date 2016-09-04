@@ -13,11 +13,13 @@ public class ListPokemon extends BasicScrollList
 {
 
     protected List<PixelmonData> pokemon;
+    protected SellGui parentScreen;
 
-    public ListPokemon(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, final int screenWidth, final int screenHeight, List<PixelmonData> pokemon)
+    public ListPokemon(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, List<PixelmonData> pokemon, SellGui parentScreen)
     {
-        super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
+        super(client, width, height, top, bottom, left, entryHeight, parentScreen.width, parentScreen.height);
         this.pokemon = pokemon;
+        this.parentScreen = parentScreen;
     }
 
     @Override
@@ -29,7 +31,10 @@ public class ListPokemon extends BasicScrollList
     @Override
     protected void elementClicked(final int index, final boolean doubleClick)
     {
-
+        if(doubleClick)
+        {
+            parentScreen.sellPopup.visible = true;
+        }
     }
 
     @Override
@@ -41,7 +46,7 @@ public class ListPokemon extends BasicScrollList
     @Override
     protected void drawBackground()
     {
-
+        this.drawDefaultBackground();
     }
 
     @Override

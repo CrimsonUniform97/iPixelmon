@@ -23,21 +23,22 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
+import net.minecraftforge.fml.client.GuiScrollingList;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public abstract class BasicScrollList
 {
     protected final Minecraft client;
-    protected final int listWidth;
-    protected final int listHeight;
-    protected final int screenWidth;
-    protected final int screenHeight;
-    protected final int top;
-    protected final int bottom;
-    protected final int right;
-    protected final int left;
-    protected final int slotHeight;
+    public final int listWidth;
+    public final int listHeight;
+    public final int screenWidth;
+    public final int screenHeight;
+    public final int top;
+    public final int bottom;
+    public final int right;
+    public final int left;
+    public final int slotHeight;
     private int scrollUpActionId;
     private int scrollDownActionId;
     protected int mouseX;
@@ -366,6 +367,11 @@ public abstract class BasicScrollList
         worldr.pos(max - 1, slotTop - 1, 0).tex(1, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
         worldr.pos(min + 1, slotTop - 1, 0).tex(0, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
         tess.draw();
+    }
+
+    public void drawDefaultBackground()
+    {
+        this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
     }
 
     public void drawScrollBar(int scrollBarLeft, int scrollBarRight, int thumbTop, int thumbHeight)

@@ -17,9 +17,9 @@ public class GuiSellPopup extends InputWindow
 
     private BasicScrollList scrollList;
 
-    public GuiSellPopup(final FontRenderer fontRenderer, final int xPosition, final int yPosition, final String btnTxt, final BasicScrollList scrollList)
+    public GuiSellPopup(final FontRenderer fontRenderer, final int xPosition, final int yPosition, final BasicScrollList scrollList)
     {
-        super(fontRenderer, xPosition, yPosition, btnTxt);
+        super(fontRenderer, xPosition, yPosition, "Sell");
         this.scrollList = scrollList;
     }
 

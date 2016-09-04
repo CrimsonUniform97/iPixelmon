@@ -1,5 +1,6 @@
 package ipixelmon.pixelbay.gui.sell;
 
+import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.search.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,53 +10,48 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class ListItem extends BasicScrollList
-{
+public class ListItem extends BasicScrollList {
 
     protected List<ItemStack> items;
+    protected SellGui parentScreen;
 
-    public ListItem(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, final int screenWidth, final int screenHeight, List<ItemStack> items)
-    {
-        super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
+    public ListItem(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, List<ItemStack> items, SellGui parentScreen) {
+        super(client, width, height, top, bottom, left, entryHeight, parentScreen.width, parentScreen.height);
         this.items = items;
+        this.parentScreen = parentScreen;
     }
 
     @Override
-    protected int getSize()
-    {
+    protected int getSize() {
         return items.size();
     }
 
     @Override
-    protected void elementClicked(final int index, final boolean doubleClick)
-    {
-
+    protected void elementClicked(final int index, final boolean doubleClick) {
+        if (doubleClick) {
+            parentScreen.sellPopup.visible = true;
+        }
     }
 
     @Override
-    protected boolean isSelected(final int index)
-    {
+    protected boolean isSelected(final int index) {
         return index == selectedIndex;
     }
 
     @Override
-    protected void drawBackground()
-    {
-
+    protected void drawBackground() {
+        this.drawDefaultBackground();
     }
 
     @Override
-    protected void drawSlot(final int slotIdx, final int entryRight, final int slotTop, final int slotBuffer, final Tessellator tess)
-    {
-        if(slotIdx >= items.size())
-        {
+    protected void drawSlot(final int slotIdx, final int entryRight, final int slotTop, final int slotBuffer, final Tessellator tess) {
+        if (slotIdx >= items.size()) {
             return;
         }
 
         ItemStack stack = items.get(slotIdx);
 
-        if(stack == null)
-        {
+        if (stack == null) {
             return;
         }
 
