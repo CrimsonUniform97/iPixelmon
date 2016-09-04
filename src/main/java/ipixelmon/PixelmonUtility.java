@@ -57,7 +57,7 @@ public final class PixelmonUtility {
         final ItemStack stack = new ItemStack(PixelmonItems.itemPixelmonSprite);
         final NBTTagCompound tagCompound = new NBTTagCompound();
         final Optional stats = Entity3HasStats.getBaseStats(pokemon.name);
-        tagCompound.setString("SpriteName", "pixelmon:sprites/pokemon/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats)stats.get()).nationalPokedexNumber)}));
+        tagCompound.setString("SpriteName", "pixelmon:sprites/items/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats)stats.get()).nationalPokedexNumber)}));
         final NBTTagCompound display = new NBTTagCompound();
         display.setString("Name", EntityPixelmon.getLocalizedName(pokemon.name) + " " + StatCollector.translateToLocal("item.PixelmonSprite.name"));
         tagCompound.setTag("display", display);

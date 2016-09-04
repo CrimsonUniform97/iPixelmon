@@ -1,7 +1,6 @@
 package ipixelmon.pixelbay;
 
-import ipixelmon.pixelbay.gui.search.SearchGui;
-import ipixelmon.pixelbay.gui.search.SearchScreen;
+import ipixelmon.pixelbay.gui.search.GuiSearch;
 import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -15,6 +14,6 @@ public final class GuiHandler implements IGuiHandler {
 
     @Override
     public final Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z) {
-        return ID == SearchGui.ID ? new SearchScreen() : ID == SellGui.ID ? new SellGui() : null;
+        return ID == GuiSearch.ID ? new GuiSearch() : ID == SellGui.ID ? new SellGui() : null;
     }
 }

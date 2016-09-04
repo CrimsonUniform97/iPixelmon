@@ -5,7 +5,6 @@ import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.storage.PCClientStorage;
 import ipixelmon.PixelmonUtility;
-import ipixelmon.guiList.IListObject;
 import ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
@@ -59,7 +58,7 @@ public final class PokemonSellObject extends IListObject {
             // DON'T REMOVE IF IT IS THE ONLY POKEMON THEY HAVE IN THEIR HANDS
 
             if(PixelmonUtility.getPokemonCountClient() == 1) {
-                Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("You cannot sell your only pokemon."));
+                Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("You cannot sell your only items."));
                 return;
             }
 

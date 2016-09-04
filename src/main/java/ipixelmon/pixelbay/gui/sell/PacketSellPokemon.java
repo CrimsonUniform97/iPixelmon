@@ -51,11 +51,11 @@ public final class PacketSellPokemon implements IMessage {
             if (player == null) return null;
 
             try {
-                if(PixelmonStorage.PokeballManager.getPlayerStorage(player).count() == 1) throw new Exception("You cannot sell your only pokemon.");
+                if(PixelmonStorage.PokeballManager.getPlayerStorage(player).count() == 1) throw new Exception("You cannot sell your only items.");
 
                 final EntityPixelmon pixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pokeData.pokemonID, player.worldObj);
 
-                if (pixelmon == null) throw new Exception("That pokemon is null.");
+                if (pixelmon == null) throw new Exception("That items is null.");
 
                 if (!pixelmon.getOwner().getUniqueID().equals(player.getUniqueID()))
                     throw new Exception("You are not the owner");

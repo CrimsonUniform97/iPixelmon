@@ -2,6 +2,8 @@ package ipixelmon.pixelbay.gui.sell;
 
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import ipixelmon.pixelbay.gui.search.*;
+import ipixelmon.pixelbay.gui.search.ListItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,32 +15,16 @@ public final class SellGui extends GuiScreen {
 
     public static final int ID = 987;
 
-    private SellList guiList;
-
-    public SellGui() {
-        this.guiList = new SellList(this);
-    }
+    private BasicScrollList scrollList;
 
     @Override
     public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-
-        this.drawDefaultBackground();
-        this.guiList.drawList(mouseX, mouseY, this.mc);
     }
 
     @Override
     protected final void keyTyped(final char typedChar, final int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-
-        this.guiList.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    protected final void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-
-        this.guiList.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -50,6 +36,9 @@ public final class SellGui extends GuiScreen {
     public final void initGui() {
         super.initGui();
         this.buttonList.clear();
+        // TODO: Implement ListItem and ListPokemon, also will need to draw buttons to switch in between the two. Also need to test it out and test out the search screen after redoing everything.
+        // TODO: Also need to make the ListItem and ListPokemon have the same appearance as the search screen.
+        scrollList = new ListItem()
 
         final PixelmonData[] pixelList = ServerStorageDisplay.pokemon;
         // Add Pokemon
@@ -64,9 +53,4 @@ public final class SellGui extends GuiScreen {
         this.guiList.initGui();
     }
 
-    @Override
-    public final void updateScreen() {
-        super.updateScreen();
-        this.guiList.update();
-    }
 }

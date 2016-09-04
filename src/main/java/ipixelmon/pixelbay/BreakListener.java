@@ -1,7 +1,7 @@
 package ipixelmon.pixelbay;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.search.SearchGui;
+import ipixelmon.pixelbay.gui.search.GuiSearch;
 import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -25,7 +25,7 @@ public final class BreakListener {
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if(pong.isPressed()) {
-            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, SearchGui.ID, null, 0, 0, 0);
+            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, GuiSearch.ID, null, 0, 0, 0);
         }
 
         if(ping.isPressed()) {
