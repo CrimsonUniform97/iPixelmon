@@ -2,6 +2,7 @@ package ipixelmon.pixelbay.gui.buy;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import ipixelmon.PixelmonUtility;
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.ColorPicker;
 import ipixelmon.uuidmanager.UUIDManager;
@@ -21,9 +22,8 @@ import java.util.UUID;
 public class ListPokemon extends ISearchList
 {
 
-    private List<PokeListInfo> entries = new ArrayList<>();
+    public List<PokeListInfo> entries = new ArrayList<>();
     private int mysqlRow = 0, mysqlSearchLimit = 100;
-    private static final ResourceLocation logo = new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/PixelbayLogo.png");
     private GuiSearch parentScreen;
 
     public ListPokemon(Minecraft client, int width, int height, int top, int bottom, int left, GuiSearch parentScreen)
@@ -54,43 +54,12 @@ public class ListPokemon extends ISearchList
             } else
             {
                 // do buying
-                parentScreen.popupSearch.visible = false;
-                parentScreen.popupBuy.visible = true;
+                parentScreen.popupSearch.setVisible(false);
+                parentScreen.popupBuy.setVisible(true);
                 return;
             }
             search(null);
         }
-    }
-
-    @Override
-    protected boolean isSelected(int index)
-    {
-        return index == selectedIndex;
-    }
-
-    @Override
-    protected void drawBackground()
-    {
-        GlStateManager.color(1, 1, 1, 1);
-        this.drawRect(new Rectangle(left, top, listWidth, listHeight), ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
-
-        this.client.getTextureManager().bindTexture(logo);
-        int logoWidth = 398 / 2;
-        int logoHeight = 108 / 2;
-        GuiHelper.drawImageQuad(this.left + ((this.listWidth - logoWidth) / 2), this.top - logoHeight, logoWidth, logoHeight, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
-    }
-
-    @Override
-    public void drawSelectionBox(final int slotLeft, final int slotTop, final int slotRight, final int slotBuffer)
-    {
-        this.drawRect(new Rectangle(slotLeft, slotTop, listWidth - 6, slotBuffer), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
-    }
-
-    @Override
-    public void drawScrollBar(final int scrollBarLeft, final int scrollBarRight, final int thumbTop, final int thumbHeight)
-    {
-        this.drawRect(new Rectangle(scrollBarLeft, this.top, scrollBarRight - scrollBarLeft, this.bottom - this.top), ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
-        this.drawRect(new Rectangle(scrollBarLeft, thumbTop, scrollBarRight - scrollBarLeft, thumbHeight), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
     }
 
     @Override
@@ -117,7 +86,8 @@ public class ListPokemon extends ISearchList
                 this.client.fontRendererObj.drawString("Level: " + entryInfo.pixelmonData.lvl, left + 26, slotTop + 4, 0xFFFFFF);
                 this.client.fontRendererObj.drawString("XP: " + entryInfo.pixelmonData.xp, left + 26, slotTop + 15, 0xFFFFFF);
                 this.client.fontRendererObj.drawString("Seller: " + entryInfo.sellerName, left + 88, slotTop + 4, 0xFFFFFF);
-                this.client.fontRendererObj.drawString("Price: $" + entryInfo.price, left + 88, slotTop + 15, 0xFFFFFF);
+                this.client.fontRendererObj.drawString("Price:   " + entryInfo.price, left + 88, slotTop + 15, 0xFFFFFF);
+                PixelmonUtility.drawPokeDollar(client, left + 91 + client.fontRendererObj.getStringWidth("Price:"), slotTop + 15, 6, 9, 0xFFFFFF);
             }
         }
     }
@@ -165,6 +135,11 @@ public class ListPokemon extends ISearchList
         }
     }
 
+    public PokeListInfo getSelected()
+    {
+        return entries.get(this.selectedIndex);
+    }
+
     public void drawRect(Rectangle rect, Color bgColor, Color trimColor)
     {
         int x = rect.getX(), y = rect.getY(), w = rect.getWidth(), h = rect.getHeight();
@@ -189,7 +164,7 @@ public class ListPokemon extends ISearchList
 
     public class PokeListInfo
     {
-        private PixelmonData pixelmonData;
+        public PixelmonData pixelmonData;
         public int price;
         public UUID seller;
         public String sellerName;

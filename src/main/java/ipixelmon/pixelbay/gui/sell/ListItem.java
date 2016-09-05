@@ -28,7 +28,7 @@ public class ListItem extends BasicScrollList {
     @Override
     protected void elementClicked(final int index, final boolean doubleClick) {
         if (doubleClick) {
-            parentScreen.sellPopup.visible = true;
+            parentScreen.sellPopup.setVisible(true);
         }
     }
 

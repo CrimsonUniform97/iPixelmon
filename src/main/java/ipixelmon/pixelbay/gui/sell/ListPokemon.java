@@ -33,7 +33,7 @@ public class ListPokemon extends BasicScrollList
     {
         if(doubleClick)
         {
-            parentScreen.sellPopup.visible = true;
+            parentScreen.sellPopup.setVisible(true);
         }
     }
 

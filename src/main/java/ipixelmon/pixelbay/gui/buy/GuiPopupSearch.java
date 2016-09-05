@@ -37,8 +37,7 @@ public class GuiPopupSearch extends InputWindow
     public void actionPerformed()
     {
         searchList.search(textField.getText().trim());
-        this.actionBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
-        this.visible = false;
+        this.setVisible(false);
     }
 
     private void drawSearchButton(Minecraft mc)

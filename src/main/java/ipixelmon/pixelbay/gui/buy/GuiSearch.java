@@ -26,7 +26,7 @@ public class GuiSearch extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        super.drawScreen(popupBuy.visible || popupSearch.visible ? 0 : mouseX, popupBuy.visible || popupSearch.visible ? 0 : mouseY, partialTicks);
+        super.drawScreen(popupBuy.isVisible() || popupSearch.isVisible() ? 0 : mouseX, popupBuy.isVisible() || popupSearch.isVisible() ? 0 : mouseY, partialTicks);
         searchList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
@@ -38,7 +38,7 @@ public class GuiSearch extends GuiScreen
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        if (!popupSearch.visible && !popupBuy.visible)
+        if (!popupSearch.isVisible() && !popupBuy.isVisible())
         {
             super.keyTyped(typedChar, keyCode);
         }
@@ -67,7 +67,7 @@ public class GuiSearch extends GuiScreen
 
         if (button == this.buttonList.get(searchBtnId))
         {
-            this.popupSearch.visible = true;
+            this.popupSearch.setVisible(true);
             this.popupSearch.textField.setFocused(true);
             this.popupSearch.textField.setCanLoseFocus(false);
         }
@@ -88,7 +88,7 @@ public class GuiSearch extends GuiScreen
         GuiButton searchBtn = new GuiButton(searchBtnId = 0, posX + searchList.listWidth, posY + 20 + 00, 20, 20, "");
 
         this.popupSearch = new GuiPopupSearch(this.fontRendererObj, (this.width - GuiPopupSearch.width) / 2, (this.height - GuiPopupSearch.height) / 2, searchList, searchBtn);
-        this.popupBuy = new GuiPopupBuy(this.fontRendererObj, (this.width - GuiPopupBuy.width) / 2, (this.height - GuiPopupBuy.height) / 2);
+        this.popupBuy = new GuiPopupBuy(this.fontRendererObj, (this.width - GuiPopupBuy.width) / 2, (this.height - GuiPopupBuy.height) / 2, searchList);
         this.buttonList.add(searchBtn);
         this.buttonList.add(new GuiButton(pokemonBtnId = 1, posX + searchList.listWidth, posY + 20 + 20, 20, 20, ""));
         this.buttonList.add(new GuiButton(itemBtnId = 2, posX + searchList.listWidth, posY + 20 + 40, 20, 20, ""));
@@ -99,7 +99,7 @@ public class GuiSearch extends GuiScreen
     {
         super.updateScreen();
         popupSearch.update();
-        searchList.enabled = !popupBuy.visible && !popupSearch.visible;
+        searchList.enabled = !popupBuy.isVisible() && !popupSearch.isVisible();
     }
 
     private void drawPokemonBtnIcon()

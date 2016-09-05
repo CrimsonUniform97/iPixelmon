@@ -1,7 +1,9 @@
 package ipixelmon;
 
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
+import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.CommandChatHandler;
+import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
 import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
@@ -9,15 +11,21 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.util.Color;
 
 import java.util.Optional;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public final class PixelmonUtility {
 
@@ -42,7 +50,7 @@ public final class PixelmonUtility {
     }
 
     @SideOnly(Side.SERVER)
-    public static final int getBalance(final EntityPlayerMP player) {
+    public static final int getServerBalance(final EntityPlayerMP player) {
         try {
             final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorage(player);
             return targetStorage.getCurrency();
@@ -51,6 +59,12 @@ public final class PixelmonUtility {
         }
 
         return 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static final int getClientBalance()
+    {
+        return UpdateCurrency.playerMoney;
     }
 
     public static final ItemStack makePokemonItem(final EnumPokemon pokemon) {
@@ -72,6 +86,23 @@ public final class PixelmonUtility {
         }
 
         return count;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static final void drawPokeDollar(Minecraft mc, int x, int y, int w, int h, int color)
+    {
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        {
+            float red = (float)(color >> 16 & 255) / 255.0F;
+            float blue = (float)(color >> 8 & 255) / 255.0F;
+            float green = (float)(color & 255) / 255.0F;
+            float alpha = (float)(color >> 24 & 255) / 255.0F;
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
+            GlStateManager.color(red, blue, green, 1);
+            mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/pokedollar.png"));
+            GuiHelper.drawImageQuad(x, y, w, h, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
+        }
+        glPopAttrib();
     }
 
 }

@@ -33,13 +33,12 @@ public final class SellGui extends GuiScreen {
         scrollList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
-
         sellPopup.draw(mc, mouseX, mouseY);
     }
 
     @Override
     protected final void keyTyped(final char typedChar, final int keyCode) throws IOException {
-        if(!sellPopup.visible)
+        if(!sellPopup.isVisible())
         {
             super.keyTyped(typedChar, keyCode);
         }
@@ -60,6 +59,8 @@ public final class SellGui extends GuiScreen {
         {
             this.scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getItems(), this);
         }
+
+        sellPopup.scrollList = scrollList;
 
         scrollList.actionPerformed(button);
     }
@@ -84,7 +85,7 @@ public final class SellGui extends GuiScreen {
     {
         super.updateScreen();
         sellPopup.update();
-        scrollList.enabled = !sellPopup.visible;
+        scrollList.enabled = !sellPopup.isVisible();
     }
 
     private void drawPokemonBtnIcon()

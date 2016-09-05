@@ -13,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public abstract class InputWindow extends Gui
 {
@@ -23,7 +24,9 @@ public abstract class InputWindow extends Gui
     protected final int xPosition, yPosition;
     public GuiTextField textField;
     protected GuiButton actionBtn;
-    public boolean visible;
+    private boolean visible;
+    private boolean mouseDown = false;
+    private volatile boolean enableClicking = false;
 
     public InputWindow(FontRenderer fontRenderer, int xPosition, int yPosition, String btnTxt)
     {
@@ -50,15 +53,21 @@ public abstract class InputWindow extends Gui
         this.textField.drawTextBox();
         this.actionBtn.drawButton(mc, mouseX, mouseY);
 
-        if ((Mouse.isButtonDown(0) && actionBtn.mousePressed(mc, mouseX, mouseY)))
+        if (enableClicking)
         {
-            actionPerformed();
+            if ((Mouse.isButtonDown(0) && !mouseDown && actionBtn.mousePressed(mc, mouseX, mouseY)))
+            {
+                this.actionBtn.playPressSound(Minecraft.getMinecraft().getSoundHandler());
+                actionPerformed();
+            }
+
+            mouseDown = Mouse.isButtonDown(0);
         }
     }
 
     public void keyTyped(char typedChar, int keyCode)
     {
-        if(!this.visible)
+        if (!this.visible)
         {
             return;
         }
@@ -75,7 +84,37 @@ public abstract class InputWindow extends Gui
         textField.textboxKeyTyped(typedChar, keyCode);
     }
 
+    public boolean isVisible()
+    {
+        return visible;
+    }
 
+    public void setVisible(boolean visible)
+    {
+        enableClicking = false;
+        boolean pastVisible = this.visible;
+
+        this.visible = visible;
+
+        if (!pastVisible && visible)
+        {
+            new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    enableClicking = true;
+                }
+            }.start();
+        }
+    }
 
     public void update()
     {
