@@ -10,12 +10,11 @@
  *     cpw - implementation
  */
 
-package ipixelmon.pixelbay.gui.search;
+package ipixelmon.pixelbay.gui;
 
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
-import net.minecraftforge.fml.client.GuiScrollingList;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -51,7 +49,8 @@ public abstract class BasicScrollList
     private boolean highlightSelected = true;
     private boolean hasHeader;
     private int headerHeight;
-    protected boolean captureMouse = true;
+    public boolean captureMouse = true;
+    public boolean enabled = true;
 
     @Deprecated // We need to know screen size.
     public BasicScrollList(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight)
@@ -209,6 +208,9 @@ public abstract class BasicScrollList
 
         boolean isHovering = mouseX >= this.left && mouseX <= this.left + this.listWidth &&
                 mouseY >= this.top && mouseY <= this.bottom;
+
+        if(!enabled) isHovering = false;
+
         int listLength = this.getSize();
         int scrollBarWidth = 6;
         int scrollBarRight = this.left + this.listWidth;

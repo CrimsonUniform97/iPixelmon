@@ -2,7 +2,7 @@ package ipixelmon.pixelbay.gui.sell;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import ipixelmon.pixelbay.gui.search.BasicScrollList;
+import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

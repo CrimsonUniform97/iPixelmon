@@ -6,7 +6,7 @@ import com.pixelmonmod.pixelmon.storage.PCClientStorage;
 import ipixelmon.PixelmonUtility;
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.InputWindow;
-import ipixelmon.pixelbay.gui.search.BasicScrollList;
+import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
@@ -31,10 +31,23 @@ public class GuiSellPopup extends InputWindow
             return;
         }
 
+        if(textField.getText().isEmpty())
+        {
+            return;
+        }
+
+        try
+        {
+            Integer.parseInt(textField.getText());
+        }catch (NumberFormatException e)
+        {
+            return;
+        }
+
         if(scrollList instanceof ListItem)
         {
             ItemStack stack = ((ListItem) scrollList).items.get(scrollList.selectedIndex);
-            iPixelmon.network.sendToServer(new PacketSellItem(stack, Integer.parseInt(textField.getText().replaceAll("\\$", ""))));
+            iPixelmon.network.sendToServer(new PacketSellItem(stack, Integer.parseInt(textField.getText())));
             ((ListItem) scrollList).items.remove(scrollList.selectedIndex);
         } else if (scrollList instanceof ListPokemon)
         {
@@ -45,7 +58,7 @@ public class GuiSellPopup extends InputWindow
                 return;
             }
 
-            iPixelmon.network.sendToServer(new PacketSellPokemon(pData, Integer.parseInt(textField.getText().replaceAll("\\$", ""))));
+            iPixelmon.network.sendToServer(new PacketSellPokemon(pData, Integer.parseInt(textField.getText())));
             ((ListPokemon) scrollList).pokemon.remove(scrollList.selectedIndex);
 
             ServerStorageDisplay.changePokemon(pData.order, (PixelmonData) null);
@@ -53,5 +66,15 @@ public class GuiSellPopup extends InputWindow
         }
 
         scrollList.selectedIndex = -1;
+    }
+
+    @Override
+    public void keyTyped(final char typedChar, final int keyCode)
+    {
+        super.keyTyped(typedChar, keyCode);
+        if(keyCode < 0 || keyCode > 9 && !textField.getText().isEmpty())
+        {
+            textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+        }
     }
 }

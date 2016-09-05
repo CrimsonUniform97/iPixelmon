@@ -1,5 +1,6 @@
-package ipixelmon.pixelbay.gui.search;
+package ipixelmon.pixelbay.gui.buy;
 
+import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 
 public abstract class ISearchList extends BasicScrollList

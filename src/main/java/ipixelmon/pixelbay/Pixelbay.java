@@ -3,6 +3,8 @@ package ipixelmon.pixelbay;
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
+import ipixelmon.pixelbay.gui.buy.PacketBuyItem;
+import ipixelmon.pixelbay.gui.buy.PacketBuyPokemon;
 import ipixelmon.pixelbay.gui.sell.PacketSellItem;
 import ipixelmon.pixelbay.gui.sell.PacketSellPokemon;
 import net.minecraftforge.fml.common.network.IGuiHandler;

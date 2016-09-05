@@ -31,6 +31,8 @@ public abstract class InputWindow extends Gui
         this.yPosition = yPosition;
         int section = this.height / 2;
         this.textField = new GuiTextField(0, fontRenderer, this.xPosition + ((this.width - (this.width - 50)) / 2), this.yPosition + ((section * 0) + ((section - 20) / 2)), this.width - 50, 20);
+        textField.setFocused(true);
+        textField.setCanLoseFocus(false);
         this.actionBtn = new GuiButton(1, this.xPosition + ((this.width - (this.width - 100)) / 2), this.yPosition + ((section * 1) + ((section - 20) / 2)), this.width - 100, 20, btnTxt);
         this.visible = false;
     }
@@ -41,8 +43,6 @@ public abstract class InputWindow extends Gui
         {
             return;
         }
-
-        this.textField.updateCursorCounter();
 
         GlStateManager.color(1, 1, 1, 1);
         mc.getTextureManager().bindTexture(bgTexture);
@@ -71,6 +71,15 @@ public abstract class InputWindow extends Gui
             actionPerformed();
             this.visible = false;
         }
+
+        textField.textboxKeyTyped(typedChar, keyCode);
+    }
+
+
+
+    public void update()
+    {
+        this.textField.updateCursorCounter();
     }
 
     public abstract void actionPerformed();

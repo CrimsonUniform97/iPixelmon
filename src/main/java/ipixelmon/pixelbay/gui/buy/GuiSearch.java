@@ -1,4 +1,4 @@
-package ipixelmon.pixelbay.gui.search;
+package ipixelmon.pixelbay.gui.buy;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.GuiScrollingList;
 
 import java.io.IOException;
 
@@ -19,29 +18,33 @@ public class GuiSearch extends GuiScreen
     public static final int ID = 9745;
 
     private ISearchList searchList;
-    private GuiSearchPopup popupWindow;
+    protected GuiPopupSearch popupSearch;
+    protected GuiPopupBuy popupBuy;
     private int searchBtnId, pokemonBtnId, itemBtnId;
     private int scrollListWidth = 300, scrollListHeight = 150;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-
-        GlStateManager.color(1, 1, 1, 1);
-
+        super.drawScreen(popupBuy.visible || popupSearch.visible ? 0 : mouseX, popupBuy.visible || popupSearch.visible ? 0 : mouseY, partialTicks);
         searchList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
 
-        popupWindow.draw(mc, mouseX, mouseY);
+        popupSearch.draw(mc, mouseX, mouseY);
+        popupBuy.draw(mc, mouseX, mouseY);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        super.keyTyped(typedChar, keyCode);
-        popupWindow.keyTyped(typedChar, keyCode);
+        if (!popupSearch.visible && !popupBuy.visible)
+        {
+            super.keyTyped(typedChar, keyCode);
+        }
+
+        popupSearch.keyTyped(typedChar, keyCode);
+        popupBuy.keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -54,19 +57,19 @@ public class GuiSearch extends GuiScreen
 
         if (button == this.buttonList.get(pokemonBtnId) && !(this.searchList instanceof ListPokemon))
         {
-            this.searchList = new ListPokemon(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this.width, this.height);
+            this.searchList = new ListPokemon(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, this);
             this.searchList.search(null);
         } else if (button == this.buttonList.get(itemBtnId) && !(this.searchList instanceof ListItem))
         {
-            this.searchList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this.width, this.height);
+            this.searchList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, this);
             this.searchList.search(null);
         }
 
         if (button == this.buttonList.get(searchBtnId))
         {
-            this.popupWindow.visible = true;
-            this.popupWindow.textField.setFocused(true);
-            this.popupWindow.textField.setCanLoseFocus(false);
+            this.popupSearch.visible = true;
+            this.popupSearch.textField.setFocused(true);
+            this.popupSearch.textField.setCanLoseFocus(false);
         }
 
         searchList.actionPerformed(button);
@@ -79,13 +82,24 @@ public class GuiSearch extends GuiScreen
 
         int posX = (this.width - scrollListWidth) / 2;
         int posY = (this.height - scrollListHeight) / 2;
-        searchList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this.width, this.height);
+        searchList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, this);
         searchList.search(null);
 
-        this.popupWindow = new GuiSearchPopup(this.fontRendererObj, (this.width - GuiSearchPopup.width) / 2, (this.height - GuiSearchPopup.height) / 2, searchList);
-        this.buttonList.add(new GuiButton(searchBtnId = 0, posX + searchList.listWidth, posY + 20 + 00, 20, 20, ""));
+        GuiButton searchBtn = new GuiButton(searchBtnId = 0, posX + searchList.listWidth, posY + 20 + 00, 20, 20, "");
+
+        this.popupSearch = new GuiPopupSearch(this.fontRendererObj, (this.width - GuiPopupSearch.width) / 2, (this.height - GuiPopupSearch.height) / 2, searchList, searchBtn);
+        this.popupBuy = new GuiPopupBuy(this.fontRendererObj, (this.width - GuiPopupBuy.width) / 2, (this.height - GuiPopupBuy.height) / 2);
+        this.buttonList.add(searchBtn);
         this.buttonList.add(new GuiButton(pokemonBtnId = 1, posX + searchList.listWidth, posY + 20 + 20, 20, 20, ""));
         this.buttonList.add(new GuiButton(itemBtnId = 2, posX + searchList.listWidth, posY + 20 + 40, 20, 20, ""));
+    }
+
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        popupSearch.update();
+        searchList.enabled = !popupBuy.visible && !popupSearch.visible;
     }
 
     private void drawPokemonBtnIcon()

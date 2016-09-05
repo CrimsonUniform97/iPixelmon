@@ -1,4 +1,4 @@
-package ipixelmon.pixelbay;
+package ipixelmon.pixelbay.gui.buy;
 
 import io.netty.buffer.ByteBuf;
 import ipixelmon.ItemSerializer;
@@ -7,8 +7,8 @@ import ipixelmon.PixelmonUtility;
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.DeleteForm;
 import ipixelmon.mysql.SelectionForm;
+import ipixelmon.pixelbay.Pixelbay;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

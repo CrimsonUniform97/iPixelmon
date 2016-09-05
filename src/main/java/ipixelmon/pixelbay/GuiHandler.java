@@ -1,6 +1,6 @@
 package ipixelmon.pixelbay;
 
-import ipixelmon.pixelbay.gui.search.GuiSearch;
+import ipixelmon.pixelbay.gui.buy.GuiSearch;
 import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;

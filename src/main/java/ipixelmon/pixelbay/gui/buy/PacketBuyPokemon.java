@@ -1,4 +1,4 @@
-package ipixelmon.pixelbay;
+package ipixelmon.pixelbay.gui.buy;
 
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import io.netty.buffer.ByteBuf;

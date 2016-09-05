@@ -1,7 +1,7 @@
 package ipixelmon.pixelbay;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.search.GuiSearch;
+import ipixelmon.pixelbay.gui.buy.GuiSearch;
 import ipixelmon.pixelbay.gui.sell.SellGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;

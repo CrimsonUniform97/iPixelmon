@@ -1,7 +1,6 @@
-package ipixelmon.pixelbay.gui.search;
+package ipixelmon.pixelbay.gui.buy;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import ipixelmon.ItemSerializer;
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.ColorPicker;
@@ -10,32 +9,30 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.GuiScrollingList;
 import org.lwjgl.util.Rectangle;
 
 import java.awt.*;
-import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ListPokemon extends ISearchList
+public class ListItem extends ISearchList
 {
 
-    private List<PokeListInfo> entries = new ArrayList<>();
+    private List<ItemListInfo> entries = new ArrayList<>();
     private int mysqlRow = 0, mysqlSearchLimit = 100;
     private static final ResourceLocation logo = new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/PixelbayLogo.png");
+    private GuiSearch parentScreen;
 
-    public ListPokemon(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight)
+    public ListItem(Minecraft client, int width, int height, int top, int bottom, int left, GuiSearch parentScreen)
     {
-        super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
+        super(client, width, height, top, bottom, left, 30, parentScreen.width, parentScreen.height);
+        this.parentScreen = parentScreen;
     }
 
     @Override
@@ -60,7 +57,8 @@ public class ListPokemon extends ISearchList
             } else
             {
                 // do buying
-
+                parentScreen.popupSearch.visible = false;
+                parentScreen.popupBuy.visible = true;
                 return;
             }
             search(null);
@@ -70,7 +68,7 @@ public class ListPokemon extends ISearchList
     @Override
     protected boolean isSelected(int index)
     {
-        return index == selectedIndex;
+        return index == this.selectedIndex;
     }
 
     @Override
@@ -95,7 +93,7 @@ public class ListPokemon extends ISearchList
     public void drawScrollBar(final int scrollBarLeft, final int scrollBarRight, final int thumbTop, final int thumbHeight)
     {
         this.drawRect(new Rectangle(scrollBarLeft, this.top, scrollBarRight - scrollBarLeft, this.bottom - this.top), ColorPicker.color(16, 0, 16, 250), ColorPicker.color(29, 0, 102, 250));
-        this.drawRect(new Rectangle(scrollBarLeft, thumbTop, scrollBarRight - scrollBarLeft, thumbHeight), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
+        this.drawRect(new Rectangle(scrollBarLeft, thumbTop, scrollBarRight - scrollBarLeft, thumbHeight),  ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
     }
 
     @Override
@@ -103,7 +101,7 @@ public class ListPokemon extends ISearchList
     {
         if (this.client.getRenderItem() != null && slotIdx < this.entries.size() && this.entries.get(slotIdx) != null)
         {
-            PokeListInfo entryInfo = this.entries.get(slotIdx);
+            ItemListInfo entryInfo = this.entries.get(slotIdx);
 
             // draw the next and previous page entries
             if (entryInfo.sellerName == null)
@@ -114,15 +112,13 @@ public class ListPokemon extends ISearchList
                     this.client.fontRendererObj.drawString("Previous Page >>> Double Click This Slot", left + (listWidth - this.client.fontRendererObj.getStringWidth("Previous Page >>> Double Click This Slot")) / 2, slotTop + 8, 0xFFFFFF);
             } else
             {
-                GlStateManager.disableBlend();
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                GuiHelper.bindPokemonSprite(entryInfo.pixelmonData, this.client);
-                GuiHelper.drawImageQuad(this.left, slotTop - 3, 26.0D, 26.0F, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
-
-                this.client.fontRendererObj.drawString("Level: " + entryInfo.pixelmonData.lvl, left + 26, slotTop + 4, 0xFFFFFF);
-                this.client.fontRendererObj.drawString("XP: " + entryInfo.pixelmonData.xp, left + 26, slotTop + 15, 0xFFFFFF);
-                this.client.fontRendererObj.drawString("Seller: " + entryInfo.sellerName, left + 88, slotTop + 4, 0xFFFFFF);
-                this.client.fontRendererObj.drawString("Price: $" + entryInfo.price, left + 88, slotTop + 15, 0xFFFFFF);
+                RenderHelper.enableGUIStandardItemLighting();
+                GlStateManager.enableBlend();
+                this.client.getRenderItem().renderItemAndEffectIntoGUI(entryInfo.itemStack, left + 2, slotTop + 4);
+                this.client.getRenderItem().renderItemOverlayIntoGUI(this.client.fontRendererObj, entryInfo.itemStack, left + 2, slotTop + 4, "" + entryInfo.itemStack.stackSize);
+                RenderHelper.disableStandardItemLighting();
+                this.client.fontRendererObj.drawString("Seller: " + entryInfo.sellerName, left + 22, slotTop + 4, 0xFFFFFF);
+                this.client.fontRendererObj.drawString("Price: $" + entryInfo.price, left + 22, slotTop + 14, 0xFFFFFF);
             }
         }
     }
@@ -136,26 +132,20 @@ public class ListPokemon extends ISearchList
         // add previous button
         if (this.mysqlRow != 0)
         {
-            this.entries.add(new PokeListInfo(new PixelmonData(), UUID.randomUUID(), -9998));
+            this.entries.add(new ItemListInfo(new ItemStack(Items.iron_pickaxe), UUID.randomUUID(), -9998));
         }
 
         try
         {
-            ResultSet resultPokemon = iPixelmon.mysql.query("SELECT * FROM pixelbayPokemon"
-                    + (str != null && !str.trim().isEmpty() ? " WHERE name LIKE '%" + str + "%' " : " ") + "LIMIT " + this.mysqlRow + "," + this.mysqlSearchLimit + ";");
+            ResultSet resultItem = iPixelmon.mysql.query("SELECT * FROM pixelbayItem"
+                    + (str != null && !str.trim().isEmpty() ? " WHERE itemName LIKE '%" + str + "%' " : " ") + "LIMIT " + this.mysqlRow + "," + this.mysqlSearchLimit + ";");
 
-            PixelmonData pData;
-            while (resultPokemon != null && resultPokemon.next())
+            ItemStack item;
+            while (resultItem.next())
             {
-                pData = new PixelmonData();
-                if (pData != null)
-                {
-                    pData.name = resultPokemon.getString("name");
-                    pData.xp = resultPokemon.getInt("xp");
-                    pData.lvl = resultPokemon.getInt("lvl");
-                    pData.isShiny = resultPokemon.getBoolean("isShiny");
-                    this.entries.add(new PokeListInfo(pData, UUID.fromString(resultPokemon.getString("seller")), resultPokemon.getInt("price")));
-                }
+                item = ItemSerializer.itemFromString(resultItem.getString("item"));
+                if (item != null)
+                    this.entries.add(new ItemListInfo(item, UUID.fromString(resultItem.getString("seller")), resultItem.getInt("price")));
             }
         } catch (SQLException e)
         {
@@ -166,7 +156,7 @@ public class ListPokemon extends ISearchList
         // add next page button
         if (this.entries.size() - (mysqlRow == 0 ? 0 : 1) == this.mysqlSearchLimit)
         {
-            this.entries.add(new PokeListInfo(new PixelmonData(), UUID.randomUUID(), -9999));
+            this.entries.add(new ItemListInfo(new ItemStack(Items.iron_pickaxe), UUID.randomUUID(), -9999));
         }
     }
 
@@ -192,16 +182,16 @@ public class ListPokemon extends ISearchList
     }
 
 
-    public class PokeListInfo
+    public class ItemListInfo
     {
-        private PixelmonData pixelmonData;
+        private ItemStack itemStack;
         public int price;
         public UUID seller;
         public String sellerName;
 
-        public PokeListInfo(PixelmonData pixelmonData, UUID seller, int price)
+        public ItemListInfo(ItemStack itemStack, UUID seller, int price)
         {
-            this.pixelmonData = pixelmonData;
+            this.itemStack = itemStack;
             this.price = price;
             this.seller = seller;
             sellerName = UUIDManager.getPlayerName(seller);

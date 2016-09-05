@@ -4,7 +4,8 @@ import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
-import ipixelmon.pixelbay.gui.search.*;
+import ipixelmon.pixelbay.gui.BasicScrollList;
+import ipixelmon.pixelbay.gui.buy.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,15 +24,12 @@ public final class SellGui extends GuiScreen {
 
     private BasicScrollList scrollList;
     protected GuiSellPopup sellPopup;
-    private int sellBtnId, pokemonBtnId, itemBtnId;
+    private int pokemonBtnId, itemBtnId;
     private int scrollListWidth = 300, scrollListHeight = 150;
 
     @Override
-    public final void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
+    public final void drawScreen(int mouseX, int mouseY, final float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-
-        GlStateManager.color(1, 1, 1, 1);
-
         scrollList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
@@ -41,7 +39,10 @@ public final class SellGui extends GuiScreen {
 
     @Override
     protected final void keyTyped(final char typedChar, final int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+        if(!sellPopup.visible)
+        {
+            super.keyTyped(typedChar, keyCode);
+        }
         sellPopup.keyTyped(typedChar, keyCode);
     }
 
@@ -60,13 +61,6 @@ public final class SellGui extends GuiScreen {
             this.scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getItems(), this);
         }
 
-        if (button == this.buttonList.get(sellBtnId))
-        {
-            this.sellPopup.visible = true;
-            this.sellPopup.textField.setFocused(true);
-            this.sellPopup.textField.setCanLoseFocus(false);
-        }
-
         scrollList.actionPerformed(button);
     }
 
@@ -74,18 +68,23 @@ public final class SellGui extends GuiScreen {
     public final void initGui() {
         super.initGui();
         this.buttonList.clear();
-        // TODO: Implement ListItem and ListPokemon, also will need to draw buttons to switch in between the two. Also need to test it out and test out the search screen after redoing everything.
-        // TODO: Also need to make the ListItem and ListPokemon have the same appearance as the search screen.
 
         int posX = (this.width - scrollListWidth) / 2;
         int posY = (this.height - scrollListHeight) / 2;
         scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getItems(), this);
 
-        this.sellPopup = new GuiSellPopup(this.fontRendererObj, (this.width - GuiSearchPopup.width) / 2, (this.height - GuiSearchPopup.height) / 2, scrollList);
+        this.sellPopup = new GuiSellPopup(this.fontRendererObj, (this.width - GuiPopupSearch.width) / 2, (this.height - GuiPopupSearch.height) / 2, scrollList);
 
-        this.buttonList.add(new GuiButton(sellBtnId = 0, posX + scrollList.listWidth, posY + 20 + 00, 20, 20, ""));
-        this.buttonList.add(new GuiButton(pokemonBtnId = 1, posX + scrollList.listWidth, posY + 20 + 20, 20, 20, ""));
-        this.buttonList.add(new GuiButton(itemBtnId = 2, posX + scrollList.listWidth, posY + 20 + 40, 20, 20, ""));
+        this.buttonList.add(new GuiButton(pokemonBtnId = 0, posX + scrollList.listWidth, posY + 20 + 20, 20, 20, ""));
+        this.buttonList.add(new GuiButton(itemBtnId = 1, posX + scrollList.listWidth, posY + 20 + 40, 20, 20, ""));
+    }
+
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        sellPopup.update();
+        scrollList.enabled = !sellPopup.visible;
     }
 
     private void drawPokemonBtnIcon()
