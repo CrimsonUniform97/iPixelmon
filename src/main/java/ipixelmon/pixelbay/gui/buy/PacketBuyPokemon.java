@@ -43,6 +43,8 @@ public class PacketBuyPokemon implements IMessage {
 
         @Override
         public IMessage onMessage(PacketBuyPokemon message, MessageContext ctx) {
+            // TODO: Give money to buyer. Can use  final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUIDOffline
+            // TODO: Actually finish this
             return null;
         }
     }

@@ -11,7 +11,6 @@ import net.minecraft.util.EnumChatFormatting;
 public class GuiPopupBuy extends InputWindow
 {
 
-    // TODO: Implement this into ListItem and ListPokemon and GuiSearch
     private ISearchList searchList;
     private InfoMessage.Info infoMessage;
 

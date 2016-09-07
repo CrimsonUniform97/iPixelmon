@@ -9,7 +9,9 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class ListItem extends BasicScrollList {
+public class ListItem extends ISellList {
+
+    // TODO: Make look like BuyList
 
     protected List<ItemStack> items;
     protected SellGui parentScreen;
@@ -30,16 +32,6 @@ public class ListItem extends BasicScrollList {
         if (doubleClick) {
             parentScreen.sellPopup.setVisible(true);
         }
-    }
-
-    @Override
-    protected boolean isSelected(final int index) {
-        return index == selectedIndex;
-    }
-
-    @Override
-    protected void drawBackground() {
-        this.drawDefaultBackground();
     }
 
     @Override

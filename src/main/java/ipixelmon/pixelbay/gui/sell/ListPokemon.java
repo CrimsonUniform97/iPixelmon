@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.Tessellator;
 
 import java.util.List;
 
-public class ListPokemon extends BasicScrollList
+public class ListPokemon extends ISellList
 {
+
+    // TODO: Make look like BuyList
 
     protected List<PixelmonData> pokemon;
     protected SellGui parentScreen;
@@ -35,18 +37,6 @@ public class ListPokemon extends BasicScrollList
         {
             parentScreen.sellPopup.setVisible(true);
         }
-    }
-
-    @Override
-    protected boolean isSelected(final int index)
-    {
-        return index == selectedIndex;
-    }
-
-    @Override
-    protected void drawBackground()
-    {
-        this.drawDefaultBackground();
     }
 
     @Override

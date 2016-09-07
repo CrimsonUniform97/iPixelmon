@@ -86,6 +86,7 @@ public class PacketBuyItem implements IMessage {
 
                 if (!hasEmptySlot) throw new Exception("No empty slots found.");
 
+                // TODO: Give money to buyer. Can use  final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUIDOffline
                 player.inventory.addItemStackToInventory(ItemSerializer.itemFromString(message.itemStack));
                 PixelmonUtility.takeMoney(player, (int) message.price);
                 player.addChatComponentMessage(new ChatComponentText(message.price + " PokéDollars deducted from your account."));

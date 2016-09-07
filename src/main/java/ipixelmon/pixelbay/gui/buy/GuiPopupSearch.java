@@ -42,7 +42,6 @@ public class GuiPopupSearch extends InputWindow
 
     private void drawSearchButton(Minecraft mc)
     {
-        // TODO: Fix placement of searchIcon, should not be where actionBtn is, easy fix.
         mc.getTextureManager().bindTexture(searchIcon);
         GlStateManager.enableBlend();
         int iconWidth = 16, iconHeight = 16;

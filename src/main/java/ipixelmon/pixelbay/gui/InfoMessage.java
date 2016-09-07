@@ -18,7 +18,7 @@ public class InfoMessage
     }
 
     private static Map<Info, Integer> messages = new HashMap<>();
-    // TODO: Buying and Selling are implemented into the new list. Just make the sell list look like the buy list, and we should be good?
+
     private InfoMessage()
     {
         new Thread()
