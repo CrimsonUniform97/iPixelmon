@@ -14,8 +14,8 @@ public final class DeleteForm {
         deleteForms = new HashMap<String, String>();
     }
 
-    public final DeleteForm add(final String key, final String value) {
-        this.deleteForms.put(key, value);
+    public final DeleteForm add(final String key, final Object value) {
+        this.deleteForms.put(key, "" + value);
         return this;
     }
 

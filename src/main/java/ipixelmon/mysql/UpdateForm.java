@@ -14,13 +14,13 @@ public final class UpdateForm {
         updateFormsWhere = new HashMap<String, String>();
     }
 
-    public final UpdateForm set(final String key, final String value) {
-        this.updateFormsSet.put(key, value);
+    public final UpdateForm set(final String key, final Object value) {
+        this.updateFormsSet.put(key, "" +  value);
         return this;
     }
 
-    public final UpdateForm where(final String key, final String value) {
-        this.updateFormsWhere.put(key, value);
+    public final UpdateForm where(final String key, final Object value) {
+        this.updateFormsWhere.put(key, "" + value);
         return this;
     }
 

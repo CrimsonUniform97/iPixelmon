@@ -12,8 +12,6 @@ import java.util.List;
 public class ListPokemon extends ISellList
 {
 
-    // TODO: Make look like BuyList
-
     protected List<PixelmonData> pokemon;
     protected SellGui parentScreen;
 

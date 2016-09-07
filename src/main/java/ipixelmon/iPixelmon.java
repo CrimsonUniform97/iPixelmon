@@ -1,5 +1,6 @@
 package ipixelmon;
 
+import ipixelmon.landcontrol.LandControl;
 import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.MySQLHandler;
 import ipixelmon.uuidmanager.UUIDManager;
@@ -37,6 +38,7 @@ public final class iPixelmon {
     public iPixelmon() {
         mods.add(new UUIDManager());
         mods.add(new Pixelbay());
+        mods.add(new LandControl());
     }
 
     @Mod.EventHandler

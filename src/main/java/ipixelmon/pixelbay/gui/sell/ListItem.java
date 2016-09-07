@@ -11,8 +11,6 @@ import java.util.List;
 
 public class ListItem extends ISellList {
 
-    // TODO: Make look like BuyList
-
     protected List<ItemStack> items;
     protected SellGui parentScreen;
 

@@ -5,6 +5,7 @@ import ipixelmon.iPixelmon;
 import ipixelmon.landcontrol.LandControl;
 import ipixelmon.mysql.CreateForm;
 import ipixelmon.mysql.DataType;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ServerProxy extends CommonProxy
 {
@@ -26,5 +27,7 @@ public class ServerProxy extends CommonProxy
         regionsForm.add("zMin", DataType.INT);
         regionsForm.add("zMax", DataType.INT);
         iPixelmon.mysql.createTable(LandControl.class, regionsForm);
+
+        MinecraftForge.EVENT_BUS.register(new PlayerListener());
     }
 }

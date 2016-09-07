@@ -13,8 +13,8 @@ public final class SelectionForm {
         selectionForms = new HashMap<String, String>();
     }
 
-    public final SelectionForm add(final String key, final String value) {
-        this.selectionForms.put(key, value);
+    public final SelectionForm add(final String key, final Object value) {
+        this.selectionForms.put(key, ""+ value);
         return this;
     }
 
