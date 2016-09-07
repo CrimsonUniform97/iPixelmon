@@ -39,6 +39,7 @@ public class FenceDetector implements Runnable
         int initialCount = 0;
         int finalCount = blockPosList.size();
         List<BlockPos> toAdd = new ArrayList<>();
+        boolean firstRun = true;
         while (finalCount - initialCount > 0)
         {
             initialCount = blockPosList.size();
@@ -53,18 +54,23 @@ public class FenceDetector implements Runnable
 
                         if (!blockPosList.contains(toCheck) && isFenceBlock(world, toCheck))
                         {
-                            world.setBlockState(toCheck, Blocks.diamond_block.getDefaultState());
                             toAdd.add(toCheck);
                         }
                     }
                 }
             }
-            blockPosList.addAll(toAdd);
+
+            if(firstRun)
+            {
+                blockPosList.add(toAdd.get(0));
+            } else
+            {
+                blockPosList.addAll(toAdd);
+            }
             toAdd.clear();
             finalCount = blockPosList.size();
+            firstRun = false;
         }
-
-        System.out.println("CALLED 1");
 
         List<Integer> xPositions = new ArrayList<>();
         List<Integer> zPositions = new ArrayList<>();
@@ -73,7 +79,7 @@ public class FenceDetector implements Runnable
             xPositions.add(pos.getX());
             zPositions.add(pos.getZ());
         }
-        System.out.println("CALLED 2");
+
         Collections.sort(xPositions);
         Collections.sort(zPositions);
 
@@ -85,8 +91,6 @@ public class FenceDetector implements Runnable
         ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world.getWorldInfo().getWorldName() + "' " +
                 "AND 'xMin' < '" + maxPos.getX() + "' AND 'xMax' > '" + minPos.getX() + "' " +
                 "AND 'zMin' < '" + maxPos.getZ() + "' AND 'zMax' > '" + minPos.getZ() + "';");
-
-        System.out.println("CALLED 3");
 
         try
         {
@@ -100,8 +104,6 @@ public class FenceDetector implements Runnable
             e.printStackTrace();
         }
 
-        System.out.println("CALLED 4");
-
         InsertForm insertForm = new InsertForm("Regions");
         insertForm.add("owner", player.getUniqueID().toString());
         insertForm.add("members", "");
@@ -113,9 +115,7 @@ public class FenceDetector implements Runnable
 
         iPixelmon.mysql.insert(LandControl.class, insertForm);
 
-        System.out.println("CALLED 5");
         player.addChatComponentMessage(new ChatComponentText("Region created."));
-        System.out.println("CALLED 6");
     }
 
     private boolean isFenceBlock(World world, BlockPos pos)
