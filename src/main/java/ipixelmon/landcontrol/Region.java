@@ -2,10 +2,12 @@ package ipixelmon.landcontrol;
 
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.UpdateForm;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,9 +19,10 @@ public class Region
     private World world;
     private BlockPos min, max;
 
-    private Region(World world, BlockPos pos) throws Exception
+    private Region(World parWorld, BlockPos pos) throws Exception
     {
-        this.world = world;
+        world = parWorld;
+        members = new ArrayList<>();
 
         ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world.getWorldInfo().getWorldName() + "' " +
                 "AND xMin <= '" + pos.getX() + "' AND xMax >= '" + pos.getX() + "' " +
@@ -34,6 +37,8 @@ public class Region
         {
             throw new Exception("There is no region there.");
         }
+
+        members.add(owner);
 
         if(!LandControl.regions.contains(this))
         {
@@ -113,6 +118,12 @@ public class Region
     public boolean isWithin(BlockPos pos)
     {
         return pos.getX() >= min.getX() && pos.getX() <= max.getX() && pos.getZ() >= min.getZ() && pos.getZ() <= max.getZ();
+    }
+
+    public boolean isMember(EntityPlayer player)
+    {
+        System.out.println("CALLED");
+        return members.contains(player.getUniqueID());
     }
 
     private String membersToString()

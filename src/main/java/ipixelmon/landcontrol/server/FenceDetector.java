@@ -80,13 +80,15 @@ public class FenceDetector implements Runnable
             if(surroundingFences.size() > 1 && blockPosList.size() > 1)
             {
                 player.addChatComponentMessage(new ChatComponentText("Found outlier."));
-                break;
+                return;
             }
 
             currentBlock = surroundingFences.get(0);
             blockPosList.add(currentBlock);
         }
 
+
+        // TODO: Need to make sure it's complete square some how.
 
         List<Integer> xPositions = new ArrayList<>();
         List<Integer> zPositions = new ArrayList<>();

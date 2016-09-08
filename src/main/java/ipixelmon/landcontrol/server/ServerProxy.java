@@ -40,7 +40,6 @@ public class ServerProxy extends CommonProxy
 
         ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
 
-        // TODO: still need to test getting region from location, and then need to disable players from editing blocks that arent a member.
         try
         {
             World world;
