@@ -18,6 +18,9 @@ import java.util.List;
 @Mod(modid = iPixelmon.id, name = iPixelmon.name, version = iPixelmon.version)
 public final class iPixelmon {
 
+    // TODO: Next mod. Players make their own badges/gyms
+
+
     public static final String id = "ipixelmon", name = "iPixelmon", version = "dev";
 
     public static final List<IMod> mods = new ArrayList<IMod>();
