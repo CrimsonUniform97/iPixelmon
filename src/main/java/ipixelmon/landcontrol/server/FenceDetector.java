@@ -20,7 +20,7 @@ public class FenceDetector implements Runnable
 {
 
     private World world;
-    private BlockPos clickedPos, minPos, maxPos;
+    private BlockPos clickedPos;
     private List<BlockPos> blockPosList;
     private EntityPlayer player;
 
@@ -33,59 +33,78 @@ public class FenceDetector implements Runnable
         this.blockPosList.add(pos);
     }
 
+    // TODO: I don't like how this method literally has to go through EVERY single fence.
+    // TODO: it would be nice if it started at one and continued down the path of one.
     @Override
     public void run()
     {
-        int initialCount = 0;
-        int finalCount = blockPosList.size();
-        List<BlockPos> toAdd = new ArrayList<>();
-        boolean firstRun = true;
-        while (finalCount - initialCount > 0)
-        {
-            initialCount = blockPosList.size();
-            for (BlockPos blockPos : blockPosList)
-            {
-                BlockPos toCheck;
-                for (int x = -1; x <= 1; x++)
-                {
-                    for (int z = -1; z <= 1; z++)
-                    {
-                        toCheck = new BlockPos(blockPos.getX() + x, clickedPos.getY(), blockPos.getZ() + z);
 
-                        if (!blockPosList.contains(toCheck) && isFenceBlock(world, toCheck))
-                        {
-                            toAdd.add(toCheck);
-                        }
+        BlockPos currentBlock = this.clickedPos;
+        List<BlockPos> surroundingFences = new ArrayList<>();
+        surroundingFences.add(currentBlock);
+
+        // TODO: So far finding fence path works great! Just need to do a little more testing, clean up, and get the resultset to work...
+        while (!surroundingFences.isEmpty() && surroundingFences.size() < 3)
+        {
+            surroundingFences.clear();
+
+            BlockPos blockPos;
+            for (int i = -1; i <= 1; i++)
+            {
+
+                blockPos = new BlockPos(currentBlock.getX() + i, this.clickedPos.getY(), currentBlock.getZ());
+                if (!world.isAirBlock(blockPos))
+                {
+                    if (isFenceBlock(world, blockPos) && !blockPosList.contains(blockPos) && !surroundingFences.contains(blockPos))
+                    {
+                        System.out.println("ADD");
+                        surroundingFences.add(blockPos);
                     }
                 }
             }
 
-            if(firstRun)
+            for (int i = -1; i <= 1; i++)
             {
-                blockPosList.add(toAdd.get(0));
-            } else
-            {
-                blockPosList.addAll(toAdd);
+
+                blockPos = new BlockPos(currentBlock.getX(), this.clickedPos.getY(), currentBlock.getZ() + i);
+                if (!world.isAirBlock(blockPos))
+                {
+                    if (isFenceBlock(world, blockPos) && !blockPosList.contains(blockPos) && !surroundingFences.contains(blockPos))
+                    {
+                        System.out.println("ADD");
+                        surroundingFences.add(blockPos);
+                    }
+                }
             }
-            toAdd.clear();
-            finalCount = blockPosList.size();
-            firstRun = false;
+
+            System.out.println(surroundingFences.size());
+
+            if (surroundingFences.isEmpty())
+            {
+                break;
+            }
+
+            if(surroundingFences.size() > 1 && blockPosList.size() > 1)
+            {
+                System.out.println("Found outlier");
+                break;
+            }
+            currentBlock = surroundingFences.get(0);
+
+
+            try
+            {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            world.setBlockState(currentBlock, Blocks.diamond_block.getDefaultState());
+            blockPosList.add(currentBlock);
         }
 
-        List<Integer> xPositions = new ArrayList<>();
-        List<Integer> zPositions = new ArrayList<>();
-        for (BlockPos pos : blockPosList)
-        {
-            xPositions.add(pos.getX());
-            zPositions.add(pos.getZ());
-        }
-
-        Collections.sort(xPositions);
-        Collections.sort(zPositions);
-
-        minPos = new BlockPos(xPositions.get(0), 0, zPositions.get(0));
-        maxPos = new BlockPos(xPositions.get(xPositions.size() - 1), world.getHeight(), zPositions.get(zPositions.size() - 1));
-
+        BlockPos minPos = getMin();
+        BlockPos maxPos = getMax();
         // TODO: Fix the MySQL result, it's not finding the region if it overlaps
 //        Xmin1 <= Xmax2 && Xmin2 <= Xmax1
         ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world.getWorldInfo().getWorldName() + "' " +
@@ -122,5 +141,37 @@ public class FenceDetector implements Runnable
     {
         Block block = world.getBlockState(pos).getBlock();
         return block.getUnlocalizedName().toLowerCase().contains("fence");
+    }
+
+    private BlockPos getMin()
+    {
+        List<Integer> xPositions = new ArrayList<>();
+        List<Integer> zPositions = new ArrayList<>();
+        for (BlockPos pos : blockPosList)
+        {
+            xPositions.add(pos.getX());
+            zPositions.add(pos.getZ());
+        }
+
+        Collections.sort(xPositions);
+        Collections.sort(zPositions);
+
+        return new BlockPos(xPositions.get(0), 0, zPositions.get(0));
+    }
+
+    private BlockPos getMax()
+    {
+        List<Integer> xPositions = new ArrayList<>();
+        List<Integer> zPositions = new ArrayList<>();
+        for (BlockPos pos : blockPosList)
+        {
+            xPositions.add(pos.getX());
+            zPositions.add(pos.getZ());
+        }
+
+        Collections.sort(xPositions);
+        Collections.sort(zPositions);
+
+        return new BlockPos(xPositions.get(xPositions.size() - 1), world.getHeight(), zPositions.get(zPositions.size() - 1));
     }
 }
