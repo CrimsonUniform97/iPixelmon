@@ -18,12 +18,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SellGui extends GuiScreen {
+public final class GuiSell extends GuiScreen {
 
     public static final int ID = 987;
 
-    private BasicScrollList scrollList;
-    protected GuiSellPopup sellPopup;
+    protected BasicScrollList scrollList;
     private int pokemonBtnId, itemBtnId;
     private int scrollListWidth = 300, scrollListHeight = 150;
 
@@ -33,16 +32,6 @@ public final class SellGui extends GuiScreen {
         scrollList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
-        sellPopup.draw(mc, mouseX, mouseY);
-    }
-
-    @Override
-    protected final void keyTyped(final char typedChar, final int keyCode) throws IOException {
-        if(!sellPopup.isVisible())
-        {
-            super.keyTyped(typedChar, keyCode);
-        }
-        sellPopup.keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -54,13 +43,11 @@ public final class SellGui extends GuiScreen {
 
         if (button == this.buttonList.get(pokemonBtnId) && !(this.scrollList instanceof ListPokemon))
         {
-            this.scrollList = new ListPokemon(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getPokemon(), this);
+            this.scrollList = new ListPokemon(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this, getPokemon());
         } else if (button == this.buttonList.get(itemBtnId) && !(this.scrollList instanceof ListItem))
         {
-            this.scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getItems(), this);
+            this.scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this, getItems());
         }
-
-        sellPopup.scrollList = scrollList;
 
         scrollList.actionPerformed(button);
     }
@@ -72,20 +59,9 @@ public final class SellGui extends GuiScreen {
 
         int posX = (this.width - scrollListWidth) / 2;
         int posY = (this.height - scrollListHeight) / 2;
-        scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, getItems(), this);
-
-        this.sellPopup = new GuiSellPopup(this.fontRendererObj, (this.width - GuiPopupSearch.width) / 2, (this.height - GuiPopupSearch.height) / 2, scrollList);
-
+        scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this, getItems());
         this.buttonList.add(new GuiButton(pokemonBtnId = 0, posX + scrollList.listWidth, posY + 20 + 20, 20, 20, ""));
         this.buttonList.add(new GuiButton(itemBtnId = 1, posX + scrollList.listWidth, posY + 20 + 40, 20, 20, ""));
-    }
-
-    @Override
-    public void updateScreen()
-    {
-        super.updateScreen();
-        sellPopup.update();
-        scrollList.enabled = !sellPopup.isVisible();
     }
 
     private void drawPokemonBtnIcon()

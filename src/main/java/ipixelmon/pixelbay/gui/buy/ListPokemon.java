@@ -53,9 +53,7 @@ public class ListPokemon extends ISearchList
                 this.scrollDistance = 5000.0F;
             } else
             {
-                // do buying
-                parentScreen.popupSearch.setVisible(false);
-                parentScreen.popupBuy.setVisible(true);
+                Minecraft.getMinecraft().displayGuiScreen(new GuiPopupBuy(parentScreen, "", "Buy Pokémon?", 3));
                 return;
             }
             search(null);

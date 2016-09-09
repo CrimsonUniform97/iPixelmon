@@ -2,7 +2,7 @@ package ipixelmon.pixelbay;
 
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.buy.GuiSearch;
-import ipixelmon.pixelbay.gui.sell.SellGui;
+import ipixelmon.pixelbay.gui.sell.GuiSell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -29,7 +29,7 @@ public final class BreakListener {
         }
 
         if(ping.isPressed()) {
-            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, SellGui.ID, null, 0, 0, 0);
+            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, GuiSell.ID, null, 0, 0, 0);
         }
 
     }

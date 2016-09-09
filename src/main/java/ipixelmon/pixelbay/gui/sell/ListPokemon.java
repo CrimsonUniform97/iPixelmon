@@ -2,7 +2,6 @@ package ipixelmon.pixelbay.gui.sell;
 
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -13,28 +12,17 @@ public class ListPokemon extends ISellList
 {
 
     protected List<PixelmonData> pokemon;
-    protected SellGui parentScreen;
 
-    public ListPokemon(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, List<PixelmonData> pokemon, SellGui parentScreen)
+    public ListPokemon(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, final GuiSell parentScreen, final List<PixelmonData> pokemon)
     {
-        super(client, width, height, top, bottom, left, entryHeight, parentScreen.width, parentScreen.height);
+        super(client, width, height, top, bottom, left, entryHeight, parentScreen);
         this.pokemon = pokemon;
-        this.parentScreen = parentScreen;
     }
 
     @Override
     protected int getSize()
     {
         return pokemon.size();
-    }
-
-    @Override
-    protected void elementClicked(final int index, final boolean doubleClick)
-    {
-        if(doubleClick)
-        {
-            parentScreen.sellPopup.setVisible(true);
-        }
     }
 
     @Override

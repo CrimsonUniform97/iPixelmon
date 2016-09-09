@@ -1,94 +1,80 @@
 package ipixelmon.pixelbay.gui.sell;
 
-import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.storage.PCClientStorage;
-import ipixelmon.PixelmonUtility;
-import ipixelmon.TimedMessage;
 import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.InputWindow;
-import ipixelmon.pixelbay.gui.BasicScrollList;
+import ipixelmon.pixelbay.gui.buy.GuiSearch;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.client.gui.*;
+import org.lwjgl.input.Keyboard;
 
-public class GuiSellPopup extends InputWindow
+import java.io.IOException;
+
+public class GuiSellPopup extends GuiYesNo
 {
 
-    protected BasicScrollList scrollList;
-    protected TimedMessage infoMessage;
+    private GuiTextField textField;
 
-    public GuiSellPopup(final FontRenderer fontRenderer, final int xPosition, final int yPosition, final BasicScrollList scrollList)
+    public GuiSellPopup(final GuiYesNoCallback parentScreen, final String prompt1, final String prompt2, final int delay)
     {
-        super(fontRenderer, xPosition, yPosition, "Sell");
-        this.scrollList = scrollList;
+        super(parentScreen, prompt1, prompt2, delay);
     }
 
     @Override
-    public void draw(Minecraft mc, int mouseX, int mouseY)
+    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
     {
-        super.draw(mc, mouseX, mouseY);
-        if(infoMessage != null && this.isVisible())
-        {
-            mc.fontRendererObj.drawString(infoMessage.getMessage(), xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getMessage())) / 2, yPosition + 10, 0xFFFFFF);
-        }
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        textField.drawTextBox();
     }
 
     @Override
-    public void actionPerformed()
+    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException
     {
-        if(scrollList.selectedIndex < 0)
-        {
-            return;
-        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        textField.mouseClicked(mouseX, mouseY, mouseButton);
+    }
 
-        if(textField.getText().isEmpty())
-        {
-            return;
-        }
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        textField.updateCursorCounter();
+    }
 
-        try
-        {
-            Integer.parseInt(textField.getText());
-        }catch (NumberFormatException e)
-        {
-            return;
-        }
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+        textField = new GuiTextField(1, mc.fontRendererObj, (width - 100) / 2, buttonList.get(0).yPosition - 25, 100, 20);
+    }
 
-        if(scrollList instanceof ListItem)
+    @Override
+    protected void actionPerformed(final GuiButton button) throws IOException
+    {
+        if(button.id == 0)
         {
-            ItemStack stack = ((ListItem) scrollList).items.get(scrollList.selectedIndex);
-            iPixelmon.network.sendToServer(new PacketSellItem(stack, Integer.parseInt(textField.getText())));
-            ((ListItem) scrollList).items.remove(scrollList.selectedIndex);
-            this.setVisible(false);
-        } else if (scrollList instanceof ListPokemon)
-        {
-            PixelmonData pData = ((ListPokemon) scrollList).pokemon.get(scrollList.selectedIndex);
-
-            if(PixelmonUtility.getPokemonCountClient() == 1) {
-                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "You cannot sell your only pokémon.", 3)).start();
-                return;
+            GuiSell guiSell = (GuiSell) parentScreen;
+            if(guiSell.scrollList instanceof ListItem)
+            {
+                ListItem listItem = (ListItem) guiSell.scrollList;
+                iPixelmon.network.sendToServer(new PacketSellItem(listItem.items.get(listItem.selectedIndex), Integer.parseInt(textField.getText())));
+            } else
+            {
+                ListPokemon listPokemon = (ListPokemon) guiSell.scrollList;
+                iPixelmon.network.sendToServer(new PacketSellPokemon(listPokemon.pokemon.get(listPokemon.selectedIndex), Integer.parseInt(textField.getText())));
             }
-
-            iPixelmon.network.sendToServer(new PacketSellPokemon(pData, Integer.parseInt(textField.getText())));
-            ((ListPokemon) scrollList).pokemon.remove(scrollList.selectedIndex);
-
-            ServerStorageDisplay.changePokemon(pData.order, (PixelmonData) null);
-            PCClientStorage.refreshStore();
-            this.setVisible(false);
         }
-
-        scrollList.selectedIndex = -1;
+        Minecraft.getMinecraft().displayGuiScreen((GuiScreen) parentScreen);
+        super.actionPerformed(button);
     }
 
     @Override
-    public void keyTyped(final char typedChar, final int keyCode)
+    protected void keyTyped(final char typedChar, final int keyCode) throws IOException
     {
-        super.keyTyped(typedChar, keyCode);
-        if(keyCode < 0 || keyCode > 9 && !textField.getText().isEmpty() && keyCode != 11)
+        textField.textboxKeyTyped(typedChar, keyCode);
+
+        if (keyCode == Keyboard.KEY_ESCAPE)
         {
-            textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+            Minecraft.getMinecraft().displayGuiScreen((GuiScreen) parentScreen);
         }
     }
+
 }

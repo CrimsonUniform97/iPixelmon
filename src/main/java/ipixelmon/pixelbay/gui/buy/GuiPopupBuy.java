@@ -1,69 +1,29 @@
 package ipixelmon.pixelbay.gui.buy;
 
-import ipixelmon.PixelmonUtility;
-import ipixelmon.TimedMessage;
-import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.InputWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
+import org.lwjgl.input.Keyboard;
 
-public class GuiPopupBuy extends InputWindow
+import java.io.IOException;
+
+public class GuiPopupBuy extends GuiYesNo
 {
 
-    private ISearchList searchList;
-    private TimedMessage infoMessage;
-
-    public GuiPopupBuy(final FontRenderer fontRenderer, final int xPosition, final int yPosition, ISearchList searchList)
+    public GuiPopupBuy(final GuiYesNoCallback parentScreen, final String prompt1, final String prompt2, final int delay)
     {
-        super(fontRenderer, xPosition, yPosition, "Confirm Purchase");
-        this.textField.setVisible(false);
-        this.actionBtn.width = 100;
-        this.actionBtn.xPosition = this.xPosition + (this.width - 100) / 2;
-        this.actionBtn.yPosition = this.yPosition + (this.height - 20) / 2;
-        this.searchList = searchList;
-    }
-    @Override
-    public void draw(Minecraft mc, int mouseX, int mouseY)
-    {
-        super.draw(mc, mouseX, mouseY);
-        if(infoMessage != null && this.isVisible())
-        {
-            mc.fontRendererObj.drawString(infoMessage.getMessage(), xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getMessage())), yPosition + 10, 0xFFFFFF);
-        }
+        super(parentScreen, prompt1, prompt2, delay);
     }
 
     @Override
-    public void actionPerformed()
+    protected void keyTyped(final char typedChar, final int keyCode) throws IOException
     {
-
-        if (searchList instanceof ListItem)
+        if(keyCode == Keyboard.KEY_ESCAPE)
         {
-            ListItem listItem = (ListItem) searchList;
-            if (PixelmonUtility.getClientBalance() < listItem.getSelected().price)
-            {
-                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3));
-                return;
-            }
-            iPixelmon.network.sendToServer(new PacketBuyItem(listItem.getSelected().itemStack, listItem.getSelected().seller, listItem.getSelected().price));
-            listItem.entries.remove(listItem.selectedIndex);
-            this.setVisible(false);
-        } else if (searchList instanceof ListPokemon)
-        {
-            ListPokemon listPokemon = (ListPokemon) searchList;
-
-            if (PixelmonUtility.getClientBalance() < listPokemon.getSelected().price)
-            {
-                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3));
-                return;
-            }
-
-            iPixelmon.network.sendToServer(new PacketBuyPokemon(listPokemon.getSelected().pixelmonData, listPokemon.getSelected().seller, listPokemon.getSelected().price));
-            listPokemon.entries.remove(listPokemon.selectedIndex);
-            this.setVisible(false);
+            Minecraft.getMinecraft().displayGuiScreen((GuiScreen) parentScreen);
         }
-
-        this.setVisible(false);
     }
 
 }

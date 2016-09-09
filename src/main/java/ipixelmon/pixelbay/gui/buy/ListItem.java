@@ -59,9 +59,7 @@ public class ListItem extends ISearchList
                 this.scrollDistance = 5000.0F;
             } else
             {
-                // do buying
-                parentScreen.popupSearch.setVisible(false);
-                parentScreen.popupBuy.setVisible(true);
+                Minecraft.getMinecraft().displayGuiScreen(new GuiPopupBuy(parentScreen, "", "Buy Item?", 3));
                 return;
             }
             search(null);

@@ -16,9 +16,21 @@ public abstract class ISellList extends BasicScrollList
 
     private static final ResourceLocation logo = new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/PixelbayLogo.png");
 
-    public ISellList(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, final int screenWidth, final int screenHeight)
+    protected GuiSell parentScreen;
+
+    public ISellList(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, GuiSell parentScreen)
     {
-        super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
+        super(client, width, height, top, bottom, left, entryHeight, parentScreen.width, parentScreen.height);
+        this.parentScreen = parentScreen;
+    }
+
+    @Override
+    protected void elementClicked(final int index, final boolean doubleClick)
+    {
+        if(doubleClick)
+        {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiSellPopup(parentScreen, "", "Cost in Pokédollars", 3));
+        }
     }
 
     @Override

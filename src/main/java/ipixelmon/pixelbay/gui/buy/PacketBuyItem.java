@@ -95,7 +95,6 @@ public class PacketBuyItem implements IMessage {
                         .add("item", message.itemStack)
                         .add("price", "" + message.price));
             } catch (Exception e) {
-                e.printStackTrace();
                 player.addChatComponentMessage(new ChatComponentText(e.getLocalizedMessage()));
                 player.addChatComponentMessage(new ChatComponentText("*** If you think this is an error notify an admin. ***"));
             }

@@ -1,6 +1,5 @@
 package ipixelmon.pixelbay.gui.sell;
 
-import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -12,24 +11,16 @@ import java.util.List;
 public class ListItem extends ISellList {
 
     protected List<ItemStack> items;
-    protected SellGui parentScreen;
 
-    public ListItem(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, List<ItemStack> items, SellGui parentScreen) {
-        super(client, width, height, top, bottom, left, entryHeight, parentScreen.width, parentScreen.height);
+    public ListItem(final Minecraft client, final int width, final int height, final int top, final int bottom, final int left, final int entryHeight, final GuiSell parentScreen, final List<ItemStack> items)
+    {
+        super(client, width, height, top, bottom, left, entryHeight, parentScreen);
         this.items = items;
-        this.parentScreen = parentScreen;
     }
 
     @Override
     protected int getSize() {
         return items.size();
-    }
-
-    @Override
-    protected void elementClicked(final int index, final boolean doubleClick) {
-        if (doubleClick) {
-            parentScreen.sellPopup.setVisible(true);
-        }
     }
 
     @Override
