@@ -6,23 +6,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class GuiMemberScrollList extends GuiScrollingList
 {
 
     private Region region;
-    private Map<UUID, String> playerNames;
+    private List<String> playerNames;
+    private String ownerName;
 
     public GuiMemberScrollList(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight, Region parRegion)
     {
         super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
         region = parRegion;
-        // TODO: Test this out, new method getNames().
-        playerNames = UUIDManager.getNames(region.getMembers());
+        playerNames = new ArrayList<>();
+        playerNames.addAll(UUIDManager.getNames(parRegion.getMembers()).values());
+        ownerName = UUIDManager.getPlayerName(region.getOwner());
     }
 
     @Override
@@ -34,7 +33,10 @@ public class GuiMemberScrollList extends GuiScrollingList
     @Override
     protected void elementClicked(int index, boolean doubleClick)
     {
-
+        if(doubleClick)
+        {
+            // TODO: Open popup
+        }
     }
 
     @Override
@@ -52,6 +54,6 @@ public class GuiMemberScrollList extends GuiScrollingList
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess)
     {
-        Minecraft.getMinecraft().fontRendererObj.drawString(playerNames.get(slotIdx), left, slotTop, 0xFFFFFF);
+        Minecraft.getMinecraft().fontRendererObj.drawString(playerNames.get(slotIdx), left + 4, slotTop, ownerName.equals(playerNames.get(slotIdx)) ? 0x9900cc : 0xFFFFFF);
     }
 }

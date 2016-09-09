@@ -1,8 +1,8 @@
 package ipixelmon.pixelbay.gui.buy;
 
 import ipixelmon.PixelmonUtility;
+import ipixelmon.TimedMessage;
 import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.InfoMessage;
 import ipixelmon.pixelbay.gui.InputWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -12,7 +12,7 @@ public class GuiPopupBuy extends InputWindow
 {
 
     private ISearchList searchList;
-    private InfoMessage.Info infoMessage;
+    private TimedMessage infoMessage;
 
     public GuiPopupBuy(final FontRenderer fontRenderer, final int xPosition, final int yPosition, ISearchList searchList)
     {
@@ -29,7 +29,7 @@ public class GuiPopupBuy extends InputWindow
         super.draw(mc, mouseX, mouseY);
         if(infoMessage != null && this.isVisible())
         {
-            infoMessage.draw(xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getText())), yPosition + 10, 0xFFFFFF);
+            mc.fontRendererObj.drawString(infoMessage.getMessage(), xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getMessage())), yPosition + 10, 0xFFFFFF);
         }
     }
 
@@ -42,7 +42,7 @@ public class GuiPopupBuy extends InputWindow
             ListItem listItem = (ListItem) searchList;
             if (PixelmonUtility.getClientBalance() < listItem.getSelected().price)
             {
-                infoMessage = InfoMessage.newMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3);
+                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3));
                 return;
             }
             iPixelmon.network.sendToServer(new PacketBuyItem(listItem.getSelected().itemStack, listItem.getSelected().seller, listItem.getSelected().price));
@@ -54,7 +54,7 @@ public class GuiPopupBuy extends InputWindow
 
             if (PixelmonUtility.getClientBalance() < listPokemon.getSelected().price)
             {
-                infoMessage = InfoMessage.newMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3);
+                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "Insufficient PokéDollars", 3));
                 return;
             }
 

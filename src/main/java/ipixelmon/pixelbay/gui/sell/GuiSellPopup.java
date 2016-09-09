@@ -4,21 +4,20 @@ import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.storage.PCClientStorage;
 import ipixelmon.PixelmonUtility;
+import ipixelmon.TimedMessage;
 import ipixelmon.iPixelmon;
-import ipixelmon.pixelbay.gui.InfoMessage;
 import ipixelmon.pixelbay.gui.InputWindow;
 import ipixelmon.pixelbay.gui.BasicScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 public class GuiSellPopup extends InputWindow
 {
 
     protected BasicScrollList scrollList;
-    protected InfoMessage.Info infoMessage;
+    protected TimedMessage infoMessage;
 
     public GuiSellPopup(final FontRenderer fontRenderer, final int xPosition, final int yPosition, final BasicScrollList scrollList)
     {
@@ -32,7 +31,7 @@ public class GuiSellPopup extends InputWindow
         super.draw(mc, mouseX, mouseY);
         if(infoMessage != null && this.isVisible())
         {
-            infoMessage.draw(xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getText())) / 2, yPosition + 10, 0xFFFFFF);
+            mc.fontRendererObj.drawString(infoMessage.getMessage(), xPosition + (width - mc.fontRendererObj.getStringWidth(infoMessage.getMessage())) / 2, yPosition + 10, 0xFFFFFF);
         }
     }
 
@@ -68,7 +67,7 @@ public class GuiSellPopup extends InputWindow
             PixelmonData pData = ((ListPokemon) scrollList).pokemon.get(scrollList.selectedIndex);
 
             if(PixelmonUtility.getPokemonCountClient() == 1) {
-                infoMessage = InfoMessage.newMessage(EnumChatFormatting.RED + "You cannot sell your only pokémon.", 3);
+                new Thread(infoMessage = new TimedMessage(EnumChatFormatting.RED + "You cannot sell your only pokémon.", 3)).start();
                 return;
             }
 

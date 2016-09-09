@@ -2,9 +2,12 @@ package ipixelmon.landcontrol.server;
 
 import ipixelmon.iPixelmon;
 import ipixelmon.landcontrol.LandControl;
+import ipixelmon.landcontrol.PacketOpenRegionInfo;
 import ipixelmon.landcontrol.Region;
+import ipixelmon.landcontrol.client.GuiRegionInfo;
 import ipixelmon.mysql.InsertForm;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
@@ -13,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +42,13 @@ public class PlayerListener
                     event.entityPlayer.addChatComponentMessage(new ChatComponentText("You are not a member of that region."));
                     return;
                 }
+
+                if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather)
+                {
+                    iPixelmon.network.sendTo(new PacketOpenRegionInfo(region), (EntityPlayerMP) event.entityPlayer);
+                    return;
+                }
+
             }
         } catch (Exception e)
         {

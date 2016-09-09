@@ -76,7 +76,7 @@ public final class UUIDManager implements IMod {
             }
             builder.deleteCharAt(builder.length() - 1);
 
-            ResultSet result = iPixelmon.mysql.query("SELECT * FROM uuidmanagerPlayers WHERE uuid IN (" + builder.toString() + ");");
+            ResultSet result = iPixelmon.mysql.query("SELECT * FROM uuidmanagerPlayers WHERE uuid IN ('" + builder.toString() + "');");
             while(result.next())
             {
                 names.put(UUID.fromString(result.getString("uuid")), result.getString("name"));
@@ -103,7 +103,7 @@ public final class UUIDManager implements IMod {
             }
             builder.deleteCharAt(builder.length() - 1);
 
-            ResultSet result = iPixelmon.mysql.query("SELECT * FROM uuidmanagerPlayers WHERE nameLower IN (" + builder.toString() + ");");
+            ResultSet result = iPixelmon.mysql.query("SELECT * FROM uuidmanagerPlayers WHERE nameLower IN ('" + builder.toString() + "');");
             while(result.next())
             {
                 uuids.put(result.getString("name"), UUID.fromString(result.getString("uuid")));
