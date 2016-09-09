@@ -51,7 +51,9 @@ public abstract class InputWindow extends Gui
         mc.getTextureManager().bindTexture(bgTexture);
         drawTexturedModalRect(xPosition, yPosition, 0, 0, width, height);
         this.textField.drawTextBox();
-        this.actionBtn.drawButton(mc, mouseX, mouseY);
+        System.out.println(( Minecraft.getMinecraft().displayWidth - Mouse.getX()) + "," + Mouse.getY());
+        System.out.println(this.actionBtn.xPosition + ";" + this.actionBtn.yPosition);
+        this.actionBtn.drawButton(mc, Mouse.getX(), Mouse.getY());
 
         if (enableClicking)
         {

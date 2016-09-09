@@ -17,6 +17,8 @@ import java.util.UUID;
 public class Region
 {
 
+    private static final List<Region> regions = new ArrayList<>();
+
     private UUID owner;
     private List<UUID> members;
     private String world;
@@ -37,18 +39,17 @@ public class Region
             owner = UUID.fromString(result.getString("owner"));
             min = new BlockPos(result.getInt("xMin"), 0, result.getInt("zMin"));
             max = new BlockPos(result.getInt("xMax"), 50, result.getInt("zMax"));
-            members.add(owner);
 
             String membersStr = result.getString("members");
 
-            if(membersStr != null && !membersStr.isEmpty())
+            if (membersStr != null && !membersStr.isEmpty())
             {
-                if(!membersStr.contains(","))
+                if (!membersStr.contains(","))
                 {
                     members.add(UUID.fromString(membersStr));
                 } else
                 {
-                    for(String s : membersStr.split(","))
+                    for (String s : membersStr.split(","))
                     {
                         members.add(UUID.fromString(s));
                     }
@@ -59,38 +60,34 @@ public class Region
             throw new Exception("There is no region there.");
         }
 
-        if (!LandControl.regions.contains(this))
-        {
-            LandControl.regions.add(this);
-        }
+        regions.add(this);
     }
 
     public static Region getRegionAt(World world, BlockPos pos) throws Exception
     {
-        for (Region r : LandControl.regions)
+        for (Region r : regions)
         {
-            if (r.world.equals(world.getWorldInfo().getWorldName()))
+            if (r.getWorld().equalsIgnoreCase(world.getWorldInfo().getWorldName()) && r.isWithin(pos))
             {
-                if (r.isWithin(pos))
-                {
-                    return r;
-                }
+                return r;
             }
         }
 
         return new Region(world.getWorldInfo().getWorldName(), pos);
     }
 
-    public static Region getRegionAt(String world, BlockPos pos) throws Exception
+    public static Region getRegionAt(String world, BlockPos pos, Side side) throws Exception
     {
-        for (Region r : LandControl.regions)
+        if(side == Side.CLIENT)
         {
-            if (r.world.equals(world))
+            return new Region(world, pos);
+        }
+
+        for (Region r : regions)
+        {
+            if (r.getWorld().equalsIgnoreCase(world) && r.isWithin(pos))
             {
-                if (r.isWithin(pos))
-                {
-                    return r;
-                }
+                return r;
             }
         }
 
@@ -140,24 +137,30 @@ public class Region
 
     public void addMember(UUID player)
     {
-        members.add(player);
+        if (!members.contains(player))
+        {
+            members.add(player);
 
-        UpdateForm updateForm = new UpdateForm("Regions");
-        updateForm.set("members", membersToString()).where("world", world);
-        updateForm.where("xMin", min.getX()).where("xMax", max.getX());
-        updateForm.where("zMin", min.getZ()).where("zMax", max.getZ());
-        iPixelmon.mysql.update(LandControl.class, updateForm);
+            UpdateForm updateForm = new UpdateForm("Regions");
+            updateForm.set("members", membersToString()).where("world", world);
+            updateForm.where("xMin", min.getX()).where("xMax", max.getX());
+            updateForm.where("zMin", min.getZ()).where("zMax", max.getZ());
+            iPixelmon.mysql.update(LandControl.class, updateForm);
+        }
     }
 
     public void removeMember(UUID player)
     {
-        members.remove(player);
+        if (members.contains(player) && !owner.equals(player))
+        {
+            members.remove(player);
 
-        UpdateForm updateForm = new UpdateForm("Regions");
-        updateForm.set("members", membersToString()).where("world", world);
-        updateForm.where("xMin", min.getX()).where("xMax", max.getX());
-        updateForm.where("zMin", min.getZ()).where("zMax", max.getZ());
-        iPixelmon.mysql.update(LandControl.class, updateForm);
+            UpdateForm updateForm = new UpdateForm("Regions");
+            updateForm.set("members", membersToString()).where("world", world);
+            updateForm.where("xMin", min.getX()).where("xMax", max.getX());
+            updateForm.where("zMin", min.getZ()).where("zMax", max.getZ());
+            iPixelmon.mysql.update(LandControl.class, updateForm);
+        }
     }
 
     public boolean isWithin(BlockPos pos)
@@ -167,19 +170,19 @@ public class Region
 
     public boolean isMember(EntityPlayer player)
     {
-        return members.contains(player.getUniqueID());
+        return owner.equals(player.getUniqueID()) || members.contains(player.getUniqueID());
     }
 
     private String membersToString()
     {
         StringBuilder builder = new StringBuilder();
 
-        if(members.isEmpty())
+        if (members.isEmpty())
         {
             return "";
         }
 
-        for(UUID member : members)
+        for (UUID member : members)
         {
             builder.append(member.toString());
             builder.append(",");

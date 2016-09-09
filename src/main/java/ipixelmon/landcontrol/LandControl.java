@@ -12,8 +12,6 @@ import java.util.List;
 public class LandControl implements IMod
 {
 
-    public static final List<Region> regions = new ArrayList<>();
-
     @Override
     public String getID()
     {
@@ -30,7 +28,8 @@ public class LandControl implements IMod
     public void init()
     {
         iPixelmon.registerPacket(PacketOpenRegionInfo.Handler.class, PacketOpenRegionInfo.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketAddMember.Handler.class, PacketAddMember.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketEditMemberRequest.Handler.class, PacketEditMemberRequest.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketEditMemberResponse.Handler.class, PacketEditMemberResponse.class, Side.CLIENT);
     }
 
     @Override

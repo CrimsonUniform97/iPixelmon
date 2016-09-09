@@ -1,10 +1,12 @@
 package ipixelmon.landcontrol.client;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.landcontrol.PacketAddMember;
+import ipixelmon.landcontrol.PacketEditMemberRequest;
+import ipixelmon.landcontrol.PacketEditMemberResponse;
 import ipixelmon.landcontrol.Region;
 import ipixelmon.TimedMessage;
 import ipixelmon.uuidmanager.UUIDManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -17,21 +19,20 @@ public class GuiRegionInfo extends GuiScreen
 {
 
     int bgWidth = 200, bgHeight = 100, posX, posY;
-    private GuiMemberScrollList scrollList;
-    private GuiTextField textField;
+    public GuiMemberScrollList scrollList;
+    public GuiTextField textField;
     private Region region;
-    private TimedMessage message;
-    protected GuiRemoveMemberPopup popup;
+    public TimedMessage message;
 
     public GuiRegionInfo(Region region)
     {
         this.region = region;
     }
-        // TODO: work on the popup window and remove member prompt
+
     @Override
-    public void drawScreen( int mouseX,  int mouseY, final float partialTicks)
+    public void drawScreen(int mouseX,  int mouseY, final float partialTicks)
     {
-        super.drawScreen(mouseX = popup.isVisible() ? 0 : mouseX, mouseY = popup.isVisible() ? 0 : mouseY, partialTicks);
+        super.drawScreen(mouseX, mouseY, partialTicks);
         scrollList.drawScreen(mouseX, mouseY, partialTicks);
         textField.drawTextBox();
         mc.fontRendererObj.drawStringWithShadow("Double click player for more options.", posX, posY - 20, 0xffff00);
@@ -40,8 +41,18 @@ public class GuiRegionInfo extends GuiScreen
         {
             mc.fontRendererObj.drawStringWithShadow(message.getMessage(), posX, textField.yPosition + textField.height + 2, 0xFFFFFF);
         }
+    }
 
-        popup.draw(mc, mouseX, mouseY);
+    @Override
+    public void confirmClicked(final boolean result, final int id)
+    {
+        if (result)
+        {
+            iPixelmon.network.sendToServer(new PacketEditMemberRequest(scrollList.playerNames.get(scrollList.getSelectedIndex()), region, false));
+        }
+
+        Minecraft.getMinecraft().displayGuiScreen(this);
+        super.confirmClicked(result, id);
     }
 
     @Override
@@ -54,6 +65,15 @@ public class GuiRegionInfo extends GuiScreen
         {
             if(!textField.getText().isEmpty())
             {
+                for(String s : scrollList.playerNames)
+                {
+                    if(s.equalsIgnoreCase(textField.getText()))
+                    {
+                        new Thread(message = new TimedMessage(EnumChatFormatting.RED + "Player is already a member.", 3));
+                        return;
+                    }
+                }
+
                 UUID playerUUID = UUIDManager.getUUID(textField.getText());
 
                 if(playerUUID == null)
@@ -62,9 +82,10 @@ public class GuiRegionInfo extends GuiScreen
                     return;
                 }
 
-                iPixelmon.network.sendToServer(new PacketAddMember(textField.getText(), region));
+                iPixelmon.network.sendToServer(new PacketEditMemberRequest(textField.getText(), region, true));
             }
         }
+
     }
 
     @Override
@@ -94,9 +115,9 @@ public class GuiRegionInfo extends GuiScreen
         buttonList.clear();
         posX = (width - bgWidth) / 2;
         posY = (height - bgHeight) / 2;
-        scrollList = new GuiMemberScrollList(mc, bgWidth, bgHeight, posY, posY + bgHeight, posX, 12, width, height, region);
+        scrollList = new GuiMemberScrollList(mc, bgWidth, bgHeight, posY, posY + bgHeight, posX, 12, width, height, region, this);
         textField = new GuiTextField(0, mc.fontRendererObj, posX, posY + bgHeight + 2, bgWidth - 50, 20);
         buttonList.add(new GuiButton(1, textField.xPosition + textField.width + 2, textField.yPosition, 50, 20, "Add"));
-        popup = new GuiRemoveMemberPopup(mc.fontRendererObj,(width - GuiRemoveMemberPopup.width) / 2,(height - GuiRemoveMemberPopup.height) / 2, "Remove");
+        buttonList.add(new GuiButton(2, textField.xPosition + textField.width + 2, textField.yPosition, 50, 20, "Add"));
     }
 }

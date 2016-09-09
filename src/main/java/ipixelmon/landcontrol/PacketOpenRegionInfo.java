@@ -67,7 +67,7 @@ public class PacketOpenRegionInfo implements IMessage
             {
                 try
                 {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(Region.getRegionAt(message.world, message.pos)));
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(Region.getRegionAt(message.world, message.pos, Side.CLIENT)));
                 } catch (Exception e)
                 {
                     e.printStackTrace();

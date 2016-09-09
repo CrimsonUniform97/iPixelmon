@@ -66,6 +66,11 @@ public final class UUIDManager implements IMod {
     {
         Map<UUID, String> names = new HashMap<>();
 
+        if(uuids.isEmpty())
+        {
+            return names;
+        }
+
         try
         {
             StringBuilder builder = new StringBuilder();
@@ -92,6 +97,11 @@ public final class UUIDManager implements IMod {
     public static final Map<String, UUID> getUUIDs(final List<String> names)
     {
         Map<String, UUID> uuids = new HashMap<>();
+
+        if(names.isEmpty())
+        {
+            return uuids;
+        }
 
         try
         {

@@ -75,8 +75,10 @@ public class PlayerListener
 
             if (region != null)
             {
+                System.out.println("BOOM");
                 if (!region.isMember(event.getPlayer()))
                 {
+                    System.out.println("BOOM");
                     event.setCanceled(true);
                     event.getPlayer().addChatComponentMessage(new ChatComponentText("You are not a member of that region."));
                 }
