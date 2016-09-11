@@ -49,7 +49,7 @@ public class GuiSellPopup extends GuiYesNo
     @Override
     protected void actionPerformed(final GuiButton button) throws IOException
     {
-        if(button.id == 0)
+        if(button.id == 0 && !textField.getText().isEmpty())
         {
             GuiSell guiSell = (GuiSell) parentScreen;
             if(guiSell.scrollList instanceof ListItem)
@@ -69,7 +69,11 @@ public class GuiSellPopup extends GuiYesNo
     @Override
     protected void keyTyped(final char typedChar, final int keyCode) throws IOException
     {
-        textField.textboxKeyTyped(typedChar, keyCode);
+        // TODO: Make sure the price isn't too large.
+        if(("" + typedChar).matches("[0-9]+"))
+        {
+            textField.textboxKeyTyped(typedChar, keyCode);
+        }
 
         if (keyCode == Keyboard.KEY_ESCAPE)
         {

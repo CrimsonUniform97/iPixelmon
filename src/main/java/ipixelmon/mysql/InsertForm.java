@@ -21,7 +21,7 @@ public final class InsertForm {
             value = "1";
         }
 
-        this.valueMap.put(key, strValue);
+        this.valueMap.put(key, "" + value);
         return this;
     }
 

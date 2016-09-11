@@ -62,7 +62,7 @@ public class PacketBuyItem implements IMessage {
 
                 if (message.seller == null) throw new Exception("Seller is null.");
 
-                if(message.price > PixelmonUtility.getServerBalance(player)) throw new Exception("Insufficient PokéDollars.");
+                if(message.price > PixelmonUtility.getServerBalance(player.getUniqueID())) throw new Exception("Insufficient PokéDollars.");
 
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Item")
                         .add("seller", message.seller.toString())
@@ -88,7 +88,8 @@ public class PacketBuyItem implements IMessage {
 
                 // TODO: Give money to buyer. Can use  final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUIDOffline
                 player.inventory.addItemStackToInventory(ItemSerializer.itemFromString(message.itemStack));
-                PixelmonUtility.takeMoney(player, (int) message.price);
+                PixelmonUtility.takeMoney(player.getUniqueID(), message.price);
+                PixelmonUtility.giveMoney(message.seller, message.price);
                 player.addChatComponentMessage(new ChatComponentText(message.price + " PokéDollars deducted from your account."));
                 iPixelmon.mysql.delete(Pixelbay.class, new DeleteForm("Item")
                         .add("seller", message.seller.toString())

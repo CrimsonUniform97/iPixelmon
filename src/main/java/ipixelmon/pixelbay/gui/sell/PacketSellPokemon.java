@@ -1,13 +1,18 @@
 package ipixelmon.pixelbay.gui.sell;
 
+import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PCServer;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.InsertForm;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -15,6 +20,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public final class PacketSellPokemon implements IMessage {
 
@@ -31,14 +38,14 @@ public final class PacketSellPokemon implements IMessage {
 
     @Override
     public final void fromBytes(final ByteBuf buf) {
-        this.pokeData = new PixelmonData();
+        pokeData = new PixelmonData();
         pokeData.decodeInto(buf);
         price = buf.readInt();
     }
 
     @Override
     public final void toBytes(final ByteBuf buf) {
-        pokeData.encodeInto(buf);
+        new PixelmonData(getEntityPokemon()).encodeInto(buf);
         buf.writeInt(price);
     }
 
@@ -55,7 +62,7 @@ public final class PacketSellPokemon implements IMessage {
 
                 final EntityPixelmon pixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pokeData.pokemonID, player.worldObj);
 
-                if (pixelmon == null) throw new Exception("That items is null.");
+                if (pixelmon == null) throw new Exception("That pokemon is null.");
 
                 if (!pixelmon.getOwner().getUniqueID().equals(player.getUniqueID()))
                     throw new Exception("You are not the owner");
@@ -73,6 +80,8 @@ public final class PacketSellPokemon implements IMessage {
 
                 MinecraftServer.getServer().addScheduledTask(() -> {
                     PCServer.deletePokemon(player, -1, message.pokeData.order);
+                    Pixelmon.network.sendTo(new Remove(message.pokeData.pokemonID), player);
+                    iPixelmon.network.sendTo(new PacketSellResponse(message.pokeData), player);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -82,5 +91,18 @@ public final class PacketSellPokemon implements IMessage {
             return null;
         }
 
+    }
+
+    @SideOnly(Side.CLIENT)
+    private EntityPixelmon getEntityPokemon()
+    {
+        EntityPixelmon pokemon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pokeData.name, Minecraft.getMinecraft().theWorld);
+        pokemon.setIsShiny(pokeData.isShiny);
+        pokemon.setForm(pokeData.form);
+        pokemon.getLvl().setLevel(pokeData.lvl);
+        pokemon.caughtBall = EnumPokeballs.PokeBall;
+        pokemon.friendship.initFromCapture();
+        pokemon.setPokemonId(pokeData.pokemonID);
+        return pokemon;
     }
 }

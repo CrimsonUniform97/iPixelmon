@@ -14,7 +14,15 @@ public final class DeleteForm {
         deleteForms = new HashMap<String, String>();
     }
 
-    public final DeleteForm add(final String key, final Object value) {
+    public final DeleteForm add(final String key, Object value) {
+        String strValue = "" + value;
+        if(strValue.equalsIgnoreCase("false")) {
+            value = "0";
+        } else if (strValue.equalsIgnoreCase("true")) {
+            value = "1";
+        }
+
+
         this.deleteForms.put(key, "" + value);
         return this;
     }

@@ -47,7 +47,10 @@ public class GuiSearch extends GuiScreen
             {
                 ListPokemon listPokemon = (ListPokemon) searchList;
                 ListPokemon.PokeListInfo info = listPokemon.entries.get(listPokemon.selectedIndex);
-                iPixelmon.network.sendToServer(new PacketBuyPokemon(info.pixelmonData, info.seller, info.price));
+                if (info != null)
+                {
+                    iPixelmon.network.sendToServer(new PacketBuyPokemon(info.pixelmonData, info.seller, info.price));
+                }
             }
         }
 

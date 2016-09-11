@@ -1,5 +1,6 @@
 package ipixelmon.pixelbay.gui.sell;
 
+import com.pixelmonmod.pixelmon.Pixelmon;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.ItemSerializer;
 import ipixelmon.ItemUtil;
@@ -79,7 +80,7 @@ public final class PacketSellItem implements IMessage {
                 itemForm.add("price", "" + message.price);
 
                 iPixelmon.mysql.insert(Pixelbay.class, itemForm);
-
+                iPixelmon.network.sendTo(new PacketSellResponse(message.itemStack), player);
             } catch(Exception e) {
                 e.printStackTrace();
                 player.addChatComponentMessage(new ChatComponentText(e.getMessage()));

@@ -24,15 +24,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.Color;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public final class PixelmonUtility {
 
     @SideOnly(Side.SERVER)
-    public static final void giveMoney(final EntityPlayerMP player, final int balance) {
+    public static final void giveMoney(final UUID player, final int balance) {
         try {
-            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorage(player);
+            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             targetStorage.addCurrency(Math.abs(balance));
         } catch(Exception e) {
             e.printStackTrace();
@@ -40,9 +41,9 @@ public final class PixelmonUtility {
     }
 
     @SideOnly(Side.SERVER)
-    public static final void takeMoney(final EntityPlayerMP player, final int balance) {
+    public static final void takeMoney(final UUID player, final int balance) {
         try {
-            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorage(player);
+            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             targetStorage.addCurrency(-1 * Math.abs(balance));
         } catch(Exception e) {
             e.printStackTrace();
@@ -50,9 +51,9 @@ public final class PixelmonUtility {
     }
 
     @SideOnly(Side.SERVER)
-    public static final int getServerBalance(final EntityPlayerMP player) {
+    public static final int getServerBalance(final UUID player) {
         try {
-            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorage(player);
+            final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             return targetStorage.getCurrency();
         } catch(Exception e) {
             e.printStackTrace();
