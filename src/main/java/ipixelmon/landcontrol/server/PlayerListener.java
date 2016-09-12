@@ -1,14 +1,10 @@
 package ipixelmon.landcontrol.server;
 
 import ipixelmon.iPixelmon;
-import ipixelmon.landcontrol.LandControl;
 import ipixelmon.landcontrol.PacketOpenRegionInfo;
 import ipixelmon.landcontrol.Region;
-import ipixelmon.landcontrol.client.GuiRegionInfo;
-import ipixelmon.mysql.InsertForm;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -16,13 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class PlayerListener
 {
@@ -30,9 +19,12 @@ public class PlayerListener
     @SubscribeEvent
     public void playerInteraction(PlayerInteractEvent event)
     {
+        // TODO: Add listener for client player. Send packet to player upon joining world that tells them what world they are in.
+        // TODO: Then get region with String world name and position, and cancel it on client side so it's seemless. No block break,
+        // TODO: then reappear. Already made Region.getRegionForClient
         try
         {
-            Region region = Region.getRegionAt(event.world, event.pos);
+            Region region = new Region(event.world, event.pos);
 
             if (region != null)
             {
@@ -71,7 +63,7 @@ public class PlayerListener
     {
         try
         {
-            Region region = Region.getRegionAt(event.world, event.pos);
+            Region region = new Region(event.world, event.pos);
 
             if (region != null)
             {
@@ -93,7 +85,7 @@ public class PlayerListener
     {
         try
         {
-            Region region = Region.getRegionAt(event.world, event.pos);
+            Region region = new Region(event.world, event.pos);
 
             if (region != null)
             {

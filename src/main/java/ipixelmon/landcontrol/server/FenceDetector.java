@@ -2,10 +2,10 @@ package ipixelmon.landcontrol.server;
 
 import ipixelmon.iPixelmon;
 import ipixelmon.landcontrol.LandControl;
+import ipixelmon.landcontrol.Region;
 import ipixelmon.mysql.InsertForm;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class FenceDetector implements Runnable
 {
@@ -122,6 +123,7 @@ public class FenceDetector implements Runnable
         }
 
         InsertForm insertForm = new InsertForm("Regions");
+        insertForm.add("uuid", UUID.randomUUID());
         insertForm.add("owner", player.getUniqueID().toString());
         insertForm.add("members", "");
         insertForm.add("world", world.getWorldInfo().getWorldName());
@@ -131,7 +133,6 @@ public class FenceDetector implements Runnable
         insertForm.add("zMax", maxPos.getZ());
 
         iPixelmon.mysql.insert(LandControl.class, insertForm);
-
         player.addChatComponentMessage(new ChatComponentText("Region created."));
     }
 

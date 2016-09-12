@@ -1,11 +1,9 @@
-package ipixelmon.landcontrol.client;
+package ipixelmon.gyms.server;
 
 import ipixelmon.CommonProxy;
-import net.minecraftforge.common.MinecraftForge;
 
-public class ClientProxy extends CommonProxy
+public class ServerProxy extends CommonProxy
 {
-
     @Override
     public void preInit()
     {

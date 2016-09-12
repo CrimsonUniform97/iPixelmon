@@ -14,7 +14,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ServerProxy extends CommonProxy
 {
@@ -28,6 +27,7 @@ public class ServerProxy extends CommonProxy
     public void init()
     {
         CreateForm regionsForm = new CreateForm("Regions");
+        regionsForm.add("uuid", DataType.TEXT);
         regionsForm.add("owner", DataType.TEXT);
         regionsForm.add("members", DataType.TEXT);
         regionsForm.add("world", DataType.TEXT);
@@ -36,26 +36,6 @@ public class ServerProxy extends CommonProxy
         regionsForm.add("zMin", DataType.INT);
         regionsForm.add("zMax", DataType.INT);
         iPixelmon.mysql.createTable(LandControl.class, regionsForm);
-
-
-        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
-
-        try
-        {
-            World world;
-
-            while (result.next())
-            {
-                world = getWorld(result.getString("world"));
-                if(world != null)
-                {
-                    Region.getRegionAt(world, new BlockPos(result.getInt("xMin"), 50, result.getInt("zMin")));
-                }
-            }
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
 
         MinecraftForge.EVENT_BUS.register(new PlayerListener());
     }

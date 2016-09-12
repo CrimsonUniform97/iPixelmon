@@ -1,11 +1,10 @@
 package ipixelmon.landcontrol;
 
 import io.netty.buffer.ByteBuf;
-import ipixelmon.iPixelmon;
 import ipixelmon.landcontrol.client.GuiRegionInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,11 +12,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.UUID;
+
 public class PacketOpenRegionInfo implements IMessage
 {
 
-    private String world;
-    private BlockPos pos;
+    private UUID regionID;
 
     public PacketOpenRegionInfo()
     {
@@ -25,25 +25,19 @@ public class PacketOpenRegionInfo implements IMessage
 
     public PacketOpenRegionInfo(Region region)
     {
-        world = region.getWorld();
-        pos = region.getMin();
+        this.regionID = region.getUUID();
     }
 
     @Override
     public void fromBytes(final ByteBuf buf)
     {
-        world = ByteBufUtils.readUTF8String(buf);
-        int x = buf.readInt();
-        int z = buf.readInt();
-        pos = new BlockPos(x, 50, z);
+        regionID = UUID.fromString(ByteBufUtils.readUTF8String(buf));
     }
 
     @Override
     public void toBytes(final ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, world);
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getZ());
+        ByteBufUtils.writeUTF8String(buf, regionID.toString());
     }
 
     public static class Handler implements IMessageHandler<PacketOpenRegionInfo, IMessage>
@@ -67,9 +61,11 @@ public class PacketOpenRegionInfo implements IMessage
             {
                 try
                 {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(Region.getRegionAt(message.world, message.pos, Side.CLIENT)));
+                    Region region = new Region(message.regionID);
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(region));
                 } catch (Exception e)
                 {
+                    Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));
                     e.printStackTrace();
                 }
             }

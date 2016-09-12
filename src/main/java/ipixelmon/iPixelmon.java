@@ -1,5 +1,6 @@
 package ipixelmon;
 
+import ipixelmon.gyms.Gyms;
 import ipixelmon.landcontrol.LandControl;
 import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.MySQLHandler;
@@ -17,9 +18,6 @@ import java.util.List;
 
 @Mod(modid = iPixelmon.id, name = iPixelmon.name, version = iPixelmon.version)
 public final class iPixelmon {
-
-    // TODO: Next mod. Players make their own badges/gyms
-
 
     public static final String id = "ipixelmon", name = "iPixelmon", version = "dev";
 
@@ -42,6 +40,7 @@ public final class iPixelmon {
         mods.add(new UUIDManager());
         mods.add(new Pixelbay());
         mods.add(new LandControl());
+        mods.add(new Gyms());
     }
 
     @Mod.EventHandler

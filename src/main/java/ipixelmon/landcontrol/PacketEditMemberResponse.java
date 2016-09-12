@@ -13,11 +13,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.UUID;
+
 public class PacketEditMemberResponse implements IMessage
 {
 
     private String player;
-    private Region region;
     private boolean addMember;
     private boolean successful;
     private String message;
@@ -26,10 +27,9 @@ public class PacketEditMemberResponse implements IMessage
     {
     }
 
-    public PacketEditMemberResponse(String player, Region region, boolean addMember, boolean successful, String message)
+    public PacketEditMemberResponse(String player, boolean addMember, boolean successful, String message)
     {
         this.player = player;
-        this.region = region;
         this.addMember = addMember;
         this.successful = successful;
         this.message = message;
@@ -39,17 +39,6 @@ public class PacketEditMemberResponse implements IMessage
     public void fromBytes(final ByteBuf buf)
     {
         player = ByteBufUtils.readUTF8String(buf);
-        String world = ByteBufUtils.readUTF8String(buf);
-        int x = buf.readInt();
-        int z = buf.readInt();
-
-        try
-        {
-            region = Region.getRegionAt(world, new BlockPos(x, 50, z), Side.SERVER);
-        } catch (Exception e)
-        {
-        }
-
         addMember = buf.readBoolean();
         successful = buf.readBoolean();
         message = ByteBufUtils.readUTF8String(buf);
@@ -59,9 +48,6 @@ public class PacketEditMemberResponse implements IMessage
     public void toBytes(final ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, player);
-        ByteBufUtils.writeUTF8String(buf, region.getWorld());
-        buf.writeInt(region.getMin().getX());
-        buf.writeInt(region.getMin().getZ());
         buf.writeBoolean(addMember);
         buf.writeBoolean(successful);
         ByteBufUtils.writeUTF8String(buf, message);
@@ -73,13 +59,7 @@ public class PacketEditMemberResponse implements IMessage
         @Override
         public IMessage onMessage(final PacketEditMemberResponse message, final MessageContext ctx)
         {
-            if (message.region == null)
-            {
-                return null;
-            }
-
             updateScreen(message);
-
             return null;
         }
     }

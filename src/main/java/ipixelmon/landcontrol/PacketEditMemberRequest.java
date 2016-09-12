@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import ipixelmon.iPixelmon;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class PacketEditMemberRequest implements IMessage
 {
     private String player;
-    private Region region;
+    private UUID regionID;
     private boolean addMember;
 
     public PacketEditMemberRequest()
@@ -25,7 +24,7 @@ public class PacketEditMemberRequest implements IMessage
     public PacketEditMemberRequest(String player, Region region, boolean addMember)
     {
         this.player = player;
-        this.region = region;
+        this.regionID = region.getUUID();
         this.addMember = addMember;
     }
 
@@ -33,17 +32,7 @@ public class PacketEditMemberRequest implements IMessage
     public void fromBytes(final ByteBuf buf)
     {
         player = ByteBufUtils.readUTF8String(buf);
-        String world = ByteBufUtils.readUTF8String(buf);
-        int x = buf.readInt();
-        int z = buf.readInt();
-
-        try
-        {
-            region = Region.getRegionAt(world, new BlockPos(x, 50, z), Side.SERVER);
-        } catch (Exception e)
-        {
-        }
-
+        regionID = UUID.fromString(ByteBufUtils.readUTF8String(buf));
         addMember = buf.readBoolean();
     }
 
@@ -51,9 +40,7 @@ public class PacketEditMemberRequest implements IMessage
     public void toBytes(final ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, player);
-        ByteBufUtils.writeUTF8String(buf, region.getWorld());
-        buf.writeInt(region.getMin().getX());
-        buf.writeInt(region.getMin().getZ());
+        ByteBufUtils.writeUTF8String(buf, regionID.toString());
         buf.writeBoolean(addMember);
     }
 
@@ -70,12 +57,9 @@ public class PacketEditMemberRequest implements IMessage
 
             try
             {
-                if (message.region == null)
-                {
-                    throw new Exception("Region could not be found.");
-                }
+                Region region = new Region(message.regionID);
 
-                if (!message.region.getOwner().equals(ctx.getServerHandler().playerEntity.getUniqueID()))
+                if (!region.getOwner().equals(ctx.getServerHandler().playerEntity.getUniqueID()))
                 {
                     throw new Exception("You are not the owner.");
                 }
@@ -87,23 +71,23 @@ public class PacketEditMemberRequest implements IMessage
                     throw new Exception("Could not find player.");
                 }
 
-                if (playerUUID.equals(message.region.getOwner()))
+                if (playerUUID.equals(region.getOwner()))
                 {
                     throw new Exception("Can not add/remove owner.");
                 }
 
                 if (message.addMember)
                 {
-                    message.region.addMember(playerUUID);
+                    region.addMember(playerUUID);
                 } else
                 {
-                    message.region.removeMember(playerUUID);
+                    region.removeMember(playerUUID);
                 }
 
-                iPixelmon.network.sendTo(new PacketEditMemberResponse(UUIDManager.getPlayerName(playerUUID), message.region, message.addMember, true, message.addMember ? "Member added." : "Member removed."), ctx.getServerHandler().playerEntity);
+                iPixelmon.network.sendTo(new PacketEditMemberResponse(UUIDManager.getPlayerName(playerUUID), message.addMember, true, message.addMember ? "Member added." : "Member removed."), ctx.getServerHandler().playerEntity);
             } catch (Exception e)
             {
-                iPixelmon.network.sendTo(new PacketEditMemberResponse(message.player, message.region, message.addMember, false, e.getMessage()), ctx.getServerHandler().playerEntity);
+                iPixelmon.network.sendTo(new PacketEditMemberResponse(message.player, message.addMember, false, e.getMessage()), ctx.getServerHandler().playerEntity);
             }
             return null;
         }

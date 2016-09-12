@@ -1,6 +1,5 @@
 package ipixelmon.pixelbay.gui.sell;
 
-import com.pixelmonmod.pixelmon.Pixelmon;
 import io.netty.buffer.ByteBuf;
 import ipixelmon.ItemSerializer;
 import ipixelmon.ItemUtil;

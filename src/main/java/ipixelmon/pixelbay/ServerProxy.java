@@ -1,17 +1,10 @@
 package ipixelmon.pixelbay;
 
 import ipixelmon.CommonProxy;
-import ipixelmon.ItemSerializer;
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.CreateForm;
 import ipixelmon.mysql.DataType;
-import ipixelmon.mysql.InsertForm;
-import ipixelmon.uuidmanager.UUIDManager;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.util.Iterator;
 
 public final class ServerProxy extends CommonProxy {
     @Override
