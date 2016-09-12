@@ -5,6 +5,7 @@ import ipixelmon.iPixelmon;
 import ipixelmon.mysql.CreateForm;
 import ipixelmon.mysql.DataType;
 import ipixelmon.mysql.UpdateForm;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public final class ServerProxy extends CommonProxy {
 
     @Override
     public final void init() {
-        FMLCommonHandler.instance().bus().register(new PlayerListener());
+        MinecraftForge.EVENT_BUS.register(new PlayerListener());
 
         final CreateForm playersForm = new CreateForm("Players");
         playersForm.add("uuid", DataType.TEXT);

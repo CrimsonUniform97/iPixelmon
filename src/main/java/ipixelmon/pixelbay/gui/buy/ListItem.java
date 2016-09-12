@@ -19,6 +19,7 @@ import org.lwjgl.util.Rectangle;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,11 +32,13 @@ public class ListItem extends ISearchList
     public List<ItemListInfo> entries = new ArrayList<>();
     private int mysqlRow = 0, mysqlSearchLimit = 100;
     private GuiSearch parentScreen;
+    private DecimalFormat formatter;
 
     public ListItem(Minecraft client, int width, int height, int top, int bottom, int left, GuiSearch parentScreen)
     {
         super(client, width, height, top, bottom, left, 30, parentScreen.width, parentScreen.height);
         this.parentScreen = parentScreen;
+        this.formatter = new DecimalFormat("#,###");
     }
 
     @Override
@@ -89,7 +92,7 @@ public class ListItem extends ISearchList
                 this.client.getRenderItem().renderItemOverlayIntoGUI(this.client.fontRendererObj, entryInfo.itemStack, left + 2, slotTop + 4, "" + entryInfo.itemStack.stackSize);
                 RenderHelper.disableStandardItemLighting();
                 this.client.fontRendererObj.drawString("Seller: " + entryInfo.sellerName, left + 22, slotTop + 4, 0xFFFFFF);
-                this.client.fontRendererObj.drawString("Price:   " + entryInfo.price, left + 22, slotTop + 14, 0xFFFFFF);
+                this.client.fontRendererObj.drawString("Price:   " + formatter.format(entryInfo.price), left + 22, slotTop + 14, 0xFFFFFF);
                 PixelmonUtility.drawPokeDollar(client, left + 25 + client.fontRendererObj.getStringWidth("Price:"), slotTop + 13, 6, 9, 0xFFFFFF);
             }
         }
