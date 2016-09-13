@@ -8,6 +8,7 @@ import ipixelmon.pixelbay.gui.buy.PacketBuyPokemon;
 import ipixelmon.pixelbay.gui.sell.PacketSellItem;
 import ipixelmon.pixelbay.gui.sell.PacketSellPokemon;
 import ipixelmon.pixelbay.gui.sell.PacketSellResponse;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -30,6 +31,12 @@ public final class Pixelbay implements IMod {
         iPixelmon.registerPacket(PacketBuyItem.Handler.class, PacketBuyItem.class, Side.SERVER);
         iPixelmon.registerPacket(PacketBuyPokemon.Handler.class, PacketBuyPokemon.class, Side.SERVER);
         iPixelmon.registerPacket(PacketSellResponse.Handler.class, PacketSellResponse.class, Side.CLIENT);
+    }
+
+    @Override
+    public void serverStartingEvent(FMLServerStartingEvent event)
+    {
+
     }
 
     @Override

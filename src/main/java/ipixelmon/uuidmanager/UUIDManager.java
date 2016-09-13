@@ -4,6 +4,7 @@ import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.SelectionForm;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import java.sql.ResultSet;
@@ -24,6 +25,12 @@ public final class UUIDManager implements IMod {
 
     @Override
     public final void init() {
+
+    }
+
+    @Override
+    public void serverStartingEvent(FMLServerStartingEvent event)
+    {
 
     }
 

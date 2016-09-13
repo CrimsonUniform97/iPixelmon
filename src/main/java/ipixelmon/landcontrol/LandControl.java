@@ -3,6 +3,7 @@ package ipixelmon.landcontrol;
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -30,6 +31,12 @@ public class LandControl implements IMod
         iPixelmon.registerPacket(PacketOpenRegionInfo.Handler.class, PacketOpenRegionInfo.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketEditMemberRequest.Handler.class, PacketEditMemberRequest.class, Side.SERVER);
         iPixelmon.registerPacket(PacketEditMemberResponse.Handler.class, PacketEditMemberResponse.class, Side.CLIENT);
+    }
+
+    @Override
+    public void serverStartingEvent(FMLServerStartingEvent event)
+    {
+
     }
 
     @Override

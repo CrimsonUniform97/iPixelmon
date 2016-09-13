@@ -29,7 +29,7 @@ public class PlayerListener
             return;
         }
 
-        if (event.action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)
+        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
             return;
         }
@@ -43,6 +43,8 @@ public class PlayerListener
         {
             exception = e;
         }
+
+        System.out.println("HA");
 
         if (event.entityPlayer.getHeldItem() != null)
         {
@@ -91,15 +93,12 @@ public class PlayerListener
             region = new Region(event.world, event.pos);
         } catch (Exception e)
         {
-            e.printStackTrace();
         }
 
         if (region != null)
         {
-            System.out.println("BOOM");
             if (!region.isMember(event.getPlayer()))
             {
-                System.out.println("BOOM");
                 event.setCanceled(true);
                 event.getPlayer().addChatComponentMessage(new ChatComponentText("You are not a member of that region."));
             }
@@ -117,7 +116,6 @@ public class PlayerListener
             region = new Region(event.world, event.pos);
         } catch (Exception e)
         {
-            e.printStackTrace();
         }
 
         if (region != null)

@@ -5,6 +5,7 @@ import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.SelectionForm;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import java.sql.ResultSet;
@@ -26,6 +27,12 @@ public class Teams implements IMod
 
     @Override
     public void init()
+    {
+
+    }
+
+    @Override
+    public void serverStartingEvent(FMLServerStartingEvent event)
     {
 
     }

@@ -1,5 +1,6 @@
 package ipixelmon;
 
+import ipixelmon.eggincubator.EggIncubator;
 import ipixelmon.gyms.Gyms;
 import ipixelmon.landcontrol.LandControl;
 import ipixelmon.pixelbay.Pixelbay;
@@ -10,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,6 +45,7 @@ public final class iPixelmon {
         mods.add(new LandControl());
         mods.add(new Gyms());
         mods.add(new Teams());
+        mods.add(new EggIncubator());
     }
 
     @Mod.EventHandler
@@ -64,6 +67,12 @@ public final class iPixelmon {
         for(IMod mod : mods) mod.init();
 
         proxy.init();
+    }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event)
+    {
+        for(IMod mod : mods) mod.serverStartingEvent(event);
     }
 
     public static final void registerPacket(final Class handlerClass, final Class messageClass, final Side side) {

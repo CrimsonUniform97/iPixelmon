@@ -1,46 +1,50 @@
-package ipixelmon.gyms;
+package ipixelmon.eggincubator;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
-import ipixelmon.gyms.server.CommandGym;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
-public class Gyms implements IMod
+public class EggIncubator implements IMod
 {
+
+    public static ItemPokeEgg itemPokeEgg;
+
     @Override
     public String getID()
     {
-        return "gyms";
+        return "eggincubator";
     }
 
     @Override
     public void preInit()
     {
+
     }
 
     @Override
     public void init()
     {
-
+        GameRegistry.registerItem(itemPokeEgg = new ItemPokeEgg(), "pokeEgg");
     }
 
     @Override
     public void serverStartingEvent(FMLServerStartingEvent event)
     {
-        event.registerServerCommand(new CommandGym());
+
     }
 
     @Override
     public Class<? extends CommonProxy> clientProxyClass()
     {
-        return ipixelmon.gyms.client.ClientProxy.class;
+        return null;
     }
 
     @Override
     public Class<? extends CommonProxy> serverProxyClass()
     {
-        return ipixelmon.gyms.server.ServerProxy.class;
+        return ipixelmon.eggincubator.ServerProxy.class;
     }
 
     @Override
