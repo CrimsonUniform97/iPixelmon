@@ -22,55 +22,32 @@ public class Region
     private List<UUID> members;
     private World world;
     private BlockPos min, max;
+    private String worldName;
 
     @SideOnly(Side.SERVER)
     public Region(World parWorld, BlockPos pos) throws Exception
     {
         world = parWorld;
-        members = new ArrayList<>();
-
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world + "' " +
+        initRegion(iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world.getWorldInfo().getWorldName() + "' " +
                 "AND xMin <= '" + pos.getX() + "' AND xMax >= '" + pos.getX() + "' " +
-                "AND zMin <= '" + pos.getZ() + "' AND zMax >= '" + pos.getZ() + "';");
-
-        if (result.next())
-        {
-            uuid = UUID.fromString(result.getString("uuid"));
-            owner = UUID.fromString(result.getString("owner"));
-            min = new BlockPos(result.getInt("xMin"), 0, result.getInt("zMin"));
-            max = new BlockPos(result.getInt("xMax"), 50, result.getInt("zMax"));
-
-            String membersStr = result.getString("members");
-
-            if (membersStr != null && !membersStr.isEmpty())
-            {
-                if (!membersStr.contains(","))
-                {
-                    members.add(UUID.fromString(membersStr));
-                } else
-                {
-                    for (String s : membersStr.split(","))
-                    {
-                        members.add(UUID.fromString(s));
-                    }
-                }
-            }
-        } else
-        {
-            throw new Exception("There is no region there.");
-        }
+                "AND zMin <= '" + pos.getZ() + "' AND zMax >= '" + pos.getZ() + "';"));
     }
 
     public Region(UUID uuid) throws Exception
     {
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';");
+        initRegion(iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';"));
+    }
 
+    private void initRegion(ResultSet result) throws Exception
+    {
         if (result.next())
         {
-            this.uuid = uuid;
+            members = new ArrayList<>();
+            uuid = UUID.fromString(result.getString("uuid"));
             owner = UUID.fromString(result.getString("owner"));
             min = new BlockPos(result.getInt("xMin"), 0, result.getInt("zMin"));
             max = new BlockPos(result.getInt("xMax"), 50, result.getInt("zMax"));
+            worldName = result.getString("world");
 
             String membersStr = result.getString("members");
 
@@ -137,32 +114,14 @@ public class Region
     }
 
     @SideOnly(Side.SERVER)
-    public World getWorld()
+    public World getWorldServer()
     {
         return world;
     }
 
-    public String getWorldName()
+    public String getWorldClient()
     {
-        if (world != null)
-        {
-            return world.getWorldInfo().getWorldName();
-        }
-
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';");
-
-        try
-        {
-            if (result.next())
-            {
-                return result.getString("world");
-            }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
+        return worldName;
     }
 
     public UUID getUUID()

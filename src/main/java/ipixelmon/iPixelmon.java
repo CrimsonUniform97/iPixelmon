@@ -4,6 +4,7 @@ import ipixelmon.gyms.Gyms;
 import ipixelmon.landcontrol.LandControl;
 import ipixelmon.pixelbay.Pixelbay;
 import ipixelmon.mysql.MySQLHandler;
+import ipixelmon.teams.Teams;
 import ipixelmon.uuidmanager.UUIDManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -41,6 +42,7 @@ public final class iPixelmon {
         mods.add(new Pixelbay());
         mods.add(new LandControl());
         mods.add(new Gyms());
+        mods.add(new Teams());
     }
 
     @Mod.EventHandler

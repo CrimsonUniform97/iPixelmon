@@ -25,7 +25,7 @@ public class GuiMemberScrollList extends GuiScrollingList
         region = parRegion;
         playerNames = new ArrayList<>();
         playerNames.add(UUIDManager.getPlayerName(region.getOwner()));
-        playerNames.addAll(UUIDManager.getNames(parRegion.getMembers()).values());
+        playerNames.addAll(UUIDManager.getNames(region.getMembers()).values());
         parentScreen = parent;
     }
 

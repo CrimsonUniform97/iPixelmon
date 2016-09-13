@@ -59,15 +59,19 @@ public class PacketOpenRegionInfo implements IMessage
             @Override
             public void run()
             {
+
+                Region region = null;
                 try
                 {
-                    Region region = new Region(message.regionID);
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(region));
+                    region = new Region(message.regionID);
                 } catch (Exception e)
                 {
                     Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));
-                    e.printStackTrace();
+                    return;
                 }
+
+                Minecraft.getMinecraft().displayGuiScreen(new GuiRegionInfo(region));
+
             }
         });
     }
