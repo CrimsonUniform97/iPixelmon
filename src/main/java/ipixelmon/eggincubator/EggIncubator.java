@@ -9,8 +9,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class EggIncubator implements IMod
 {
 
-    public static ItemPokeEgg itemPokeEgg;
-
+    // TODO: Egg renders, atleast that works. Now isolate the issue and get obj's working.
     @Override
     public String getID()
     {
@@ -21,12 +20,12 @@ public class EggIncubator implements IMod
     public void preInit()
     {
 
+        GameRegistry.registerBlock(EggBlock.instance, EggBlock.name);
     }
 
     @Override
     public void init()
     {
-        GameRegistry.registerItem(itemPokeEgg = new ItemPokeEgg(), "pokeEgg");
     }
 
     @Override
@@ -38,7 +37,7 @@ public class EggIncubator implements IMod
     @Override
     public Class<? extends CommonProxy> clientProxyClass()
     {
-        return null;
+        return ipixelmon.eggincubator.ClientProxy.class;
     }
 
     @Override
