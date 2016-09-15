@@ -7,6 +7,23 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}]
+    "inventory": [{
+      "transform": {
+        "firstperson": {
+          "translation": [0.1, 0, -0.3],
+          "rotation": [ { "y": 130}, {"x": 0}, {"z": 0} ],
+          "scale": 0.2
+        },
+        "thirdperson": {
+          "translation": [0.02, 0.05, -0.05],
+          "rotation": [ { "y": 0}, {"x": -92}, {"z": 0} ],
+          "scale": 0.07
+        },
+        "gui": {
+          "translation": [0, -0.1, 0],
+          "scale": 0.16
+        }
+      }
+    }]
   }
 }
