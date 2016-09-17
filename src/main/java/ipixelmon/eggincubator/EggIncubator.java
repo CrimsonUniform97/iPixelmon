@@ -2,6 +2,9 @@ package ipixelmon.eggincubator;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
+import ipixelmon.eggincubator.client.ClientProxy;
+import ipixelmon.eggincubator.egg.EggBlock;
+import ipixelmon.eggincubator.egg.EggItemBlock;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -9,7 +12,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class EggIncubator implements IMod
 {
 
-    // TODO: Egg renders, atleast that works. Now isolate the issue and get obj's working.
     @Override
     public String getID()
     {
@@ -19,8 +21,7 @@ public class EggIncubator implements IMod
     @Override
     public void preInit()
     {
-
-        GameRegistry.registerBlock(EggBlock.instance, EggBlock.name);
+        GameRegistry.registerBlock(EggBlock.instance, EggItemBlock.class, EggBlock.name);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class EggIncubator implements IMod
     @Override
     public Class<? extends CommonProxy> clientProxyClass()
     {
-        return ipixelmon.eggincubator.ClientProxy.class;
+        return ipixelmon.eggincubator.client.ClientProxy.class;
     }
 
     @Override

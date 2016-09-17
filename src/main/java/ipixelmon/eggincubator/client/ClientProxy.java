@@ -1,16 +1,13 @@
-package ipixelmon.eggincubator;
+package ipixelmon.eggincubator.client;
 
 import ipixelmon.CommonProxy;
+import ipixelmon.eggincubator.egg.EggBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
@@ -23,6 +20,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void init()
     {
+        MinecraftForge.EVENT_BUS.register(new TestListener());
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.getItemModelMesher().register(Item.getItemFromBlock(EggBlock.instance), 0, new ModelResourceLocation("ipixelmon:egg", "inventory"));
     }
