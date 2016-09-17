@@ -60,7 +60,7 @@ public class GuiPokemonEggReward extends GuiScreen
         GlStateManager.translate(width / 2,height / 2, z);
         Minecraft.getMinecraft().fontRendererObj.drawString("|", 0, 0, 0xFFFFFF);
 
-        // TODO: Rotating works! Now lets work on the gui and then give the player a pokemon after walking and send the packets etc.
+        // TODO: Rotating works! Now lets work on the gui and then give the player a pokemon after walking and send the packets etc.s
 
         // scale
         GlStateManager.scale(scale, scale, scale);
