@@ -2,9 +2,7 @@ package ipixelmon.eggincubator;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
-import ipixelmon.eggincubator.client.ClientProxy;
-import ipixelmon.eggincubator.egg.EggBlock;
-import ipixelmon.eggincubator.egg.EggItemBlock;
+import ipixelmon.eggincubator.egg.EggItem;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -21,7 +19,7 @@ public class EggIncubator implements IMod
     @Override
     public void preInit()
     {
-        GameRegistry.registerBlock(EggBlock.instance, EggItemBlock.class, EggBlock.name);
+        GameRegistry.registerItem(EggItem.instance);
     }
 
     @Override

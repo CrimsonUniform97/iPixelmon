@@ -6,7 +6,7 @@
       "flip-v": true
     },
     "textures": {
-      "#Material.001": "ipixelmon:blocks/egg"
+      "#Material.001": "ipixelmon:blocks/egg_crack1"
     },
     "model": "ipixelmon:egg.obj"
   },

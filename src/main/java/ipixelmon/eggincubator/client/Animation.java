@@ -1,8 +1,6 @@
 package ipixelmon.eggincubator.client;
 
 import com.pixelmonmod.pixelmon.client.models.animations.EnumRotation;
-import javafx.scene.transform.Translate;
-import net.minecraft.util.Rotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +9,19 @@ public class Animation
 {
 
     private List<Object> actions;
-    private long startTime, waitTime;
     private float rotX, rotY, rotZ, posX, posY, posZ, scalar;
+    private float startX, startY, startZ;
+    private int stage = 0;
 
-    private Animation()
+    public Animation(float startX, float startY, float startZ)
     {
         actions = new ArrayList();
-    }
-
-    public static Animation newInstance()
-    {
-        return new Animation();
+        this.startX = startX;
+        this.startY = startY;
+        this.startZ = startZ;
+        this.posX = startX;
+        this.posY = startY;
+        this.posZ = startZ;
     }
 
     public Animation rotate(float rotX, float rotY, float rotZ)
@@ -42,9 +42,9 @@ public class Animation
         return this;
     }
 
-    public Animation translateTo(EnumRotation axis, float position, float increment)
+    public Animation translateTo(float x, float y, float increment)
     {
-        actions.add(new ComplexTranslation(axis, position, increment));
+        actions.add(new ComplexTranslation(x, y, increment));
         return this;
     }
 
@@ -73,6 +73,8 @@ public class Animation
             return;
         }
 
+        int actionsSize = actions.size();
+
         Object currentAnimation = actions.get(0);
 
         if (currentAnimation instanceof SimpleRotation)
@@ -80,6 +82,7 @@ public class Animation
             SimpleRotation simpleRotation = (SimpleRotation) currentAnimation;
             simpleRotation.execute();
             actions.remove(0);
+            stage++;
         } else if (currentAnimation instanceof ComplexRotation)
         {
             ComplexRotation complexRotation = (ComplexRotation) currentAnimation;
@@ -88,34 +91,39 @@ public class Animation
             if (complexRotation.done)
             {
                 actions.remove(0);
+                stage++;
             }
         } else if (currentAnimation instanceof SimpleTranslation)
         {
             SimpleTranslation simpleTranslation = (SimpleTranslation) currentAnimation;
             simpleTranslation.execute();
             actions.remove(0);
+            stage++;
         } else if (currentAnimation instanceof ComplexTranslation)
         {
             ComplexTranslation complexTranslation = (ComplexTranslation) currentAnimation;
             complexTranslation.execute();
 
-            if(complexTranslation.done)
+            if (complexTranslation.done)
             {
                 actions.remove(0);
+                stage++;
             }
         } else if (currentAnimation instanceof SimpleScalar)
         {
             SimpleScalar simpleScalar = (SimpleScalar) currentAnimation;
             simpleScalar.execute();
             actions.remove(0);
+            stage++;
         } else if (currentAnimation instanceof ComplexScalar)
         {
             ComplexScalar complexScalar = (ComplexScalar) currentAnimation;
             complexScalar.execute();
 
-            if(complexScalar.done)
+            if (complexScalar.done)
             {
                 actions.remove(0);
+                stage++;
             }
         } else if (currentAnimation instanceof Wait)
         {
@@ -124,6 +132,7 @@ public class Animation
             if (wait.done)
             {
                 actions.remove(0);
+                stage++;
             }
         }
 
@@ -197,6 +206,26 @@ public class Animation
     private void setScalar(final float scalar)
     {
         this.scalar = scalar;
+    }
+
+    public float getStartX()
+    {
+        return startX;
+    }
+
+    public float getStartY()
+    {
+        return startY;
+    }
+
+    public float getStartZ()
+    {
+        return startZ;
+    }
+
+    public int getStage()
+    {
+        return stage;
     }
 
     private class SimpleRotation
@@ -300,58 +329,58 @@ public class Animation
 
     private class ComplexTranslation
     {
-        private EnumRotation axis;
-        private float position, increment;
+        private float x, y, increment;
         private boolean done = false;
-        private boolean isLess = false;
+        private boolean isLessX = false, isLessY = false;
         private boolean started = false;
+        private double angle;
 
-        public ComplexTranslation(EnumRotation axis, float position, float increment)
+        public ComplexTranslation(float x, float y, float increment)
         {
-            this.axis = axis;
-            this.position = position;
+            this.x = x;
+            this.y = y;
             this.increment = increment;
         }
 
         public void execute()
         {
-            float rotation = axis == EnumRotation.x ? posX() : axis == EnumRotation.y ? posY() : posZ();
             if (!started)
             {
-                isLess = rotation < position;
                 started = true;
-            }
+                angle = Math.atan2(Math.abs(y - posY()), Math.abs(x - posX()));
 
-            if (isLess && rotation < position)
-            {
-                if (axis == EnumRotation.x)
+                if (x < posX())
                 {
-                    setPosX(rotation + increment > position ? position : rotation + increment);
-                } else if (axis == EnumRotation.y)
-                {
-                    setPosY(rotation + increment > position ? position : rotation + increment);
-                } else
-                {
-                    setPosZ(rotation + increment > position ? position : rotation + increment);
+                    isLessX = true;
                 }
 
-            }
-
-            if (!isLess && rotation > position)
-            {
-                if (axis == EnumRotation.x)
+                if (y < posY())
                 {
-                    setPosX(rotation - increment < position ? position : rotation - increment);
-                } else if (axis == EnumRotation.y)
-                {
-                    setPosY(rotation - increment < position ? position : rotation - increment);
-                } else
-                {
-                    setPosZ(rotation - increment < position ? position : rotation - increment);
+                    isLessY = true;
                 }
             }
 
-            if (rotation == position)
+            if (isLessX)
+            {
+                float x = (float) (posX() - Math.cos(angle) * increment);
+                setPosX(x < this.x ? this.x : x);
+            } else
+            {
+                float x = (float) (posX() + Math.cos(angle) * increment);
+                setPosX(x > this.x ? this.x : x);
+            }
+
+            if (isLessY)
+            {
+                float y = (float) (posY() - Math.sin(angle) * increment);
+                setPosY(y < this.y ? this.y : y);
+            } else
+            {
+                float y = (float) (posY() + Math.sin(angle) * increment);
+                setPosY(y > this.y ? this.y : y);
+            }
+
+            if (posY() == y && posX() == x)
             {
                 done = true;
             }
