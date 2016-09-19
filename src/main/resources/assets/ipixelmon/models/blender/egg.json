@@ -1,0 +1,98 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "custom": {
+      "flip-v": true
+    },
+    "textures": {
+      "#Material.001": "ipixelmon:blocks/egg"
+    },
+    "model": "ipixelmon:egg.obj"
+  },
+  "variants": {
+    "eggstage": {
+      0: {
+        "textures": {
+          "#Material.001": "ipixelmon:blocks/egg"
+        }
+      },
+      1: {
+        "textures": {
+          "#Material.001": "ipixelmon:blocks/egg_crack1"
+        }
+      },
+      2: {
+        "textures": {
+          "#Material.001": "ipixelmon:blocks/egg_crack2"
+        }
+      }
+    },
+    "normal": [
+      {}
+    ],
+    "inventory": [
+      {
+        "transform": {
+          "firstperson": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1
+          },
+          "thirdperson": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1
+          },
+          "gui": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1.5
+          }
+        }
+      }
+    ]
+  }
+}
