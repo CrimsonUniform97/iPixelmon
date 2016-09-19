@@ -11,10 +11,10 @@ import ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 
 import java.util.ArrayList;
@@ -25,14 +25,16 @@ public class GuiPokemonEggReward extends GuiScreen
 {
 
     private static final ResourceLocation lens_flares = new ResourceLocation(iPixelmon.id, "textures/gui/lens_flares.png");
+    private static final ResourceLocation super_flare = new ResourceLocation(iPixelmon.id, "textures/gui/super_flare.png");
     private static final Rectangle orb = new Rectangle(0, 0, 94, 82);
     private static final Rectangle underGlow = new Rectangle(0, 128, 256, 128);
     private static final Rectangle shadow = new Rectangle(116, 0, 140, 54);
     private static final float eggScale = 7f;
 
     EntityPixelmon pixelmon;
-    private Animation eggAnimation;
+    private Animation eggAnimation, superFlareAnimation;
     private ItemStack toRender;
+    private float brightness = 255f;
 
     private List<Animation> orbs = new ArrayList<>();
 
@@ -46,35 +48,91 @@ public class GuiPokemonEggReward extends GuiScreen
 
         int centerX = (this.width - 16) / 2;
         int centerY = (this.height - 16) / 2;
-        eggAnimation = new Animation(centerX - 3, centerY + 5, 100f).scale(7f).rotate(20f, 0f, 0f)
+        eggAnimation = new Animation(centerX - 3, centerY + 5, 0f).scale(7f).rotate(20f, 0f, 0f)
                 .rotateTo(EnumRotation.x, -40f, 3.2f).rotateTo(EnumRotation.x,20f, 3.0f).wait(500)
                 .rotateTo(EnumRotation.z, -40f, 3.2f).rotateTo(EnumRotation.z, 0f, 2.0f).wait(200)
                 .rotateTo(EnumRotation.z, 40f, 3.2f).rotateTo(EnumRotation.z, 0f, 2.5f).wait(100)
                 .translateTo(centerX, centerY - 80f, 1.2f)
                 .scaleTo(0.5f, 0.4f);
+        superFlareAnimation = new Animation((this.width - 256) /2, 50 + (this.height - 256) / 2, 0f).scaleTo(1.3f, 0.3f);
 
         addOrbs();
     }
-    // TODO: add flash at the beginning
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
     {
         super.drawScreen(mouseX, mouseY, partialTicks);
+
         drawBackground();
 
-        mc.getTextureManager().bindTexture(lens_flares);
-        this.drawTexturedModalRect((this.width - underGlow.getWidth()) / 2, this.height - underGlow.getHeight(), underGlow.getX(), underGlow.getY(), underGlow.getWidth(), underGlow.getHeight());
+            mc.getTextureManager().bindTexture(lens_flares);
+            this.drawTexturedModalRect((this.width - underGlow.getWidth()) / 2, this.height - underGlow.getHeight(), underGlow.getX(), underGlow.getY(), underGlow.getWidth(), underGlow.getHeight());
 
         GuiPokedex.drawEntityToScreen(100, 50, 51, 55, pixelmon, partialTicks, true);
         drawEgg();
 
-        mc.getTextureManager().bindTexture(lens_flares);
-        drawShadow();
+        if(eggAnimation.stage() < 13)
+        {
+            drawShadow();
+        }
+
+        if(eggAnimation.stage() >= 13)
+        {
+            drawSuperFlare();
+        }
+
         drawOrbs();
+
+        brightness-=1.8f;
+        GlStateManager.color(1f, 1f, 1f, brightness / 255f);
+        GlStateManager.translate(0f, 0f, 300f);
+        GlStateManager.disableTexture2D();
+        this.drawTexturedModalRect(0, 0, 0, 0, this.width, this.height);
+        GlStateManager.enableTexture2D();
+    }
+
+    private void drawSuperFlare()
+    {
+        mc.getTextureManager().bindTexture(super_flare);
+        GuiUtil.instance.setBrightness(0.6f, 1.5f, 0f);
+        GlStateManager.pushMatrix();
+
+        float width = 256f, height = 256f;
+        superFlareAnimation.animate();
+        //move to position
+        GlStateManager.translate(superFlareAnimation.posX(), superFlareAnimation.posY(), superFlareAnimation.posZ());
+        // translate to center of egg
+        // We use 100f because that is what Minecraft is on by default.
+        float z = 300f;
+        GlStateManager.translate(width / 2f, height / 2f, z);
+
+        // TODO: Add rays that spin
+
+        // scale
+        float scale = superFlareAnimation.scalar();
+        System.out.println((this.width / width) * 2);
+        GlStateManager.scale(scale + (this.width / width), scale + (this.height / height) * 0.5f, 1f);
+
+        // rotate
+        GlStateManager.rotate(superFlareAnimation.rotX(), 1f, 0f, 0f);
+        GlStateManager.rotate(superFlareAnimation.rotY(), 0f, 1f, 0f);
+        GlStateManager.rotate(superFlareAnimation.rotZ(), 0f, 0f, 1f);
+
+        // translate back
+        GlStateManager.translate(-(width / 2f), -(height / 2f), -z);
+        GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0f, 0f, 256, 256, 256f, 256f);
+//        this.drawTexturedModalRect(0, 0, 0, 0, 256, 256);
+
+        GlStateManager.popMatrix();
     }
 
     private void drawEgg()
     {
+
+        if(eggAnimation.stage() >= 13)
+        {
+            return;
+        }
 
         GuiUtil.instance.setBrightness(0.6f, 1.5f, 0f);
 
@@ -88,12 +146,9 @@ public class GuiPokemonEggReward extends GuiScreen
         // We use 100f because that is what Minecraft is on by default.
         float z = 100f;
         GlStateManager.translate(width / 2f, height / 2f, z);
-        Minecraft.getMinecraft().fontRendererObj.drawString("|", 0, 0, 0xFFFFFF);
-
-        // TODO: Rotating works! Now lets work on the gui and then give the player a pokemon after walking and send the packets etc.
 
         // scale
-        GlStateManager.scale(eggAnimation.scalar(), eggAnimation.scalar(), eggAnimation.scalar());
+        GlStateManager.scale(eggAnimation.scalar(), eggAnimation.scalar(), 1f);
 
         // rotate
         GlStateManager.rotate(eggAnimation.rotX(), 1f, 0f, 0f);
@@ -103,7 +158,13 @@ public class GuiPokemonEggReward extends GuiScreen
         // translate back
         GlStateManager.translate(-(width / 2f), -(height / 2f), -z);
 
-        // TODO: Get animation stage to update texture
+        if(eggAnimation.stage() == 6)
+        {
+            toRender = new ItemStack(EggItem.instance, 1, 1);
+        } else if (eggAnimation.stage() == 9)
+        {
+            toRender = new ItemStack(EggItem.instance, 1, 2);
+        }
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(toRender, 0, 0);
         GlStateManager.popMatrix();
     }
@@ -143,8 +204,8 @@ public class GuiPokemonEggReward extends GuiScreen
         for(int circle = 0; circle < 10; circle++)
         {
             Animation a = new Animation( r.nextInt(this.width), r.nextInt(this.height), 100f);
-            List<Float> yTranslations = this.setupYTranslations(a.getStartX());
-            List<Float> xTranslations = this.setupXTranslations(a.getStartY(), yTranslations);
+            List<Float> yTranslations = this.setupYTranslations(a.startX());
+            List<Float> xTranslations = this.setupXTranslations(a.startY(), yTranslations);
 
             int translation = 0;
             for(Float f : yTranslations)
@@ -159,26 +220,28 @@ public class GuiPokemonEggReward extends GuiScreen
 
     private void drawOrbs()
     {
+        mc.getTextureManager().bindTexture(lens_flares);
         for (Animation a : orbs)
         {
             a.animate();
             GlStateManager.pushMatrix();
             GlStateManager.translate(a.posX(), a.posY(), 0);
-            GlStateManager.translate(orb.getWidth() / 2, orb.getHeight() / 2, 100f);
-            GlStateManager.scale(0.2f, 0.2f, 0.2f);
+            GlStateManager.translate(orb.getWidth() / 2, orb.getHeight() / 2, 200f);
+            GlStateManager.scale(0.2f, 0.2f, 1f);
             this.drawTexturedModalRect(0, 0, orb.getX(), orb.getY(), orb.getWidth(), orb.getHeight());
-            GlStateManager.translate(-(orb.getWidth() / 2), -(orb.getHeight() / 2), - 100f);
+            GlStateManager.translate(-(orb.getWidth() / 2), -(orb.getHeight() / 2), - 200f);
             GlStateManager.popMatrix();
         }
     }
 
     private void drawShadow()
     {
+        mc.getTextureManager().bindTexture(lens_flares);
         GlStateManager.pushMatrix();
         GlStateManager.color(1f, 1f, 1f, 175f/255f);
-        GlStateManager.translate(eggAnimation.posX() - (shadow.getWidth() / 2) + 11, eggAnimation.getStartY() + 30f, 100f);
+        GlStateManager.translate(eggAnimation.posX() - (shadow.getWidth() / 2) + 11, eggAnimation.startY() + 30f, 100f);
         GlStateManager.translate(shadow.getWidth() / 2, shadow.getHeight() / 2, 100f);
-        float scalar = eggAnimation.posY()/ (eggAnimation.getStartY() + 5);
+        float scalar = eggAnimation.posY()/ (eggAnimation.startY() + 5);
         scalar *= (eggAnimation.scalar() / eggScale);
         GlStateManager.scale(scalar, scalar, scalar);
         GlStateManager.translate(-(shadow.getWidth() / 2), -(shadow.getHeight() / 2), -100f);

@@ -73,8 +73,6 @@ public class Animation
             return;
         }
 
-        int actionsSize = actions.size();
-
         Object currentAnimation = actions.get(0);
 
         if (currentAnimation instanceof SimpleRotation)
@@ -208,22 +206,22 @@ public class Animation
         this.scalar = scalar;
     }
 
-    public float getStartX()
+    public float startX()
     {
         return startX;
     }
 
-    public float getStartY()
+    public float startY()
     {
         return startY;
     }
 
-    public float getStartZ()
+    public float startZ()
     {
         return startZ;
     }
 
-    public int getStage()
+    public int stage()
     {
         return stage;
     }
