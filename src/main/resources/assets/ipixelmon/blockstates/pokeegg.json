@@ -6,9 +6,9 @@
       "flip-v": true
     },
     "textures": {
-      "#Material.001": "ipixelmon:blocks/egg"
+      "#Material.001": "ipixelmon:blocks/pokeegg"
     },
-    "model": "ipixelmon:egg.obj"
+    "model": "ipixelmon:pokeegg.obj"
   },
   "variants": {
     "normal": [

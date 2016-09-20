@@ -44,8 +44,6 @@ public class PlayerListener
             exception = e;
         }
 
-        System.out.println("HA");
-
         if (event.entityPlayer.getHeldItem() != null)
         {
             if (event.entityPlayer.getHeldItem().getItem() == Items.feather)

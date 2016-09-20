@@ -1,4 +1,4 @@
-package ipixelmon.eggincubator.egg;
+package ipixelmon.pokeegg.egg;
 
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 
@@ -93,7 +93,7 @@ public class EggHatchingList
 
     public EnumPokemon getRandomPokemon(int km)
     {
-        if (km != 2 || km != 5 || km != 10)
+        if (km != 2 && km != 5 && km != 10)
         {
             return null;
         }

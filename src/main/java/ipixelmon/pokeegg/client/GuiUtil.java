@@ -1,11 +1,7 @@
-package ipixelmon.eggincubator.client;
+package ipixelmon.pokeegg.client;
 
-import ipixelmon.eggincubator.egg.EggBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.Item;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
@@ -59,5 +55,6 @@ public class GuiUtil
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPECULAR, (FloatBuffer) setColorBuffer(f2, f2, f2, 1.0F));
         GlStateManager.shadeModel(7424);
         GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) setColorBuffer(f, f, f, 1.0F));
+        GlStateManager.enableBlend();
     }
 }

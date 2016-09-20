@@ -1,4 +1,4 @@
-package ipixelmon.eggincubator.client;
+package ipixelmon.pokeegg.client;
 
 import com.pixelmonmod.pixelmon.client.models.animations.EnumRotation;
 

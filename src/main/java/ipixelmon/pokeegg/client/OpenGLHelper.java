@@ -1,4 +1,4 @@
-package ipixelmon.eggincubator.client;
+package ipixelmon.pokeegg.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

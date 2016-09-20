@@ -1,6 +1,6 @@
 # Blender v2.77 (sub 0) OBJ File: 'pokeegg.blend'
 # www.blender.org
-mtllib egg.mtl
+mtllib pokeegg.mtl
 o Cube
 v 0.495775 -0.026356 0.482853
 v 0.589675 -0.017443 0.482853

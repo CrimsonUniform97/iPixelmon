@@ -1,30 +1,33 @@
-package ipixelmon.eggincubator;
+package ipixelmon.pokeegg;
 
 import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
-import ipixelmon.eggincubator.egg.EggItem;
+import ipixelmon.iPixelmon;
+import ipixelmon.pokeegg.egg.PokeEggItem;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class EggIncubator implements IMod
+public class PokeEgg implements IMod
 {
 
     @Override
     public String getID()
     {
-        return "eggincubator";
+        return "pokeegg";
     }
 
     @Override
     public void preInit()
     {
-        GameRegistry.registerItem(EggItem.instance);
+        GameRegistry.registerItem(PokeEggItem.instance);
     }
 
     @Override
     public void init()
     {
+        iPixelmon.registerPacket(PacketOpenGuiPokeEgg.Handler.class, PacketOpenGuiPokeEgg.class, Side.CLIENT);
     }
 
     @Override
@@ -36,13 +39,13 @@ public class EggIncubator implements IMod
     @Override
     public Class<? extends CommonProxy> clientProxyClass()
     {
-        return ipixelmon.eggincubator.client.ClientProxy.class;
+        return ipixelmon.pokeegg.client.ClientProxy.class;
     }
 
     @Override
     public Class<? extends CommonProxy> serverProxyClass()
     {
-        return ipixelmon.eggincubator.ServerProxy.class;
+        return ipixelmon.pokeegg.ServerProxy.class;
     }
 
     @Override

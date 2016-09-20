@@ -1,6 +1,6 @@
 package ipixelmon;
 
-import ipixelmon.eggincubator.EggIncubator;
+import ipixelmon.pokeegg.PokeEgg;
 import ipixelmon.gyms.Gyms;
 import ipixelmon.landcontrol.LandControl;
 import ipixelmon.pixelbay.Pixelbay;
@@ -45,7 +45,7 @@ public final class iPixelmon {
         mods.add(new LandControl());
         mods.add(new Gyms());
         mods.add(new Teams());
-        mods.add(new EggIncubator());
+        mods.add(new PokeEgg());
     }
 
     @Mod.EventHandler

@@ -1,4 +1,4 @@
-package ipixelmon.eggincubator;
+package ipixelmon.pokeegg;
 
 import ipixelmon.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;
