@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public class Teams implements IMod
 {
+    // TODO: Use different team names, from GoogleTranslate
+
     @Override
     public String getID()
     {
