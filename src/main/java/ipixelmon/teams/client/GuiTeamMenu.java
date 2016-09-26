@@ -4,6 +4,7 @@ import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import ipixelmon.iPixelmon;
 import ipixelmon.pixelbay.gui.ColorPicker;
 import ipixelmon.teams.EnumTeam;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -43,6 +44,13 @@ public class GuiTeamMenu extends GuiScreen
     protected void actionPerformed(GuiButton button) throws IOException
     {
         super.actionPerformed(button);
+        iPixelmon.network.sendToServer(new PacketChooseTeam(button.id));
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException
+    {
+        super.keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -66,7 +74,7 @@ public class GuiTeamMenu extends GuiScreen
         mc.getTextureManager().bindTexture(team == EnumTeam.Colossus ? teamColossus : team == EnumTeam.Omicron ? teamOmicron : teamManta);
         GuiHelper.drawImageQuad(posX + (xDiff * index) + ((xDiff - 65) / 2), posY + 2, 65, 65, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         String teamName = team.name().substring(0, 1).toUpperCase() + team.name().toLowerCase().substring(1, team.name().length());
-        drawString(mc.fontRendererObj, team.getColor() + "Team " + teamName, posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + teamName)) / 2), posY + 70, 0xFFFFFF);
+        drawString(mc.fontRendererObj, team.color() + "Team " + teamName, posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + teamName)) / 2), posY + 70, 0xFFFFFF);
         mc.fontRendererObj.drawSplitString("", posX + (xDiff * index), posY + 80, xDiff, 0xFFFFFF);
         mc.fontRendererObj.drawSplitString(description, posX + (xDiff * index) + 10, posY + 80, xDiff - 10, 0xFFFFFF);
     }

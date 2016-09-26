@@ -4,6 +4,7 @@ import ipixelmon.CommonProxy;
 import ipixelmon.IMod;
 import ipixelmon.iPixelmon;
 import ipixelmon.mysql.SelectionForm;
+import ipixelmon.teams.client.PacketChooseTeam;
 import ipixelmon.teams.server.PacketOpenTeamMenu;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -33,6 +34,7 @@ public class Teams implements IMod
     public void init()
     {
         iPixelmon.registerPacket(PacketOpenTeamMenu.Handler.class, PacketOpenTeamMenu.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketChooseTeam.Handler.class, PacketChooseTeam.class, Side.SERVER);
     }
 
     @Override
