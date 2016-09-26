@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
@@ -20,10 +21,6 @@ public class PlayerListener
     @SubscribeEvent
     public void playerInteraction(PlayerInteractEvent event)
     {
-        // TODO: Add listener for client player. Send packet to player upon joining world that tells them what world they are in.
-        // TODO: Then get region with String world name and position, and cancel it on client side so it's seemless. No block break,
-        // TODO: then reappear. Already made Region.getRegionForClient
-
         if (event.pos.getX() == 0 && event.pos.getY() == 0 && event.pos.getZ() == 0)
         {
             return;
@@ -62,7 +59,7 @@ public class PlayerListener
                     return;
                 }
 
-                new Thread(new FenceDetector(event.world, event.pos, event.entityPlayer)).start();
+                MinecraftServer.getServer().addScheduledTask(new FenceDetector(event.world, event.pos, event.entityPlayer));
             }
         } else
         {
