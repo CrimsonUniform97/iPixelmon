@@ -31,7 +31,7 @@ public final class iPixelmon {
 
     public static final List<IMod> mods = new ArrayList<IMod>();
 
-    @SidedProxy(clientSide = "ipixelmon.ClientProxy", serverSide = "ipixelmon.ServerProxy")
+    @SidedProxy(clientSide = "com.ipixelmon.ClientProxy", serverSide = "com.ipixelmon.ServerProxy")
     public static CommonProxy proxy;
 
     public static MySQLHandler mysql;

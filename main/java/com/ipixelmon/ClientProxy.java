@@ -1,5 +1,7 @@
 package com.ipixelmon;
 
+import net.minecraftforge.client.model.obj.OBJLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void preInit() {
+        OBJLoader.instance.addDomain(iPixelmon.id);
 
         try {
             for (IMod mod : iPixelmon.mods) if(mod.clientProxyClass() != null) proxies.add(mod.clientProxyClass().newInstance());

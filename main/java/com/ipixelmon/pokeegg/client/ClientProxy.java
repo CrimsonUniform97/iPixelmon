@@ -10,7 +10,6 @@ public class ClientProxy extends CommonProxy
     @Override
     public void preInit()
     {
-        OBJLoader.instance.addDomain("ipixelmon");
         PokeEggItem.instance.initModel();
     }
 
