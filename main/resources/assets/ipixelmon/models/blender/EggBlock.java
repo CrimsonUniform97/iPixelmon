@@ -1,6 +1,6 @@
 package assets.ipixelmon.models.blender;
 
-import ipixelmon.iPixelmon;
+import com.ipixelmon.iPixelmon;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
