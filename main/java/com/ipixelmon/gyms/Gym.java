@@ -5,12 +5,7 @@ import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.teams.EnumTeam;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.Region;
-import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.InsertForm;
-import com.ipixelmon.mysql.SelectionForm;
-import com.ipixelmon.teams.EnumTeam;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,7 +17,7 @@ public class Gym
 
     private UUID regionID;
     private String name;
-    private int prestige;
+    private int power;
     private EnumTeam team;
 
     public Gym(UUID regionID) throws Exception
@@ -36,7 +31,7 @@ public class Gym
 
         this.regionID = regionID;
         this.name = result.getString("name");
-        this.prestige = result.getInt("prestige");
+        this.power = result.getInt("power");
         this.team = EnumTeam.valueOf(result.getString("team"));
     }
 
@@ -50,9 +45,9 @@ public class Gym
         return name;
     }
 
-    public int getPrestige()
+    public int getPower()
     {
-        return prestige;
+        return power;
     }
 
     public EnumTeam getTeam()
@@ -65,9 +60,9 @@ public class Gym
         this.name = name;
     }
 
-    public void setPrestige(int prestige)
+    public void setPower(int power)
     {
-        this.prestige = prestige;
+        this.power = power;
     }
 
     public void setTeam(EnumTeam team)
@@ -75,7 +70,7 @@ public class Gym
         this.team = team;
     }
 
-    public static Gym createGym(World world, BlockPos pos, int prestige, EnumTeam team, String name) throws Exception
+    public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team, String name) throws Exception
     {
         Region region = new Region(world, pos);
         if(name == null || name.isEmpty())
@@ -100,7 +95,7 @@ public class Gym
         InsertForm gymForm = new InsertForm("Gyms");
         gymForm.add("name", name);
         gymForm.add("regionID", region.getUUID().toString());
-        gymForm.add("prestige", prestige);
+        gymForm.add("power", power);
         gymForm.add("team", team.name());
         gymForm.add("pokemon", "");
         iPixelmon.mysql.insert(Gyms.class, gymForm);
@@ -108,13 +103,18 @@ public class Gym
         return new Gym(region.getUUID());
     }
 
-    public static boolean deleteGym(Gym gym)
+    public boolean delete()
     {
-        iPixelmon.mysql.delete(Gyms.class, new DeleteForm("Gyms").add("regionID", gym.regionID.toString()));
+        iPixelmon.mysql.delete(Gyms.class, new DeleteForm("Gyms").add("regionID", regionID.toString()));
 
         try
         {
-            new Gym(gym.regionID);
+            ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", regionID.toString()));
+
+            if(!result.next())
+            {
+                throw new Exception("Gym not found.");
+            }
         }catch(Exception e)
         {
             return true;

@@ -24,7 +24,7 @@ public class ServerProxy extends CommonProxy
         CreateForm gymsForm = new CreateForm("Gyms");
         gymsForm.add("name", DataType.TEXT);
         gymsForm.add("regionID", DataType.TEXT);
-        gymsForm.add("prestige", DataType.INT);
+        gymsForm.add("power", DataType.INT);
         gymsForm.add("team", DataType.TEXT);
         gymsForm.add("pokemon", DataType.TEXT);
         iPixelmon.mysql.createTable(Gyms.class, gymsForm);

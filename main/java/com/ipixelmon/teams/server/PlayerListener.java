@@ -22,23 +22,8 @@ public class PlayerListener
     @SubscribeEvent
     public void onChatRecieved(ServerChatEvent event)
     {
-        String toDisplay = Teams.getPlayerTeam(event.player.getUniqueID()) + event.player.getName() + " " + EnumChatFormatting.GRAY + event.message;
+        String toDisplay = Teams.getPlayerTeam(event.player.getUniqueID()).color() + event.player.getName() + " " + EnumChatFormatting.GRAY + event.message;
         event.setComponent(new ChatComponentText(toDisplay));
-    }
-
-    // TODO: Kick player if they move and haven't picked a team.
-    @SubscribeEvent
-    public void playerTick(TickEvent.PlayerTickEvent event)
-    {
-        // TODO: This does not work well. Need to fix it.
-        if(Math.abs(event.player.lastTickPosX - event.player.posX) != 0 ||
-                Math.abs(event.player.lastTickPosY - event.player.posY) != 0 || Math.abs(event.player.lastTickPosZ- event.player.posZ) != 0)
-        {
-            if(Teams.getPlayerTeam(event.player.getUniqueID()) == EnumTeam.None)
-            {
-                ((EntityPlayerMP)event.player).playerNetServerHandler.kickPlayerFromServer("You must choose a team.");
-            }
-        }
     }
 
     @SubscribeEvent

@@ -79,7 +79,7 @@ public class PacketBuyPokemon implements IMessage
             {
                 if (message.pixelmonData == null)
                 {
-                    throw new Exception("ItemStack is null.");
+                    throw new Exception("Pokemon is null.");
                 }
 
                 if (message.seller == null)

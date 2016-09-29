@@ -14,8 +14,7 @@ import org.lwjgl.util.Rectangle;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiTeamMenu extends GuiScreen
-{
+public class GuiTeamMenu extends GuiScreen {
 
     private static final int bgWidth = 300, bgHeight = 200, xDiff = (bgWidth / 3);
     private int posX, posY;
@@ -24,38 +23,34 @@ public class GuiTeamMenu extends GuiScreen
     private static final ResourceLocation teamManta = new ResourceLocation(iPixelmon.id, "textures/gui/teams/manta.png");
     private static final ResourceLocation teamOmicron = new ResourceLocation(iPixelmon.id, "textures/gui/teams/omicron.png");
 
-    // TODO: Use Pixelmon's font for the fontrenderer.
-
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawDefaultBackground();
         super.drawDefaultBackground();
         this.drawRect(new Rectangle(posX, posY, bgWidth, bgHeight), ColorPicker.color(70, 0, 80, 250), ColorPicker.color(90, 0, 100, 250));
 
-        drawTeam(EnumTeam.Colossus, 0, "Extremely tactical when in combat. Team Colossus trainers carry very few Pokemon, but they are extremely talented with each one.");
+        mc.fontRendererObj.setUnicodeFlag(true);
+        drawTeam(EnumTeam.Colossus, 0, "Extremely tactical in combat. Team Colossus trainers carry few Pokemon, but are extremely talented with each one.");
         drawTeam(EnumTeam.Manta, 1, "The trainer that goes in guns blazing and doesn't back down. Manta trainers are less about tactics and more about absolute carnage.");
         drawTeam(EnumTeam.Omicron, 2, "Interested in the science of Pokemon. Team Omicron trainers study all Pokemon. They know of each Pokemon's weaknesses and strengths.");
 
         super.drawScreen(mouseX, mouseY, partialTicks);
+        mc.fontRendererObj.setUnicodeFlag(false);
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
+    protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
         iPixelmon.network.sendToServer(new PacketChooseTeam(button.id));
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException
-    {
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         this.buttonList.clear();
 
@@ -67,20 +62,17 @@ public class GuiTeamMenu extends GuiScreen
         this.buttonList.add(new GuiButton(2, posX + (xDiff * 2) + ((xDiff - 75) / 2), posY + bgHeight - 25, 75, 20, "Join Omicron"));
     }
 
-    private void drawTeam(EnumTeam team, int index, String description)
-    {
+    private void drawTeam(EnumTeam team, int index, String description) {
         GlStateManager.color(1, 1, 1, 1);
 
         mc.getTextureManager().bindTexture(team == EnumTeam.Colossus ? teamColossus : team == EnumTeam.Omicron ? teamOmicron : teamManta);
         GuiHelper.drawImageQuad(posX + (xDiff * index) + ((xDiff - 65) / 2), posY + 2, 65, 65, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
-        String teamName = team.name().substring(0, 1).toUpperCase() + team.name().toLowerCase().substring(1, team.name().length());
-        drawString(mc.fontRendererObj, team.color() + "Team " + teamName, posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + teamName)) / 2), posY + 70, 0xFFFFFF);
+        mc.fontRendererObj.drawString(team.color() + "Team " + team.name(), posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + team.name())) / 2), posY + 70, 16777215);
         mc.fontRendererObj.drawSplitString("", posX + (xDiff * index), posY + 80, xDiff, 0xFFFFFF);
-        mc.fontRendererObj.drawSplitString(description, posX + (xDiff * index) + 10, posY + 80, xDiff - 10, 0xFFFFFF);
+        mc.fontRendererObj.drawSplitString(description, posX + (xDiff * index) + 10, posY + 80, xDiff - 10, 16777215);
     }
 
-    public void drawRect(Rectangle rect, Color bgColor, Color trimColor)
-    {
+    public void drawRect(Rectangle rect, Color bgColor, Color trimColor) {
         int x = rect.getX(), y = rect.getY(), w = rect.getWidth(), h = rect.getHeight();
         x += 4;
         y += 4;

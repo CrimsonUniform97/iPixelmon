@@ -5,18 +5,13 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.teams.client.ClientProxy;
+import com.ipixelmon.gyms.EntityGymLeader;
 import com.ipixelmon.teams.client.PacketChooseTeam;
 import com.ipixelmon.teams.server.PacketOpenTeamMenu;
 import com.ipixelmon.teams.server.ServerProxy;
-import com.ipixelmon.CommonProxy;
-import com.ipixelmon.IMod;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.SelectionForm;
-import com.ipixelmon.teams.client.PacketChooseTeam;
-import com.ipixelmon.teams.server.PacketOpenTeamMenu;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.sql.ResultSet;
@@ -24,7 +19,6 @@ import java.util.UUID;
 
 public class Teams implements IMod
 {
-    // TODO: Use different team names, from GoogleTranslate
 
     @Override
     public String getID()
