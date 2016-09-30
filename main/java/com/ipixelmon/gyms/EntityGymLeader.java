@@ -1,14 +1,16 @@
 package com.ipixelmon.gyms;
 
+import com.ipixelmon.gyms.client.CustomSkinManager;
+import com.ipixelmon.teams.Teams;
 import com.ipixelmon.uuidmanager.UUIDManager;
+import com.mojang.authlib.GameProfile;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import java.util.UUID;
 
 /**
@@ -24,8 +26,9 @@ public class EntityGymLeader extends NPCTrainer {
     }
 
     @Override
-    public boolean isAIDisabled() {
-        return false;
+    public void initAI() {
+        clearAITasks();
+        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
     }
 
     protected void clearAITasks() {
@@ -43,6 +46,23 @@ public class EntityGymLeader extends NPCTrainer {
     public void readFromNBT(NBTTagCompound tagCompund) {
         super.readFromNBT(tagCompund);
         setPlayerUUID(UUID.fromString(tagCompund.getString("playerUUID")));
+    }
+
+    @Override
+    public String getDisplayText() {
+        return "Gym Boss: " + Teams.getPlayerTeam(getPlayerUUID()).color() + UUIDManager.getPlayerName(getPlayerUUID());
+    }
+
+    public ResourceLocation getSkin() {
+        ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
+        GameProfile profile = new GameProfile(getPlayerUUID(), UUIDManager.getPlayerName(getPlayerUUID()));
+        if (profile != null)
+        {
+            if(CustomSkinManager.instance.loadSkin(getPlayerUUID()) != null) {
+                resourcelocation = CustomSkinManager.instance.loadSkin(getPlayerUUID());
+            }
+        }
+        return resourcelocation;
     }
 
     public void setPlayerUUID(UUID playerUUID) {
