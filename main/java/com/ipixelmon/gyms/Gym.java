@@ -6,10 +6,14 @@ import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.teams.EnumTeam;
 import com.ipixelmon.mysql.InsertForm;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Gym
@@ -19,6 +23,7 @@ public class Gym
     private String name;
     private int power;
     private EnumTeam team;
+    private Map<UUID, PixelmonData> pokemon;
 
     public Gym(UUID regionID) throws Exception
     {
@@ -33,6 +38,9 @@ public class Gym
         this.name = result.getString("name");
         this.power = result.getInt("power");
         this.team = EnumTeam.valueOf(result.getString("team"));
+
+        // TODO: set from sqldatabase
+        this.pokemon = new HashMap<UUID, PixelmonData>();
     }
 
     public UUID getRegionID()
@@ -68,6 +76,15 @@ public class Gym
     public void setTeam(EnumTeam team)
     {
         this.team = team;
+    }
+
+    // TODO: update sqldatabase
+    public void setPokemon(Map<UUID, PixelmonData> pokemon) {
+        this.pokemon = pokemon;
+    }
+
+    public Map<UUID, PixelmonData> getPokemon() {
+        return pokemon;
     }
 
     public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team, String name) throws Exception

@@ -27,6 +27,7 @@ public class ServerProxy extends CommonProxy
         gymsForm.add("power", DataType.INT);
         gymsForm.add("team", DataType.TEXT);
         gymsForm.add("pokemon", DataType.TEXT);
+        gymsForm.add("pokemon", DataType.TEXT);
         iPixelmon.mysql.createTable(Gyms.class, gymsForm);
     }
 }
