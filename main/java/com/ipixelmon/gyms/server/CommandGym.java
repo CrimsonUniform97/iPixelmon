@@ -40,6 +40,8 @@ import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class CommandGym implements ICommand {
     @Override
@@ -119,10 +121,31 @@ public class CommandGym implements ICommand {
                 player1.startedBattle = true;
                 BattleParticipant[] team1 = new BattleParticipant[]{player1};
                 BattleParticipant[] team2 = new BattleParticipant[]{player2};
-               new BattleControllerBase(team1, team2);
+                new BattleControllerBase(team1, team2);
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        } else if (cmd.equalsIgnoreCase("give")) {
+            try {
+                Region region = new Region(player.getEntityWorld(), player.getPosition());
+
+                Gym gym = new Gym(region.getUUID());
+
+                EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(EnumPokemon.Rayquaza.name, MinecraftServer.getServer().getEntityWorld());
+                pixelmon.setHealth(100);
+                pixelmon.setIsShiny(true);
+                pixelmon.setForm(80);
+                pixelmon.getLvl().setLevel(65);
+                pixelmon.caughtBall = EnumPokeballs.PokeBall;
+                pixelmon.friendship.initFromCapture();
+
+                Map<UUID, EntityPixelmon> pokemon = gym.getPokemon();
+                pokemon.put(player.getUniqueID(), pixelmon);
+
+                gym.setPokemon(pokemon);
+            } catch (Exception e) {
+                player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
             }
         } else {
             player.addChatComponentMessage(new ChatComponentText(getCommandUsage(sender)));
