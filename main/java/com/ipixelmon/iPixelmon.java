@@ -4,6 +4,7 @@ import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pokeegg.PokeEgg;
+import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.ipixelmon.pokeegg.PokeEgg;
 import com.ipixelmon.gyms.Gyms;
@@ -51,6 +52,7 @@ public final class iPixelmon {
         mods.add(new Gyms());
         mods.add(new Teams());
         mods.add(new PokeEgg());
+        mods.add(new Tablet());
     }
 
     @Mod.EventHandler
