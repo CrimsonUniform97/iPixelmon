@@ -1,8 +1,10 @@
 package com.ipixelmon.tablet.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
@@ -27,51 +29,67 @@ public class NotificationOverlay {
             return;
         }
 
+        // TODO: Don't update animation or timer, just draw if we are typing in chat.
+
         Iterator<NotificationProperties> iterator = notifications.descendingIterator();
 
-        int posX = event.resolution.getScaledWidth() - maxNotificationWidth;
         int posY = 0;
 
         NotificationProperties n;
 
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             n = iterator.next();
 
-            if(System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration()) {
-                iterator.remove();
-            } else {
-                GlStateManager.pushMatrix();
-                {
-                    n.animationX = (n.notification.startTime + 10) - System.currentTimeMillis() < 0 ? 0 : (n.notification.startTime + 10) - System.currentTimeMillis();
-//                    n.animationX = n.animationX - 0.2f < 0 ? 0 : n.animationX - 0.2f;
-                    GlStateManager.translate(posX + n.animationX, posY, 400f);
-                    GL11.glScissor(posX, posY, maxNotificationWidth, n.notification.getHeight());
-                    n.notification.draw();
-                    posY += n.notification.getHeight();
+            GlStateManager.pushMatrix();
+            {
+                int posX = n.notification.maxWidth * -1;
+
+                n.update(System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration() ? 0 : n.notification.maxWidth, posY);
+
+                GlStateManager.translate(posX + n.posX, n.posY, 400f);
+                n.notification.draw();
+
+
+                if (n.posX <= 0) {
+                    iterator.remove();
                 }
+
+                posY += n.notification.getHeight();
                 GlStateManager.popMatrix();
             }
         }
 
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     public void addNotification(Notification notification) {
-        notifications.addLast(new NotificationProperties(notification, maxNotificationWidth, 0));
+        notifications.addLast(new NotificationProperties(notification));
+        System.out.println(notification.getDuration());
     }
 
     private class NotificationProperties {
 
         private Notification notification;
-        private float animationX, animationY;
+        private double posX, posY, speedX = 200f, speedY = 200f;
 
-        public NotificationProperties(Notification notification, float animationX, float animationY) {
+        private double timeOfLastFrame = System.nanoTime() / 1e9;
+
+        public NotificationProperties(Notification notification) {
             this.notification = notification;
-            this.animationX = animationX;
-            this.animationY = animationY;
         }
+
+        private void update(double neededX, double neededY) {
+            double time = System.nanoTime() / 1e9;
+            double timePassed = time - timeOfLastFrame;
+            timeOfLastFrame = time;
+            update(timePassed, neededX, neededY);
+        }
+
+
+        private void update(double time, double neededX, double neededY) {
+            posX = posX < neededX ? posX + (time * speedX) > neededX ? neededX : posX + (time * speedX) : posX - (time * speedX) < neededX ? neededX : posX - (time * speedX);
+            posY = posY < neededY ? posY + (time * speedY) > neededY ? neededY : posY + (time * speedY) : posY - (time * speedY) < neededY ? neededY : posY - (time * speedY);
+        }
+
     }
 
 }
