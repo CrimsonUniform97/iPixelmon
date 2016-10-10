@@ -1,5 +1,7 @@
 package com.ipixelmon.tablet.client;
 
+import com.ipixelmon.tablet.notification.NotificationOverlay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -12,11 +14,13 @@ import org.lwjgl.input.Keyboard;
 public class KeyListener {
 
     private KeyBinding key = new KeyBinding("key.notifications.test", Keyboard.KEY_N, "key.ipixelmon.test");
+    private KeyBinding key1 = new KeyBinding("key.notifications.test1", Keyboard.KEY_K, "key.ipixelmon.test1");
 
     private int count = 0;
 
     public KeyListener() {
         ClientRegistry.registerKeyBinding(key);
+        ClientRegistry.registerKeyBinding(key1);
     }
 
     @SubscribeEvent
@@ -24,6 +28,7 @@ public class KeyListener {
         if(key.isPressed()) {
             NotificationOverlay.instance.addNotification(new TextNotification("Test Sample " + count++));
         }
+
     }
 
 }

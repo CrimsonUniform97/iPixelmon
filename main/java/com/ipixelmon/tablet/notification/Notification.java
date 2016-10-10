@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client;
+package com.ipixelmon.tablet.notification;
 
 import net.minecraft.client.gui.Gui;
 

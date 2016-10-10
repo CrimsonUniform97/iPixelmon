@@ -1,25 +1,28 @@
 package com.ipixelmon.teams;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumChatFormatting;
 
-public enum EnumTeam
-{
-    Colossus(EnumChatFormatting.BLUE), Manta(EnumChatFormatting.RED), Omicron(EnumChatFormatting.YELLOW), None(EnumChatFormatting.DARK_GRAY);
+public enum EnumTeam {
+    Colossus(EnumChatFormatting.BLUE, EnumDyeColor.BLUE), Manta(EnumChatFormatting.RED, EnumDyeColor.RED), Omicron(EnumChatFormatting.YELLOW, EnumDyeColor.YELLOW), None(EnumChatFormatting.DARK_GRAY, EnumDyeColor.WHITE);
 
-    private final EnumChatFormatting color;
+    private final EnumChatFormatting colorChat;
+    private final EnumDyeColor colorDye;
 
-    EnumTeam(EnumChatFormatting color)
-    {
-        this.color = color;
+    EnumTeam(EnumChatFormatting colorChat, EnumDyeColor colorDye) {
+        this.colorChat = colorChat;
+        this.colorDye = colorDye;
     }
 
-    public static EnumTeam getTeamFromID(int id)
-    {
+    public static EnumTeam getTeamFromID(int id) {
         return id == 0 ? Colossus : id == 1 ? Manta : id == 2 ? Omicron : None;
     }
 
-    public EnumChatFormatting color()
-    {
-        return color;
+    public EnumChatFormatting colorChat() {
+        return colorChat;
+    }
+
+    public EnumDyeColor colorDye() {
+        return colorDye;
     }
 }

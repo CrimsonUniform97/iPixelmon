@@ -9,6 +9,7 @@ import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
+import com.pixelmonmod.pixelmon.Pixelmon;
 
 public class ServerProxy extends CommonProxy
 {
@@ -27,6 +28,9 @@ public class ServerProxy extends CommonProxy
         gymsForm.add("power", DataType.INT);
         gymsForm.add("team", DataType.TEXT);
         gymsForm.add("pokemon", DataType.TEXT);
+        gymsForm.add("displayblocks", DataType.TEXT);
         iPixelmon.mysql.createTable(Gyms.class, gymsForm);
+
+        Pixelmon.EVENT_BUS.register(new PixelmonSendOutListener());
     }
 }

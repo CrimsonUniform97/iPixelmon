@@ -37,6 +37,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +147,34 @@ public class CommandGym implements ICommand {
 
                 gym.setPokemon(pokemon);
             } catch (Exception e) {
+                player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+            }
+        }else if (cmd.equalsIgnoreCase("setdisplayblock")) {
+            try {
+                Region region = new Region(player.getEntityWorld(), player.getPosition());
+                Gym gym = new Gym(region.getUUID());
+
+                MovingObjectPosition mop = player.worldObj.rayTraceBlocks(player.getPositionVector(), player.getLookVec());
+
+                if (mop.getBlockPos() != null) {
+                    List<BlockPos> blocks = gym.getDisplayBlocks();
+                    blocks.add(mop.getBlockPos());
+                    gym.setDisplayBlocks(blocks);
+
+                    player.addChatComponentMessage(new ChatComponentText("Display block set."));
+                }
+                player.addChatComponentMessage(new ChatComponentText("Could not find block."));
+            } catch (Exception e) {
+                player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+            }
+        } else if(cmd.equalsIgnoreCase("update")) {
+            try {
+                Region region = new Region(player.getEntityWorld(), player.getPosition());
+                Gym gym = new Gym(region.getUUID());
+
+                gym.updateWool();
+            } catch (Exception e) {
+                e.printStackTrace();
                 player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
             }
         } else {

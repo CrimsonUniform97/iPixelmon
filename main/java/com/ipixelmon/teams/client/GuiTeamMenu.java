@@ -67,7 +67,7 @@ public class GuiTeamMenu extends GuiScreen {
 
         mc.getTextureManager().bindTexture(team == EnumTeam.Colossus ? teamColossus : team == EnumTeam.Omicron ? teamOmicron : teamManta);
         GuiHelper.drawImageQuad(posX + (xDiff * index) + ((xDiff - 65) / 2), posY + 2, 65, 65, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
-        mc.fontRendererObj.drawString(team.color() + "Team " + team.name(), posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + team.name())) / 2), posY + 70, 16777215);
+        mc.fontRendererObj.drawString(team.colorChat() + "Team " + team.name(), posX + (xDiff * index) + ((xDiff - mc.fontRendererObj.getStringWidth("Team " + team.name())) / 2), posY + 70, 16777215);
         mc.fontRendererObj.drawSplitString("", posX + (xDiff * index), posY + 80, xDiff, 0xFFFFFF);
         mc.fontRendererObj.drawSplitString(description, posX + (xDiff * index) + 10, posY + 80, xDiff - 10, 16777215);
     }

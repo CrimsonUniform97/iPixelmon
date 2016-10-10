@@ -50,7 +50,7 @@ public class EntityGymLeader extends NPCTrainer {
 
     @Override
     public String getDisplayText() {
-        return "Gym Boss: " + Teams.getPlayerTeam(getPlayerUUID()).color() + UUIDManager.getPlayerName(getPlayerUUID());
+        return "Gym Boss: " + Teams.getPlayerTeam(getPlayerUUID()).colorChat() + UUIDManager.getPlayerName(getPlayerUUID());
     }
 
     public ResourceLocation getSkin() {

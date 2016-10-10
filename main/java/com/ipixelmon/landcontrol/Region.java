@@ -4,8 +4,10 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.UpdateForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -116,6 +118,22 @@ public class Region
     @SideOnly(Side.SERVER)
     public World getWorldServer()
     {
+        if(world == null) {
+            ResultSet resultSet = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';");
+
+            try {
+                if(resultSet.next()) {
+                    for (WorldServer worldServer : MinecraftServer.getServer().worldServers) {
+                        if (worldServer.getWorldInfo().getWorldName().equalsIgnoreCase(resultSet.getString("world"))) {
+                            world = worldServer;
+                            break;
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return world;
     }
 
@@ -162,7 +180,7 @@ public class Region
         }
     }
 
-    public boolean isWithin(BlockPos pos)
+    public boolean contains(BlockPos pos)
     {
         return pos.getX() >= min.getX() && pos.getX() <= max.getX() && pos.getZ() >= min.getZ() && pos.getZ() <= max.getZ();
     }

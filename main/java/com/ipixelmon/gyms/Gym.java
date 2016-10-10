@@ -12,6 +12,10 @@ import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
+import net.minecraft.block.BlockCarpet;
+import net.minecraft.client.renderer.entity.layers.LayerSheepWool;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -27,6 +31,7 @@ public class Gym {
     private int power;
     private EnumTeam team;
     private Map<UUID, EntityPixelmon> pokemon;
+    private List<BlockPos> displayBlocks;
 
     public Gym(UUID regionID) throws Exception {
         ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", regionID.toString()));
@@ -41,6 +46,7 @@ public class Gym {
         setPower(result.getInt("power"));
         setTeam(EnumTeam.valueOf(result.getString("team")));
         setPokemon(getPokemon());
+        setDisplayBlocks(getDisplayBlocks());
     }
 
     public UUID getRegionID() {
@@ -100,6 +106,51 @@ public class Gym {
         iPixelmon.mysql.update(Gyms.class, new UpdateForm("Gyms").set("pokemon", builder.toString()).where("name", getName()));
     }
 
+    public void setDisplayBlocks(List<BlockPos> displayBlocks) {
+        this.displayBlocks = displayBlocks;
+
+        StringBuilder builder = new StringBuilder();
+
+        Iterator<BlockPos> iterator = displayBlocks.listIterator();
+
+        BlockPos pos;
+        while (iterator.hasNext()) {
+            pos = iterator.next();
+
+            builder.append(pos.getX() + "," + pos.getY() + "," + pos.getZ());
+            builder.append(";");
+        }
+
+        if(builder.length() != 0) {
+            builder.deleteCharAt(builder.length() - 1);
+
+            iPixelmon.mysql.update(Gyms.class, new UpdateForm("Gyms").set("displayblocks", builder.toString()).where("regionID", regionID.toString()));
+        }
+    }
+
+    public List<BlockPos> getDisplayBlocks() {
+        if (displayBlocks == null) {
+            displayBlocks = new ArrayList<BlockPos>();
+            ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", regionID.toString()));
+
+            try {
+                if (result.next()) {
+                    if (result.getString("displayblocks") != null && !result.getString("displayblocks").isEmpty()) {
+                        String[] blockData;
+                        for (String s : result.getString("displayblocks").split(";")) {
+                            blockData = s.split(",");
+                            displayBlocks.add(new BlockPos(Integer.valueOf(blockData[0]), Integer.valueOf(blockData[1]), Integer.valueOf(blockData[2])));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return displayBlocks;
+    }
+
     public Map<UUID, EntityPixelmon> getPokemon() {
         if (pokemon == null) {
             pokemon = new HashMap<UUID, EntityPixelmon>();
@@ -108,7 +159,7 @@ public class Gym {
             try {
                 if (result.next()) {
 
-                    if(result.getString("pokemon") == null || result.getString("pokemon").isEmpty()) {
+                    if (result.getString("pokemon") == null || result.getString("pokemon").isEmpty()) {
                         return pokemon;
                     }
 
@@ -180,4 +231,24 @@ public class Gym {
         return false;
     }
 
+    public void updateWool() {
+        try {
+            Region region = new Region(regionID);
+            BlockPos pos;
+            for (int x = region.getMin().getX(); x <= region.getMax().getX(); x++) {
+                for (int y = region.getMin().getY(); y <= region.getWorldServer().getHeight(); y++) {
+                    for (int z = region.getMin().getZ(); z <= region.getMax().getZ(); z++) {
+                        pos = new BlockPos(x, y, z);
+                        if(region.getWorldServer().getBlockState(pos) != null) {
+                            if (region.getWorldServer().getBlockState(pos).getBlock() == Blocks.wool) {
+                                region.getWorldServer().setBlockState(pos, Blocks.wool.getDefaultState().withProperty(BlockCarpet.COLOR, getTeam().colorDye()));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
