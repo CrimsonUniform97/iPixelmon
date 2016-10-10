@@ -4,13 +4,20 @@ import com.ipixelmon.gyms.client.CustomSkinManager;
 import com.ipixelmon.teams.Teams;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
+import com.pixelmonmod.pixelmon.RandomHelper;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -72,4 +79,9 @@ public class EntityGymLeader extends NPCTrainer {
     public UUID getPlayerUUID() {
         return UUID.fromString(this.dataWatcher.getWatchableObjectString(20));
     }
+
+    public void loadPokemon(EntityPixelmon pixelmon) {
+        this.getPokemonStorage().addToParty(pixelmon);
+    }
+
 }

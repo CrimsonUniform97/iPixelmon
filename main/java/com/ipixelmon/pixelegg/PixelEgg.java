@@ -1,34 +1,34 @@
-package com.ipixelmon.pokeegg;
+package com.ipixelmon.pixelegg;
 
-import com.ipixelmon.pokeegg.client.ClientProxy;
+import com.ipixelmon.pixelegg.client.ClientProxy;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.pokeegg.egg.PokeEggItem;
+import com.ipixelmon.pixelegg.egg.PixelEggItem;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class PokeEgg implements IMod
+public class PixelEgg implements IMod
 {
 
     @Override
     public String getID()
     {
-        return "pokeegg";
+        return "pixelegg";
     }
 
     @Override
     public void preInit()
     {
-        GameRegistry.registerItem(PokeEggItem.instance);
+        GameRegistry.registerItem(PixelEggItem.instance);
     }
 
     @Override
     public void init()
     {
-        iPixelmon.registerPacket(PacketOpenGuiPokeEgg.Handler.class, PacketOpenGuiPokeEgg.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketOpenGuiPixelEgg.Handler.class, PacketOpenGuiPixelEgg.class, Side.CLIENT);
     }
 
     @Override

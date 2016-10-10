@@ -1,4 +1,4 @@
-package com.ipixelmon.pokeegg.client;
+package com.ipixelmon.pixelegg.client;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
