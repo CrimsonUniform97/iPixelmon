@@ -35,7 +35,7 @@ public final class PixelmonUtility {
         try {
             final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             targetStorage.addCurrency(Math.abs(balance));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -45,7 +45,7 @@ public final class PixelmonUtility {
         try {
             final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             targetStorage.addCurrency(-1 * Math.abs(balance));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -55,7 +55,7 @@ public final class PixelmonUtility {
         try {
             final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
             return targetStorage.getCurrency();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -63,8 +63,7 @@ public final class PixelmonUtility {
     }
 
     @SideOnly(Side.CLIENT)
-    public static final int getClientBalance()
-    {
+    public static final int getClientBalance() {
         return UpdateCurrency.playerMoney;
     }
 
@@ -72,7 +71,7 @@ public final class PixelmonUtility {
         final ItemStack stack = new ItemStack(PixelmonItems.itemPixelmonSprite);
         final NBTTagCompound tagCompound = new NBTTagCompound();
         final Optional stats = Entity3HasStats.getBaseStats(pokemon.name);
-        tagCompound.setString("SpriteName", "pixelmon:sprites/items/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats)stats.get()).nationalPokedexNumber)}));
+        tagCompound.setString("SpriteName", "pixelmon:sprites/items/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats) stats.get()).nationalPokedexNumber)}));
         final NBTTagCompound display = new NBTTagCompound();
         display.setString("Name", EntityPixelmon.getLocalizedName(pokemon.name) + " " + StatCollector.translateToLocal("item.PixelmonSprite.name"));
         tagCompound.setTag("display", display);
@@ -82,28 +81,35 @@ public final class PixelmonUtility {
 
     public static final int getPokemonCountClient() {
         int count = 0;
-        for(int i = 0; i < ServerStorageDisplay.pokemon.length; ++i) {
-            if(ServerStorageDisplay.pokemon[i] != null) count++;
+        for (int i = 0; i < ServerStorageDisplay.pokemon.length; ++i) {
+            if (ServerStorageDisplay.pokemon[i] != null) count++;
         }
 
         return count;
     }
 
     @SideOnly(Side.CLIENT)
-    public static final void drawPokeDollar(Minecraft mc, int x, int y, int w, int h, int color)
-    {
+    public static final void drawPokeDollar(Minecraft mc, int x, int y, int w, int h, int color) {
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         {
-            float red = (float)(color >> 16 & 255) / 255.0F;
-            float blue = (float)(color >> 8 & 255) / 255.0F;
-            float green = (float)(color & 255) / 255.0F;
-            float alpha = (float)(color >> 24 & 255) / 255.0F;
+            float red = (float) (color >> 16 & 255) / 255.0F;
+            float blue = (float) (color >> 8 & 255) / 255.0F;
+            float green = (float) (color & 255) / 255.0F;
+            float alpha = (float) (color >> 24 & 255) / 255.0F;
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
             GlStateManager.color(red, blue, green, 1);
             mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/pokedollar.png"));
             GuiHelper.drawImageQuad(x, y, w, h, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         }
         glPopAttrib();
+    }
+
+    public static double getBP(EntityPixelmon pixelmon) {
+        double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.getLvl().getLevel());
+        double Stamina = (pixelmon.baseStats.speed + pixelmon.stats.Speed) * TotalBpMultiplier;
+        double Attack = (pixelmon.baseStats.attack + pixelmon.stats.Attack) * TotalBpMultiplier;
+        double Defense = (pixelmon.baseStats.defence + pixelmon.stats.Defence) * TotalBpMultiplier;
+        return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
     }
 
 }

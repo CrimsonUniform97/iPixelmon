@@ -3,16 +3,11 @@ package com.ipixelmon;
 import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.pixelbay.Pixelbay;
-import com.ipixelmon.pokeegg.PokeEgg;
+import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
-import com.ipixelmon.pokeegg.PokeEgg;
-import com.ipixelmon.gyms.Gyms;
-import com.ipixelmon.landcontrol.LandControl;
-import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.mysql.MySQLHandler;
 import com.ipixelmon.teams.Teams;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -51,7 +46,7 @@ public final class iPixelmon {
         mods.add(new LandControl());
         mods.add(new Gyms());
         mods.add(new Teams());
-        mods.add(new PokeEgg());
+        mods.add(new PixelEgg());
         mods.add(new Tablet());
     }
 

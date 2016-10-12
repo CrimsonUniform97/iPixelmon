@@ -3,18 +3,17 @@ package com.ipixelmon.landcontrol;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.uuidmanager.UUIDManager;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.UUID;
 
 public class PacketEditMemberRequest implements IMessage
 {
+    //TODO: Something happened with all the code. Need to redo gyms and regions.
+
     private String player;
     private UUID regionID;
     private boolean addMember;
@@ -25,7 +24,7 @@ public class PacketEditMemberRequest implements IMessage
     public PacketEditMemberRequest(String player, Region region, boolean addMember)
     {
         this.player = player;
-        this.regionID = region.getUUID();
+        this.regionID = region.id();
         this.addMember = addMember;
     }
 
@@ -58,7 +57,7 @@ public class PacketEditMemberRequest implements IMessage
 
             try
             {
-                Region region = new Region(message.regionID);
+                Region region =  Region.instance.getRegion(message.regionID);
 
                 if (!region.getOwner().equals(ctx.getServerHandler().playerEntity.getUniqueID()))
                 {

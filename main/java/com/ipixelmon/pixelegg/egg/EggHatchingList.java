@@ -1,4 +1,4 @@
-package com.ipixelmon.pokeegg.egg;
+package com.ipixelmon.pixelegg.egg;
 
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
 

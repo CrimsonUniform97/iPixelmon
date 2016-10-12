@@ -1,8 +1,11 @@
-package com.ipixelmon.tablet.client;
+package com.ipixelmon.tablet.notification;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Mouse;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,15 +21,12 @@ public class NotificationOverlay {
     private NotificationOverlay() {
     }
 
-    private static final LinkedList<NotificationProperties> notifications = new LinkedList<NotificationProperties>();
+    protected final LinkedList<NotificationProperties> notifications = new LinkedList<NotificationProperties>();
 
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent event) {
-        if (event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
-            return;
-        }
 
-        // TODO: Don't update animation or timer, just draw if we are typing in chat. Make it come in from the right as well
+        if (event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
 
         Iterator<NotificationProperties> iterator = notifications.descendingIterator();
 
@@ -34,38 +34,52 @@ public class NotificationOverlay {
 
         NotificationProperties n;
 
+        Minecraft.getMinecraft().fontRendererObj.setUnicodeFlag(true);
         while (iterator.hasNext()) {
             n = iterator.next();
 
             GlStateManager.pushMatrix();
             {
-                int posX = n.notification.maxWidth * -1;
+                int posX = event.resolution.getScaledWidth();
 
-                n.update(System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration() ? 0 : n.notification.maxWidth, posY);
+                n.posX = n.posX == 0 ? posX : n.posX;
 
-                GlStateManager.translate(posX + n.posX, n.posY, 400f);
+                boolean viewingChat = Minecraft.getMinecraft().currentScreen instanceof GuiChat;
+
+                n.update(System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration() ? viewingChat ? posX - n.notification.getWidth() : posX : posX - n.notification.getWidth(), posY);
+
+                GlStateManager.translate(n.posX, n.posY, 100f);
+
                 n.notification.draw();
 
 
-                if (n.posX <= 0) {
-                    iterator.remove();
+                if (viewingChat) {
+                    int mouseX = Mouse.getX() / event.resolution.getScaleFactor();
+                    int mouseY = event.resolution.getScaledHeight() - (Mouse.getY() / event.resolution.getScaleFactor());
+
+                    if (mouseX > n.posX && mouseX < n.posX + n.notification.getWidth() && mouseY > n.posY && mouseY < n.posY + n.notification.getHeight() && Mouse.isButtonDown(0)) {
+                        Minecraft.getMinecraft().thePlayer.closeScreen();
+                        n.notification.actionPerformed();
+                    }
                 }
 
-                posY += n.notification.getHeight();
+                if (n.posX >= posX) iterator.remove();
+
+                posY += n.notification.getHeight() + 1;
                 GlStateManager.popMatrix();
             }
         }
+        Minecraft.getMinecraft().fontRendererObj.setUnicodeFlag(false);
 
     }
 
     public void addNotification(Notification notification) {
         notifications.addLast(new NotificationProperties(notification));
-        System.out.println(notification.getDuration());
     }
 
-    private class NotificationProperties {
+    protected class NotificationProperties {
 
-        private Notification notification;
+        protected Notification notification;
         private double posX, posY, speedX = 200f, speedY = 200f;
 
         private double timeOfLastFrame = System.nanoTime() / 1e9;

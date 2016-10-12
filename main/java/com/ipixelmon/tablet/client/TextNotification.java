@@ -1,5 +1,6 @@
 package com.ipixelmon.tablet.client;
 
+import com.ipixelmon.tablet.notification.Notification;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
@@ -43,5 +44,10 @@ public class TextNotification extends Notification {
     @Override
     public long getDuration() {
         return duration;
+    }
+
+    @Override
+    public void actionPerformed() {
+        System.out.println(text);
     }
 }

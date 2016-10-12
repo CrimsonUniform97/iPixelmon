@@ -1,4 +1,4 @@
-package com.ipixelmon.pokeegg;
+package com.ipixelmon.pixelegg;
 
 import com.ipixelmon.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;

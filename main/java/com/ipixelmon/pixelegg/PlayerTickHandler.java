@@ -1,6 +1,6 @@
-package com.ipixelmon.pokeegg;
+package com.ipixelmon.pixelegg;
 
-import com.ipixelmon.pokeegg.egg.PokeEggItem;
+import com.ipixelmon.pixelegg.egg.PixelEggItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -11,9 +11,9 @@ public class PlayerTickHandler
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
-        if(!event.player.getEntityData().hasKey("pokeEggLocation"))
+        if(!event.player.getEntityData().hasKey("pixelEggLocation"))
         {
-            event.player.getEntityData().setString("pokeEggLocation", event.player.posX + "," + event.player.posZ);
+            event.player.getEntityData().setString("pixelEggLocation", event.player.posX + "," + event.player.posZ);
         }
 
         boolean moved = false;
@@ -21,9 +21,9 @@ public class PlayerTickHandler
         {
             if(stack != null)
             {
-                if(stack.getItem() == PokeEggItem.instance)
+                if(stack.getItem() == PixelEggItem.instance)
                 {
-                    if(PokeEggItem.instance.tick(event.player, stack))
+                    if(PixelEggItem.instance.tick(event.player, stack))
                     {
                         moved = true;
                     }
@@ -33,7 +33,7 @@ public class PlayerTickHandler
 
         if(moved)
         {
-            event.player.getEntityData().setString("pokeEggLocation", event.player.posX + "," + event.player.posZ);
+            event.player.getEntityData().setString("pixelEggLocation", event.player.posX + "," + event.player.posZ);
         }
     }
 

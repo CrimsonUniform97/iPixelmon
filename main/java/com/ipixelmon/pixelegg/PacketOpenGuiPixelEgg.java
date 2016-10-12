@@ -1,11 +1,11 @@
-package com.ipixelmon.pokeegg;
+package com.ipixelmon.pixelegg;
 
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.pokeegg.client.GuiPokeEgg;
+import com.ipixelmon.pixelegg.client.GuiPixelEgg;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,16 +13,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class PacketOpenGuiPokeEgg implements IMessage
+public class PacketOpenGuiPixelEgg implements IMessage
 {
 
-    public PacketOpenGuiPokeEgg()
+    public PacketOpenGuiPixelEgg()
     {
     }
 
     private PixelmonData pokeData;
 
-    public PacketOpenGuiPokeEgg(PixelmonData pokeData)
+    public PacketOpenGuiPixelEgg(PixelmonData pokeData)
     {
         this.pokeData = pokeData;
     }
@@ -40,11 +40,11 @@ public class PacketOpenGuiPokeEgg implements IMessage
         pokeData.encodeInto(buf);
     }
 
-    public static class Handler implements IMessageHandler<PacketOpenGuiPokeEgg, IMessage>
+    public static class Handler implements IMessageHandler<PacketOpenGuiPixelEgg, IMessage>
     {
 
         @Override
-        public IMessage onMessage(final PacketOpenGuiPokeEgg message, final MessageContext ctx)
+        public IMessage onMessage(final PacketOpenGuiPixelEgg message, final MessageContext ctx)
         {
             openGui(message);
             return null;
@@ -52,7 +52,7 @@ public class PacketOpenGuiPokeEgg implements IMessage
     }
 
     @SideOnly(Side.CLIENT)
-    private static void openGui(final PacketOpenGuiPokeEgg message)
+    private static void openGui(final PacketOpenGuiPixelEgg message)
     {
         Minecraft.getMinecraft().addScheduledTask(new Runnable()
         {
@@ -66,7 +66,7 @@ public class PacketOpenGuiPokeEgg implements IMessage
                 pokemon.getLvl().setLevel(message.pokeData.lvl);
                 pokemon.caughtBall = EnumPokeballs.PokeBall;
                 pokemon.friendship.initFromCapture();
-                Minecraft.getMinecraft().displayGuiScreen(new GuiPokeEgg(pokemon));
+                Minecraft.getMinecraft().displayGuiScreen(new GuiPixelEgg(pokemon));
             }
         });
     }

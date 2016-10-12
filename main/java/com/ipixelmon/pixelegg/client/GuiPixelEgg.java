@@ -1,18 +1,14 @@
-package com.ipixelmon.pokeegg.client;
+package com.ipixelmon.pixelegg.client;
 
 import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
 import com.pixelmonmod.pixelmon.client.models.animations.EnumRotation;
-import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumGrowth;
-import com.pixelmonmod.pixelmon.enums.EnumPokemon;
-import com.ipixelmon.pokeegg.egg.PokeEggItem;
+import com.ipixelmon.pixelegg.egg.PixelEggItem;
 import com.ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GuiPokeEgg extends GuiScreen
+public class GuiPixelEgg extends GuiScreen
 {
 
     private static final ResourceLocation lens_flares = new ResourceLocation(iPixelmon.id, "textures/gui/lens_flares.png");
@@ -40,7 +36,7 @@ public class GuiPokeEgg extends GuiScreen
 
     private List<Animation> orbs = new ArrayList<Animation>();
 
-    public GuiPokeEgg(EntityPixelmon pixelmon)
+    public GuiPixelEgg(EntityPixelmon pixelmon)
     {
         this.pixelmon = pixelmon;
         this.pixelmon.getLvl().setLevel(50);
@@ -50,7 +46,7 @@ public class GuiPokeEgg extends GuiScreen
     @Override
     public void initGui()
     {
-        toRender = new ItemStack(PokeEggItem.instance, 1, 0);
+        toRender = new ItemStack(PixelEggItem.instance, 1, 0);
 
         int centerX = (this.width - 16) / 2;
         int centerY = (this.height - 16) / 2;
@@ -188,10 +184,10 @@ public class GuiPokeEgg extends GuiScreen
 
         if (eggAnimation.stage() == 6)
         {
-            toRender = new ItemStack(PokeEggItem.instance, 1, 1);
+            toRender = new ItemStack(PixelEggItem.instance, 1, 1);
         } else if (eggAnimation.stage() == 9)
         {
-            toRender = new ItemStack(PokeEggItem.instance, 1, 2);
+            toRender = new ItemStack(PixelEggItem.instance, 1, 2);
         }
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(toRender, 0, 0);
         GlStateManager.popMatrix();

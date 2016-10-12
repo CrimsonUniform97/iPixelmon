@@ -22,7 +22,7 @@ public class PlayerListener
     @SubscribeEvent
     public void onChatRecieved(ServerChatEvent event)
     {
-        String toDisplay = Teams.getPlayerTeam(event.player.getUniqueID()).color() + event.player.getName() + " " + EnumChatFormatting.GRAY + event.message;
+        String toDisplay = Teams.getPlayerTeam(event.player.getUniqueID()).colorChat() + event.player.getName() + " " + EnumChatFormatting.GRAY + event.message;
         event.setComponent(new ChatComponentText(toDisplay));
     }
 

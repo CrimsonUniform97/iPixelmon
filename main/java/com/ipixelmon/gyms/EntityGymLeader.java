@@ -4,13 +4,19 @@ import com.ipixelmon.gyms.client.CustomSkinManager;
 import com.ipixelmon.teams.Teams;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
+import com.pixelmonmod.pixelmon.comm.SetTrainerData;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumEncounterMode;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import java.util.UUID;
 
 /**
@@ -20,15 +26,29 @@ public class EntityGymLeader extends NPCTrainer {
 
     public EntityGymLeader(World world) {
         super(world);
-
-        clearAITasks();
-        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
     }
+
+    public EntityGymLeader(World world, BlockPos location, EntityPixelmon pixelmon, UUID playerUUID) {
+        super(world);
+        clearAITasks();
+        this.tasks.addTask(0, new EntityMoveToLocationAI(this, 1.0D, location.getX() + 0.5D, location.getY() + 0.5D, location.getZ() + 0.5D));
+        this.tasks.addTask(1, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        setPlayerUUID(playerUUID);
+        update(new SetTrainerData("Name", "Greeting", "Win", "Loss", 12, new ItemStack[]{}));
+        setPosition(location.getX() + 0.5D, location.getY() + 0.5D, location.getZ() + 0.5D);
+        setEncounterMode(EnumEncounterMode.Unlimited);
+        loadPokemon(pixelmon);
+    }
+
 
     @Override
     public void initAI() {
-        clearAITasks();
-        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+
+    }
+
+    @Override
+    public boolean isAIDisabled() {
+        return false;
     }
 
     protected void clearAITasks() {
@@ -50,15 +70,14 @@ public class EntityGymLeader extends NPCTrainer {
 
     @Override
     public String getDisplayText() {
-        return "Gym Boss: " + Teams.getPlayerTeam(getPlayerUUID()).color() + UUIDManager.getPlayerName(getPlayerUUID());
+        return "Gym Boss: " + Teams.getPlayerTeam(getPlayerUUID()).colorChat() + UUIDManager.getPlayerName(getPlayerUUID());
     }
 
     public ResourceLocation getSkin() {
         ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
         GameProfile profile = new GameProfile(getPlayerUUID(), UUIDManager.getPlayerName(getPlayerUUID()));
-        if (profile != null)
-        {
-            if(CustomSkinManager.instance.loadSkin(getPlayerUUID()) != null) {
+        if (profile != null) {
+            if (CustomSkinManager.instance.loadSkin(getPlayerUUID()) != null) {
                 resourcelocation = CustomSkinManager.instance.loadSkin(getPlayerUUID());
             }
         }
@@ -72,4 +91,9 @@ public class EntityGymLeader extends NPCTrainer {
     public UUID getPlayerUUID() {
         return UUID.fromString(this.dataWatcher.getWatchableObjectString(20));
     }
+
+    public void loadPokemon(EntityPixelmon pixelmon) {
+        this.getPokemonStorage().addToParty(pixelmon);
+    }
+
 }

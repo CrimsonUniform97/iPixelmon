@@ -1,6 +1,6 @@
-package com.ipixelmon.pokeegg.egg;
+package com.ipixelmon.pixelegg.egg;
 
-import com.ipixelmon.pokeegg.PacketOpenGuiPokeEgg;
+import com.ipixelmon.pixelegg.PacketOpenGuiPixelEgg;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.achievement.PixelmonAchievements;
 import com.pixelmonmod.pixelmon.api.enums.ReceiveType;
@@ -12,8 +12,6 @@ import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.PacketOpenRegionInfo;
-import com.ipixelmon.pokeegg.PacketOpenGuiPokeEgg;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -32,15 +30,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 
-public class PokeEggItem extends Item
+public class PixelEggItem extends Item
 {
 
-    public static final PokeEggItem instance = new PokeEggItem();
+    public static final PixelEggItem instance = new PixelEggItem();
 
-    private PokeEggItem()
+    private PixelEggItem()
     {
-        setUnlocalizedName("pokeegg");
-        setRegistryName("pokeegg");
+        setUnlocalizedName("pixelegg");
+        setRegistryName("pixelegg");
         setCreativeTab(CreativeTabs.tabBlock);
     }
 
@@ -71,14 +69,14 @@ public class PokeEggItem extends Item
     {
         if (stack.hasTagCompound())
         {
-            if (stack.getTagCompound().hasKey("pokeEggDistance"))
+            if (stack.getTagCompound().hasKey("pixelEggDistance"))
             {
-                return EnumChatFormatting.GOLD + "" + stack.getTagCompound().getInteger("pokeEggDistance") + "Km PokéEgg";
+                return EnumChatFormatting.GOLD + "" + stack.getTagCompound().getInteger("pixelEggDistance") + "Km PixelEgg";
             }
         } else {
             initTag(stack);
         }
-        return EnumChatFormatting.GOLD + "PokéEgg";
+        return EnumChatFormatting.GOLD + "PixelEgg";
     }
 
     @Override
@@ -86,7 +84,7 @@ public class PokeEggItem extends Item
     {
         if (stack.hasTagCompound())
         {
-            tooltip.add("" + (int) stack.getTagCompound().getDouble("pokeEggWalked"));
+            tooltip.add("" + (int) stack.getTagCompound().getDouble("pixelEggWalked"));
         } else {
             initTag(stack);
         }
@@ -100,9 +98,9 @@ public class PokeEggItem extends Item
             return false;
         }
 
-        if(stack.getTagCompound().getDouble("pokeEggWalked") >= stack.getTagCompound().getInteger("pokeEggDistance") * 1000)
+        if(stack.getTagCompound().getDouble("pixelEggWalked") >= stack.getTagCompound().getInteger("pixelEggDistance") * 1000)
         {
-            EntityPixelmon pokemon = (EntityPixelmon) PixelmonEntityList.createEntityByName(EggHatchingList.instance.getRandomPokemon(stack.getTagCompound().getInteger("pokeEggDistance")).name, worldIn);
+            EntityPixelmon pokemon = (EntityPixelmon) PixelmonEntityList.createEntityByName(EggHatchingList.instance.getRandomPokemon(stack.getTagCompound().getInteger("pixelEggDistance")).name, worldIn);
             pokemon.setHealth(pokemon.getMaxHealth());
             pokemon.getLvl().setLevel(MathHelper.getRandomIntegerInRange(new Random(), 50, 99));
             pokemon.caughtBall = EnumPokeballs.PokeBall;
@@ -118,7 +116,7 @@ public class PokeEggItem extends Item
             }
             PixelmonAchievements.pokedexChieves(playerIn);
             Pixelmon.EVENT_BUS.post(new PixelmonRecievedEvent(playerIn, ReceiveType.Command, pokemon));
-            iPixelmon.network.sendTo(new PacketOpenGuiPokeEgg(new PixelmonData(pokemon)), (EntityPlayerMP) playerIn);
+            iPixelmon.network.sendTo(new PacketOpenGuiPixelEgg(new PixelmonData(pokemon)), (EntityPlayerMP) playerIn);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
             ((EntityPlayerMP) playerIn).updateHeldItem();
         }
@@ -142,8 +140,8 @@ public class PokeEggItem extends Item
         {
             distance = 5;
         }
-        nbtTag.setInteger("pokeEggDistance", distance);
-        nbtTag.setDouble("pokeEggWalked", 0);
+        nbtTag.setInteger("pixelEggDistance", distance);
+        nbtTag.setDouble("pixelEggWalked", 0);
         stack.setTagCompound(nbtTag);
     }
 
@@ -154,19 +152,18 @@ public class PokeEggItem extends Item
             initTag(stack);
         }
 
-        String[] data = player.getEntityData().getString("pokeEggLocation").split(",");
+        String[] data = player.getEntityData().getString("pixelEggLocation").split(",");
         BlockPos pos = new BlockPos(Double.parseDouble(data[0]), player.posY, Double.parseDouble(data[1]));
 
         double xOffset = Math.abs(pos.getX() - player.posX);
         double zOffset = Math.abs(pos.getZ() - player.posZ);
         if ((int) xOffset > 0 || (int) zOffset > 0)
         {
-            if(stack.getTagCompound().getDouble("pokeEggWalked") >= stack.getTagCompound().getInteger("pokeEggDistance") * 1000)
+            if(stack.getTagCompound().getDouble("pixelEggWalked") >= stack.getTagCompound().getInteger("pixelEggDistance") * 1000)
             {
-                System.out.println("CALLED");
                 return true;
             }
-            stack.getTagCompound().setDouble("pokeEggWalked", stack.getTagCompound().getDouble("pokeEggWalked") + Math.sqrt(xOffset * xOffset + zOffset * zOffset));
+            stack.getTagCompound().setDouble("pixelEggWalked", stack.getTagCompound().getDouble("pixelEggWalked") + Math.sqrt(xOffset * xOffset + zOffset * zOffset));
             return true;
         }
 
