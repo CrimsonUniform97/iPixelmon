@@ -122,7 +122,13 @@ public class FenceDetector implements Runnable
         }
 
 
-        Region.createRegion(player.getUniqueID(), world, minPos.getX(), maxPos.getX(),minPos.getZ(), maxPos.getZ());
+        try {
+            LandControl.createRegion(player.getUniqueID(), world, minPos.getX(), maxPos.getX(),minPos.getZ(), maxPos.getZ());
+        } catch (Exception e) {
+            e.printStackTrace();
+            player.addChatComponentMessage(new ChatComponentText("An error occured. Please notify an admin."));
+            return;
+        }
         player.addChatComponentMessage(new ChatComponentText("Region created."));
     }
 

@@ -62,7 +62,7 @@ public class PacketOpenRegionInfo implements IMessage
                 Region region = null;
                 try
                 {
-                    region =  Region.instance.getRegion(message.regionID);
+                    region =  LandControl.getRegion(message.regionID);
                 } catch (Exception e)
                 {
                     Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));

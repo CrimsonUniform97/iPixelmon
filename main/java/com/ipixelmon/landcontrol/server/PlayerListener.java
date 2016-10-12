@@ -1,6 +1,7 @@
 package com.ipixelmon.landcontrol.server;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.PacketOpenRegionInfo;
 import com.ipixelmon.landcontrol.Region;
 import net.minecraft.block.Block;
@@ -30,7 +31,7 @@ public class PlayerListener {
         Region region = null;
         Exception exception = null;
         try {
-            region = Region.instance.getRegion(event.world, event.pos);
+            region = LandControl.getRegion(event.world, event.pos);
         } catch (Exception e) {
             exception = e;
         }
@@ -69,7 +70,7 @@ public class PlayerListener {
 
         Region region = null;
         try {
-            region = Region.instance.getRegion(event.world, event.pos);
+            region = LandControl.getRegion(event.world, event.pos);
         } catch (Exception e) {
         }
 
@@ -87,7 +88,7 @@ public class PlayerListener {
 
         Region region = null;
         try {
-            region = Region.instance.getRegion(event.world, event.pos);
+            region = LandControl.getRegion(event.world, event.pos);
         } catch (Exception e) {
         }
 

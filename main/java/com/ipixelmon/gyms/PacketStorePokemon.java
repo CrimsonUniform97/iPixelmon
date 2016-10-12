@@ -1,6 +1,7 @@
 package com.ipixelmon.gyms;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.pixelbay.gui.sell.PacketSellResponse;
 import com.ipixelmon.teams.Teams;
@@ -56,7 +57,7 @@ public class PacketStorePokemon implements IMessage {
             // TODO: Check gyms points before adding pokemon, and it's slots
 
             try {
-                Gym gym = Gym.instance.getGym(Region.instance.getRegion(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ)));
+                Gym gym = Gyms.getGym(LandControl.getRegion(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ)));
                 gym.setTeam(Teams.getPlayerTeam(player.getUniqueID()));
                 List<EntityGymLeader> gymLeaders = gym.getGymLeaders();
                 gymLeaders.add(new EntityGymLeader(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ), PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj), player.getUniqueID()));

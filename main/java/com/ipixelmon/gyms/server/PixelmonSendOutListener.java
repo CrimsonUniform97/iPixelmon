@@ -3,8 +3,10 @@ package com.ipixelmon.gyms.server;
 import com.ipixelmon.PixelmonUtility;
 import com.ipixelmon.gyms.EntityGymLeader;
 import com.ipixelmon.gyms.Gym;
+import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.gyms.PacketOpenClaimGui;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.teams.Teams;
 import com.pixelmonmod.pixelmon.api.events.BeatTrainerEvent;
@@ -27,11 +29,11 @@ public class PixelmonSendOutListener {
     public void onDelivery(PixelmonSendOutEvent event) {
         try {
             EntityPixelmon pixelmon = PixelmonStorage.PokeballManager.getPlayerStorage((EntityPlayerMP) event.player).getPokemon(event.pixelmonID, event.player.worldObj);
-            Region region = Region.instance.getRegion(event.player.worldObj, new BlockPos(event.player.posX, event.player.posY, event.player.posZ));
+            Region region = LandControl.getRegion(event.player.worldObj, new BlockPos(event.player.posX, event.player.posY, event.player.posZ));
 
             if (region == null) return;
 
-            Gym gym = Gym.instance.getGym(region);
+            Gym gym = Gyms.getGym(region);
 
             if (gym == null) return;
 
@@ -45,7 +47,7 @@ public class PixelmonSendOutListener {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
 
         try {
-            Gym gym = Gym.instance.getGym(Region.instance.getRegion(event.world, event.pos));
+            Gym gym = Gyms.getGym(LandControl.getRegion(event.world, event.pos));
 
             if (!gym.getDisplayBlocks().contains(event.pos)) return;
 
@@ -69,7 +71,7 @@ public class PixelmonSendOutListener {
         boolean sameTeam = Teams.getPlayerTeam(gymLeader.getPlayerUUID()).equals(Teams.getPlayerTeam(event.player.getUniqueID()));
 
         try {
-            Gym gym = Gym.instance.getGym(Region.instance.getRegion(gymLeader.getEntityWorld(), new BlockPos(gymLeader.posX, gymLeader.posY, gymLeader.posZ)));
+            Gym gym = Gyms.getGym(LandControl.getRegion(gymLeader.getEntityWorld(), new BlockPos(gymLeader.posX, gymLeader.posY, gymLeader.posZ)));
             double trainerBP = PixelmonUtility.getBP(gymLeader.getPokemonStorage().getFirstAblePokemon(event.player.worldObj));
             double playerBP = PixelmonUtility.getBP(PixelmonStorage.PokeballManager.getPlayerStorage((EntityPlayerMP) event.player).getFirstAblePokemon(event.player.worldObj));
 

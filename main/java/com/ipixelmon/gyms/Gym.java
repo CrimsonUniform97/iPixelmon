@@ -33,10 +33,6 @@ import java.util.concurrent.Exchanger;
 
 public class Gym {
 
-    public static final Gym instance = new Gym();
-
-    private static List<Gym> gyms;
-
     private Region region;
     private String name;
     private int power;
@@ -46,18 +42,7 @@ public class Gym {
     private Map<EntityPlayerMP, BattleControllerBase> battles;
     private List<BlockPos> displayBlocks;
 
-    private Gym() {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms"));
-        gyms = new ArrayList<>();
-        try {
-            while (result.next())
-                gyms.add(new Gym(Region.instance.getRegion(UUID.fromString(result.getString("regionID")))));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Gym(Region region) {
+    protected Gym(Region region) throws Exception {
         ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", region.id().toString()));
         try {
             this.region = region;
@@ -67,18 +52,12 @@ public class Gym {
                 setTeam(EnumTeam.valueOf(result.getString("team")));
                 setGymLeaders(getGymLeaders());
                 setDisplayBlocks(getDisplayBlocks());
+            } else {
+                throw new Exception("Gym not found there.");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public Gym getGym(Region region) {
-        for (Gym gym : gyms) {
-            if (gym.region.equals(region)) return gym;
-        }
-
-        return null;
     }
 
     public int getAvailableSlots() {
@@ -250,55 +229,6 @@ public class Gym {
             }
         }
         return gymLeaders;
-    }
-
-    @SideOnly(Side.SERVER)
-    public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team, String name) throws Exception {
-        Region region = Region.instance.getRegion(world, pos);
-        if (name == null || name.isEmpty()) {
-            throw new Exception("Name is invalid.");
-        }
-
-        ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", region.id().toString()));
-
-        if (result.next()) {
-            throw new Exception("There is already a gym here.");
-        }
-
-        result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("name", name));
-
-        if (result.next()) {
-            throw new Exception("There is already a gym with that name.");
-        }
-
-        InsertForm gymForm = new InsertForm("Gyms");
-        gymForm.add("name", name);
-        gymForm.add("regionID", region.id().toString());
-        gymForm.add("power", power);
-        gymForm.add("team", team.name());
-        gymForm.add("gymLeaders", "");
-        iPixelmon.mysql.insert(Gyms.class, gymForm);
-        Gym gym = new Gym(region);
-        gyms.add(gym);
-
-        return gym;
-    }
-
-    @SideOnly(Side.SERVER)
-    public boolean delete() {
-        iPixelmon.mysql.delete(Gyms.class, new DeleteForm("Gyms").add("regionID", region.id().toString()));
-
-        try {
-            ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", region.id().toString()));
-
-            if (!result.next()) {
-                throw new Exception("Gym not found.");
-            }
-        } catch (Exception e) {
-            return true;
-        }
-
-        return false;
     }
 
     @SideOnly(Side.SERVER)

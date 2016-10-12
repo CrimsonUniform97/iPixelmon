@@ -57,7 +57,7 @@ public class PacketEditMemberRequest implements IMessage
 
             try
             {
-                Region region =  Region.instance.getRegion(message.regionID);
+                Region region =  LandControl.getRegion(message.regionID);
 
                 if (!region.getOwner().equals(ctx.getServerHandler().playerEntity.getUniqueID()))
                 {

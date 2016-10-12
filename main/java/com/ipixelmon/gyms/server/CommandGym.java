@@ -1,5 +1,7 @@
 package com.ipixelmon.gyms.server;
 
+import com.ipixelmon.gyms.Gyms;
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.teams.EnumTeam;
 import com.mojang.authlib.GameProfile;
@@ -24,6 +26,7 @@ public class CommandGym implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
+        //TODO: If still getting error check this out, maybe shorten it.
         return "/gym create <name>\n/gym delete\n/gym update\n/gym addslot\n/gym delslot";
     }
 
@@ -55,32 +58,34 @@ public class CommandGym implements ICommand {
                 case "create": {
                     if (args.length != 2)
                         throw new Exception(getCommandUsage(sender));
-                    Gym.createGym(player.worldObj, playerPos, 0, EnumTeam.None, args[1]);
+                    Gyms.createGym(player.worldObj, playerPos, 0, EnumTeam.None, args[1]);
                     player.addChatComponentMessage(new ChatComponentText("Gym created."));
                     break;
                 }
                 case "delete": {
-                    Gym.instance.getGym(Region.instance.getRegion(player.getEntityWorld(), playerPos)).delete();
+                    Gyms.deleteGym(Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos)));
                     player.addChatComponentMessage(new ChatComponentText("Gym deleted."));
                     break;
                 }
                 case "update": {
-                    Gym.instance.getGym(Region.instance.getRegion(player.getEntityWorld(), playerPos)).update();
+                    Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos)).update();
                     player.addChatComponentMessage(new ChatComponentText("Gym updated."));
                     break;
                 }
                 case "addslot": {
-                    Gym gym = Gym.instance.getGym(Region.instance.getRegion(player.getEntityWorld(), playerPos));
+                    Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
                     List<BlockPos> slots = gym.getDisplayBlocks();
                     slots.add(new BlockPos(player.posX, player.posY, player.posZ));
                     gym.setDisplayBlocks(slots);
+                    player.addChatComponentMessage(new ChatComponentText("Slot added."));
                     break;
                 }
                 case "delslot": {
-                    Gym gym = Gym.instance.getGym(Region.instance.getRegion(player.getEntityWorld(), playerPos));
+                    Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
                     List<BlockPos> slots = gym.getDisplayBlocks();
                     slots.remove(new BlockPos(player.posX, player.posY, player.posZ));
                     gym.setDisplayBlocks(slots);
+                    player.addChatComponentMessage(new ChatComponentText("Slot deleted."));
                     break;
                 }
             }

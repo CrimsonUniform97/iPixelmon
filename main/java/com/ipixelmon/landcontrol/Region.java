@@ -21,76 +21,17 @@ import java.util.UUID;
 
 public class Region {
 
-    public static final Region instance = new Region();
-
-    private static List<Region> regions;
-
     private UUID uuid, owner;
     private List<UUID> members;
     private World world;
     private BlockPos min, max;
     private String worldName;
 
-    private Region() {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
-        regions = new ArrayList<>();
-        try {
-            while (result.next()) {
-                regions.add(new Region(UUID.fromString(result.getString("uuid"))));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    protected Region(UUID id) throws Exception {
+        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions").add("uuid", id.toString()));
 
-    private Region(UUID id) throws Exception {
-        initRegion(iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions").add("uuid", id.toString())));
-    }
-
-    public static Region createRegion(UUID owner, World world, int xMin, int xMax, int zMin, int zMax) {
-        InsertForm insertForm = new InsertForm("Regions");
-        UUID id = UUID.randomUUID();
-        insertForm.add("uuid", id);
-        insertForm.add("owner", owner.toString());
-        insertForm.add("members", "");
-        insertForm.add("world", world.getWorldInfo().getWorldName());
-        insertForm.add("xMin", xMin);
-        insertForm.add("xMax", xMax);
-        insertForm.add("zMin", zMin);
-        insertForm.add("zMax", zMax);
-        try {
-            Region region = new Region(id);
-            regions.add(region);
-            return region;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        iPixelmon.mysql.insert(LandControl.class, insertForm);
-        return null;
-    }
-
-    public Region getRegion(UUID id) {
-        for (Region region : regions)
-            if (region.id().equals(id)) return region;
-
-        return null;
-    }
-
-    public Region getRegion(World world, BlockPos pos) {
-        for (Region region : regions) {
-            if (region.worldName.equalsIgnoreCase(world.getWorldInfo().getWorldName())) {
-                if (region.getMin().getX() < pos.getX() && region.getMax().getX() > pos.getX()
-                        && region.getMin().getZ() < pos.getZ() && region.getMax().getZ() > pos.getZ())
-                    return region;
-            }
-        }
-
-        return null;
-    }
-
-    private void initRegion(ResultSet result) throws Exception {
         if (result.next()) {
-            members = new ArrayList<UUID>();
+            members = new ArrayList<>();
             uuid = UUID.fromString(result.getString("uuid"));
             owner = UUID.fromString(result.getString("owner"));
             min = new BlockPos(result.getInt("xMin"), 0, result.getInt("zMin"));
