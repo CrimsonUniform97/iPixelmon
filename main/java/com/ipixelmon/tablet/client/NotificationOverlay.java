@@ -1,11 +1,8 @@
 package com.ipixelmon.tablet.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +26,7 @@ public class NotificationOverlay {
             return;
         }
 
-        // TODO: Don't update animation or timer, just draw if we are typing in chat.
+        // TODO: Don't update animation or timer, just draw if we are typing in chat. Make it come in from the right as well
 
         Iterator<NotificationProperties> iterator = notifications.descendingIterator();
 
