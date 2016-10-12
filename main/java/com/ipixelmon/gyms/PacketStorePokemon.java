@@ -5,12 +5,8 @@ import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.pixelbay.gui.sell.PacketSellResponse;
 import com.ipixelmon.teams.Teams;
 import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.achievement.PixelmonAchievements;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PCServer;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import io.netty.buffer.ByteBuf;
@@ -21,8 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * Created by colby on 10/10/2016.
@@ -61,17 +56,12 @@ public class PacketStorePokemon implements IMessage {
             // TODO: Check gyms points before adding pokemon, and it's slots
 
             try {
-                Region region = new Region(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ));
-
-                Gym gym = new Gym(region.getUUID());
-
+                Gym gym = Gym.instance.getGym(Region.instance.getRegion(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ)));
                 gym.setTeam(Teams.getPlayerTeam(player.getUniqueID()));
-                Map<UUID, EntityPixelmon> pixelmonMap = gym.getPokemon();
-
-                final EntityPixelmon pixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj);
-                pixelmonMap.put(player.getUniqueID(), pixelmon);
-                gym.setPokemon(pixelmonMap);
-                gym.updateWool();
+                List<EntityGymLeader> gymLeaders = gym.getGymLeaders();
+                gymLeaders.add(new EntityGymLeader(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ), PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj), player.getUniqueID()));
+                gym.setGymLeaders(gymLeaders);
+                gym.update();
 
                 MinecraftServer.getServer().addScheduledTask(new Runnable() {
                     @Override

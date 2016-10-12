@@ -10,6 +10,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.pixelmonmod.pixelmon.Pixelmon;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ServerProxy extends CommonProxy
 {
@@ -27,10 +28,13 @@ public class ServerProxy extends CommonProxy
         gymsForm.add("regionID", DataType.TEXT);
         gymsForm.add("power", DataType.INT);
         gymsForm.add("team", DataType.TEXT);
-        gymsForm.add("pokemon", DataType.TEXT);
+        gymsForm.add("gymLeaders", DataType.TEXT);
         gymsForm.add("displayblocks", DataType.TEXT);
         iPixelmon.mysql.createTable(Gyms.class, gymsForm);
 
-        Pixelmon.EVENT_BUS.register(new PixelmonSendOutListener());
+        PixelmonSendOutListener sendOutListener;
+
+        Pixelmon.EVENT_BUS.register(sendOutListener = new PixelmonSendOutListener());
+        MinecraftForge.EVENT_BUS.register(sendOutListener);
     }
 }

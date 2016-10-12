@@ -1,6 +1,8 @@
 package com.ipixelmon.landcontrol;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mysql.InsertForm;
+import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,8 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Region
-{
+public class Region {
+
+    public static final Region instance = new Region();
+
+    private static List<Region> regions;
 
     private UUID uuid, owner;
     private List<UUID> members;
@@ -26,24 +31,65 @@ public class Region
     private BlockPos min, max;
     private String worldName;
 
-    @SideOnly(Side.SERVER)
-    public Region(World parWorld, BlockPos pos) throws Exception
-    {
-        world = parWorld;
-        initRegion(iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + world.getWorldInfo().getWorldName() + "' " +
-                "AND xMin <= '" + pos.getX() + "' AND xMax >= '" + pos.getX() + "' " +
-                "AND zMin <= '" + pos.getZ() + "' AND zMax >= '" + pos.getZ() + "';"));
+    private Region() {
+        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
+        regions = new ArrayList<>();
+        try {
+            while (result.next()) {
+                regions.add(new Region(UUID.fromString(result.getString("uuid"))));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public Region(UUID uuid) throws Exception
-    {
-        initRegion(iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';"));
+    private Region(UUID id) throws Exception {
+        initRegion(iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions").add("uuid", id.toString())));
     }
 
-    private void initRegion(ResultSet result) throws Exception
-    {
-        if (result.next())
-        {
+    public static Region createRegion(UUID owner, World world, int xMin, int xMax, int zMin, int zMax) {
+        InsertForm insertForm = new InsertForm("Regions");
+        UUID id = UUID.randomUUID();
+        insertForm.add("uuid", id);
+        insertForm.add("owner", owner.toString());
+        insertForm.add("members", "");
+        insertForm.add("world", world.getWorldInfo().getWorldName());
+        insertForm.add("xMin", xMin);
+        insertForm.add("xMax", xMax);
+        insertForm.add("zMin", zMin);
+        insertForm.add("zMax", zMax);
+        try {
+            Region region = new Region(id);
+            regions.add(region);
+            return region;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        iPixelmon.mysql.insert(LandControl.class, insertForm);
+        return null;
+    }
+
+    public Region getRegion(UUID id) {
+        for (Region region : regions)
+            if (region.id().equals(id)) return region;
+
+        return null;
+    }
+
+    public Region getRegion(World world, BlockPos pos) {
+        for (Region region : regions) {
+            if (region.worldName.equalsIgnoreCase(world.getWorldInfo().getWorldName())) {
+                if (region.getMin().getX() < pos.getX() && region.getMax().getX() > pos.getX()
+                        && region.getMin().getZ() < pos.getZ() && region.getMax().getZ() > pos.getZ())
+                    return region;
+            }
+        }
+
+        return null;
+    }
+
+    private void initRegion(ResultSet result) throws Exception {
+        if (result.next()) {
             members = new ArrayList<UUID>();
             uuid = UUID.fromString(result.getString("uuid"));
             owner = UUID.fromString(result.getString("owner"));
@@ -53,76 +99,43 @@ public class Region
 
             String membersStr = result.getString("members");
 
-            if (membersStr != null && !membersStr.isEmpty())
-            {
-                if (!membersStr.contains(","))
-                {
+            if (membersStr != null && !membersStr.isEmpty()) {
+                if (!membersStr.contains(",")) {
                     members.add(UUID.fromString(membersStr));
-                } else
-                {
-                    for (String s : membersStr.split(","))
-                    {
+                } else {
+                    for (String s : membersStr.split(",")) {
                         members.add(UUID.fromString(s));
                     }
                 }
             }
-        } else
-        {
+        } else {
             throw new Exception("There is no region there.");
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public static Region getRegionForClient(BlockPos pos) throws Exception
-    {
-        if(!Minecraft.getMinecraft().thePlayer.getEntityData().hasKey("regionWorld"))
-        {
-            return null;
-        }
-
-        String worldName = Minecraft.getMinecraft().thePlayer.getEntityData().getString("regionWorld");
-
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + worldName + "' " +
-                "AND xMin <= '" + pos.getX() + "' AND xMax >= '" + pos.getX() + "' " +
-                "AND zMin <= '" + pos.getZ() + "' AND zMax >= '" + pos.getZ() + "';");
-
-        if (result.next())
-        {
-            return new Region(UUID.fromString(result.getString("uuid")));
-        } else
-        {
-            throw new Exception("There is no region there.");
-        }
-    }
-
-    public UUID getOwner()
-    {
+    public UUID getOwner() {
         return owner;
     }
 
-    public List<UUID> getMembers()
-    {
+    public List<UUID> getMembers() {
         return members;
     }
 
-    public BlockPos getMin()
-    {
+    public BlockPos getMin() {
         return min;
     }
 
-    public BlockPos getMax()
-    {
+    public BlockPos getMax() {
         return max;
     }
 
     @SideOnly(Side.SERVER)
-    public World getWorldServer()
-    {
-        if(world == null) {
+    public World getWorldServer() {
+        if (world == null) {
             ResultSet resultSet = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE uuid='" + uuid.toString() + "';");
 
             try {
-                if(resultSet.next()) {
+                if (resultSet.next()) {
                     for (WorldServer worldServer : MinecraftServer.getServer().worldServers) {
                         if (worldServer.getWorldInfo().getWorldName().equalsIgnoreCase(resultSet.getString("world"))) {
                             world = worldServer;
@@ -137,18 +150,15 @@ public class Region
         return world;
     }
 
-    public String getWorldClient()
-    {
+    public String getWorldClient() {
         return worldName;
     }
 
-    public UUID getUUID()
-    {
+    public UUID id() {
         return uuid;
     }
 
-    public void setOwner(UUID player)
-    {
+    public void setOwner(UUID player) {
         owner = player;
 
         UpdateForm updateForm = new UpdateForm("Regions");
@@ -156,10 +166,8 @@ public class Region
         iPixelmon.mysql.update(LandControl.class, updateForm);
     }
 
-    public void addMember(UUID player)
-    {
-        if (!members.contains(player))
-        {
+    public void addMember(UUID player) {
+        if (!members.contains(player)) {
             members.add(player);
 
             UpdateForm updateForm = new UpdateForm("Regions");
@@ -168,10 +176,8 @@ public class Region
         }
     }
 
-    public void removeMember(UUID player)
-    {
-        if (members.contains(player) && !owner.equals(player))
-        {
+    public void removeMember(UUID player) {
+        if (members.contains(player) && !owner.equals(player)) {
             members.remove(player);
 
             UpdateForm updateForm = new UpdateForm("Regions");
@@ -180,27 +186,22 @@ public class Region
         }
     }
 
-    public boolean contains(BlockPos pos)
-    {
+    public boolean contains(BlockPos pos) {
         return pos.getX() >= min.getX() && pos.getX() <= max.getX() && pos.getZ() >= min.getZ() && pos.getZ() <= max.getZ();
     }
 
-    public boolean isMember(EntityPlayer player)
-    {
+    public boolean isMember(EntityPlayer player) {
         return owner.equals(player.getUniqueID()) || members.contains(player.getUniqueID());
     }
 
-    private String membersToString()
-    {
+    private String membersToString() {
         StringBuilder builder = new StringBuilder();
 
-        if (members.isEmpty())
-        {
+        if (members.isEmpty()) {
             return "";
         }
 
-        for (UUID member : members)
-        {
+        for (UUID member : members) {
             builder.append(member.toString());
             builder.append(",");
         }

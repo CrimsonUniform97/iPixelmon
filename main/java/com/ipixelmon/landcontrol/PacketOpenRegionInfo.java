@@ -2,9 +2,7 @@ package com.ipixelmon.landcontrol;
 
 import com.ipixelmon.landcontrol.client.GuiRegionInfo;
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.landcontrol.client.GuiRegionInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -26,7 +24,7 @@ public class PacketOpenRegionInfo implements IMessage
 
     public PacketOpenRegionInfo(Region region)
     {
-        this.regionID = region.getUUID();
+        this.regionID = region.id();
     }
 
     @Override
@@ -64,7 +62,7 @@ public class PacketOpenRegionInfo implements IMessage
                 Region region = null;
                 try
                 {
-                    region = new Region(message.regionID);
+                    region =  Region.instance.getRegion(message.regionID);
                 } catch (Exception e)
                 {
                     Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));

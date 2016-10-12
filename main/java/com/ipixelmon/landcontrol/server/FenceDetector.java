@@ -117,22 +117,12 @@ public class FenceDetector implements Runnable
                 player.addChatComponentMessage(new ChatComponentText("There is a region already there."));
                 return;
             }
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        InsertForm insertForm = new InsertForm("Regions");
-        insertForm.add("uuid", UUID.randomUUID());
-        insertForm.add("owner", player.getUniqueID().toString());
-        insertForm.add("members", "");
-        insertForm.add("world", world.getWorldInfo().getWorldName());
-        insertForm.add("xMin", minPos.getX());
-        insertForm.add("xMax", maxPos.getX());
-        insertForm.add("zMin", minPos.getZ());
-        insertForm.add("zMax", maxPos.getZ());
 
-        iPixelmon.mysql.insert(LandControl.class, insertForm);
+        Region.createRegion(player.getUniqueID(), world, minPos.getX(), maxPos.getX(),minPos.getZ(), maxPos.getZ());
         player.addChatComponentMessage(new ChatComponentText("Region created."));
     }
 
