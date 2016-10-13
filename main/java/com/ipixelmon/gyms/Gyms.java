@@ -73,7 +73,7 @@ public class Gyms implements IMod {
 
         try {
             while(result.next()) {
-                gyms.add(new Gym(LandControl.getRegion(UUID.fromString("regionID"))));
+                gyms.add(new Gym(LandControl.getRegion(UUID.fromString(result.getString("regionID")))));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public class PacketEditMemberRequest implements IMessage
 {
-    //TODO: Something happened with all the code. Need to redo gyms and regions.
 
     private String player;
     private UUID regionID;

@@ -19,6 +19,8 @@ import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import net.minecraft.block.BlockCarpet;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -207,6 +209,23 @@ public class Gym {
 
                     EntityPixelmon pixelmon;
                     UUID playerUUID;
+
+                    if(!result.getString("gymLeaders").contains(";")) {
+                        Iterator<String> pokedataIter = Splitter.on(",").split(pokemonIter.next()).iterator();
+
+                        playerUUID = UUID.fromString(pokedataIter.next());
+
+                        pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pokedataIter.next(), MinecraftServer.getServer().getEntityWorld());
+                        pixelmon.setHealth(pixelmon.getMaxHealth());
+                        pixelmon.setIsShiny(Boolean.valueOf(pokedataIter.next()));
+                        pixelmon.setForm(Integer.valueOf(pokedataIter.next()));
+                        pixelmon.getLvl().setLevel(Integer.valueOf(pokedataIter.next()));
+                        pixelmon.caughtBall = EnumPokeballs.PokeBall;
+                        pixelmon.friendship.initFromCapture();
+
+                        gymLeaders.add(new EntityGymLeader(region.getWorldServer(), new BlockPos(Integer.valueOf(pokedataIter.next()), Integer.valueOf(pokedataIter.next()), Integer.valueOf(pokedataIter.next())), pixelmon, playerUUID));
+                    }
+
                     Iterator<String> pokemonIter = Splitter.on(";").split(result.getString("gymLeaders")).iterator();
                     while (pokemonIter.hasNext()) {
                         Iterator<String> pokedataIter = Splitter.on(",").split(pokemonIter.next()).iterator();
