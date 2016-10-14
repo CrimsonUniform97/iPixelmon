@@ -12,6 +12,7 @@ import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.teams.EnumTeam;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -37,7 +38,6 @@ public class Gyms implements IMod {
 
     @Override
     public void preInit() {
-        initGyms();
         EntityRegistry.registerModEntity(EntityGymLeader.class, "entityGymLeader", 487, iPixelmon.instance, 80, 3, false);
         iPixelmon.registerPacket(PacketOpenClaimGui.Handler.class, PacketOpenClaimGui.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketStorePokemon.Handler.class, PacketStorePokemon.class, Side.SERVER);
@@ -45,7 +45,7 @@ public class Gyms implements IMod {
 
     @Override
     public void init() {
-
+        initGyms();
     }
 
     @Override
@@ -72,8 +72,8 @@ public class Gyms implements IMod {
         ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms"));
 
         try {
-            while(result.next()) {
-                gyms.add(new Gym(LandControl.getRegion(UUID.fromString(result.getString("regionID")))));
+            while (result.next()) {
+                gyms.add(new Gym(UUID.fromString(result.getString("region"))));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,38 +81,27 @@ public class Gyms implements IMod {
     }
 
     public static Gym getGym(Region region) throws Exception {
-        for (Gym gym : gyms) {
-            if (gym.getRegion().equals(region)) return gym;
-        }
+        for (Gym gym : gyms) if (gym.getRegion().equals(region)) return gym;
 
         throw new Exception("Gym not found there.");
     }
 
     @SideOnly(Side.SERVER)
-    public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team, String name) throws Exception {
+    public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team) throws Exception {
         Region region = LandControl.getRegion(world, pos);
-        if (name == null || name.isEmpty()) {
-            throw new Exception("Name is invalid.");
-        }
 
-        ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", region.id().toString()));
-
-        if (result.next()) {
+        if (iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("region", region.id().toString())).next())
             throw new Exception("There is already a gym here.");
-        }
 
-        result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("name", name));
-
-        if (result.next()) {
-            throw new Exception("There is already a gym with that name.");
-        }
+        NBTTagCompound dataTag = new NBTTagCompound();
+        dataTag.setLong("power", power);
+        dataTag.setString("team", team.name());
 
         InsertForm gymForm = new InsertForm("Gyms");
-        gymForm.add("name", name);
-        gymForm.add("regionID", region.id().toString());
-        gymForm.add("power", power);
-        gymForm.add("team", team.name());
-        gymForm.add("gymLeaders", "");
+        gymForm.add("region", region.id().toString());
+        gymForm.add("data", dataTag.toString());
+        gymForm.add("seats", new NBTTagCompound().toString());
+        gymForm.add("gymLeaders", new NBTTagCompound().toString());
         iPixelmon.mysql.insert(Gyms.class, gymForm);
         Gym gym = new Gym(region);
         gyms.add(gym);
@@ -122,13 +111,10 @@ public class Gyms implements IMod {
 
     @SideOnly(Side.SERVER)
     public static void deleteGym(Gym gym) throws Exception {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("regionID", gym.getRegion().id().toString()));
-
-        if (!result.next()) {
+        if (!iPixelmon.mysql.selectAllFrom(Gyms.class, new SelectionForm("Gyms").add("region", gym.getRegion().id().toString())).next())
             throw new Exception("Gym not found.");
-        }
 
-        iPixelmon.mysql.delete(Gyms.class, new DeleteForm("Gyms").add("regionID", gym.getRegion().id().toString()));
+        iPixelmon.mysql.delete(Gyms.class, new DeleteForm("Gyms").add("region", gym.getRegion().id().toString()));
         gyms.remove(gym);
     }
 

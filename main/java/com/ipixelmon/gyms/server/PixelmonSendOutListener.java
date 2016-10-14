@@ -37,7 +37,7 @@ public class PixelmonSendOutListener {
 
             if (gym == null) return;
 
-            gym.initiateBattle((EntityPlayerMP) event.player);
+            gym.initBattle((EntityPlayerMP) event.player);
         } catch (Exception e) {
         }
     }
@@ -49,7 +49,7 @@ public class PixelmonSendOutListener {
         try {
             Gym gym = Gyms.getGym(LandControl.getRegion(event.world, event.pos));
 
-            if (!gym.getDisplayBlocks().contains(event.pos)) return;
+            if (!gym.getSeats().contains(event.pos)) return;
 
             if (gym.getAvailableSlots() < 1) {
                 event.entityPlayer.addChatComponentMessage(new ChatComponentText("There are no available slots."));
@@ -79,7 +79,7 @@ public class PixelmonSendOutListener {
 
             // TODO: Work on power if gym wins a battle, and work on loss
 
-            gym.initiateBattle((EntityPlayerMP) event.player);
+            gym.initBattle((EntityPlayerMP) event.player);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -36,15 +36,19 @@ public class GuiClaimGym extends GuiScreen {
 
     public GuiClaimGym() {
         for (PixelmonData pixelmonData : ServerStorageDisplay.pokemon) {
-            EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, Minecraft.getMinecraft().thePlayer.worldObj);
-            pixelmon.setHealth(pixelmonData.health);
-            pixelmon.setIsShiny(pixelmonData.isShiny);
-            pixelmon.setForm(pixelmonData.form);
-            pixelmon.getLvl().setLevel(pixelmonData.lvl);
-            pixelmon.setGrowth(EnumGrowth.Enormous);
-            pixelmon.caughtBall = EnumPokeballs.PokeBall;
-            pixelmon.friendship.initFromCapture();
-            pixelmonList.add(pixelmon);
+            if(pixelmonData != null) {
+                EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, Minecraft.getMinecraft().thePlayer.worldObj);
+                pixelmon.setHealth(pixelmonData.health);
+                pixelmon.setIsShiny(pixelmonData.isShiny);
+                pixelmon.setForm(pixelmonData.form);
+                pixelmon.getLvl().setLevel(pixelmonData.lvl);
+                pixelmon.setGrowth(EnumGrowth.Enormous);
+                pixelmon.caughtBall = EnumPokeballs.PokeBall;
+                pixelmon.friendship.initFromCapture();
+                pixelmonList.add(pixelmon);
+            } else {
+                pixelmonList.add(null);
+            }
         }
     }
 
@@ -58,14 +62,16 @@ public class GuiClaimGym extends GuiScreen {
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
         GlStateManager.translate(this.width / 2f, (this.height / 2f) + 50, 0f);
-        GuiPokedex.drawEntityToScreen(0, 0, 71 * 2, 77 * 2, pixelmon, partialTicks, true);
+        if(pixelmon != null) GuiPokedex.drawEntityToScreen(0, 0, 71 * 2, 77 * 2, pixelmon, partialTicks, true);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
 
-        mc.fontRendererObj.drawString("Name: " + pixelmon.getName(), posX + 5, posY + 5, 0xFFFFFF, true);
-        mc.fontRendererObj.drawString("Shiny: " + pixelmon.getIsShiny(), posX + 5, posY + 12, 0xFFFFFF, true);
-        mc.fontRendererObj.drawString("BP: " + PixelmonUtility.getBP(pixelmon), posX + 5, posY + 19, 0xFFFFFF, true);
-        mc.fontRendererObj.drawString("Level: " + pixelmon.getLvl().getLevel(), posX + 5, posY + 26, 0xFFFFFF, true);
+        if(pixelmon != null) {
+            mc.fontRendererObj.drawString("Name: " + pixelmon.getName(), posX + 5, posY + 5, 0xFFFFFF, true);
+            mc.fontRendererObj.drawString("Shiny: " + pixelmon.getIsShiny(), posX + 5, posY + 12, 0xFFFFFF, true);
+            mc.fontRendererObj.drawString("BP: " + PixelmonUtility.getBP(pixelmon), posX + 5, posY + 19, 0xFFFFFF, true);
+            mc.fontRendererObj.drawString("Level: " + pixelmon.getLvl().getLevel(), posX + 5, posY + 26, 0xFFFFFF, true);
+        }
 
         mc.fontRendererObj.setUnicodeFlag(false);
 
@@ -96,6 +102,11 @@ public class GuiClaimGym extends GuiScreen {
         buttonList.add(new GuiButton(1, posX + bgWidth + 5, posY + ((bgHeight / 2) - (20 / 2)), 20, 20, ">"));
         buttonList.add(new GuiButton(2, posX, posY + bgHeight, 40, 20, "Exit"));
         buttonList.add(new GuiButton(3, posX + bgWidth - 100, posY + bgHeight, 100, 20, "Store Pixelmon"));
+    }
+
+    @Override
+    public void updateScreen() {
+        this.buttonList.get(3).enabled = ServerStorageDisplay.pokemon[page] != null;
     }
 
     public void drawRect(Rectangle rect, Color bgColor, Color trimColor) {

@@ -134,6 +134,7 @@ public class Region {
     public boolean isMember(EntityPlayer player) {
         return owner.equals(player.getUniqueID()) || members.contains(player.getUniqueID());
     }
+    // TODO: Update to NBTTagCompounds
 
     private String membersToString() {
         StringBuilder builder = new StringBuilder();
@@ -150,5 +151,12 @@ public class Region {
         builder.deleteCharAt(builder.length() - 1);
 
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Region)) return false;
+
+        return ((Region) obj).id().equals(id());
     }
 }

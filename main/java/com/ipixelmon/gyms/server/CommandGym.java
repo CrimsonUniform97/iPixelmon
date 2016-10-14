@@ -1,11 +1,10 @@
 package com.ipixelmon.gyms.server;
 
+import com.ipixelmon.gyms.Gym;
 import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.landcontrol.LandControl;
-import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.teams.EnumTeam;
 import com.mojang.authlib.GameProfile;
-import com.ipixelmon.gyms.Gym;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -16,6 +15,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class CommandGym implements ICommand {
@@ -27,7 +27,7 @@ public class CommandGym implements ICommand {
     @Override
     public String getCommandUsage(ICommandSender sender) {
         //TODO: If still getting error check this out, maybe shorten it.
-        return "/gym create <name>\n/gym delete\n/gym update\n/gym addslot\n/gym delslot";
+        return "/gym create\n/gym delete\n/gym sync\n/gym addseat\n/gym delseat";
     }
 
     @Override
@@ -56,9 +56,7 @@ public class CommandGym implements ICommand {
         try {
             switch (cmd.toLowerCase()) {
                 case "create": {
-                    if (args.length != 2)
-                        throw new Exception(getCommandUsage(sender));
-                    Gyms.createGym(player.worldObj, playerPos, 0, EnumTeam.None, args[1]);
+                    Gyms.createGym(player.worldObj, playerPos, 0, EnumTeam.None);
                     player.addChatComponentMessage(new ChatComponentText("Gym created."));
                     break;
                 }
@@ -67,30 +65,34 @@ public class CommandGym implements ICommand {
                     player.addChatComponentMessage(new ChatComponentText("Gym deleted."));
                     break;
                 }
-                case "update": {
-                    Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos)).update();
-                    player.addChatComponentMessage(new ChatComponentText("Gym updated."));
+                case "sync": {
+                    Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos)).sync();
+                    player.addChatComponentMessage(new ChatComponentText("Gym sync complete."));
                     break;
                 }
-                case "addslot": {
+                case "addseat": {
                     Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
-                    List<BlockPos> slots = gym.getDisplayBlocks();
-                    slots.add(new BlockPos(player.posX, player.posY, player.posZ));
-                    gym.setDisplayBlocks(slots);
-                    player.addChatComponentMessage(new ChatComponentText("Slot added."));
+
+                    if(gym.getSeats().size() >= 10) throw new Exception("Maximum seats reached. (10)");
+
+                    gym.getSeats().add(new BlockPos(player.posX, player.posY, player.posZ));
+                    gym.sync();
+                    player.addChatComponentMessage(new ChatComponentText("Seat added."));
                     break;
                 }
-                case "delslot": {
+                case "delseat": {
                     Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
-                    List<BlockPos> slots = gym.getDisplayBlocks();
-                    slots.remove(new BlockPos(player.posX, player.posY, player.posZ));
-                    gym.setDisplayBlocks(slots);
-                    player.addChatComponentMessage(new ChatComponentText("Slot deleted."));
+                    int size = gym.getSeats().size();
+                    gym.getSeats().remove(playerPos);
+                    gym.sync();
+                    if(size == gym.getSeats().size()) throw new Exception("There is no seat there.");
+                    player.addChatComponentMessage(new ChatComponentText("Seat deleted."));
                     break;
                 }
             }
         } catch (Exception e) {
-            player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+            e.printStackTrace();
+//            player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
         }
     }
 

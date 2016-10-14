@@ -22,7 +22,6 @@ public final class DeleteForm {
             value = "1";
         }
 
-
         this.deleteForms.put(key, "" + value);
         return this;
     }

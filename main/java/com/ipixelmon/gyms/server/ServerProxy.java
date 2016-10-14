@@ -17,21 +17,17 @@ public class ServerProxy extends CommonProxy
     @Override
     public void preInit()
     {
-
+        CreateForm gymsForm = new CreateForm("Gyms");
+        gymsForm.add("region", DataType.TEXT);
+        gymsForm.add("data", DataType.TEXT);
+        gymsForm.add("seats", DataType.TEXT);
+        gymsForm.add("gymLeaders", DataType.TEXT);
+        iPixelmon.mysql.createTable(Gyms.class, gymsForm);
     }
 
     @Override
     public void init()
     {
-        CreateForm gymsForm = new CreateForm("Gyms");
-        gymsForm.add("name", DataType.TEXT);
-        gymsForm.add("regionID", DataType.TEXT);
-        gymsForm.add("power", DataType.INT);
-        gymsForm.add("team", DataType.TEXT);
-        gymsForm.add("gymLeaders", DataType.TEXT);
-        gymsForm.add("displayblocks", DataType.TEXT);
-        iPixelmon.mysql.createTable(Gyms.class, gymsForm);
-
         PixelmonSendOutListener sendOutListener;
 
         Pixelmon.EVENT_BUS.register(sendOutListener = new PixelmonSendOutListener());

@@ -8,6 +8,7 @@ import com.pixelmonmod.pixelmon.comm.SetTrainerData;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumEncounterMode;
+import com.pixelmonmod.pixelmon.storage.PCServer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,8 @@ public class EntityGymLeader extends NPCTrainer {
         super(world);
     }
 
+    private EntityPixelmon pixelmon;
+
     public EntityGymLeader(World world, BlockPos location, EntityPixelmon pixelmon, UUID playerUUID) {
         super(world);
         clearAITasks();
@@ -37,7 +40,7 @@ public class EntityGymLeader extends NPCTrainer {
         update(new SetTrainerData("Name", "Greeting", "Win", "Loss", 12, new ItemStack[]{}));
         setPosition(location.getX() + 0.5D, location.getY() + 0.5D, location.getZ() + 0.5D);
         setEncounterMode(EnumEncounterMode.Unlimited);
-        loadPokemon(pixelmon);
+        loadPokemon(this.pixelmon = pixelmon);
     }
 
 
@@ -96,4 +99,7 @@ public class EntityGymLeader extends NPCTrainer {
         this.getPokemonStorage().addToParty(pixelmon);
     }
 
+    public EntityPixelmon getPixelmon() {
+        return pixelmon;
+    }
 }
