@@ -51,6 +51,10 @@ public class Gyms implements IMod {
     @Override
     public void serverStartingEvent(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandGym());
+
+        for(Gym gym : gyms) {
+            gym.spawnGymLeaders();
+        }
     }
 
     @Override

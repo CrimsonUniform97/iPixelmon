@@ -14,11 +14,12 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class PlayerListener {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void playerInteraction(PlayerInteractEvent event) {
         if (event.pos.getX() == 0 && event.pos.getY() == 0 && event.pos.getZ() == 0) {
             return;
@@ -57,6 +58,7 @@ public class PlayerListener {
             }
 
             if (!region.isMember(event.entityPlayer)) {
+                if(event.isCanceled()) return;
                 event.entityPlayer.addChatComponentMessage(new ChatComponentText("You do not have permission for this area."));
                 event.setCanceled(true);
             }

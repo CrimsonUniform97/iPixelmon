@@ -12,12 +12,15 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import net.minecraft.block.BlockCarpet;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,19 +29,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.sql.ResultSet;
 import java.util.*;
 
-/**
- * Created by colby on 10/13/2016.
- * <p>
- * Defeating a Pokemon at a rival gym: -500 Prestige
- * Defeating all the Pokemon at a rival gym: -1,500 Prestige on top of the individual bonuses
- * <p>
- * If a gym loses enough prestige to drop down a level, the lowest-ranked Pokemon is dropped; if all of a gym's prestige is depleted, the team is kicked out altogether and the gym reverts to a neutral, unclaimed state.
- */
 
 /**
  * Defeating a Pokemon at a rival gym: -500 Prestige
  * Defeating all the Pokemon at a rival gym: -1,500 Prestige on top of the individual bonuses
- *
+ * <p>
  * If a gym loses enough prestige to drop down a level, the lowest-ranked Pokemon is dropped; if all of a gym's prestige is depleted, the team is kicked out altogether and the gym reverts to a neutral, unclaimed state.
  */
 
@@ -57,7 +52,7 @@ public class Gym {
 
     private UUID region;
     private List<EntityGymLeader> gymLeaders;
-    private Map<EntityPlayerMP, BattleControllerBase> battles;
+    private Map<EntityPlayerMP, GymBattle> battles;
     private List<BlockPos> seats;
     private NBTTagCompound tagData, tagSeats, tagGymLeaders;
 
@@ -91,8 +86,9 @@ public class Gym {
         return LandControl.getRegion(region);
     }
 
-    public int getAvailableSlots() {
-        return getLevel() - gymLeaders.size();
+    public int getAvailableSlots() throws Exception {
+        System.out.println(getLevel() + "," + getGymLeaders().size());
+        return getLevel() - getGymLeaders().size();
     }
 
     public int getLevel() {
@@ -126,9 +122,21 @@ public class Gym {
             gymLeaders = new ArrayList<>();
 
             int seatIndex = 0;
+            NBTTagCompound tagCompound;
+            EntityPixelmon pixelmon;
             for (String key : tagGymLeaders.getKeySet()) {
-                gymLeaders.add(new EntityGymLeader(getRegion().getWorldServer(), seatIndex < getSeats().size() ? getSeats().get(seatIndex) : new BlockPos(0, 0, 0),
-                        (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(tagGymLeaders.getCompoundTag(key), getRegion().getWorldServer()), UUID.fromString(key)));
+                tagCompound = tagGymLeaders.getCompoundTag(key);
+                pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(tagCompound.getString("name"), getRegion().getWorldServer());
+                pixelmon.setHealth(pixelmon.getMaxHealth());
+                pixelmon.setIsShiny(tagCompound.getBoolean("shiny"));
+                pixelmon.setForm(tagCompound.getInteger("form"));
+                pixelmon.getLvl().setLevel(tagCompound.getInteger("lvl"));
+                pixelmon.caughtBall = EnumPokeballs.PokeBall;
+                pixelmon.friendship.initFromCapture();
+
+                gymLeaders.add(new EntityGymLeader(getRegion().getWorldServer(),
+                        seatIndex < getSeats().size() ? getSeats().get(seatIndex) : new BlockPos(0, 0, 0),
+                        pixelmon, UUID.fromString(key)));
                 seatIndex++;
             }
         }
@@ -161,44 +169,27 @@ public class Gym {
     }
 
     @SideOnly(Side.SERVER)
-    public void initBattle(EntityPlayerMP player) throws Exception {
-        if (getGymLeaders().isEmpty()) throw new Exception("There are no gym leaders occupying this gym.");
-
-        EntityGymLeader gymLeader = getGymLeaders().get(getGymLeaders().size() - 1);
-
-        if (battles.containsKey(player)) {
-            for (int i = 0; i < gymLeaders.size(); i++) {
-                TrainerParticipant trainerParticipant = (TrainerParticipant) battles.get(player).participants.get(1);
-                if (gymLeaders.get(i).equals(trainerParticipant.trainer))
-                    if (i - 1 > -1) {
-                        gymLeader = gymLeaders.get(i - 1);
-                    } else {
-                        // TODO: Beat the GYM!
-                    }
+    public void setPower(long power) {
+        try {
+            if (power < 0) {
+                power = 0;
+                setTeam(EnumTeam.None);
+                getGymLeaders().remove(getGymLeaders().size() - 1);
             }
+
+            // TODO: Need to keep testing all of this out. Battles need to be worked on more.
+
+            tagData.setLong("power", power);
+
+            sync();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
-        EntityPixelmon[] pixelmons = new EntityPixelmon[PixelmonStorage.PokeballManager.getPlayerStorage(player).getAllAblePokemonIDs().size()];
-
-        int i = 0;
-        for (int[] id : PixelmonStorage.PokeballManager.getPlayerStorage(player).getAllAblePokemonIDs())
-            pixelmons[i++] = PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(id, getRegion().getWorldServer());
-
-
-        PlayerParticipant playerParticipant = new PlayerParticipant(player, pixelmons);
-        TrainerParticipant trainerParticipant = new TrainerParticipant(gymLeader, player, 1);
-
-        playerParticipant.startedBattle = true;
-        BattleParticipant[] team1 = new BattleParticipant[]{playerParticipant};
-        BattleParticipant[] team2 = new BattleParticipant[]{trainerParticipant};
-        battles.put(player, new BattleControllerBase(team1, team2));
     }
 
     @SideOnly(Side.SERVER)
-    public void setPower(long power) {
-        tagData.setLong("power", power);
-        iPixelmon.mysql.update(Gyms.class, new UpdateForm("Gyms").set("data", tagData.toString()).where("region", region.toString()));
+    public Map<EntityPlayerMP, GymBattle> getBattles() {
+        return battles;
     }
 
     @SideOnly(Side.SERVER)
@@ -207,14 +198,40 @@ public class Gym {
         tagSeats = new NBTTagCompound();
 
         // TODO: Get correct NBT, not working. getPixelmon().getNBTTagCompound() returns null....
-        for (EntityGymLeader gymLeader : getGymLeaders())
-            tagGymLeaders.setTag(gymLeader.getPlayerUUID().toString(), gymLeader.getPixelmon().getNBTTagCompound());
+        NBTTagCompound tagCompound;
+        for (EntityGymLeader gymLeader : getGymLeaders()) {
+            tagCompound = new NBTTagCompound();
+            tagCompound.setString("name", gymLeader.getPixelmon().getName());
+            tagCompound.setInteger("lvl", gymLeader.getPixelmon().getLvl().getLevel());
+            tagCompound.setBoolean("shiny", gymLeader.getPixelmon().getIsShiny());
+            tagCompound.setInteger("form", gymLeader.getPixelmon().getForm());
+            tagGymLeaders.setTag(gymLeader.getPlayerUUID().toString(), tagCompound);
+        }
 
         int count = 0;
         for (BlockPos seat : getSeats())
             tagSeats.setIntArray(String.valueOf(count++), new int[]{seat.getX(), seat.getY(), seat.getZ()});
 
         iPixelmon.mysql.update(Gyms.class, new UpdateForm("Gyms").set("data", tagData.toString()).set("seats", tagSeats.toString()).set("gymLeaders", tagGymLeaders.toString()).where("region", region.toString()));
+    }
+
+    @SideOnly(Side.SERVER)
+    public void spawnGymLeaders() {
+        try {
+            for (EntityLiving e : getRegion().getWorldServer().getEntitiesWithinAABB(EntityGymLeader.class,
+                    new AxisAlignedBB(getRegion().getMin().getX(), 0, getRegion().getMin().getZ(),
+                            getRegion().getMax().getX(), getRegion().getWorldServer().getHeight(), getRegion().getMax().getZ()))) {
+                getRegion().getWorldServer().removeEntity(e);
+
+            }
+
+            gymLeaders = null;
+
+            for (EntityGymLeader gymLeader : getGymLeaders()) getRegion().getWorldServer().spawnEntityInWorld(gymLeader);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

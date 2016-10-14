@@ -59,7 +59,6 @@ public class PacketStorePokemon implements IMessage {
             try {
                 Gym gym = Gyms.getGym(LandControl.getRegion(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ)));
                 gym.setTeam(Teams.getPlayerTeam(player.getUniqueID()));
-                System.out.println(PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj).getName());
                 gym.getGymLeaders().add(new EntityGymLeader(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ),
                         PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj), player.getUniqueID()));
                 gym.sync();

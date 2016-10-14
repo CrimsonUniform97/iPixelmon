@@ -89,6 +89,11 @@ public class CommandGym implements ICommand {
                     player.addChatComponentMessage(new ChatComponentText("Seat deleted."));
                     break;
                 }
+                case "spawn": {
+                    Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
+                    gym.spawnGymLeaders();
+                    break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

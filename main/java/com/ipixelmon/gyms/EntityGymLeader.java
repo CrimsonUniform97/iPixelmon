@@ -4,11 +4,15 @@ import com.ipixelmon.gyms.client.CustomSkinManager;
 import com.ipixelmon.teams.Teams;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
+import com.pixelmonmod.pixelmon.AI.AITrainerInBattle;
 import com.pixelmonmod.pixelmon.comm.SetTrainerData;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
+import com.pixelmonmod.pixelmon.entities.npcs.registry.GymNPCData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.enums.EnumEncounterMode;
+import com.pixelmonmod.pixelmon.enums.*;
 import com.pixelmonmod.pixelmon.storage.PCServer;
+import com.pixelmonmod.pixelmon.worldGeneration.structure.gyms.GymInfo;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,24 +38,24 @@ public class EntityGymLeader extends NPCTrainer {
     public EntityGymLeader(World world, BlockPos location, EntityPixelmon pixelmon, UUID playerUUID) {
         super(world);
         clearAITasks();
-        this.tasks.addTask(0, new EntityMoveToLocationAI(this, 1.0D, location.getX() + 0.5D, location.getY() + 0.5D, location.getZ() + 0.5D));
-        this.tasks.addTask(1, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(0, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(1, new AITrainerInBattle(this));
         setPlayerUUID(playerUUID);
-        update(new SetTrainerData("Name", "Greeting", "Win", "Loss", 12, new ItemStack[]{}));
+        update(new SetTrainerData("Name", "Bring it on!", "Eat shit!", "Damn you!", 12, new ItemStack[]{}));
         setPosition(location.getX() + 0.5D, location.getY() + 0.5D, location.getZ() + 0.5D);
         setEncounterMode(EnumEncounterMode.Unlimited);
         loadPokemon(this.pixelmon = pixelmon);
-    }
 
+
+        setAIMode(EnumTrainerAI.StandStill);
+        setEncounterMode(EnumEncounterMode.Once);
+        setBossMode(EnumBossMode.NotBoss);
+        setBattleType(EnumBattleType.Single);
+        setBattleAIMode(EnumBattleAIMode.Default);
+    }
 
     @Override
     public void initAI() {
-
-    }
-
-    @Override
-    public boolean isAIDisabled() {
-        return false;
     }
 
     protected void clearAITasks() {
@@ -60,15 +64,15 @@ public class EntityGymLeader extends NPCTrainer {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompund) {
-        super.writeToNBT(tagCompund);
-        tagCompund.setString("playerUUID", getPlayerUUID() != null ? getPlayerUUID().toString() : this.getUniqueID().toString());
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setString("playerUUID", getPlayerUUID() != null ? getPlayerUUID().toString() : this.getUniqueID().toString());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompund) {
-        super.readFromNBT(tagCompund);
-        setPlayerUUID(UUID.fromString(tagCompund.getString("playerUUID")));
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        setPlayerUUID(UUID.fromString(tagCompound.getString("playerUUID")));
     }
 
     @Override
