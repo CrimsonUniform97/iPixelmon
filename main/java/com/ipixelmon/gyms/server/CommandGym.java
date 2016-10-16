@@ -26,7 +26,6 @@ public class CommandGym implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        //TODO: If still getting error check this out, maybe shorten it.
         return "/gym create\n/gym delete\n/gym sync\n/gym addseat\n/gym delseat";
     }
 
@@ -73,7 +72,7 @@ public class CommandGym implements ICommand {
                 case "addseat": {
                     Gym gym = Gyms.getGym(LandControl.getRegion(player.getEntityWorld(), playerPos));
 
-                    if(gym.getSeats().size() >= 10) throw new Exception("Maximum seats reached. (10)");
+                    if (gym.getSeats().size() >= 10) throw new Exception("Maximum seats reached. (10)");
 
                     gym.getSeats().add(new BlockPos(player.posX, player.posY, player.posZ));
                     gym.sync();
@@ -85,7 +84,7 @@ public class CommandGym implements ICommand {
                     int size = gym.getSeats().size();
                     gym.getSeats().remove(playerPos);
                     gym.sync();
-                    if(size == gym.getSeats().size()) throw new Exception("There is no seat there.");
+                    if (size == gym.getSeats().size()) throw new Exception("There is no seat there.");
                     player.addChatComponentMessage(new ChatComponentText("Seat deleted."));
                     break;
                 }
@@ -97,7 +96,8 @@ public class CommandGym implements ICommand {
             }
         } catch (Exception e) {
             e.printStackTrace();
-//            player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+
+            if (e.getMessage().length() < 256) player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
         }
     }
 

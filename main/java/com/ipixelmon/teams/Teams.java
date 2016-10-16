@@ -9,6 +9,7 @@ import com.ipixelmon.gyms.EntityGymLeader;
 import com.ipixelmon.teams.client.PacketChooseTeam;
 import com.ipixelmon.teams.server.PacketOpenTeamMenu;
 import com.ipixelmon.teams.server.ServerProxy;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -40,8 +41,13 @@ public class Teams implements IMod
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event)
+    public void serverStarting(FMLServerStartingEvent event)
     {
+
+    }
+
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
 
     }
 

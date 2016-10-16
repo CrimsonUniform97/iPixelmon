@@ -5,6 +5,7 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelegg.egg.PixelEggItem;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -32,8 +33,13 @@ public class PixelEgg implements IMod
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event)
+    public void serverStarting(FMLServerStartingEvent event)
     {
+
+    }
+
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
 
     }
 

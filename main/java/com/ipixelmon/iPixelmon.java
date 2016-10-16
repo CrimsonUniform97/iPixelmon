@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -74,7 +75,13 @@ public final class iPixelmon {
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event)
     {
-        for(IMod mod : mods) mod.serverStartingEvent(event);
+        for(IMod mod : mods) mod.serverStarting(event);
+    }
+
+    @Mod.EventHandler
+    public void serverLoaded(FMLServerStartedEvent event)
+    {
+        for(IMod mod : mods) mod.serverStarted(event);
     }
 
     public static final void registerPacket(final Class handlerClass, final Class messageClass, final Side side) {

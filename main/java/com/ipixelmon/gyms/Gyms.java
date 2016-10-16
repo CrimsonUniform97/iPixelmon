@@ -1,6 +1,8 @@
 package com.ipixelmon.gyms;
 
 import com.ipixelmon.gyms.client.ClientProxy;
+import com.ipixelmon.gyms.client.TileEntityGymInfo;
+import com.ipixelmon.gyms.server.BattleListenerThread;
 import com.ipixelmon.gyms.server.ServerProxy;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
@@ -15,9 +17,11 @@ import com.ipixelmon.teams.EnumTeam;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -41,6 +45,8 @@ public class Gyms implements IMod {
         EntityRegistry.registerModEntity(EntityGymLeader.class, "entityGymLeader", 487, iPixelmon.instance, 80, 3, false);
         iPixelmon.registerPacket(PacketOpenClaimGui.Handler.class, PacketOpenClaimGui.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketStorePokemon.Handler.class, PacketStorePokemon.class, Side.SERVER);
+        GameRegistry.registerTileEntity(TileEntityGymInfo.class, "tileEntityGymInfo");
+        GameRegistry.registerBlock(BlockGymInfo.instance);
     }
 
     @Override
@@ -49,12 +55,21 @@ public class Gyms implements IMod {
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandGym());
+    }
 
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
         for(Gym gym : gyms) {
             gym.spawnGymLeaders();
         }
+
+        new Thread(new BattleListenerThread()).start();
+    }
+
+    public static List<Gym> getGyms() {
+        return gyms;
     }
 
     @Override

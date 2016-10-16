@@ -4,19 +4,13 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
-import com.ipixelmon.CommonProxy;
-import com.ipixelmon.gyms.Gyms;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.CreateForm;
-import com.ipixelmon.mysql.DataType;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import net.minecraftforge.common.MinecraftForge;
 
-public class ServerProxy extends CommonProxy
-{
+public class ServerProxy extends CommonProxy {
     @Override
-    public void preInit()
-    {
+    public void preInit() {
         CreateForm gymsForm = new CreateForm("Gyms");
         gymsForm.add("region", DataType.TEXT);
         gymsForm.add("data", DataType.TEXT);
@@ -26,11 +20,11 @@ public class ServerProxy extends CommonProxy
     }
 
     @Override
-    public void init()
-    {
-        PixelmonSendOutListener sendOutListener;
+    public void init() {
+        PixelmonListener sendOutListener;
 
-        Pixelmon.EVENT_BUS.register(sendOutListener = new PixelmonSendOutListener());
+        Pixelmon.EVENT_BUS.register(sendOutListener = new PixelmonListener());
         MinecraftForge.EVENT_BUS.register(sendOutListener);
     }
+
 }

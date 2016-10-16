@@ -14,6 +14,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -54,10 +55,14 @@ public class PacketStorePokemon implements IMessage {
 
             final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
-            // TODO: Check gyms points before adding pokemon, and it's slots
-
             try {
                 Gym gym = Gyms.getGym(LandControl.getRegion(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ)));
+
+                if (gym.getAvailableSlots() < 1) {
+                    player.addChatComponentMessage(new ChatComponentText("There are no available slots."));
+                    return null;
+                }
+
                 gym.setTeam(Teams.getPlayerTeam(player.getUniqueID()));
                 gym.getGymLeaders().add(new EntityGymLeader(player.worldObj, new BlockPos(player.posX, player.posY, player.posZ),
                         PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(message.pixelmonData.pokemonID, player.worldObj), player.getUniqueID()));

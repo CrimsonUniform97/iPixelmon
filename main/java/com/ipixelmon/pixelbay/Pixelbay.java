@@ -9,6 +9,7 @@ import com.ipixelmon.pixelbay.gui.buy.PacketBuyPokemon;
 import com.ipixelmon.pixelbay.gui.sell.PacketSellItem;
 import com.ipixelmon.pixelbay.gui.sell.PacketSellPokemon;
 import com.ipixelmon.pixelbay.gui.sell.PacketSellResponse;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,8 +36,13 @@ public final class Pixelbay implements IMod {
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event)
+    public void serverStarting(FMLServerStartingEvent event)
     {
+
+    }
+
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
 
     }
 

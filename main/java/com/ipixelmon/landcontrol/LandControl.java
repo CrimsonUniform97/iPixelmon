@@ -10,6 +10,7 @@ import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,7 +44,12 @@ public class LandControl implements IMod {
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
+
+    }
+
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
 
     }
 

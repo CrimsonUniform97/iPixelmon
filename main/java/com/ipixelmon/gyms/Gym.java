@@ -6,12 +6,14 @@ import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.teams.EnumTeam;
-import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
+import com.pixelmonmod.pixelmon.battles.BattleQuery;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumBattleType;
+import com.pixelmonmod.pixelmon.enums.EnumGrowth;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import net.minecraft.block.BlockCarpet;
@@ -22,7 +24,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,7 +53,6 @@ public class Gym {
 
     private UUID region;
     private List<EntityGymLeader> gymLeaders;
-    private Map<EntityPlayerMP, GymBattle> battles;
     private List<BlockPos> seats;
     private NBTTagCompound tagData, tagSeats, tagGymLeaders;
 
@@ -67,7 +67,6 @@ public class Gym {
             tagGymLeaders = JsonToNBT.getTagFromJson(result.getString("gymLeaders"));
         }
 
-        battles = new HashMap<>();
     }
 
     protected Gym(Region region) throws Exception {
@@ -87,20 +86,19 @@ public class Gym {
     }
 
     public int getAvailableSlots() throws Exception {
-        System.out.println(getLevel() + "," + getGymLeaders().size());
         return getLevel() - getGymLeaders().size();
     }
 
     public int getLevel() {
         int count = 0;
         for (int level : levels) {
-            count++;
             if (getPower() <= level) {
-                break;
+                return count;
             }
+            count++;
         }
 
-        return count;
+        return 0;
     }
 
     public List<BlockPos> getSeats() {
@@ -131,6 +129,7 @@ public class Gym {
                 pixelmon.setIsShiny(tagCompound.getBoolean("shiny"));
                 pixelmon.setForm(tagCompound.getInteger("form"));
                 pixelmon.getLvl().setLevel(tagCompound.getInteger("lvl"));
+                pixelmon.setGrowth(EnumGrowth.getGrowthFromIndex(tagCompound.getInteger("growth")));
                 pixelmon.caughtBall = EnumPokeballs.PokeBall;
                 pixelmon.friendship.initFromCapture();
 
@@ -177,8 +176,6 @@ public class Gym {
                 getGymLeaders().remove(getGymLeaders().size() - 1);
             }
 
-            // TODO: Need to keep testing all of this out. Battles need to be worked on more.
-
             tagData.setLong("power", power);
 
             sync();
@@ -188,16 +185,10 @@ public class Gym {
     }
 
     @SideOnly(Side.SERVER)
-    public Map<EntityPlayerMP, GymBattle> getBattles() {
-        return battles;
-    }
-
-    @SideOnly(Side.SERVER)
     public void sync() throws Exception {
         tagGymLeaders = new NBTTagCompound();
         tagSeats = new NBTTagCompound();
 
-        // TODO: Get correct NBT, not working. getPixelmon().getNBTTagCompound() returns null....
         NBTTagCompound tagCompound;
         for (EntityGymLeader gymLeader : getGymLeaders()) {
             tagCompound = new NBTTagCompound();
@@ -205,6 +196,7 @@ public class Gym {
             tagCompound.setInteger("lvl", gymLeader.getPixelmon().getLvl().getLevel());
             tagCompound.setBoolean("shiny", gymLeader.getPixelmon().getIsShiny());
             tagCompound.setInteger("form", gymLeader.getPixelmon().getForm());
+            tagCompound.setInteger("growth", gymLeader.getPixelmon().getGrowth().index);
             tagGymLeaders.setTag(gymLeader.getPlayerUUID().toString(), tagCompound);
         }
 
@@ -227,11 +219,30 @@ public class Gym {
 
             gymLeaders = null;
 
-            for (EntityGymLeader gymLeader : getGymLeaders()) getRegion().getWorldServer().spawnEntityInWorld(gymLeader);
+            for (EntityGymLeader gymLeader : getGymLeaders())
+                getRegion().getWorldServer().spawnEntityInWorld(gymLeader);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void startBattle(EntityPlayerMP player) throws Exception {
+        if(getGymLeaders().isEmpty()) throw new Exception("There are no gym leaders occupying this gym.");
+
+        EntityPixelmon e = PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj);
+        PlayerParticipant playerParticipant = new PlayerParticipant(player, new EntityPixelmon[]{e});
+
+        // TODO: add parties
+
+        List<TrainerParticipant> trainerParticipants = new ArrayList<>();
+        for(EntityGymLeader gymLeader : getGymLeaders()) {
+            trainerParticipants.add(new TrainerParticipant(gymLeader, player, 1));
+        }
+
+        playerParticipant.startedBattle = true;
+        BattleParticipant[] team11 = new BattleParticipant[]{playerParticipant};
+        new CustomBattleController(team11, trainerParticipants.toArray(new BattleParticipant[trainerParticipants.size()]), EnumBattleType.Single);
     }
 
 }

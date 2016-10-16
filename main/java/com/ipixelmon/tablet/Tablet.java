@@ -4,6 +4,7 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.server.ServerProxy;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -27,7 +28,12 @@ public class Tablet implements IMod {
     }
 
     @Override
-    public void serverStartingEvent(FMLServerStartingEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
+
+    }
+
+    @Override
+    public void serverStarted(FMLServerStartedEvent event) {
 
     }
 
