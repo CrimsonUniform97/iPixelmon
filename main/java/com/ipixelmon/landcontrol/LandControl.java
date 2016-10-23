@@ -72,7 +72,7 @@ public class LandControl implements IMod {
         ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
 
         try {
-            while(result.next()) {
+            while (result.next()) {
                 regions.add(new Region(UUID.fromString(result.getString("uuid"))));
             }
         } catch (Exception e) {
@@ -110,8 +110,8 @@ public class LandControl implements IMod {
 
     @SideOnly(Side.SERVER)
     public static Region getRegion(World world, BlockPos pos) throws Exception {
-        for(Region region : regions) {
-            if(region.getWorldClient().equalsIgnoreCase(world.getWorldInfo().getWorldName())
+        for (Region region : regions) {
+            if (region.getWorldClient().equalsIgnoreCase(world.getWorldInfo().getWorldName())
                     && region.contains(pos)) {
                 return region;
             }
@@ -121,18 +121,14 @@ public class LandControl implements IMod {
     }
 
     public static Region getRegion(UUID id) throws Exception {
-        for(Region region : regions) {
-            if(region.id().equals(id)) return region;
-        }
-
-        throw new Exception("There is no region there.");
+        return new Region(id);
     }
 
     public static Region getRegion(String worldName, BlockPos pos) throws Exception {
-        for(Region region : regions) {
-            if(region.getWorldClient().equalsIgnoreCase(worldName) && region.contains(pos)) {
-                return region;
-            }
+        ResultSet result = iPixelmon.mysql.query("SELECT * FROM landcontrolRegions WHERE world='" + worldName + "' AND xMin <= '" + pos.getX() + "' AND xMax >= '" + pos.getX() + "' AND zMin <= '" + pos.getZ() + "' AND zMax >= '" + pos.getZ() + "';");
+
+        if(result.next()) {
+            return new Region(UUID.fromString(result.getString("uuid")));
         }
 
         throw new Exception("There is no region there.");

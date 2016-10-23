@@ -1,86 +1,62 @@
 package com.ipixelmon.gyms.client;
 
-import com.google.common.base.Function;
 import com.ipixelmon.gyms.BlockGymInfo;
-import com.ipixelmon.iPixelmon;
-import com.pixelmonmod.pixelmon.worldGeneration.structure.gyms.GymInfo;
-import net.minecraft.block.state.IBlockState;
+import com.ipixelmon.gyms.TileEntityGymInfo;
+import com.ipixelmon.pixelegg.client.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ModelBlock;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by colby on 10/16/2016.
  */
 public class GymInfoRenderer extends TileEntitySpecialRenderer {
 
-    Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-        public TextureAtlasSprite apply(ResourceLocation location) {
-            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-        }
-    };
-
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
         TileEntityGymInfo tile = (TileEntityGymInfo) te;
 
         if (tile != null) {
-            Tessellator tessellator = Tessellator.getInstance();
-        // TODO: Get rendering to work.
-            WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            GL11.glPushMatrix();
-            GL11.glTranslated(x, y, z);
-            IModel crystalModel = null;
-            try {
-                crystalModel = ModelLoaderRegistry.getModel(new ResourceLocation("ipixelmon:block/gym_info"));
-                this.bindTexture(new ResourceLocation("minecraft:textures/blocks/iron_block.png"));
-            } catch (IOException e) {
-                crystalModel = ModelLoaderRegistry.getMissingModel();
-                e.printStackTrace();
-            }
-            IBakedModel bakedModel = crystalModel.bake((TRSRTransformation.identity()), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
-            worldRenderer.begin(7, Attributes.DEFAULT_BAKED_FORMAT);// StartDrawingQuads
+            BlockPos pos = new BlockPos(x,y,z);
 
-            List<BakedQuad> generalQuads = bakedModel.getGeneralQuads();
-            for (BakedQuad q : generalQuads)
+            // Create Empty EntityItem to help with Rendering Positionining.
+            EntityItem entity = new EntityItem(te.getWorld(),pos.getX(),pos.getY(), pos.getZ());
+            if (entity.ticksExisted == 0)
             {
-                int[] vd = q.getVertexData();
-                worldRenderer.addVertexData(vd);
+                entity.lastTickPosX = entity.posX;
+                entity.lastTickPosY = entity.posY;
+                entity.lastTickPosZ = entity.posZ;
             }
-            for (EnumFacing face : EnumFacing.values())
-            {
-                List<BakedQuad> faceQuads = bakedModel.getFaceQuads(face);
-                for (BakedQuad q : faceQuads)
-                {
-                    int[] vd = q.getVertexData();
-                    worldRenderer.addVertexData(vd);
-                }
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x + 0.5D, y + 0.5D, z + 0.5D);
+            GL11.glScaled(2D,2D,2D);
+
+            Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Item.getItemFromBlock(BlockGymInfo.instance)), ItemCameraTransforms.TransformType.FIXED);
+            GlStateManager.popMatrix();
+
+            if(tile.getGym() != null) {
+                try {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(x + 0.5D, y + 0.5D, z + 0.5D);
+                    // TODO: Work on making this a little more... pretty.
+                    renderLivingLabel(tile, EnumChatFormatting.RED + "Power: ★ " + tile.getGym().getPower(), 0, 3, 0, 50);
+                    GlStateManager.popMatrix();
+                }catch(Exception e){}
             }
-            tessellator.draw();
-            GL11.glPopMatrix();
         }
     }
 
@@ -89,10 +65,11 @@ public class GymInfoRenderer extends TileEntitySpecialRenderer {
 
         if (d0 <= (double) (maxDistance * maxDistance)) {
             FontRenderer fontrenderer = this.getFontRenderer();
+            fontrenderer.setUnicodeFlag(true);
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float) x + 0.0F, (float) y + entityIn.height + 0.5F, (float) z);
+            GlStateManager.translate((float) x + 0.0F, (float) y + 0.5F, (float) z);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(-this.rendererDispatcher.entityYaw, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.rendererDispatcher.entityPitch, 1.0F, 0.0F, 0.0F);
@@ -127,6 +104,7 @@ public class GymInfoRenderer extends TileEntitySpecialRenderer {
             GlStateManager.disableBlend();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.popMatrix();
+            fontrenderer.setUnicodeFlag(false);
         }
     }
 

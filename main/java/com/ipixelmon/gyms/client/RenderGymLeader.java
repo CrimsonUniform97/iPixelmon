@@ -3,6 +3,7 @@ package com.ipixelmon.gyms.client;
 import com.ipixelmon.gyms.EntityGymLeader;
 import com.ipixelmon.gyms.Gym;
 import com.ipixelmon.gyms.Gyms;
+import com.ipixelmon.gyms.TileEntityGymInfo;
 import com.ipixelmon.landcontrol.LandControl;
 import com.pixelmonmod.pixelmon.client.*;
 import com.pixelmonmod.pixelmon.client.ClientProxy;
@@ -11,10 +12,15 @@ import com.pixelmonmod.pixelmon.client.render.RenderNPC;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.entities.npcs.EntityNPC;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
 
@@ -47,9 +53,11 @@ public class RenderGymLeader extends RenderNPC {
                 renderPixelmon.renderPixelmon(gymLeader.getPixelmon(), 0, 0, 0, f, f1, false);
                 GlStateManager.translate(-scale, -scale, -scale);
                 GlStateManager.popMatrix();
+
                 if (gymLeader.clientDisplayRot >= 360f) {
                     gymLeader.clientDisplayRot = 0F;
                 }
+
             }
         }
 

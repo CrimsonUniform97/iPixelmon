@@ -1,7 +1,6 @@
 package com.ipixelmon.gyms;
 
 import com.ipixelmon.gyms.client.ClientProxy;
-import com.ipixelmon.gyms.client.TileEntityGymInfo;
 import com.ipixelmon.gyms.server.BattleListenerThread;
 import com.ipixelmon.gyms.server.ServerProxy;
 import com.ipixelmon.CommonProxy;
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -103,6 +101,10 @@ public class Gyms implements IMod {
         for (Gym gym : gyms) if (gym.getRegion().equals(region)) return gym;
 
         throw new Exception("Gym not found there.");
+    }
+
+    public static Gym getGymForClient(Region region) throws Exception {
+        return new Gym(region);
     }
 
     @SideOnly(Side.SERVER)
