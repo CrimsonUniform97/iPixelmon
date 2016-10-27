@@ -1,13 +1,13 @@
 package com.ipixelmon;
 
-import com.ipixelmon.gyms.Gyms;
+import com.ipixelmon.gym.GymMod;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.ipixelmon.mysql.MySQLHandler;
-import com.ipixelmon.teams.Teams;
+import com.ipixelmon.team.TeamMod;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -45,8 +45,8 @@ public final class iPixelmon {
         mods.add(new UUIDManager());
         mods.add(new Pixelbay());
         mods.add(new LandControl());
-        mods.add(new Gyms());
-        mods.add(new Teams());
+        mods.add(new GymMod());
+        mods.add(new TeamMod());
         mods.add(new PixelEgg());
         mods.add(new Tablet());
     }
