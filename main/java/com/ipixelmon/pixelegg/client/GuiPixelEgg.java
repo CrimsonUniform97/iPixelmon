@@ -1,5 +1,6 @@
 package com.ipixelmon.pixelegg.client;
 
+import com.ipixelmon.GuiUtil;
 import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
 import com.pixelmonmod.pixelmon.client.models.animations.EnumRotation;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;

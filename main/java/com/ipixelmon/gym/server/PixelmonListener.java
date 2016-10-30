@@ -35,11 +35,6 @@ public class PixelmonListener {
         try {
             Gym gym = GymMod.getGym(LandControl.getRegion(event.world, event.pos));
 
-            if(event.world.getBlockState(event.pos).getBlock() == Blocks.standing_sign) {
-                gym.startBattle((EntityPlayerMP) event.entityPlayer);
-                return;
-            }
-
             if (!gym.getSeats().contains(event.pos)) return;
 
             if (gym.getAvailableSlots() < 1) {

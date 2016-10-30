@@ -1,6 +1,8 @@
 package com.ipixelmon.gym;
 
 import com.ipixelmon.gym.client.CustomSkinManager;
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
@@ -14,9 +16,12 @@ import com.pixelmonmod.pixelmon.enums.*;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -27,6 +32,8 @@ import java.util.UUID;
  * Created by Colby McHenry on 9/28/2016.
  */
 public class EntityGymLeader extends NPCTrainer {
+
+    // TODO: Start battle if right clicked
 
     public EntityGymLeader(World world) {
         super(world);
@@ -58,6 +65,20 @@ public class EntityGymLeader extends NPCTrainer {
 
     @Override
     public void initAI() {
+    }
+
+    @Override
+    protected boolean interact(EntityPlayer player) {
+        if(getEntityWorld().isRemote) return false;
+
+        try {
+            Gym gym = GymMod.getGym(LandControl.getRegion(getEntityWorld(), getPosition()));
+            gym.startBattle((EntityPlayerMP) player);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

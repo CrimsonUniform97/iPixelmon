@@ -86,7 +86,7 @@ public class GymMod implements IMod {
     }
 
     private static void initGyms() {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("GymMod"));
+        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms"));
 
         try {
             while (result.next()) {
@@ -111,14 +111,14 @@ public class GymMod implements IMod {
     public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team) throws Exception {
         Region region = LandControl.getRegion(world, pos);
 
-        if (iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("GymMod").add("region", region.id().toString())).next())
+        if (iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", region.id().toString())).next())
             throw new Exception("There is already a gym here.");
 
         NBTTagCompound dataTag = new NBTTagCompound();
         dataTag.setLong("power", power);
         dataTag.setString("team", team.name());
 
-        InsertForm gymForm = new InsertForm("GymMod");
+        InsertForm gymForm = new InsertForm("Gyms");
         gymForm.add("region", region.id().toString());
         gymForm.add("data", dataTag.toString());
         gymForm.add("seats", new NBTTagCompound().toString());
@@ -132,10 +132,10 @@ public class GymMod implements IMod {
 
     @SideOnly(Side.SERVER)
     public static void deleteGym(Gym gym) throws Exception {
-        if (!iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("GymMod").add("region", gym.getRegion().id().toString())).next())
+        if (!iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", gym.getRegion().id().toString())).next())
             throw new Exception("Gym not found.");
 
-        iPixelmon.mysql.delete(GymMod.class, new DeleteForm("GymMod").add("region", gym.getRegion().id().toString()));
+        iPixelmon.mysql.delete(GymMod.class, new DeleteForm("Gyms").add("region", gym.getRegion().id().toString()));
         gyms.remove(gym);
     }
 

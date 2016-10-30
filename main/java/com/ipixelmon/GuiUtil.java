@@ -1,9 +1,11 @@
-package com.ipixelmon.pixelegg.client;
+package com.ipixelmon;
 
+import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Dimension;
 
 import java.nio.FloatBuffer;
 
@@ -57,4 +59,37 @@ public class GuiUtil
         GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) setColorBuffer(f, f, f, 1.0F));
         GlStateManager.enableBlend();
     }
+
+    public Dimension getScaledDimension(Dimension imgSize, Dimension boundary) {
+
+        int original_width = imgSize.getWidth();
+        int original_height = imgSize.getHeight();
+        int bound_width = boundary.getWidth();
+        int bound_height = boundary.getHeight();
+        int new_width = original_width;
+        int new_height = original_height;
+
+        // first check if we need to scale width
+        if (original_width > bound_width) {
+            //scale width to fit
+            new_width = bound_width;
+            //scale height to maintain aspect ratio
+            new_height = (new_width * original_height) / original_width;
+        }
+
+        // then check if we need to scale even with the new height
+        if (new_height > bound_height) {
+            //scale height to fit instead
+            new_height = bound_height;
+            //scale width to maintain aspect ratio
+            new_width = (new_height * original_width) / original_height;
+        }
+
+        return new Dimension(new_width, new_height);
+    }
+
+    public void drawImage(float x, float y, float width, float height) {
+        GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
+    }
+
 }

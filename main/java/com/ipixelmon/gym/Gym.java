@@ -58,7 +58,7 @@ public class Gym {
     protected Gym(UUID region) throws Exception {
         this.region = region;
 
-        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("GymMod").add("region", region.toString()));
+        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", region.toString()));
 
         if (result.next()) {
             tagData = JsonToNBT.getTagFromJson(result.getString("data"));
@@ -85,11 +85,12 @@ public class Gym {
     }
 
     public int getAvailableSlots() throws Exception {
+        System.out.println(getLevel() + "," + getGymLeaders().size());
         return getLevel() - getGymLeaders().size();
     }
 
     public int getLevel() {
-        int count = 0;
+        int count = 1;
         for (int level : levels) {
             if (getPower() <= level) {
                 return count;
@@ -160,7 +161,7 @@ public class Gym {
                 }
             }
 
-            iPixelmon.mysql.update(GymMod.class, new UpdateForm("GymMod").set("data", tagData.toString()).where("region", region.toString()));
+            iPixelmon.mysql.update(GymMod.class, new UpdateForm("Gyms").set("data", tagData.toString()).where("region", region.toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,7 +204,7 @@ public class Gym {
         for (BlockPos seat : getSeats())
             tagSeats.setIntArray(String.valueOf(count++), new int[]{seat.getX(), seat.getY(), seat.getZ()});
 
-        iPixelmon.mysql.update(GymMod.class, new UpdateForm("GymMod").set("data", tagData.toString()).set("seats", tagSeats.toString()).set("gymLeaders", tagGymLeaders.toString()).where("region", region.toString()));
+        iPixelmon.mysql.update(GymMod.class, new UpdateForm("Gyms").set("data", tagData.toString()).set("seats", tagSeats.toString()).set("gymLeaders", tagGymLeaders.toString()).where("region", region.toString()));
     }
 
     @SideOnly(Side.SERVER)

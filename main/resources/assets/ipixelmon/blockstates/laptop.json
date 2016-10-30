@@ -1,0 +1,82 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "custom": {
+      "flip-v": true
+    },
+    "textures": {
+      "#Material.042": "ipixelmon:blocks/laptop/screen.png",
+      "#Material.002": "ipixelmon:blocks/laptop/keys.png"
+    },
+    "model": "ipixelmon:pixelegg.obj"
+  },
+  "variants": {
+    "normal": [
+      {}
+    ],
+    "inventory": [
+      {
+        "transform": {
+          "firstperson": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1
+          },
+          "thirdperson": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1
+          },
+          "gui": {
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 0
+              },
+              {
+                "x": 0
+              },
+              {
+                "z": 0
+              }
+            ],
+            "scale": 1.5
+          }
+        }
+      }
+    ]
+  }
+}

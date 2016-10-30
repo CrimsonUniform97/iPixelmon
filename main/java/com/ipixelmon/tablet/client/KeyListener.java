@@ -26,7 +26,7 @@ public class KeyListener {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
         if(key.isPressed()) {
-            NotificationOverlay.instance.addNotification(new TextNotification("Test Sample " + count++));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiTablet());
         }
 
     }

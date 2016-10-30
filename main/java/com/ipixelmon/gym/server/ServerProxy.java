@@ -11,7 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class ServerProxy extends CommonProxy {
     @Override
     public void preInit() {
-        CreateForm gymsForm = new CreateForm("GymMod");
+        CreateForm gymsForm = new CreateForm("Gyms");
         gymsForm.add("region", DataType.TEXT);
         gymsForm.add("data", DataType.TEXT);
         gymsForm.add("seats", DataType.TEXT);
