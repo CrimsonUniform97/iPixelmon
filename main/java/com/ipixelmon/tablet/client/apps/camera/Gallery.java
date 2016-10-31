@@ -11,7 +11,9 @@ import java.io.IOException;
  */
 public class Gallery extends App {
 
-    public Gallery(String name, ResourceLocation icon) {
+    public static Wallpaper currentWallpaper;
+
+    public Gallery(String name, String icon) {
         super(name, icon);
     }
 

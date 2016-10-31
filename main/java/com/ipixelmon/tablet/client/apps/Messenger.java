@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class Messenger extends App {
 
-    public Messenger(String name, ResourceLocation icon) {
+    public Messenger(String name, String icon) {
         super(name, icon);
     }
 
