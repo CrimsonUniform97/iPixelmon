@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
@@ -28,16 +29,7 @@ public class GuiTablet extends GuiScreen {
     private static ResourceLocation fontTexture;
 
     public GuiTablet() {
-        try {
-            Field locationFontTexture = FontRenderer.class.
-                    getDeclaredField("locationFontTexture");
 
-            locationFontTexture.setAccessible(true);
-
-            fontTexture = (ResourceLocation) locationFontTexture.get(mc.fontRendererObj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -111,6 +103,21 @@ public class GuiTablet extends GuiScreen {
 
     private void drawApps() {
 
+        if(fontTexture == null) {
+            try {
+                Field locationFontTexture = FontRenderer.class.
+                        getDeclaredField("locationFontTexture");
+
+                locationFontTexture.setAccessible(true);
+
+                fontTexture = (ResourceLocation) locationFontTexture.get(mc.fontRendererObj);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(fontTexture == null) return;
+
         int columns = 4, rows = 2;
         int iconWidth = 64, iconHeight = 64;
 
@@ -129,16 +136,14 @@ public class GuiTablet extends GuiScreen {
                 xOffset += ((screenBounds.getWidth() / columns) - iconWidth) / 2;
                 yOffset += ((screenBounds.getHeight() / rows) - iconHeight) / 2;
 
+                // TODO: Work on clicking and hovering over icons
+
+                //ascii.png for unicode font
+                mc.getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/font/ascii_sga.png"));
+                int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
+                mc.fontRendererObj.drawString(app.name, screenBounds.getX() + xOffset + fontOffset, screenBounds.getY() + yOffset + iconHeight + 2, 0xFFFFFF, true);
+
                 AppHandler.getAppIcon(app.getClass()).drawWallpaper(screenBounds.getX() + xOffset, screenBounds.getY() + yOffset, iconWidth, iconHeight);
-
-                // TODO: Work on centering font.
-
-                mc.getTextureManager().bindTexture(fontTexture);
-
-                mc.fontRendererObj.setUnicodeFlag(true);
-                mc.fontRendererObj.drawString(app.name, screenBounds.getX() + xOffset, screenBounds.getY() + yOffset + iconHeight + 2, 0xFFFFFF, true);
-                mc.fontRendererObj.setUnicodeFlag(false);
-
 
                 if ((i + 1) % columns == 0) {
                     column = 0;
