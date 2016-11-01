@@ -103,10 +103,10 @@ public class GuiTablet extends GuiScreen {
     private void drawApps() {
         App app;
 
-        AppIterator appIterator = new AppIterator();
+        AppIterator appIterator = new AppIterator(screenBounds, columns, rows, iconWidth, iconHeight, AppHandler.getApps().toArray().length);
 
         while (appIterator.hasNext()) {
-            app = appIterator.next();
+            app = (App) AppHandler.getApps().toArray()[appIterator.next()];
 
             // TODO: Work on clicking and hovering over icons
 
@@ -127,21 +127,33 @@ public class GuiTablet extends GuiScreen {
 
     }
 
-    private class AppIterator implements Iterator<App> {
-
-        private static final int maxIcons = columns * rows;
+    // TODO: Make an abstract iterator that can take a type when it returns but comes with all the nice methods you included.
+    private class AppIterator implements Iterator<Integer> {
 
         private int i = 0;
         private int column = 0, row = 0;
         private int xOffset = 0, yOffset = 0;
+        private int columns, rows, iconWidth, iconHeight, maxIcons, maxApps;
 
-        @Override
-        public boolean hasNext() {
-            return i < maxIcons && i < AppHandler.getApps().toArray().length;
+        private Rectangle screenBounds;
+
+        public AppIterator(Rectangle bounds, int columns, int rows, int iconWidth, int iconHeight, int maxApps) {
+            this.screenBounds = bounds;
+            this.columns = columns;
+            this.rows = rows;
+            this.iconWidth = iconWidth;
+            this.iconHeight = iconHeight;
+            this.maxIcons = columns * rows;
+            this.maxApps = maxApps;
         }
 
         @Override
-        public App next() {
+        public boolean hasNext() {
+            return i < maxIcons && i < maxApps;
+        }
+
+        @Override
+        public Integer next() {
 
             xOffset = (screenBounds.getWidth() / columns) * column;
             yOffset = (screenBounds.getHeight() / rows) * row;
@@ -156,7 +168,7 @@ public class GuiTablet extends GuiScreen {
                 column++;
             }
 
-            return (App) AppHandler.getApps().toArray()[i++];
+            return i++;
         }
 
         public int getColumn() {
@@ -175,9 +187,6 @@ public class GuiTablet extends GuiScreen {
             return yOffset;
         }
 
-        public int getIndex() {
-            return i;
-        }
     }
 
 }
