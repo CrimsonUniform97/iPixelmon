@@ -21,12 +21,6 @@ public class ServerProxy extends CommonProxy
     @Override
     public void preInit()
     {
-
-    }
-
-    @Override
-    public void init()
-    {
         CreateForm regionsForm = new CreateForm("Regions");
         regionsForm.add("uuid", DataType.TEXT);
         regionsForm.add("owner", DataType.TEXT);
@@ -37,7 +31,11 @@ public class ServerProxy extends CommonProxy
         regionsForm.add("zMin", DataType.INT);
         regionsForm.add("zMax", DataType.INT);
         iPixelmon.mysql.createTable(LandControl.class, regionsForm);
+    }
 
+    @Override
+    public void init()
+    {
         MinecraftForge.EVENT_BUS.register(new PlayerListener());
     }
 

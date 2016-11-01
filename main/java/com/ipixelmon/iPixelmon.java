@@ -60,16 +60,16 @@ public final class iPixelmon {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
-        for(IMod mod : mods) mod.preInit();
-
         proxy.preInit();
+
+        for(IMod mod : mods) mod.preInit();
     }
 
     @Mod.EventHandler
     public final void init(final FMLInitializationEvent event) {
-        for(IMod mod : mods) mod.init();
-
         proxy.init();
+
+        for(IMod mod : mods) mod.init();
     }
 
     @Mod.EventHandler

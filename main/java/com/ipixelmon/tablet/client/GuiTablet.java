@@ -14,6 +14,7 @@ import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 /**
  * Created by colby on 10/28/2016.
@@ -26,17 +27,15 @@ public class GuiTablet extends GuiScreen {
     private static final ResourceLocation defaultWallpaper = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/default_wallpaper.png");
     private Dimension bgSize = new Dimension(614, 378);
     private Rectangle bgBounds, screenBounds = new Rectangle();
-    private static ResourceLocation fontTexture;
 
-    public GuiTablet() {
-
-    }
+    private static final int columns = 4, rows = 2, iconWidth = 64, iconHeight = 64;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawTablet();
         drawWallpaper();
+
         drawApps();
         if (activeApp != null) activeApp.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -102,56 +101,82 @@ public class GuiTablet extends GuiScreen {
     }
 
     private void drawApps() {
+        App app;
 
-        if(fontTexture == null) {
-            try {
-                Field locationFontTexture = FontRenderer.class.
-                        getDeclaredField("locationFontTexture");
+        AppIterator appIterator = new AppIterator();
 
-                locationFontTexture.setAccessible(true);
+        while (appIterator.hasNext()) {
+            app = appIterator.next();
 
-                fontTexture = (ResourceLocation) locationFontTexture.get(mc.fontRendererObj);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // TODO: Work on clicking and hovering over icons
+
+            //ascii.png for unicode font
+            mc.getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/font/ascii_sga.png"));
+            int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
+            mc.fontRendererObj.drawString(app.name, screenBounds.getX() + appIterator.getxOffset()
+                    + fontOffset, screenBounds.getY() + appIterator.getyOffset() + iconHeight + 2, 0xFFFFFF, true);
+
+            GlStateManager.enableTexture2D();
+            AppHandler.getAppIcon(app.getClass()).drawWallpaper(screenBounds.getX() + appIterator.getxOffset(), screenBounds.getY() + appIterator.getyOffset(), iconWidth, iconHeight);
+
         }
 
-        if(fontTexture == null) return;
+    }
 
-        int columns = 4, rows = 2;
-        int iconWidth = 64, iconHeight = 64;
+    private void drawHoverBox() {
 
+    }
 
-        int column = 0, row = 0, xOffset = 0, yOffset = 0;
-        App app = null;
-        for (int i = 0; i < 8; ++i) {
+    private class AppIterator implements Iterator<App> {
 
-            if (i < AppHandler.getApps().toArray().length) {
+        private static final int maxIcons = columns * rows;
 
-                app = (App) AppHandler.getApps().toArray()[i];
+        private int i = 0;
+        private int column = 0, row = 0;
+        private int xOffset = 0, yOffset = 0;
 
-                xOffset = (screenBounds.getWidth() / columns) * column;
-                yOffset = (screenBounds.getHeight() / rows) * row;
+        @Override
+        public boolean hasNext() {
+            return i < maxIcons && i < AppHandler.getApps().toArray().length;
+        }
 
-                xOffset += ((screenBounds.getWidth() / columns) - iconWidth) / 2;
-                yOffset += ((screenBounds.getHeight() / rows) - iconHeight) / 2;
+        @Override
+        public App next() {
 
-                // TODO: Work on clicking and hovering over icons
+            xOffset = (screenBounds.getWidth() / columns) * column;
+            yOffset = (screenBounds.getHeight() / rows) * row;
 
-                //ascii.png for unicode font
-                mc.getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/font/ascii_sga.png"));
-                int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
-                mc.fontRendererObj.drawString(app.name, screenBounds.getX() + xOffset + fontOffset, screenBounds.getY() + yOffset + iconHeight + 2, 0xFFFFFF, true);
+            xOffset += ((screenBounds.getWidth() / columns) - iconWidth) / 2;
+            yOffset += ((screenBounds.getHeight() / rows) - iconHeight) / 2;
 
-                AppHandler.getAppIcon(app.getClass()).drawWallpaper(screenBounds.getX() + xOffset, screenBounds.getY() + yOffset, iconWidth, iconHeight);
-
-                if ((i + 1) % columns == 0) {
-                    column = 0;
-                    row++;
-                } else {
-                    column++;
-                }
+            if ((i + 1) % columns == 0) {
+                column = 0;
+                row++;
+            } else {
+                column++;
             }
+
+            return (App) AppHandler.getApps().toArray()[i++];
+        }
+
+        public int getColumn() {
+            return column;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getxOffset() {
+            return xOffset;
+        }
+
+        public int getyOffset() {
+            return yOffset;
+        }
+
+        public int getIndex() {
+            return i;
         }
     }
 
