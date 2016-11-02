@@ -1,7 +1,9 @@
 package com.ipixelmon.tablet.client;
 
+import com.google.common.collect.Maps;
 import com.ipixelmon.GuiUtil;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.pixelegg.client.Animation;
 import com.ipixelmon.tablet.client.apps.camera.Gallery;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,10 +13,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
+import org.w3c.dom.css.Rect;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by colby on 10/28/2016.
@@ -28,6 +32,8 @@ public class GuiTablet extends GuiScreen {
     private Dimension bgSize = new Dimension(614, 378);
     private Rectangle bgBounds, screenBounds = new Rectangle();
 
+    private Map<App, Animation> animations = Maps.newHashMap();
+
     private static final int columns = 4, rows = 2, iconWidth = 64, iconHeight = 64;
 
     @Override
@@ -35,9 +41,9 @@ public class GuiTablet extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawTablet();
         drawWallpaper();
-
-        drawApps();
+        drawApps(mouseX, mouseY);
         if (activeApp != null) activeApp.drawScreen(mouseX, mouseY, partialTicks);
+
     }
 
     @Override
@@ -74,8 +80,11 @@ public class GuiTablet extends GuiScreen {
 
         bgBounds = new Rectangle((width - boundary.getWidth()) / 2, (height - boundary.getHeight()) / 2, boundary.getWidth(), boundary.getHeight());
         screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
-        if (activeApp != null)
+        if (activeApp != null) {
             activeApp.bounds = screenBounds;
+            return;
+        }
+
     }
 
     @Override
@@ -100,93 +109,61 @@ public class GuiTablet extends GuiScreen {
         this.drawGradientRect(screenBounds.getX(), screenBounds.getY(), screenBounds.getX() + screenBounds.getWidth(), screenBounds.getY() + screenBounds.getHeight(), -1072689136, -804253680);
     }
 
-    private void drawApps() {
+    private void drawApps(int mouseX, int mouseY) {
         App app;
+        Rectangle rec;
 
-        AppIterator appIterator = new AppIterator(screenBounds, columns, rows, iconWidth, iconHeight, AppHandler.getApps().toArray().length);
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, AppHandler.getApps().toArray());
 
-        while (appIterator.hasNext()) {
-            app = (App) AppHandler.getApps().toArray()[appIterator.next()];
+        while(tileIterator.hasNext()) {
+            app = (App) tileIterator.next();
+            rec = tileIterator.getTileBounds();
 
-            // TODO: Work on clicking and hovering over icons
+            mc.getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/font/ascii.png"));
 
-            //ascii.png for unicode font
-            mc.getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/font/ascii_sga.png"));
+            int xOffset = (rec.getWidth() - iconWidth) / 2;
+            int yOffset = (rec.getHeight() - iconHeight) / 2;
+
+            mc.fontRendererObj.setUnicodeFlag(true);
             int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
-            mc.fontRendererObj.drawString(app.name, screenBounds.getX() + appIterator.getxOffset()
-                    + fontOffset, screenBounds.getY() + appIterator.getyOffset() + iconHeight + 2, 0xFFFFFF, true);
+            mc.fontRendererObj.drawString(app.name, rec.getX() + xOffset + fontOffset, rec.getY() + yOffset + iconHeight + 1, 0xFFFFFF, true);
+            mc.fontRendererObj.setUnicodeFlag(false);
 
-            GlStateManager.enableTexture2D();
-            AppHandler.getAppIcon(app.getClass()).drawWallpaper(screenBounds.getX() + appIterator.getxOffset(), screenBounds.getY() + appIterator.getyOffset(), iconWidth, iconHeight);
+            // TODO: Add animation for font
 
+            // animation and drawing for icon
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(rec.getX() + xOffset, rec.getY() + yOffset, 1);
+            GlStateManager.translate((float)iconWidth / 2,(float) iconHeight / 2, 1 / 2);
+
+            if(!animations.containsKey(app)) {
+                animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(1f));
+            }
+
+            float scaleTo = 1.2f;
+
+            if(rec.contains(mouseX, mouseY))
+            {
+                if(animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == 1f) {
+                    animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(1f).scaleTo(scaleTo, 0.02f));
+                }
+            } else {
+                if(animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == scaleTo) {
+                    animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(scaleTo).scaleTo(1f, 0.02f));
+                }
+            }
+
+            animations.get(app).animate();
+            GlStateManager.scale(animations.get(app).scalar(), animations.get(app).scalar(), animations.get(app).scalar());
+
+            GlStateManager.translate((float)-iconWidth / 2, (float)-iconHeight / 2, -1 / 2);
+            AppHandler.getAppIcon(app.getClass()).drawWallpaper(0, 0, iconWidth, iconHeight);
+            GlStateManager.popMatrix();
         }
 
-    }
-
-    private void drawHoverBox() {
 
     }
 
     // TODO: Make an abstract iterator that can take a type when it returns but comes with all the nice methods you included.
-    private class AppIterator implements Iterator<Integer> {
-
-        private int i = 0;
-        private int column = 0, row = 0;
-        private int xOffset = 0, yOffset = 0;
-        private int columns, rows, iconWidth, iconHeight, maxIcons, maxApps;
-
-        private Rectangle screenBounds;
-
-        public AppIterator(Rectangle bounds, int columns, int rows, int iconWidth, int iconHeight, int maxApps) {
-            this.screenBounds = bounds;
-            this.columns = columns;
-            this.rows = rows;
-            this.iconWidth = iconWidth;
-            this.iconHeight = iconHeight;
-            this.maxIcons = columns * rows;
-            this.maxApps = maxApps;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return i < maxIcons && i < maxApps;
-        }
-
-        @Override
-        public Integer next() {
-
-            xOffset = (screenBounds.getWidth() / columns) * column;
-            yOffset = (screenBounds.getHeight() / rows) * row;
-
-            xOffset += ((screenBounds.getWidth() / columns) - iconWidth) / 2;
-            yOffset += ((screenBounds.getHeight() / rows) - iconHeight) / 2;
-
-            if ((i + 1) % columns == 0) {
-                column = 0;
-                row++;
-            } else {
-                column++;
-            }
-
-            return i++;
-        }
-
-        public int getColumn() {
-            return column;
-        }
-
-        public int getRow() {
-            return row;
-        }
-
-        public int getxOffset() {
-            return xOffset;
-        }
-
-        public int getyOffset() {
-            return yOffset;
-        }
-
-    }
 
 }

@@ -24,6 +24,10 @@ public class Animation
         this.posZ = startZ;
     }
 
+    public List<Object> getActions() {
+        return actions;
+    }
+
     public Animation rotate(float rotX, float rotY, float rotZ)
     {
         actions.add(new SimpleRotation(rotX, rotY, rotZ));
