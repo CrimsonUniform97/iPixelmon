@@ -164,6 +164,4 @@ public class GuiTablet extends GuiScreen {
 
     }
 
-    // TODO: Make an abstract iterator that can take a type when it returns but comes with all the nice methods you included.
-
 }
