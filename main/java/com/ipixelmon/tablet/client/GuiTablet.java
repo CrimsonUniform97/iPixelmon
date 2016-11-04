@@ -119,9 +119,9 @@ public class GuiTablet extends GuiScreen {
     }
 
     private void drawWallpaper() {
-
-        if (Gallery.currentWallpaper != null) {
-            Gallery.currentWallpaper.drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
+        // TODO
+        if (Gallery.getWallpaper() != null) {
+            Gallery.getWallpaper().drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
         } else {
             mc.getTextureManager().bindTexture(defaultWallpaper);
             GuiUtil.instance.drawImage(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());

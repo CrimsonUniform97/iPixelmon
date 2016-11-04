@@ -21,7 +21,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(NotificationOverlay.instance);
         MinecraftForge.EVENT_BUS.register(new KeyListener());
 
-        AppHandler.registerApp(new Gallery("Gallery", "gallery"));
+        AppHandler.registerApp(new Gallery("Gallery"));
     }
 
 }

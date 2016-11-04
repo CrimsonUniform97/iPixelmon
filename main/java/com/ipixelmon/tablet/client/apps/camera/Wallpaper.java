@@ -97,6 +97,7 @@ public class Wallpaper implements Comparable {
         } catch (IndexOutOfBoundsException e) {
             location.delete();
             // TODO
+            System.out.println("CALLED");
             Gallery.wallpapers.remove(this);
 //            GalleryApp.refreshWallpapers();
         } catch (IOException e) {
@@ -134,8 +135,14 @@ public class Wallpaper implements Comparable {
             Wallpaper wallpaper = (Wallpaper) o;
             return wallpaper.location.compareTo(location);
         }
-        return 0;
+        return -1;
     }
+
+    public File getLocation() {
+        return location;
+    }
+
+    public boolean isValid() { return location.exists(); }
 
     public BufferedImage getImage() {
         return image;

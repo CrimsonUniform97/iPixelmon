@@ -41,12 +41,12 @@ public class AppHandler {
         for (App app : apps) {
             if (app.getClass().equals(appClass)) {
                 try {
-                    File file = new File(app.icon);
+                    File file = new File(app.name.toLowerCase());
 
                     if(cachedIcons.containsKey(file)) return cachedIcons.get(file);
 
                     OutputStream outputStream = new FileOutputStream(file);
-                    InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(iPixelmon.id, "textures/apps/" + app.icon + ".png")).getInputStream();
+                    InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(iPixelmon.id, "textures/apps/" + app.name.toLowerCase() + "/icon.png")).getInputStream();
                     IOUtils.copy(inputStream, outputStream);
                     outputStream.close();
                     cachedIcons.put(file, new Wallpaper(file));

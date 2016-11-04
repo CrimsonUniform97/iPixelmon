@@ -35,6 +35,7 @@ public class TileIterator implements Iterator {
         if ((index + 1) % columns == 0) {
             column = 0;
             row++;
+            if(row >= rows) row = 0;
         } else {
             column++;
         }
@@ -44,5 +45,15 @@ public class TileIterator implements Iterator {
 
     public Rectangle getTileBounds() {
         return tile;
+    }
+
+    public int getPage() {
+        return (index - 1) / (rows * columns);
+    }
+
+    public int getMaxPages() {
+        int max = objects.length / (columns * rows);
+        max = objects.length % (columns * rows) == 0 ? max - 1 : max;
+        return max;
     }
 }

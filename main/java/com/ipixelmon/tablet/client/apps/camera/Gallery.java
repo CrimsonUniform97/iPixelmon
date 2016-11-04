@@ -25,17 +25,19 @@ import java.util.*;
  */
 public class Gallery extends App {
 
-    public static Wallpaper currentWallpaper;
     public static final Set<Wallpaper> wallpapers = new TreeSet<>();
-    public static final File wallpapersDir = new File(iPixelmon.path, "wallpapers");
-    private static final ResourceLocation folderIcon = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/folder.png");
-    private static final ResourceLocation reloadIcon = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/reload.png");
-    private Rectangle folderBounds, reloadBounds;
+    public static final File wallpapersDir = new File(iPixelmon.path.getParentFile(), "screenshots");
+    private static final ResourceLocation folderIcon = new ResourceLocation(iPixelmon.id, "textures/apps/gallery/folder.png");
+    private static final ResourceLocation reloadIcon = new ResourceLocation(iPixelmon.id, "textures/apps/gallery/reload.png");
+    private static final ResourceLocation arrowIcon = new ResourceLocation(iPixelmon.id, "textures/apps/gallery/arrow.png");
+    private static final ResourceLocation trashIcon = new ResourceLocation(iPixelmon.id, "textures/apps/gallery/trash.png");
+    private static final ResourceLocation setWallpaperIcon = new ResourceLocation(iPixelmon.id, "textures/apps/gallery/set_as_wallpaper_icon.png");
+    private Rectangle folderBounds, reloadBounds, leftBounds, rightBounds, trashBounds, setWallpaperBounds, goBackBounds;
+    private int page = 0, columns = 2, rows = 2;
+    private Wallpaper viewingWallpaper;
 
-    // TODO: Add pages
-
-    public Gallery(String name, String icon) {
-        super(name, icon);
+    public Gallery(String name) {
+        super(name);
     }
 
     @Override
@@ -44,32 +46,12 @@ public class Gallery extends App {
 
         GlStateManager.enableBlend();
 
-        TileIterator tileIterator = new TileIterator(screenBounds, 2, 2, wallpapers.toArray());
-        Wallpaper wallpaper;
-        Rectangle rec;
-        while(tileIterator.hasNext()) {
-            wallpaper = (Wallpaper) tileIterator.next();
-            rec = tileIterator.getTileBounds();
-            Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 12, rec.getHeight() - 12));
-            wallpaper.drawWallpaper(rec.getX() + (((rec.getWidth() - 18) - boundary.getWidth()) / 2), rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+        if (viewingWallpaper != null) {
+            drawViewingWallpaperScreen(mouseX, mouseY);
+            return;
         }
 
-        mc.getTextureManager().bindTexture(folderIcon);
-        GuiUtil.instance.drawImage(folderBounds.getX(), folderBounds.getY(), folderBounds.getWidth(), folderBounds.getHeight());
-        mc.getTextureManager().bindTexture(reloadIcon);
-        GuiUtil.instance.drawImage(reloadBounds.getX(), reloadBounds.getY(), reloadBounds.getWidth(), reloadBounds.getHeight());
-
-        if (folderBounds.contains(mouseX, mouseY)) {
-            List<String> text = Lists.newArrayList();
-            text.add("Open Folder");
-            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
-        }
-
-        if (reloadBounds.contains(mouseX, mouseY)) {
-            List<String> text = Lists.newArrayList();
-            text.add("Reload Wallpapers");
-            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
-        }
+        drawWallpapers(mouseX, mouseY);
     }
 
     @Override
@@ -81,8 +63,50 @@ public class Gallery extends App {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+
+        if(viewingWallpaper != null) {
+
+            if(setWallpaperBounds.contains(mouseX, mouseY)) {
+                iPixelmon.config.setString("tablet.wallpaper", viewingWallpaper.getLocation().getAbsolutePath());
+                viewingWallpaper = null;
+            } else if (trashBounds.contains(mouseX, mouseY)) {
+                viewingWallpaper.getLocation().delete();
+                wallpapers.remove(viewingWallpaper);
+                viewingWallpaper = null;
+            } else if (goBackBounds.contains(mouseX, mouseY)) {
+                viewingWallpaper = null;
+            }
+
+            tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+
+            if(page > tileIterator.getMaxPages()) page = tileIterator.getMaxPages();
+
+            return;
+        }
+
+        Wallpaper wallpaper;
+        Rectangle rec;
+        while (tileIterator.hasNext()) {
+            wallpaper = (Wallpaper) tileIterator.next();
+            rec = tileIterator.getTileBounds();
+            if (tileIterator.getPage() == page) {
+                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 38, rec.getHeight() - 38));
+
+                rec.setBounds(rec.getX() + ((rec.getWidth() - boundary.getWidth()) / 2), rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+
+                if (rec.contains(mouseX, mouseY)) {
+                    viewingWallpaper = wallpaper;
+                    return;
+                }
+            }
+        }
+
         if (folderBounds.contains(mouseX, mouseY)) openWallpapersFolder();
         else if (reloadBounds.contains(mouseX, mouseY)) populateWallpapers();
+        else if (rightBounds.contains(mouseX, mouseY)) {
+            page = page + 1 > tileIterator.getMaxPages() ? tileIterator.getMaxPages() : page + 1;
+        } else if (leftBounds.contains(mouseX, mouseY)) page = page - 1 < 0 ? 0 : page - 1;
     }
 
     @Override
@@ -93,13 +117,135 @@ public class Gallery extends App {
     @Override
     public void initGui() {
         super.initGui();
-        folderBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY(), 16, 16);
-        reloadBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + 18, 16, 16);
+        folderBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 0), 16, 16);
+        reloadBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 1), 16, 16);
+        rightBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
+        leftBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18) - 1, screenBounds.getY() + (18 * 3), 16, 16);
+        setWallpaperBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 1) - 6, 16, 16);
+        trashBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
+        goBackBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 3), 16, 16);
+        viewingWallpaper = null;
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
+    }
+
+    private void drawViewingWallpaperScreen(int mouseX, int mouseY) {
+        Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(viewingWallpaper.getImage().getWidth(),
+                viewingWallpaper.getImage().getHeight()), new Dimension(screenBounds.getWidth() - 16, screenBounds.getHeight() - 16));
+        viewingWallpaper.drawWallpaper(screenBounds.getX() + ((screenBounds.getWidth() - 16 - boundary.getWidth()) / 2),
+                screenBounds.getY() + ((screenBounds.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+
+        mc.getTextureManager().bindTexture(trashIcon);
+        GuiUtil.instance.drawImage(trashBounds.getX(), trashBounds.getY(), trashBounds.getWidth(), trashBounds.getHeight());
+        mc.getTextureManager().bindTexture(setWallpaperIcon);
+        GuiUtil.instance.drawImage(setWallpaperBounds.getX(), setWallpaperBounds.getY(), setWallpaperBounds.getWidth(), setWallpaperBounds.getHeight());
+        mc.getTextureManager().bindTexture(arrowIcon);
+
+        GlStateManager.pushMatrix();
+        {
+            GlStateManager.translate(goBackBounds.getX(), goBackBounds.getY(), 0f);
+            GlStateManager.translate(goBackBounds.getWidth() / 2, goBackBounds.getHeight() / 2, 0f);
+            GlStateManager.rotate(180f, 0f, 0f, 0f);
+            GlStateManager.scale(1.4f, 1.4f, 1.4f);
+            GlStateManager.translate(-goBackBounds.getWidth() / 2, -goBackBounds.getHeight() / 2, 0f);
+            GuiUtil.instance.drawImage(0, 0, goBackBounds.getWidth(), goBackBounds.getHeight());
+        }
+        GlStateManager.popMatrix();
+
+        List<String> hoveringText = Lists.newArrayList();
+        if(setWallpaperBounds.contains(mouseX, mouseY)) {
+            hoveringText.add("Set as Wallpaper");
+        } else if (trashBounds.contains(mouseX, mouseY)) {
+            hoveringText.add("Delete");
+        } else if (goBackBounds.contains(mouseX, mouseY)) {
+            hoveringText.add("Go Back");
+        }
+
+        drawHoveringText(hoveringText, mouseX, mouseY, mc.fontRendererObj);
+    }
+
+    private void drawWallpapers(int mouseX, int mouseY) {
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+        Wallpaper wallpaper;
+        Rectangle rec;
+        while (tileIterator.hasNext()) {
+            wallpaper = (Wallpaper) tileIterator.next();
+            rec = tileIterator.getTileBounds();
+            if (tileIterator.getPage() == page) {
+                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 38, rec.getHeight() - 38));
+
+                // TODO: Try to fix bounds to draw bigger by shifting to the left some.
+                rec.setBounds(rec.getX() + ((rec.getWidth() - boundary.getWidth()) / 2), rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+
+                if (rec.contains(mouseX, mouseY)) {
+                    GlStateManager.color(120f / 255f, 120f / 255f, 120f / 255f, 1f);
+                }
+
+                wallpaper.drawWallpaper(rec.getX(), rec.getY(), rec.getWidth(), rec.getHeight());
+                GlStateManager.color(1, 1, 1, 1);
+            }
+        }
+
+        mc.getTextureManager().bindTexture(folderIcon);
+        GuiUtil.instance.drawImage(folderBounds.getX(), folderBounds.getY(), folderBounds.getWidth(), folderBounds.getHeight());
+        mc.getTextureManager().bindTexture(reloadIcon);
+        GuiUtil.instance.drawImage(reloadBounds.getX(), reloadBounds.getY(), reloadBounds.getWidth(), reloadBounds.getHeight());
+        drawArrows();
+        drawHoveringText(mouseX, mouseY);
+    }
+
+    private void drawArrows() {
+        mc.getTextureManager().bindTexture(arrowIcon);
+
+        GlStateManager.pushMatrix();
+        {
+            GlStateManager.translate(rightBounds.getX(), rightBounds.getY(), 0f);
+            GlStateManager.translate(rightBounds.getWidth() / 2, rightBounds.getHeight() / 2, 0f);
+            GlStateManager.scale(1.4f, 1.4f, 1.4f);
+            GlStateManager.translate(-rightBounds.getWidth() / 2, -rightBounds.getHeight() / 2, 0f);
+            GuiUtil.instance.drawImage(0, 0, rightBounds.getWidth(), rightBounds.getHeight());
+        }
+        GlStateManager.popMatrix();
+
+        GlStateManager.pushMatrix();
+        {
+            GlStateManager.translate(leftBounds.getX(), leftBounds.getY(), 0f);
+            GlStateManager.translate(leftBounds.getWidth() / 2, leftBounds.getHeight() / 2, 0f);
+            GlStateManager.rotate(180f, 0f, 0f, 0f);
+            GlStateManager.scale(1.4f, 1.4f, 1.4f);
+            GlStateManager.translate(-leftBounds.getWidth() / 2, -leftBounds.getHeight() / 2, 0f);
+            GuiUtil.instance.drawImage(0, 0, leftBounds.getWidth(), leftBounds.getHeight());
+        }
+        GlStateManager.popMatrix();
+    }
+
+    private void drawHoveringText(int mouseX, int mouseY) {
+        if (folderBounds.contains(mouseX, mouseY)) {
+            List<String> text = Lists.newArrayList();
+            text.add("Open Folder");
+            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
+        }
+
+        if (reloadBounds.contains(mouseX, mouseY)) {
+            List<String> text = Lists.newArrayList();
+            text.add("Refresh Wallpapers");
+            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
+        }
+
+        if (rightBounds.contains(mouseX, mouseY)) {
+            List<String> text = Lists.newArrayList();
+            text.add("Page Up");
+            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
+        }
+
+        if (leftBounds.contains(mouseX, mouseY)) {
+            List<String> text = Lists.newArrayList();
+            text.add("Page Down");
+            drawHoveringText(text, mouseX, mouseY, mc.fontRendererObj);
+        }
     }
 
     private void openWallpapersFolder() {
@@ -145,7 +291,15 @@ public class Gallery extends App {
     public static final void populateWallpapers() {
         wallpapersDir.mkdir();
 
-        Iterator iterator = Arrays.asList(wallpapersDir.listFiles()).listIterator();
+        Iterator iterator = wallpapers.iterator();
+        Wallpaper wallpaper;
+        while (iterator.hasNext()) {
+            wallpaper = (Wallpaper) iterator.next();
+
+            if (!wallpaper.isValid()) iterator.remove();
+        }
+
+        iterator = Arrays.asList(wallpapersDir.listFiles()).listIterator();
 
         File file;
         while (iterator.hasNext()) {
@@ -157,5 +311,16 @@ public class Gallery extends App {
                 }
             }
         }
+    }
+
+    public static final Wallpaper getWallpaper() {
+        Iterator iterator = wallpapers.iterator();
+        Wallpaper wallpaper;
+        while(iterator.hasNext()) {
+            wallpaper = (Wallpaper) iterator.next();
+            if(wallpaper.getLocation().getAbsolutePath().equalsIgnoreCase(iPixelmon.config.getString("tablet.wallpaper"))) return wallpaper;
+        }
+
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -70,17 +71,26 @@ public class Config {
 
     private void set(String parKey, Object parValue) {
         try {
-            if(getValue(parKey) != null) return;
-
             Scanner scanner = new Scanner(configFile);
 
             List<String> listToReturn = new ArrayList<String>();
-            listToReturn.add(parKey + "=" + parValue);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 listToReturn.add(line);
             }
             scanner.close();
+
+            Iterator iterator = listToReturn.listIterator();
+            String s;
+            while(iterator.hasNext()) {
+                s = (String) iterator.next();
+
+                if(s.split("\\=")[0].equalsIgnoreCase(parKey)) {
+                    iterator.remove();
+                }
+            }
+
+            listToReturn.add(parKey + "=" + parValue);
 
             Files.write(configFile.toPath(), listToReturn, Charset.forName("UTF-8"));
         } catch (IOException e) {

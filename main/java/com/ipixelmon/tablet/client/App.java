@@ -12,12 +12,10 @@ import java.io.IOException;
 public abstract class App extends GuiScreen implements Comparable<App> {
 
     public final String name;
-    public final String icon;
     public Rectangle screenBounds = new Rectangle();
 
-    public App(String name, String icon) {
+    public App(String name) {
         this.name = name;
-        this.icon = icon;
     }
 
     @Override

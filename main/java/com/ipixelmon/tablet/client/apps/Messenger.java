@@ -10,8 +10,8 @@ import java.io.IOException;
  */
 public class Messenger extends App {
 
-    public Messenger(String name, String icon) {
-        super(name, icon);
+    public Messenger(String name) {
+        super(name);
     }
 
     @Override
