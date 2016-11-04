@@ -91,9 +91,9 @@ public class Gallery extends App {
             wallpaper = (Wallpaper) tileIterator.next();
             rec = tileIterator.getTileBounds();
             if (tileIterator.getPage() == page) {
-                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 38, rec.getHeight() - 38));
+                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
 
-                rec.setBounds(rec.getX() + ((rec.getWidth() - boundary.getWidth()) / 2), rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+                rec.setBounds(rec.getX() + 2, rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
                 if (rec.contains(mouseX, mouseY)) {
                     viewingWallpaper = wallpaper;
@@ -121,9 +121,9 @@ public class Gallery extends App {
         reloadBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 1), 16, 16);
         rightBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
         leftBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18) - 1, screenBounds.getY() + (18 * 3), 16, 16);
-        setWallpaperBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 1) - 6, 16, 16);
-        trashBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
-        goBackBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 3), 16, 16);
+        setWallpaperBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 0), 16, 16);
+        trashBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 17), screenBounds.getY() + (18 * 1), 16, 16);
+        goBackBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
         viewingWallpaper = null;
     }
 
@@ -134,8 +134,8 @@ public class Gallery extends App {
 
     private void drawViewingWallpaperScreen(int mouseX, int mouseY) {
         Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(viewingWallpaper.getImage().getWidth(),
-                viewingWallpaper.getImage().getHeight()), new Dimension(screenBounds.getWidth() - 16, screenBounds.getHeight() - 16));
-        viewingWallpaper.drawWallpaper(screenBounds.getX() + ((screenBounds.getWidth() - 16 - boundary.getWidth()) / 2),
+                viewingWallpaper.getImage().getHeight()), new Dimension(screenBounds.getWidth() - 20, screenBounds.getHeight() - 20));
+        viewingWallpaper.drawWallpaper(screenBounds.getX() + 1,
                 screenBounds.getY() + ((screenBounds.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
         mc.getTextureManager().bindTexture(trashIcon);
@@ -175,10 +175,9 @@ public class Gallery extends App {
             wallpaper = (Wallpaper) tileIterator.next();
             rec = tileIterator.getTileBounds();
             if (tileIterator.getPage() == page) {
-                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 38, rec.getHeight() - 38));
+                Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
 
-                // TODO: Try to fix bounds to draw bigger by shifting to the left some.
-                rec.setBounds(rec.getX() + ((rec.getWidth() - boundary.getWidth()) / 2), rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+                rec.setBounds(rec.getX() + 2, rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
                 if (rec.contains(mouseX, mouseY)) {
                     GlStateManager.color(120f / 255f, 120f / 255f, 120f / 255f, 1f);

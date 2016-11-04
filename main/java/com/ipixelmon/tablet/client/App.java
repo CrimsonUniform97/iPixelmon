@@ -1,10 +1,15 @@
 package com.ipixelmon.tablet.client;
 
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.client.apps.camera.Wallpaper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+import org.apache.commons.compress.utils.IOUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Rectangle;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by colby on 10/28/2016.
@@ -46,5 +51,24 @@ public abstract class App extends GuiScreen implements Comparable<App> {
     @Override
     public void initGui() {
         super.initGui();
+    }
+
+    public Wallpaper getIcon() {
+        try {
+            File file = new File(name.toLowerCase());
+
+            if(AppHandler.cachedIcons.containsKey(file)) return AppHandler.cachedIcons.get(file);
+
+            OutputStream outputStream = new FileOutputStream(file);
+            InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(iPixelmon.id, "textures/apps/" + name.toLowerCase() + "/icon.png")).getInputStream();
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.close();
+            AppHandler.cachedIcons.put(file, new Wallpaper(file));
+            return AppHandler.cachedIcons.get(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

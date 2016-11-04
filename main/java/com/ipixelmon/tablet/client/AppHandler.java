@@ -18,7 +18,7 @@ import java.util.TreeSet;
 public class AppHandler {
 
     private static final Set<App> apps = new TreeSet<>();
-    private static final Map<File, Wallpaper> cachedIcons = Maps.newHashMap();
+    protected static final Map<File, Wallpaper> cachedIcons = Maps.newHashMap();
 
     private AppHandler() {
     }
@@ -36,29 +36,5 @@ public class AppHandler {
 
         return null;
     }
-
-    public static Wallpaper getAppIcon(Class<? extends App> appClass) {
-        for (App app : apps) {
-            if (app.getClass().equals(appClass)) {
-                try {
-                    File file = new File(app.name.toLowerCase());
-
-                    if(cachedIcons.containsKey(file)) return cachedIcons.get(file);
-
-                    OutputStream outputStream = new FileOutputStream(file);
-                    InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(iPixelmon.id, "textures/apps/" + app.name.toLowerCase() + "/icon.png")).getInputStream();
-                    IOUtils.copy(inputStream, outputStream);
-                    outputStream.close();
-                    cachedIcons.put(file, new Wallpaper(file));
-                    return cachedIcons.get(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return null;
-    }
-
 
 }

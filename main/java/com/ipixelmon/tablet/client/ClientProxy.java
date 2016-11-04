@@ -1,9 +1,9 @@
 package com.ipixelmon.tablet.client;
 
 import com.ipixelmon.CommonProxy;
+import com.ipixelmon.tablet.client.apps.mail.Mail;
 import com.ipixelmon.tablet.client.apps.camera.Gallery;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -22,6 +22,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new KeyListener());
 
         AppHandler.registerApp(new Gallery("Gallery"));
+        AppHandler.registerApp(new Mail("Mail"));
     }
 
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.Color;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
@@ -127,7 +128,11 @@ public class GuiTablet extends GuiScreen {
             GuiUtil.instance.drawImage(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
         }
 
-        this.drawGradientRect(screenBounds.getX(), screenBounds.getY(), screenBounds.getX() + screenBounds.getWidth(), screenBounds.getY() + screenBounds.getHeight(), -1072689136, -804253680);
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(0/255f, 0/255f, 0/255f, 128f/255f);
+        this.drawTexturedModalRect(screenBounds.getX(), screenBounds.getY(), 0, 0, screenBounds.getWidth(), screenBounds.getHeight());
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableTexture2D();
     }
 
     private void drawApps(int mouseX, int mouseY) {
@@ -187,7 +192,7 @@ public class GuiTablet extends GuiScreen {
             mc.fontRendererObj.setUnicodeFlag(false);
 
             // draw icon
-            AppHandler.getAppIcon(app.getClass()).drawWallpaper(0, 0, iconWidth, iconHeight);
+            app.getIcon().drawWallpaper(0, 0, iconWidth, iconHeight);
             GlStateManager.popMatrix();
         }
 
