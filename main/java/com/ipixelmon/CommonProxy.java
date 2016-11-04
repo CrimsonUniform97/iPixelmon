@@ -24,7 +24,7 @@ public abstract class CommonProxy {
     }
 
     public final Config getConfig() {
-        return new Config(new File(System.getProperty("user.dir") + "/" + id + "/config.txt"));
+        return new Config(new File(iPixelmon.path, "config.txt"));
     }
 
 }

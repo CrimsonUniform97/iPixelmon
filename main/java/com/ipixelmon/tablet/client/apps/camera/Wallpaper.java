@@ -22,7 +22,7 @@ import org.lwjgl.opengl.GL12;
 import net.coobird.thumbnailator.Thumbnails;
 
 
-public class Wallpaper {
+public class Wallpaper implements Comparable {
 
     private int texture = 0;
     private ByteBuffer buffer = null;
@@ -97,14 +97,11 @@ public class Wallpaper {
         } catch (IndexOutOfBoundsException e) {
             location.delete();
             // TODO
+            Gallery.wallpapers.remove(this);
 //            GalleryApp.refreshWallpapers();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public File getLocation() {
-        return location;
     }
 
     public void drawWallpaper(int x, int y, int width, int height) {
@@ -131,4 +128,16 @@ public class Wallpaper {
         }
     }
 
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof Wallpaper) {
+            Wallpaper wallpaper = (Wallpaper) o;
+            return wallpaper.location.compareTo(location);
+        }
+        return 0;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
 }

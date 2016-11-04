@@ -5,19 +5,15 @@ import com.ipixelmon.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelegg.client.Animation;
 import com.ipixelmon.tablet.client.apps.camera.Gallery;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
-import org.w3c.dom.css.Rect;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -41,19 +37,42 @@ public class GuiTablet extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawTablet();
         drawWallpaper();
-        drawApps(mouseX, mouseY);
-        if (activeApp != null) activeApp.drawScreen(mouseX, mouseY, partialTicks);
+        if (activeApp != null) {
+            activeApp.drawScreen(mouseX, mouseY, partialTicks);
+            return;
+        }
 
+        drawApps(mouseX, mouseY);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (activeApp != null) {
+            if (keyCode == Keyboard.KEY_ESCAPE)
+                activeApp = null;
+            else
+                activeApp.keyTyped(typedChar, keyCode);
+            return;
+        }
+
         super.keyTyped(typedChar, keyCode);
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        if (activeApp != null) {
+            activeApp.mouseClicked(mouseX, mouseY, mouseButton);
+            return;
+        }
+
+        activeApp = getAppUnderMouse(mouseX, mouseY);
+        if (activeApp != null) {
+            activeApp.screenBounds = screenBounds;
+            activeApp.setWorldAndResolution(mc, width, height);
+            activeApp.initGui();
+        }
     }
 
     @Override
@@ -81,8 +100,9 @@ public class GuiTablet extends GuiScreen {
         bgBounds = new Rectangle((width - boundary.getWidth()) / 2, (height - boundary.getHeight()) / 2, boundary.getWidth(), boundary.getHeight());
         screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
         if (activeApp != null) {
-            activeApp.bounds = screenBounds;
-            return;
+            activeApp.screenBounds = screenBounds;
+            activeApp.setWorldAndResolution(mc, width, height);
+            activeApp.initGui();
         }
 
     }
@@ -90,6 +110,7 @@ public class GuiTablet extends GuiScreen {
     @Override
     public void updateScreen() {
         super.updateScreen();
+        if (activeApp != null) activeApp.updateScreen();
     }
 
     private void drawTablet() {
@@ -115,7 +136,7 @@ public class GuiTablet extends GuiScreen {
 
         TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, AppHandler.getApps().toArray());
 
-        while(tileIterator.hasNext()) {
+        while (tileIterator.hasNext()) {
             app = (App) tileIterator.next();
             rec = tileIterator.getTileBounds();
 
@@ -124,44 +145,70 @@ public class GuiTablet extends GuiScreen {
             int xOffset = (rec.getWidth() - iconWidth) / 2;
             int yOffset = (rec.getHeight() - iconHeight) / 2;
 
-            mc.fontRendererObj.setUnicodeFlag(true);
-            int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
-            mc.fontRendererObj.drawString(app.name, rec.getX() + xOffset + fontOffset, rec.getY() + yOffset + iconHeight + 1, 0xFFFFFF, true);
-            mc.fontRendererObj.setUnicodeFlag(false);
-
-            // TODO: Add animation for font
 
             // animation and drawing for icon
             GlStateManager.pushMatrix();
             GlStateManager.translate(rec.getX() + xOffset, rec.getY() + yOffset, 1);
-            GlStateManager.translate((float)iconWidth / 2,(float) iconHeight / 2, 1 / 2);
 
-            if(!animations.containsKey(app)) {
+            // translate to center
+            GlStateManager.translate((float) iconWidth / 2, (float) iconHeight / 2, 1 / 2);
+
+            if (!animations.containsKey(app)) {
                 animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(1f));
             }
 
             float scaleTo = 1.2f;
 
-            if(rec.contains(mouseX, mouseY))
-            {
-                if(animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == 1f) {
+            Rectangle boundsToRec = rec;
+            boundsToRec.setBounds(rec.getX() + (rec.getWidth() - iconWidth), rec.getY() + (rec.getHeight() - iconHeight), iconWidth - (rec.getWidth() - iconWidth), iconHeight - (rec.getHeight() - iconHeight));
+            if (boundsToRec.contains(mouseX, mouseY)) {
+                if (animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == 1f) {
                     animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(1f).scaleTo(scaleTo, 0.02f));
                 }
             } else {
-                if(animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == scaleTo) {
+                if (animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == scaleTo) {
                     animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(scaleTo).scaleTo(1f, 0.02f));
                 }
             }
 
+            // increment animation
             animations.get(app).animate();
+
+            // scale
             GlStateManager.scale(animations.get(app).scalar(), animations.get(app).scalar(), animations.get(app).scalar());
 
-            GlStateManager.translate((float)-iconWidth / 2, (float)-iconHeight / 2, -1 / 2);
+            // translate back from center
+            GlStateManager.translate((float) -iconWidth / 2, (float) -iconHeight / 2, -1 / 2);
+
+            // draw font
+            mc.fontRendererObj.setUnicodeFlag(true);
+            int fontOffset = (iconWidth - mc.fontRendererObj.getStringWidth(app.name)) / 2;
+            mc.fontRendererObj.drawString(app.name, fontOffset, iconHeight + 1, 0xFFFFFF, true);
+            mc.fontRendererObj.setUnicodeFlag(false);
+
+            // draw icon
             AppHandler.getAppIcon(app.getClass()).drawWallpaper(0, 0, iconWidth, iconHeight);
             GlStateManager.popMatrix();
         }
 
+    }
 
+    private App getAppUnderMouse(int mouseX, int mouseY) {
+        App app;
+        Rectangle rec;
+
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, AppHandler.getApps().toArray());
+
+        while (tileIterator.hasNext()) {
+            app = (App) tileIterator.next();
+            rec = tileIterator.getTileBounds();
+            Rectangle boundsToRec = rec;
+            boundsToRec.setBounds(rec.getX() + (rec.getWidth() - iconWidth), rec.getY() + (rec.getHeight() - iconHeight), iconWidth - (rec.getWidth() - iconWidth), iconHeight - (rec.getHeight() - iconHeight));
+
+            if (boundsToRec.contains(mouseX, mouseY)) return app;
+        }
+
+        return null;
     }
 
 }

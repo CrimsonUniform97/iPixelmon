@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public final class iPixelmon {
 
     public static MySQLHandler mysql;
     public static Config config;
+    public static final File path = new File(System.getProperty("user.dir") + "/" + id + "/");
 
     public static SimpleNetworkWrapper network;
 
@@ -53,6 +55,8 @@ public final class iPixelmon {
 
     @Mod.EventHandler
     public final void preInit(final FMLPreInitializationEvent event) {
+        path.getParentFile().mkdirs();
+
         network = NetworkRegistry.INSTANCE.newSimpleChannel(id);
 
         config = proxy.getConfig();

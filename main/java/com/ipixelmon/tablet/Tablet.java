@@ -3,6 +3,7 @@ package com.ipixelmon.tablet;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.tablet.client.ClientProxy;
+import com.ipixelmon.tablet.client.apps.camera.Gallery;
 import com.ipixelmon.tablet.notification.Notification;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import com.ipixelmon.tablet.server.ServerProxy;
