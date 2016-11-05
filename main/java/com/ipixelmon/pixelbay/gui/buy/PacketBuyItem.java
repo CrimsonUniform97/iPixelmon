@@ -5,13 +5,9 @@ import com.ipixelmon.ItemUtil;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.pixelbay.Pixelbay;
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.ItemSerializer;
-import com.ipixelmon.ItemUtil;
 import com.ipixelmon.PixelmonUtility;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.SelectionForm;
-import com.ipixelmon.pixelbay.Pixelbay;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
@@ -69,9 +65,9 @@ public class PacketBuyItem implements IMessage {
                 if(message.price > PixelmonUtility.getServerBalance(player.getUniqueID())) throw new Exception("Insufficient PokéDollars.");
 
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Pixelbay.class, new SelectionForm("Item")
-                        .add("seller", message.seller.toString())
-                        .add("item", message.itemStack)
-                        .add("price", "" + message.price)
+                        .where("seller", message.seller.toString())
+                        .where("item", message.itemStack)
+                        .where("price", "" + message.price)
                         .setLimit(1));
 
                 if (!result.next()) throw new Exception("That listing was not found.");

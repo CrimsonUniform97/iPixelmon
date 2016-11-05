@@ -69,7 +69,7 @@ public class TeamMod implements IMod
 
     public static EnumTeam getPlayerTeam(UUID playerUUID)
     {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(TeamMod.class, new SelectionForm("Players").add("uuid", playerUUID.toString()));
+        ResultSet result = iPixelmon.mysql.selectAllFrom(TeamMod.class, new SelectionForm("Players").where("uuid", playerUUID.toString()));
 
         try
         {

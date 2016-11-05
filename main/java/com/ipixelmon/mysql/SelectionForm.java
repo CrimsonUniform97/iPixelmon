@@ -13,7 +13,7 @@ public final class SelectionForm {
         selectionForms = new HashMap<String, String>();
     }
 
-    public final SelectionForm add(final String key, Object value) {
+    public final SelectionForm where(final String key, Object value) {
         String strValue = "" + value;
         if(strValue.equalsIgnoreCase("false")) {
             value = "0";

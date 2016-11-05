@@ -111,7 +111,7 @@ public class GymMod implements IMod {
     public static Gym createGym(World world, BlockPos pos, int power, EnumTeam team) throws Exception {
         Region region = LandControl.getRegion(world, pos);
 
-        if (iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", region.id().toString())).next())
+        if (iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").where("region", region.id().toString())).next())
             throw new Exception("There is already a gym here.");
 
         NBTTagCompound dataTag = new NBTTagCompound();
@@ -132,7 +132,7 @@ public class GymMod implements IMod {
 
     @SideOnly(Side.SERVER)
     public static void deleteGym(Gym gym) throws Exception {
-        if (!iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", gym.getRegion().id().toString())).next())
+        if (!iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").where("region", gym.getRegion().id().toString())).next())
             throw new Exception("Gym not found.");
 
         iPixelmon.mysql.delete(GymMod.class, new DeleteForm("Gyms").add("region", gym.getRegion().id().toString()));

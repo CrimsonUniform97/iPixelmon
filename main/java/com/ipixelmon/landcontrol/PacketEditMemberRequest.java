@@ -72,7 +72,7 @@ public class PacketEditMemberRequest implements IMessage
 
                 if (playerUUID.equals(region.getOwner()))
                 {
-                    throw new Exception("Can not add/remove owner.");
+                    throw new Exception("Can not where/remove owner.");
                 }
 
                 if (message.addMember)

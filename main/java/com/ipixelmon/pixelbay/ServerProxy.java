@@ -39,10 +39,10 @@ public final class ServerProxy extends CommonProxy {
 //            final InsertForm insertForm = new InsertForm("Item");
 //            ItemStack itemStack = new ItemStack(itemIterator.next());
 //
-//            insertForm.add("seller", UUIDManager.getUUID("CMcHenry").toString());
-//            insertForm.add("item", ItemSerializer.itemToString(itemStack));
-//            insertForm.add("itemName", itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
-//            insertForm.add("price", "" + (int) (Math.random() * 100));
+//            insertForm.where("seller", UUIDManager.getUUID("CMcHenry").toString());
+//            insertForm.where("item", ItemSerializer.itemToString(itemStack));
+//            insertForm.where("itemName", itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
+//            insertForm.where("price", "" + (int) (Math.random() * 100));
 //
 //            iPixelmon.mysql.insert(Pixelbay.class, insertForm);
 //        }

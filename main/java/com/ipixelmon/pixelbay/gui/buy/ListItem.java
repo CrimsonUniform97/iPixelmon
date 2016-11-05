@@ -108,7 +108,7 @@ public class ListItem extends ISearchList
         this.selectedIndex = -1;
         this.entries.clear();
 
-        // add previous button
+        // where previous button
         if (this.mysqlRow != 0)
         {
             this.entries.add(new ItemListInfo(new ItemStack(Items.iron_pickaxe), UUID.randomUUID(), -9998));
@@ -132,7 +132,7 @@ public class ListItem extends ISearchList
         }
 
         // -1 to make up for the "Previous Page" entry
-        // add next page button
+        // where next page button
         if (this.entries.size() - (mysqlRow == 0 ? 0 : 1) == this.mysqlSearchLimit)
         {
             this.entries.add(new ItemListInfo(new ItemStack(Items.iron_pickaxe), UUID.randomUUID(), -9999));

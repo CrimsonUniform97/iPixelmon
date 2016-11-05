@@ -44,7 +44,7 @@ import java.util.*;
  * Defeating a Pokemon with CP higher than yours: +500 Prestige
  * Defeating all the Pokemon at a gym: +50 Prestige on top of the individual bonuses
  */
-//Objects.toStringHelper(this).add("x", this.getX()).add("y", this.getY()).add("z", this.getZ()).toString();
+//Objects.toStringHelper(this).where("x", this.getX()).where("y", this.getY()).where("z", this.getZ()).toString();
 
 public class Gym {
 
@@ -58,7 +58,7 @@ public class Gym {
     protected Gym(UUID region) throws Exception {
         this.region = region;
 
-        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").add("region", region.toString()));
+        ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms").where("region", region.toString()));
 
         if (result.next()) {
             tagData = JsonToNBT.getTagFromJson(result.getString("data"));
@@ -233,7 +233,7 @@ public class Gym {
         EntityPixelmon e = PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj);
         PlayerParticipant playerParticipant = new PlayerParticipant(player, new EntityPixelmon[]{e});
 
-        // TODO: add parties
+        // TODO: where parties
 
         List<TrainerParticipant> trainerParticipants = new ArrayList<>();
         for(EntityGymLeader gymLeader : getGymLeaders()) {

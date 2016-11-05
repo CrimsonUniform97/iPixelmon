@@ -120,7 +120,6 @@ public class GuiTablet extends GuiScreen {
     }
 
     private void drawWallpaper() {
-        // TODO
         if (Gallery.getWallpaper() != null) {
             Gallery.getWallpaper().drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
         } else {

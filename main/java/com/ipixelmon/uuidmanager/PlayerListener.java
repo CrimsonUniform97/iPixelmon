@@ -3,9 +3,6 @@ package com.ipixelmon.uuidmanager;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.InsertForm;
-import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -18,7 +15,7 @@ public final class PlayerListener {
     @SubscribeEvent
     public final void login(final PlayerEvent.PlayerLoggedInEvent event) {
         try {
-            final ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").add("uuid", event.player.getUniqueID().toString()));
+            final ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").where("uuid", event.player.getUniqueID().toString()));
             if (result.next())
                 iPixelmon.mysql.update(UUIDManager.class, new UpdateForm("Players").set("name", event.player.getGameProfile().getName()).set("nameLower", event.player.getGameProfile().getName().toLowerCase()).where("uuid", event.player.getUniqueID().toString()));
             else

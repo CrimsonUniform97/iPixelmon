@@ -56,7 +56,7 @@ public final class UUIDManager implements IMod {
 
     public static final String getPlayerName(final UUID uuid) {
         try {
-            ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").add("uuid", uuid.toString()));
+            ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").where("uuid", uuid.toString()));
             if (result.next()) return result.getString("name");
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public final class UUIDManager implements IMod {
 
     public static final UUID getUUID(final String name) {
         try {
-            ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").add("nameLower", name.toLowerCase()));
+            ResultSet result = iPixelmon.mysql.selectAllFrom(UUIDManager.class, new SelectionForm("Players").where("nameLower", name.toLowerCase()));
             if (result.next()) return UUID.fromString(result.getString("uuid"));
         } catch (Exception e) {
             e.printStackTrace();

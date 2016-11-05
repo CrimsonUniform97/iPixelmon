@@ -1,10 +1,8 @@
 package com.ipixelmon.landcontrol;
 
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
@@ -28,7 +26,7 @@ public class Region {
     private String worldName;
 
     protected Region(UUID id) throws Exception {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions").add("uuid", id.toString()));
+        ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions").where("uuid", id.toString()));
 
         if (result.next()) {
             members = new ArrayList<>();
