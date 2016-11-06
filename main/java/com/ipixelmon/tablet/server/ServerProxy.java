@@ -17,10 +17,15 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        CreateForm createForm = new CreateForm("Friends");
-        createForm.add("player", DataType.TEXT);
-        createForm.add("friends", DataType.TEXT);
+        CreateForm friendsForm = new CreateForm("Friends");
+        friendsForm.add("player", DataType.TEXT);
+        friendsForm.add("friends", DataType.TEXT);
+        iPixelmon.mysql.createTable(Tablet.class, friendsForm);
 
-        iPixelmon.mysql.createTable(Tablet.class, createForm);
+        CreateForm friendReqForm = new CreateForm("FriendReqs");
+        friendReqForm.add("player", DataType.TEXT);
+        friendReqForm.add("friend", DataType.TEXT);
+        friendReqForm.add("sentDate", DataType.TEXT);
+        iPixelmon.mysql.createTable(Tablet.class, friendReqForm);
     }
 }

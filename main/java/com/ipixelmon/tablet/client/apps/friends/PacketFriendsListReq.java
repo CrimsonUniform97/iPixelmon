@@ -1,6 +1,7 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
 import com.google.common.collect.Lists;
+import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
@@ -46,18 +47,12 @@ public class PacketFriendsListReq implements IMessage {
 
             ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("Friends").where("player", ctx.getServerHandler().playerEntity.getUniqueID()));
 
-            List<UUID> onlineUUIDs = Lists.newArrayList();
-
-            for (WorldServer worldServer : MinecraftServer.getServer().worldServers)
-                for (EntityPlayer player : worldServer.playerEntities)
-                    onlineUUIDs.add(player.getUniqueID());
-
             try {
                 if (result.next())
                     for (String s : result.getString("friends").split(",")) {
                         if (!s.isEmpty()) {
                             UUID uuid = UUID.fromString(s);
-                            friends.add(new Friend(uuid, UUIDManager.getPlayerName(uuid), onlineUUIDs.contains(uuid)));
+                            friends.add(new Friend(uuid, UUIDManager.getPlayerName(uuid), PlayerUtil.isPlayerOnline(uuid)));
                         }
                     }
             } catch (SQLException e) {
