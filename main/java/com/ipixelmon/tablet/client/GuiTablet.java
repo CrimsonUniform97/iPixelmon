@@ -120,6 +120,7 @@ public class GuiTablet extends GuiScreen {
     }
 
     private void drawWallpaper() {
+        GlStateManager.enableTexture2D();
         if (Gallery.getWallpaper() != null) {
             Gallery.getWallpaper().drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
         } else {
@@ -135,6 +136,8 @@ public class GuiTablet extends GuiScreen {
     }
 
     private void drawApps(int mouseX, int mouseY) {
+        GlStateManager.enableTexture2D();
+
         App app;
         Rectangle rec;
 

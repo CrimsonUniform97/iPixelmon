@@ -7,6 +7,7 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
+import javafx.scene.control.Tab;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -51,7 +52,6 @@ public class PacketAddFriendReq implements IMessage {
         @Override
         public IMessage onMessage(PacketAddFriendReq message, MessageContext ctx) {
             try {
-
                 UUID friendUUID = UUIDManager.getUUID(message.playerName);
 
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class,
@@ -59,7 +59,7 @@ public class PacketAddFriendReq implements IMessage {
                                 .where("friend", friendUUID.toString()));
 
                 if (result.next()) {
-                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.PENDING), ctx.getServerHandler().playerEntity);
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.PENDING, message.playerName), ctx.getServerHandler().playerEntity);
                     return null;
                 }
 
@@ -69,10 +69,11 @@ public class PacketAddFriendReq implements IMessage {
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                 Date today = Calendar.getInstance().getTime();
                 insertForm.add("sentDate", df.format(today));
-                iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.SENT), ctx.getServerHandler().playerEntity);
+                iPixelmon.mysql.insert(Tablet.class, insertForm);
+                iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.SENT, message.playerName), ctx.getServerHandler().playerEntity);
 
                 if (PlayerUtil.isPlayerOnline(friendUUID))
-                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.REQUEST), (EntityPlayerMP) PlayerUtil.getPlayer(friendUUID));
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.REQUEST, ctx.getServerHandler().playerEntity.getName()), (EntityPlayerMP) PlayerUtil.getPlayer(friendUUID));
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1,5 +1,7 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
+import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.tablet.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -38,12 +40,26 @@ public class PacketAddFriendRes implements IMessage {
         @Override
         public IMessage onMessage(PacketAddFriendRes message, MessageContext ctx) {
             // TODO: Work on the responses
+            System.out.println(message.responseType);
+            switch(message.responseType) {
+                case SENT:
+                    new SimpleTextNotification("Friend request sent.");
+                    break;
+                // TODO: Make the REQUEST render the player face in the notification
+                case REQUEST:
+                    new SimpleTextNotification("Friend request from " + message.player + ".");
+                    break;
+                case PENDING:
+                    new SimpleTextNotification("Friend request already pending.");
+                    break;
+                // TODO: Work on accepted and denied, need to add a section in gui in Friends app
+            }
             return null;
         }
 
     }
 
     public enum ResponseType {
-       SENT, PENDING, ACCEPTED, DENIED, REQUEST;
+       SENT, PENDING, ACCEPTED, DENIED, REQUEST
     }
 }

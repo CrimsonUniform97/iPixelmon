@@ -13,6 +13,7 @@ public abstract class Notification extends Gui {
     public Notification() {
         maxWidth = NotificationOverlay.instance.maxNotificationWidth;
         startTime = System.currentTimeMillis();
+        NotificationOverlay.instance.addNotification(this);
     }
 
     public abstract void draw();

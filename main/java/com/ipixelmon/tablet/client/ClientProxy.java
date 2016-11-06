@@ -1,6 +1,7 @@
 package com.ipixelmon.tablet.client;
 
 import com.ipixelmon.CommonProxy;
+import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.client.apps.mail.Mail;
 import com.ipixelmon.tablet.client.apps.camera.Gallery;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
@@ -23,6 +24,7 @@ public class ClientProxy extends CommonProxy {
 
         AppHandler.registerApp(new Gallery("Gallery"));
         AppHandler.registerApp(new Mail("Mail"));
+        AppHandler.registerApp(new Friends("Friends"));
     }
 
 }

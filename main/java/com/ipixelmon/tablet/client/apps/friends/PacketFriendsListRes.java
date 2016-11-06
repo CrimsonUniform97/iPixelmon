@@ -42,9 +42,7 @@ public class PacketFriendsListRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListRes message, MessageContext ctx) {
-
             Friends.friends = message.friends;
-
             return null;
         }
 

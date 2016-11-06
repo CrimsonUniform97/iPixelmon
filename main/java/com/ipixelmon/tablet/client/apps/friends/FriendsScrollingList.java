@@ -1,9 +1,12 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,18 +14,19 @@ import java.util.Set;
  */
 public class FriendsScrollingList extends GuiScrollingList {
 
-    private Friend[] friends;
+    private List<Friend> friends;
     private Minecraft mc;
 
     public FriendsScrollingList(Set<Friend> friends, Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight) {
         super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
         mc = client;
-        this.friends = (Friend[]) friends.toArray();
+        this.friends = Lists.newArrayList();
+        for(Friend friend : friends) this.friends.add(friend);
     }
 
     @Override
     protected int getSize() {
-        return friends.length;
+        return friends.size();
     }
 
     @Override
@@ -42,7 +46,7 @@ public class FriendsScrollingList extends GuiScrollingList {
 
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
-        mc.fontRendererObj.drawString(friends[slotIdx].name, left, slotTop, 0xFFFFFF, false);
-        mc.fontRendererObj.drawString(String.valueOf(friends[slotIdx].online), entryRight - (mc.fontRendererObj.getStringWidth(String.valueOf(friends[slotIdx].online))), slotTop, 0xFFFFFF, false);
+        Friend friend = friends.get(slotIdx);
+        mc.fontRendererObj.drawString((friend.online ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + friend.name, left, slotTop, 0xFFFFFF, false);
     }
 }

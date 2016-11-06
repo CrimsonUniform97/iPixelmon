@@ -5,6 +5,8 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.client.apps.camera.Gallery;
+import com.ipixelmon.tablet.client.apps.friends.PacketAddFriendReq;
+import com.ipixelmon.tablet.client.apps.friends.PacketAddFriendRes;
 import com.ipixelmon.tablet.client.apps.friends.PacketFriendsListReq;
 import com.ipixelmon.tablet.client.apps.friends.PacketFriendsListRes;
 import com.ipixelmon.tablet.notification.Notification;
@@ -30,6 +32,8 @@ public class Tablet implements IMod {
     public void preInit() {
         iPixelmon.registerPacket(PacketFriendsListReq.Handler.class, PacketFriendsListReq.class, Side.SERVER);
         iPixelmon.registerPacket(PacketFriendsListRes.Handler.class, PacketFriendsListRes.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketAddFriendReq.Handler.class, PacketAddFriendReq.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketAddFriendRes.Handler.class, PacketAddFriendRes.class, Side.CLIENT);
     }
 
     @Override
