@@ -23,8 +23,8 @@ public class ServerProxy extends CommonProxy {
         iPixelmon.mysql.createTable(Tablet.class, friendsForm);
 
         CreateForm friendReqForm = new CreateForm("FriendReqs");
-        friendReqForm.add("player", DataType.TEXT);
-        friendReqForm.add("friend", DataType.TEXT);
+        friendReqForm.add("receiver", DataType.TEXT);
+        friendReqForm.add("sender", DataType.TEXT);
         friendReqForm.add("sentDate", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, friendReqForm);
     }

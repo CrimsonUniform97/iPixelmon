@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.client.apps.friends;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.client.GuiScrollingList;
@@ -17,8 +18,8 @@ public class FriendsScrollingList extends GuiScrollingList {
     private List<Friend> friends;
     private Minecraft mc;
 
-    public FriendsScrollingList(Set<Friend> friends, Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight) {
-        super(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight);
+    public FriendsScrollingList(Set<Friend> friends, Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
+        super(client, width, height, y, y + height, x, entryHeight, screen.width, screen.height);
         mc = client;
         this.friends = Lists.newArrayList();
         for(Friend friend : friends) this.friends.add(friend);
@@ -41,7 +42,6 @@ public class FriendsScrollingList extends GuiScrollingList {
 
     @Override
     protected void drawBackground() {
-
     }
 
     @Override

@@ -1,5 +1,7 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.client.apps.friends.packet;
 
+import com.ipixelmon.tablet.client.apps.friends.Friend;
+import com.ipixelmon.tablet.client.apps.friends.Friends;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.client.apps.friends.packet;
 
 import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
@@ -7,9 +7,7 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
-import javafx.scene.control.Tab;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -55,8 +53,8 @@ public class PacketAddFriendReq implements IMessage {
                 UUID friendUUID = UUIDManager.getUUID(message.playerName);
 
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class,
-                        new SelectionForm("FriendReqs").where("player", ctx.getServerHandler().playerEntity.getUniqueID().toString())
-                                .where("friend", friendUUID.toString()));
+                        new SelectionForm("FriendReqs").where("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString())
+                                .where("receiver", friendUUID.toString()));
 
                 if (result.next()) {
                     iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.PENDING, message.playerName), ctx.getServerHandler().playerEntity);
@@ -64,8 +62,8 @@ public class PacketAddFriendReq implements IMessage {
                 }
 
                 InsertForm insertForm = new InsertForm("FriendReqs");
-                insertForm.add("player", ctx.getServerHandler().playerEntity.getUniqueID().toString());
-                insertForm.add("friend", friendUUID.toString());
+                insertForm.add("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString());
+                insertForm.add("receiver", friendUUID.toString());
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                 Date today = Calendar.getInstance().getTime();
                 insertForm.add("sentDate", df.format(today));
@@ -73,7 +71,7 @@ public class PacketAddFriendReq implements IMessage {
                 iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.SENT, message.playerName), ctx.getServerHandler().playerEntity);
 
                 if (PlayerUtil.isPlayerOnline(friendUUID))
-                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.REQUEST, ctx.getServerHandler().playerEntity.getName()), (EntityPlayerMP) PlayerUtil.getPlayer(friendUUID));
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.REQUEST, ctx.getServerHandler().playerEntity.getUniqueID().toString() + "," + ctx.getServerHandler().playerEntity.getName()), (EntityPlayerMP) PlayerUtil.getPlayer(friendUUID));
 
             } catch (Exception e) {
                 e.printStackTrace();

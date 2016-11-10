@@ -1,12 +1,18 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.client.apps.friends.packet;
 
-import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.tablet.client.apps.friends.FriendRequest;
+import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.notification.SimpleTextNotification;
+import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by colby on 11/5/2016.
@@ -40,14 +46,16 @@ public class PacketAddFriendRes implements IMessage {
         @Override
         public IMessage onMessage(PacketAddFriendRes message, MessageContext ctx) {
             // TODO: Work on the responses
-            System.out.println(message.responseType);
+
             switch(message.responseType) {
                 case SENT:
                     new SimpleTextNotification("Friend request sent.");
                     break;
                 // TODO: Make the REQUEST render the player face in the notification
                 case REQUEST:
-                    new SimpleTextNotification("Friend request from " + message.player + ".");
+                    String[] data = message.player.split(",");
+                    new SimpleTextNotification("You received a friend request from " + data[1] + ".");
+                    Friends.requests.add(new FriendRequest(UUID.fromString(data[0]), new Date()));
                     break;
                 case PENDING:
                     new SimpleTextNotification("Friend request already pending.");
