@@ -45,7 +45,7 @@ public class PacketAddFriendRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketAddFriendRes message, MessageContext ctx) {
-            // TODO: Work on the responses
+            // TODO: Finish Accept and Deny
 
             switch(message.responseType) {
                 case SENT:

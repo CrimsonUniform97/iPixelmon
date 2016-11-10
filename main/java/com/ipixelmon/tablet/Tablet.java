@@ -4,10 +4,7 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.ClientProxy;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendReq;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendRes;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketFriendsListReq;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketFriendsListRes;
+import com.ipixelmon.tablet.client.apps.friends.packet.*;
 import com.ipixelmon.tablet.notification.Notification;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import com.ipixelmon.tablet.server.ServerProxy;
@@ -32,6 +29,7 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketFriendsListRes.Handler.class, PacketFriendsListRes.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAddFriendReq.Handler.class, PacketAddFriendReq.class, Side.SERVER);
         iPixelmon.registerPacket(PacketAddFriendRes.Handler.class, PacketAddFriendRes.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketFriendOnline.Handler.class, PacketFriendOnline.class, Side.CLIENT);
     }
 
     @Override

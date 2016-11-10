@@ -15,26 +15,20 @@ import java.util.Set;
 /**
  * Created by colby on 11/7/2016.
  */
-public class FriendRequestsScrollingList extends GuiScrollingList {
+public class GuiFriendRequests extends GuiScrollingList {
 
     private Minecraft mc;
-    private List<FriendRequest> friendRequests;
-    private List<String> names;
 
-    public FriendRequestsScrollingList(Set<FriendRequest> friendRequests, Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
+    // TODO: MAke it to where they can either accept or deny the friend request
+
+    public GuiFriendRequests(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
         super(client, width, height, y, y + height, x, entryHeight, screen.width, screen.height);
         mc = client;
-        this.friendRequests = Lists.newArrayList();
-        for(FriendRequest request : friendRequests) this.friendRequests.add(request);
-
-        this.names = new ArrayList<>();
-        for(FriendRequest request : friendRequests)
-            this.names.add(UUIDManager.getPlayerName(request.friend));
     }
 
     @Override
     protected int getSize() {
-        return friendRequests.size();
+        return FriendsAPI.getFriendRequests().size();
     }
 
     @Override
@@ -54,7 +48,7 @@ public class FriendRequestsScrollingList extends GuiScrollingList {
 
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
-//        FriendRequest request = friendRequests.get(slotIdx);
-        mc.fontRendererObj.drawString(names.get(slotIdx), left, slotTop, 0xFFFFFF, false);
+        String name = ((FriendRequest) FriendsAPI.getFriendRequests().toArray()[slotIdx]).name;
+        mc.fontRendererObj.drawString(name, left + 2, slotTop, 0xFFFFFF, false);
     }
 }

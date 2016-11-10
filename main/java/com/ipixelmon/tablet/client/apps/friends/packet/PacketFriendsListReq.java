@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.tablet.client.apps.friends.Friend;
+import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -39,24 +40,8 @@ public class PacketFriendsListReq implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListReq message, MessageContext ctx) {
-            Set<Friend> friends = new TreeSet<>();
-
-            ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("Friends").where("player", ctx.getServerHandler().playerEntity.getUniqueID()));
-
-            try {
-                if (result.next())
-                    for (String s : result.getString("friends").split(",")) {
-                        if (!s.isEmpty()) {
-                            UUID uuid = UUID.fromString(s);
-                            friends.add(new Friend(uuid, UUIDManager.getPlayerName(uuid), PlayerUtil.isPlayerOnline(uuid)));
-                        }
-                    }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+            Set<Friend> friends = FriendsAPI.getFriends(ctx.getServerHandler().playerEntity.getUniqueID());
             if(!friends.isEmpty()) iPixelmon.network.sendTo(new PacketFriendsListRes(friends), ctx.getServerHandler().playerEntity);
-
 
             return null;
         }

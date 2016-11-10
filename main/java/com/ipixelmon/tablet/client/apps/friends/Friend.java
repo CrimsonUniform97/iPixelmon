@@ -24,7 +24,7 @@ public class Friend implements Comparable {
             Friend friend = (Friend) o;
             if(friend.uuid.equals(uuid)) return 0;
         }
-        return 999;
+        return -1;
     }
 
     @Override

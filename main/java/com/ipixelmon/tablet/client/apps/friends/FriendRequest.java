@@ -1,5 +1,7 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
+import com.ipixelmon.uuidmanager.UUIDManager;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,10 +11,12 @@ import java.util.UUID;
 public class FriendRequest implements Comparable {
 
     public UUID friend;
+    public String name;
     public Date sentDate;
 
     public FriendRequest(UUID friend, Date sentDate) {
         this.friend = friend;
+        this.name = UUIDManager.getPlayerName(friend);
         this.sentDate = sentDate;
     }
 

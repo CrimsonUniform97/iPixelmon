@@ -3,6 +3,7 @@ package com.ipixelmon.tablet.client.apps.mail;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.tablet.client.apps.camera.Wallpaper;
+import com.ipixelmon.tablet.client.apps.friends.GuiFriends;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.compress.utils.IOUtils;
@@ -15,6 +16,7 @@ import java.io.*;
 public class Mail extends App {
 
     private static Wallpaper icon, icon_new;
+    private GuiFriends friendsList;
 
     public Mail(String name) {
         super(name);
@@ -25,6 +27,7 @@ public class Mail extends App {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        friendsList.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -37,6 +40,12 @@ public class Mail extends App {
         super.keyTyped(typedChar, keyCode);
     }
 
+    @Override
+    public void initGui() {
+        super.initGui();
+        this.buttonList.clear();
+        friendsList = new GuiFriends(mc, 0, 0, 100, 100, 10, this);
+    }
 
     @Override
     public Wallpaper getIcon() {
