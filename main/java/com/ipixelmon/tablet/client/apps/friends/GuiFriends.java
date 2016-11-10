@@ -13,12 +13,12 @@ import java.util.Set;
 /**
  * Created by colbymchenry on 11/4/16.
  */
-public class GuiFriends extends GuiScrollingList {
+public class GuiFriends extends CustomScrollList {
 
     private Minecraft mc;
 
     public GuiFriends(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
-        super(client, width, height, y, y + height, x, entryHeight, screen.width, screen.height);
+        super(client, x, y, width, height, entryHeight, screen);
         mc = client;
         FriendsAPI.getFriends(true);
     }
@@ -40,6 +40,8 @@ public class GuiFriends extends GuiScrollingList {
 
     @Override
     protected void drawBackground() {
+        drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, -6250336);
+        drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
     }
 
     @Override

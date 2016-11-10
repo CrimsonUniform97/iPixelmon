@@ -167,7 +167,8 @@ public class GuiTablet extends GuiScreen {
             float scaleTo = 1.2f;
 
             Rectangle boundsToRec = rec;
-            boundsToRec.setBounds(rec.getX() + (rec.getWidth() - iconWidth), rec.getY() + (rec.getHeight() - iconHeight), iconWidth - (rec.getWidth() - iconWidth), iconHeight - (rec.getHeight() - iconHeight));
+            boundsToRec.setBounds(rec.getX() + xOffset, rec.getY() + yOffset, iconWidth, iconHeight);
+
             if (boundsToRec.contains(mouseX, mouseY)) {
                 if (animations.get(app).getActions().isEmpty() && animations.get(app).scalar() == 1f) {
                     animations.put(app, new Animation(rec.getX() + xOffset, rec.getY() + yOffset, 1).scale(1f).scaleTo(scaleTo, 0.02f));
@@ -210,7 +211,9 @@ public class GuiTablet extends GuiScreen {
             app = (App) tileIterator.next();
             rec = tileIterator.getTileBounds();
             Rectangle boundsToRec = rec;
-            boundsToRec.setBounds(rec.getX() + (rec.getWidth() - iconWidth), rec.getY() + (rec.getHeight() - iconHeight), iconWidth - (rec.getWidth() - iconWidth), iconHeight - (rec.getHeight() - iconHeight));
+            int xOffset = (rec.getWidth() - iconWidth) / 2;
+            int yOffset = (rec.getHeight() - iconHeight) / 2;
+            boundsToRec.setBounds(rec.getX() + xOffset, rec.getY() + yOffset, iconWidth, iconHeight);
 
             if (boundsToRec.contains(mouseX, mouseY)) return app;
         }

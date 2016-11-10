@@ -15,14 +15,14 @@ import java.util.Set;
 /**
  * Created by colby on 11/7/2016.
  */
-public class GuiFriendRequests extends GuiScrollingList {
+public class GuiFriendRequests extends CustomScrollList {
 
     private Minecraft mc;
 
     // TODO: MAke it to where they can either accept or deny the friend request
 
     public GuiFriendRequests(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
-        super(client, width, height, y, y + height, x, entryHeight, screen.width, screen.height);
+        super(client, x, y, width, height, entryHeight, screen);
         mc = client;
     }
 
@@ -43,7 +43,8 @@ public class GuiFriendRequests extends GuiScrollingList {
 
     @Override
     protected void drawBackground() {
-
+        drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, -6250336);
+        drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
     }
 
     @Override
