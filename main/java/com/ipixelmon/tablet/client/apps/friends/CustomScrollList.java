@@ -205,9 +205,11 @@ public abstract class CustomScrollList extends Gui {
                     else if (mouseX >= entryLeft && mouseX <= entryRight && mouseListY < 0)
                     {
                         this.clickHeader(mouseX - entryLeft, mouseY - this.top + (int)this.scrollDistance - border);
-                    } else {
-                        this.selectedIndex = -1;
                     }
+
+//                    else {
+//                        this.selectedIndex = -1;
+//                    }
 
 
 
@@ -234,7 +236,7 @@ public abstract class CustomScrollList extends Gui {
                 }
                 else
                 {
-                    selectedIndex = -1;
+//                    selectedIndex = -1;
                     this.initialMouseClickY = -2.0F;
                 }
             }

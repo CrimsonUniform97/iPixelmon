@@ -7,6 +7,7 @@ import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.client.apps.friends.packet.*;
 import com.ipixelmon.tablet.notification.Notification;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.tablet.notification.PacketNotification;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -30,6 +31,8 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketAddFriendReq.Handler.class, PacketAddFriendReq.class, Side.SERVER);
         iPixelmon.registerPacket(PacketAddFriendRes.Handler.class, PacketAddFriendRes.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketFriendOnline.Handler.class, PacketFriendOnline.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketAcceptDeny.Handler.class, PacketAcceptDeny.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketNotification.Handler.class, PacketNotification.class, Side.CLIENT);
     }
 
     @Override
@@ -62,8 +65,4 @@ public class Tablet implements IMod {
         return null;
     }
 
-    @SideOnly(Side.CLIENT)
-    public static final void submitNotification(Notification notification) {
-        NotificationOverlay.instance.addNotification(notification);
-    }
 }

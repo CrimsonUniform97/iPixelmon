@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
+import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -55,6 +56,11 @@ public class PacketAddFriendReq implements IMessage {
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class,
                         new SelectionForm("FriendReqs").where("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString())
                                 .where("receiver", friendUUID.toString()));
+
+                if(FriendsAPI.getFriendsUUIDOnly(ctx.getServerHandler().playerEntity.getUniqueID()).contains(friendUUID)) {
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.FRIENDS, message.playerName), ctx.getServerHandler().playerEntity);
+                    return null;
+                }
 
                 if (result.next()) {
                     iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.PENDING, message.playerName), ctx.getServerHandler().playerEntity);

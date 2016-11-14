@@ -47,6 +47,8 @@ public class GuiFriends extends CustomScrollList {
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
         Friend friend = (Friend) FriendsAPI.getFriends(false).toArray()[slotIdx];
+        mc.fontRendererObj.setUnicodeFlag(true);
         mc.fontRendererObj.drawString((friend.online ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + friend.name, left + 2, slotTop, 0xFFFFFF, false);
+        mc.fontRendererObj.setUnicodeFlag(false);
     }
 }

@@ -1,6 +1,10 @@
 package com.ipixelmon.tablet.notification;
 
+import com.ipixelmon.iPixelmon;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by colbymchenry on 10/3/16.

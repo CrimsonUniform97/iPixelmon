@@ -121,6 +121,7 @@ public class GuiTablet extends GuiScreen {
 
     private void drawWallpaper() {
         GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
         if (Gallery.getWallpaper() != null) {
             Gallery.getWallpaper().drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
         } else {

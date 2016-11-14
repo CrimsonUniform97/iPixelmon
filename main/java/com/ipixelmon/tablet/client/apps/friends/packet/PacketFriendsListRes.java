@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by colbymchenry on 11/4/16.
@@ -26,6 +27,8 @@ public class PacketFriendsListRes implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        friends = new TreeSet<>();
+
         for (String s : ByteBufUtils.readUTF8String(buf).split(";"))
             if (s.contains(","))
                 friends.add(Friend.fromString(s));

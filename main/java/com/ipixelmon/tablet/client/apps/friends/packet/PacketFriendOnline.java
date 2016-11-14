@@ -1,6 +1,6 @@
 package com.ipixelmon.tablet.client.apps.friends.packet;
 
-import com.ipixelmon.tablet.notification.NotificationPlayer;
+import com.ipixelmon.tablet.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -40,7 +40,7 @@ public class PacketFriendOnline implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendOnline message, MessageContext ctx) {
-            if(message.name != null && message.uuid != null) new NotificationPlayer(message.name + " is online.", message.uuid);
+            if(message.name != null && message.uuid != null) new SimpleTextNotification(message.name + " is online.");
             return null;
         }
 

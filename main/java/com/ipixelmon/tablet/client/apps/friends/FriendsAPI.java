@@ -45,6 +45,24 @@ public final class FriendsAPI {
         return friends;
     }
 
+    @SideOnly(Side.SERVER)
+    public static final Set<UUID> getFriendsUUIDOnly(UUID player) {
+        ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("Friends").where("player", player.toString()));
+
+        Set<UUID> friends = new TreeSet<>();
+
+        try {
+            if (result.next()) {
+                String[] data = result.getString("friends").split(",");
+                for (String friend : data) friends.add(UUID.fromString(friend));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return friends;
+    }
+
     @SideOnly(Side.CLIENT)
     public static final Set<Friend> getFriends(boolean withUpdate) {
         if (withUpdate)

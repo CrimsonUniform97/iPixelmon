@@ -61,7 +61,9 @@ public class Mail extends App {
                     new ResourceLocation(iPixelmon.id, "textures/apps/" + name.toLowerCase() + "/icon" + (isNew ? "_new" : "") + ".png")).getInputStream();
             IOUtils.copy(inputStream, outputStream);
             outputStream.close();
-            return new Wallpaper(file);
+
+            if (file != null)
+                return new Wallpaper(file);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -73,7 +73,7 @@ public class NotificationOverlay {
 
     }
 
-    public void addNotification(Notification notification) {
+    protected void addNotification(Notification notification) {
         notifications.addLast(new NotificationProperties(notification));
     }
 

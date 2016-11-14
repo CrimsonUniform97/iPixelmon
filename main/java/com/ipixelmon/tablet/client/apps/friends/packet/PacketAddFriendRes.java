@@ -3,9 +3,7 @@ package com.ipixelmon.tablet.client.apps.friends.packet;
 import com.ipixelmon.tablet.client.apps.friends.FriendRequest;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.notification.SimpleTextNotification;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -60,6 +58,9 @@ public class PacketAddFriendRes implements IMessage {
                 case PENDING:
                     new SimpleTextNotification("Friend request already pending.");
                     break;
+                case FRIENDS:
+                    Friends.setMessage("Already friends.", 5);
+                    break;
                 // TODO: Work on accepted and denied, need to add a section in gui in Friends app
             }
             return null;
@@ -68,6 +69,6 @@ public class PacketAddFriendRes implements IMessage {
     }
 
     public enum ResponseType {
-       SENT, PENDING, ACCEPTED, DENIED, REQUEST
+       SENT, PENDING, REQUEST, FRIENDS
     }
 }

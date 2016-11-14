@@ -50,6 +50,8 @@ public class GuiFriendRequests extends CustomScrollList {
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
         String name = ((FriendRequest) FriendsAPI.getFriendRequests().toArray()[slotIdx]).name;
+        mc.fontRendererObj.setUnicodeFlag(true);
         mc.fontRendererObj.drawString(name, left + 2, slotTop, 0xFFFFFF, false);
+        mc.fontRendererObj.setUnicodeFlag(false);
     }
 }
