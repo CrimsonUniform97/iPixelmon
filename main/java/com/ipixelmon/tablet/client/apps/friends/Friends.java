@@ -5,8 +5,10 @@ import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.tablet.client.GuiTextField;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendReq;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAcceptDeny;
+import com.ipixelmon.tablet.client.apps.friends.packet.PacketRemoveFriend;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -25,8 +27,6 @@ public class Friends extends App {
     public static Set<FriendRequest> requests = new TreeSet<>();
     private static Object[] message = {"", 0, Calendar.getInstance()};
 
-    // TODO: Add removing friend
-
     public Friends(String name) {
         super(name);
     }
@@ -41,6 +41,15 @@ public class Friends extends App {
         requestsList.drawScreen(mouseX, mouseY, partialTicks);
 
         addFriendTxtField.drawTextBox();
+
+        if(addFriendTxtField.isFocused()) {
+            mc.fontRendererObj.setUnicodeFlag(true);
+            mc.fontRendererObj.drawStringWithShadow(EnumChatFormatting.ITALIC + "Press Enter to Send",
+                    addFriendTxtField.xPosition +
+                            ((addFriendTxtField.getWidth() - mc.fontRendererObj.getStringWidth("Press Enter to Send")) / 2),
+                    addFriendTxtField.yPosition - 12, 0xFFFFFF);
+            mc.fontRendererObj.setUnicodeFlag(false);
+        }
 
         mc.fontRendererObj.setUnicodeFlag(true);
         mc.fontRendererObj.drawStringWithShadow("Friends",
@@ -65,11 +74,17 @@ public class Friends extends App {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
+
+        if(button.id == 2) {
+            if(friends.toArray().length > friendsList.selectedIndex) {
+                Friend friend = (Friend) friends.toArray()[friendsList.selectedIndex];
+                iPixelmon.network.sendToServer(new PacketRemoveFriend(friend.uuid));
+            }
+        }
 
         if (button.id <= 1) {
             if(requests.toArray().length > requestsList.selectedIndex) {
-                FriendRequest friendRequest = ((FriendRequest) requests.toArray()[requestsList.selectedIndex]);
+                FriendRequest friendRequest = (FriendRequest) requests.toArray()[requestsList.selectedIndex];
                 if (friendRequest != null) {
                     UUID player = friendRequest.friend;
                     iPixelmon.network.sendToServer(new PacketAcceptDeny(player, button.id == 0));
@@ -108,10 +123,7 @@ public class Friends extends App {
         super.initGui();
         this.buttonList.clear();
 
-        if (requests == null) {
-            requests = new TreeSet<>();
-            FriendsAPI.populateFriendRequests();
-        }
+        FriendsAPI.populateFriendRequests();
 
         FontRenderer fontRenderer = fontRendererObj;
         fontRenderer.setUnicodeFlag(true);
@@ -124,9 +136,9 @@ public class Friends extends App {
         requestsList.setDrawThumbAllTheTime(true);
         friendsList.setDrawThumbAllTheTime(true);
 
-        this.buttonList.add(new TextBtn(0, requestsList.xPosition + 1, requestsList.yPosition + requestsList.height + 2, "Accept"));
-        this.buttonList.add(new TextBtn(1, requestsList.xPosition + requestsList.width - 16, this.buttonList.get(0).yPosition, "Deny"));
-        this.buttonList.add(new TextBtn(2, friendsList.xPosition + ((friendsList.width - 24) / 2), friendsList.yPosition + friendsList.height + 2, "Remove"));
+        this.buttonList.add(new TextBtn(0, requestsList.xPosition + 1, requestsList.yPosition + requestsList.height + 2, mc.fontRendererObj.getStringWidth("Accept"), 12, "Accept"));
+        this.buttonList.add(new TextBtn(1, requestsList.xPosition + requestsList.width - 16, this.buttonList.get(0).yPosition, mc.fontRendererObj.getStringWidth("Deny"), 12, "Deny"));
+        this.buttonList.add(new TextBtn(2, friendsList.xPosition + ((friendsList.width - 24) / 2), friendsList.yPosition + friendsList.height + 2, mc.fontRendererObj.getStringWidth("Remove"), 12, "Remove"));
 
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;

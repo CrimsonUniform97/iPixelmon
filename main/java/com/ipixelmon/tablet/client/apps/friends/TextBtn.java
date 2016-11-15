@@ -10,8 +10,8 @@ import net.minecraft.util.EnumChatFormatting;
  */
 public class TextBtn extends GuiButton {
 
-    public TextBtn(int buttonId, int x, int y, String buttonText) {
-        super(buttonId, x, y, buttonText);
+    public TextBtn(int buttonId, int x, int y, int width, int height, String buttonText) {
+        super(buttonId, x, y, width, height, buttonText);
     }
 
     @Override
@@ -21,6 +21,6 @@ public class TextBtn extends GuiButton {
         drawTexturedModalRect(xPosition - 2, yPosition, 0, 0, mc.fontRendererObj.getStringWidth(displayString) + 3, mc.fontRendererObj.FONT_HEIGHT);
 
         GlStateManager.enableTexture2D();
-        mc.fontRendererObj.drawString((!enabled ? EnumChatFormatting.GRAY : isMouseOver() ? EnumChatFormatting.YELLOW : EnumChatFormatting.WHITE) + displayString, xPosition, yPosition, 0xFFFFFF, true);
+        mc.fontRendererObj.drawString((!enabled ? EnumChatFormatting.GRAY : mousePressed(mc, mouseX, mouseY) ? EnumChatFormatting.YELLOW : EnumChatFormatting.WHITE) + displayString, xPosition, yPosition, 0xFFFFFF, true);
     }
 }

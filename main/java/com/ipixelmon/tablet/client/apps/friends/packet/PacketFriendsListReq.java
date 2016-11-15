@@ -44,20 +44,9 @@ public class PacketFriendsListReq implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListReq message, MessageContext ctx) {
-                doMessage(message, ctx);
+            Set<Friend> friends = FriendsAPI.getFriends(ctx.getServerHandler().playerEntity.getUniqueID());
+            iPixelmon.network.sendTo(new PacketFriendsListRes(friends), ctx.getServerHandler().playerEntity);
             return null;
-        }
-
-        @SideOnly(Side.SERVER)
-        public void doMessage(PacketFriendsListReq message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    Set<Friend> friends = FriendsAPI.getFriends(ctx.getServerHandler().playerEntity.getUniqueID());
-                    System.out.println(ctx.getServerHandler().playerEntity.getName() + "," + friends.size());
-                    iPixelmon.network.sendTo(new PacketFriendsListRes(friends), ctx.getServerHandler().playerEntity);
-                }
-            });
         }
     }
 }

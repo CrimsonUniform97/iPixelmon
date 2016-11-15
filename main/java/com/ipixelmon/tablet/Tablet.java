@@ -32,6 +32,7 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketAddFriendRes.Handler.class, PacketAddFriendRes.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAcceptDeny.Handler.class, PacketAcceptDeny.class, Side.SERVER);
         iPixelmon.registerPacket(PacketNotification.Handler.class, PacketNotification.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketRemoveFriend.Handler.class, PacketRemoveFriend.class, Side.SERVER);
     }
 
     @Override

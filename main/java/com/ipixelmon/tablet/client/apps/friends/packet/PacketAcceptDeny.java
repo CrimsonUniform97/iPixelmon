@@ -59,39 +59,27 @@ public class PacketAcceptDeny implements IMessage {
 
         @Override
         public IMessage onMessage(PacketAcceptDeny message, MessageContext ctx) {
-            doMessage(message, ctx);
-            return null;
-        }
+            final EntityPlayerMP playerFrom = ctx.getServerHandler().playerEntity;
+            final EntityPlayerMP playerTo = PlayerUtil.getPlayer(message.player);
 
-        @SideOnly(Side.SERVER)
-        public void doMessage(PacketAcceptDeny message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    final EntityPlayerMP playerFrom = ctx.getServerHandler().playerEntity;
-                    final EntityPlayerMP playerTo = PlayerUtil.getPlayer(message.player);
-
-                    try {
-                        if (message.accept) {
-                            updateFriendsList(playerFrom.getUniqueID(), message.player);
-                            updateFriendsList(message.player, playerFrom.getUniqueID());
-                        }
-                        iPixelmon.mysql.delete(Tablet.class, new DeleteForm("FriendReqs").add("receiver", playerFrom.getUniqueID().toString()).add("sender", message.player.toString()));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    // TODO: Fix update with friends list  when accepting.
-
-                    if (playerTo != null) {
-                        PacketNotification.sendToPlayer(playerTo, playerFrom.getName() + (message.accept ? " accepted " : " denied ") + "your friend request.");
-                        iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), playerTo);
-                    }
-
-                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), playerFrom);
+            try {
+                if (message.accept) {
+                    updateFriendsList(playerFrom.getUniqueID(), message.player);
+                    updateFriendsList(message.player, playerFrom.getUniqueID());
                 }
-            });
+                iPixelmon.mysql.delete(Tablet.class, new DeleteForm("FriendReqs").add("receiver", playerFrom.getUniqueID().toString()).add("sender", message.player.toString()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            if (playerTo != null)
+                iPixelmon.network.sendTo(new PacketAddFriendRes(message.accept ?
+                        PacketAddFriendRes.ResponseType.ACCEPT : PacketAddFriendRes.ResponseType.DENY, playerFrom.getUniqueID().toString() + "," + playerFrom.getName()), playerTo);
+
+
+            iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), playerFrom);
+            return null;
         }
 
         private void updateFriendsList(UUID player, UUID friend) throws SQLException {

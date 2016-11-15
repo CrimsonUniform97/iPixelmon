@@ -34,8 +34,10 @@ public final class FriendsAPI {
                 UUID uuid;
 
                 for (String friend : data) {
-                    uuid = UUID.fromString(friend);
-                    friends.add(new Friend(uuid, UUIDManager.getPlayerName(uuid), PlayerUtil.isPlayerOnline(uuid)));
+                    if(friend != null && !friend.isEmpty()) {
+                        uuid = UUID.fromString(friend);
+                        friends.add(new Friend(uuid, UUIDManager.getPlayerName(uuid), PlayerUtil.isPlayerOnline(uuid)));
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -54,7 +56,11 @@ public final class FriendsAPI {
         try {
             if (result.next()) {
                 String[] data = result.getString("friends").split(",");
-                for (String friend : data) friends.add(UUID.fromString(friend));
+                for (String friend : data){
+                    if(friend != null && !friend.isEmpty()) {
+                        friends.add(UUID.fromString(friend));
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

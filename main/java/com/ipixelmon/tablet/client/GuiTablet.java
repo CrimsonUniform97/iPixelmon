@@ -84,6 +84,8 @@ public class GuiTablet extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
+
+        if(activeApp != null) activeApp.actionPerformed(button);
     }
 
     @Override

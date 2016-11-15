@@ -1,5 +1,6 @@
 package com.ipixelmon.tablet.client.apps.friends.packet;
 
+import com.ipixelmon.tablet.client.apps.friends.Friend;
 import com.ipixelmon.tablet.client.apps.friends.FriendRequest;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
@@ -48,12 +49,6 @@ public class PacketAddFriendRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketAddFriendRes message, MessageContext ctx) {
-           doMessage(message);
-            return null;
-        }
-
-        @SideOnly(Side.CLIENT)
-        public void doMessage(PacketAddFriendRes message) {
             switch (message.responseType) {
                 case SENT:
                     new SimpleTextNotification("Friend request sent.");
@@ -79,12 +74,26 @@ public class PacketAddFriendRes implements IMessage {
                 case NOTFOUND:
                     Friends.setMessage("Player not found.", 5);
                     break;
+                case ACCEPT:
+                    data = message.player.split(",");
+                    new SimpleTextNotification(data[1] + " accepted your friend request.");
+                    Friends.friends.add(new Friend(UUID.fromString(data[0]), data[1], true));
+                    break;
+                case DENY:
+                    data = message.player.split(",");
+                    new SimpleTextNotification(data[1] + " denied your friend request.");
+                    break;
+                case REMOVE:
+                    data = message.player.split(",");
+                    Friends.friends.remove(new Friend(UUID.fromString(data[0]), data[1], true));
+                    break;
             }
+            return null;
         }
 
     }
 
     public enum ResponseType {
-        SENT, PENDING, REQUEST, FRIENDS, UPDATE, SELF, NOTFOUND
+        SENT, PENDING, REQUEST, FRIENDS, UPDATE, SELF, NOTFOUND, ACCEPT, DENY, REMOVE
     }
 }

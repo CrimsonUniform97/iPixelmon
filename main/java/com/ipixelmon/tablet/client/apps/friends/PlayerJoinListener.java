@@ -6,6 +6,7 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendRes;
 import com.ipixelmon.tablet.notification.PacketNotification;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
@@ -20,17 +21,12 @@ public class PlayerJoinListener {
 
     @SubscribeEvent
     public void onJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("Friends").where("player", event.player.getUniqueID().toString()));
+        for (UUID uuid : FriendsAPI.getFriendsUUIDOnly(event.player.getUniqueID())) {
+            EntityPlayerMP player = PlayerUtil.getPlayer(uuid);
 
-        try {
-            if (result.next())
-                for (String s : result.getString("friends").split(","))
-                    if (PlayerUtil.isPlayerOnline(UUID.fromString(s)))
-                        iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), PlayerUtil.getPlayer(UUID.fromString(s)));
-        } catch (SQLException e) {
-            e.printStackTrace();
+            if (player != null)
+                iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), player);
         }
-
     }
 
 }

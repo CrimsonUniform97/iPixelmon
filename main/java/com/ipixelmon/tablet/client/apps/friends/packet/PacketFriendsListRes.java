@@ -50,19 +50,8 @@ public class PacketFriendsListRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListRes message, MessageContext ctx) {
-            doMessage(message);
+            Friends.friends = message.friends;
             return null;
-        }
-
-        @SideOnly(Side.CLIENT)
-        public void doMessage(PacketFriendsListRes message) {
-            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println(message.friends.size());
-                    Friends.friends = message.friends;
-                }
-            });
         }
 
     }
