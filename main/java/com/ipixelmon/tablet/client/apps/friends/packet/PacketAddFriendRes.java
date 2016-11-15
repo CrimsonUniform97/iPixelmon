@@ -2,12 +2,16 @@ package com.ipixelmon.tablet.client.apps.friends.packet;
 
 import com.ipixelmon.tablet.client.apps.friends.FriendRequest;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
+import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
 import com.ipixelmon.tablet.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Date;
 import java.util.UUID;
@@ -17,12 +21,13 @@ import java.util.UUID;
  */
 public class PacketAddFriendRes implements IMessage {
 
-    public PacketAddFriendRes(){}
+    public PacketAddFriendRes() {
+    }
 
     private ResponseType responseType;
     private String player;
 
-    public PacketAddFriendRes(ResponseType responseType, String player){
+    public PacketAddFriendRes(ResponseType responseType, String player) {
         this.responseType = responseType;
         this.player = player;
     }
@@ -43,13 +48,16 @@ public class PacketAddFriendRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketAddFriendRes message, MessageContext ctx) {
-            // TODO: Finish Accept and Deny
+           doMessage(message);
+            return null;
+        }
 
-            switch(message.responseType) {
+        @SideOnly(Side.CLIENT)
+        public void doMessage(PacketAddFriendRes message) {
+            switch (message.responseType) {
                 case SENT:
                     new SimpleTextNotification("Friend request sent.");
                     break;
-                // TODO: Make the REQUEST render the player face in the notification
                 case REQUEST:
                     String[] data = message.player.split(",");
                     new SimpleTextNotification("You received a friend request from " + data[1] + ".");
@@ -61,14 +69,22 @@ public class PacketAddFriendRes implements IMessage {
                 case FRIENDS:
                     Friends.setMessage("Already friends.", 5);
                     break;
-                // TODO: Work on accepted and denied, need to add a section in gui in Friends app
+                case UPDATE:
+                    FriendsAPI.populateFriendRequests();
+                    FriendsAPI.getFriends(true);
+                    break;
+                case SELF:
+                    Friends.setMessage("You cannot add yourself.", 5);
+                    break;
+                case NOTFOUND:
+                    Friends.setMessage("Player not found.", 5);
+                    break;
             }
-            return null;
         }
 
     }
 
     public enum ResponseType {
-       SENT, PENDING, REQUEST, FRIENDS
+        SENT, PENDING, REQUEST, FRIENDS, UPDATE, SELF, NOTFOUND
     }
 }

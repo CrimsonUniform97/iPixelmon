@@ -78,7 +78,7 @@ public final class FriendsAPI {
     @SideOnly(Side.CLIENT)
     public static void populateFriendRequests() {
         ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("FriendReqs").where("receiver", Minecraft.getMinecraft().thePlayer.getUniqueID().toString()));
-
+        Friends.requests.clear();
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             while(result.next())

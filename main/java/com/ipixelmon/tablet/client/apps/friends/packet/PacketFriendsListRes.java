@@ -3,10 +3,13 @@ package com.ipixelmon.tablet.client.apps.friends.packet;
 import com.ipixelmon.tablet.client.apps.friends.Friend;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -47,8 +50,19 @@ public class PacketFriendsListRes implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListRes message, MessageContext ctx) {
-            Friends.friends = message.friends;
+            doMessage(message);
             return null;
+        }
+
+        @SideOnly(Side.CLIENT)
+        public void doMessage(PacketFriendsListRes message) {
+            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(message.friends.size());
+                    Friends.friends = message.friends;
+                }
+            });
         }
 
     }

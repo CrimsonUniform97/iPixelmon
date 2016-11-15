@@ -1,15 +1,15 @@
 package com.ipixelmon.tablet.client;
 
+import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.client.apps.camera.Wallpaper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.compress.utils.IOUtils;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Rectangle;
 
 import java.io.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by colby on 10/28/2016.
@@ -19,8 +19,12 @@ public abstract class App extends GuiScreen implements Comparable<App> {
     public final String name;
     public Rectangle screenBounds = new Rectangle();
 
+    public static final Set<App> apps = new TreeSet<>();
+    public static final Map<String, ResourceLocation> cachedIcons = Maps.newHashMap();
+
     public App(String name) {
         this.name = name;
+        apps.add(this);
     }
 
     @Override
@@ -53,22 +57,21 @@ public abstract class App extends GuiScreen implements Comparable<App> {
         super.initGui();
     }
 
-    public Wallpaper getIcon() {
-        try {
-            File file = new File(name.toLowerCase());
+    public ResourceLocation getIcon() {
+        if(cachedIcons.containsKey(name)) return cachedIcons.get(name);
 
-            if(AppHandler.cachedIcons.containsKey(file)) return AppHandler.cachedIcons.get(file);
+        ResourceLocation res = new ResourceLocation(iPixelmon.id, "textures/apps/" + name + "/icon.png");
+        cachedIcons.put(name, res);
+        return res;
+    }
 
-            OutputStream outputStream = new FileOutputStream(file);
-            InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(iPixelmon.id, "textures/apps/" + name.toLowerCase() + "/icon.png")).getInputStream();
-            IOUtils.copy(inputStream, outputStream);
-            outputStream.close();
-            AppHandler.cachedIcons.put(file, new Wallpaper(file));
-            return AppHandler.cachedIcons.get(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static App getApp(Class<? extends App> appClass) {
+        for (App app : apps) if (app.getClass().equals(appClass)) return app;
 
         return null;
     }
+
+
+
+
 }

@@ -13,10 +13,13 @@ import com.ipixelmon.tablet.notification.Notification;
 import com.ipixelmon.tablet.notification.PacketNotification;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,23 +59,39 @@ public class PacketAcceptDeny implements IMessage {
 
         @Override
         public IMessage onMessage(PacketAcceptDeny message, MessageContext ctx) {
-            // TODO:
-            EntityPlayerMP playerFrom = ctx.getServerHandler().playerEntity;
-            EntityPlayerMP playerTo = PlayerUtil.getPlayer(message.player);
-
-            try {
-                updateFriendsList(playerFrom.getUniqueID(), message.player);
-                updateFriendsList(message.player, playerFrom.getUniqueID());
-                iPixelmon.mysql.delete(Tablet.class, new DeleteForm("FriendReqs").add("receiver", playerFrom.getUniqueID().toString()).add("sender", message.player.toString()));
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            if(playerTo != null) {
-                PacketNotification.sendToPlayer(playerTo, playerFrom.getName() + (message.accept ? " accepted " : " denied ") + "your friend request.");
-            }
+            doMessage(message, ctx);
             return null;
+        }
+
+        @SideOnly(Side.SERVER)
+        public void doMessage(PacketAcceptDeny message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    final EntityPlayerMP playerFrom = ctx.getServerHandler().playerEntity;
+                    final EntityPlayerMP playerTo = PlayerUtil.getPlayer(message.player);
+
+                    try {
+                        if (message.accept) {
+                            updateFriendsList(playerFrom.getUniqueID(), message.player);
+                            updateFriendsList(message.player, playerFrom.getUniqueID());
+                        }
+                        iPixelmon.mysql.delete(Tablet.class, new DeleteForm("FriendReqs").add("receiver", playerFrom.getUniqueID().toString()).add("sender", message.player.toString()));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    // TODO: Fix update with friends list  when accepting.
+
+                    if (playerTo != null) {
+                        PacketNotification.sendToPlayer(playerTo, playerFrom.getName() + (message.accept ? " accepted " : " denied ") + "your friend request.");
+                        iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), playerTo);
+                    }
+
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), playerFrom);
+                }
+            });
         }
 
         private void updateFriendsList(UUID player, UUID friend) throws SQLException {
@@ -81,10 +100,10 @@ public class PacketAcceptDeny implements IMessage {
             uuids.add(friend);
 
             String s = "";
-            for(UUID uuid : uuids) s += uuid.toString() + ",";
+            for (UUID uuid : uuids) s += uuid.toString() + ",";
 
             ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, new SelectionForm("Friends").where("player", player.toString()));
-            if(result.next()) {
+            if (result.next()) {
                 iPixelmon.mysql.update(Tablet.class, new UpdateForm("Friends").set("friends", s).where("player", player.toString()));
             } else {
                 iPixelmon.mysql.insert(Tablet.class, new InsertForm("Friends").add("friends", s).add("player", player.toString()));

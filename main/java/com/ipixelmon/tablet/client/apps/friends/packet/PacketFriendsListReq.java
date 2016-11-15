@@ -8,9 +8,13 @@ import com.ipixelmon.tablet.client.apps.friends.Friend;
 import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,10 +44,20 @@ public class PacketFriendsListReq implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendsListReq message, MessageContext ctx) {
-            Set<Friend> friends = FriendsAPI.getFriends(ctx.getServerHandler().playerEntity.getUniqueID());
-            if(!friends.isEmpty()) iPixelmon.network.sendTo(new PacketFriendsListRes(friends), ctx.getServerHandler().playerEntity);
-
+                doMessage(message, ctx);
             return null;
+        }
+
+        @SideOnly(Side.SERVER)
+        public void doMessage(PacketFriendsListReq message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    Set<Friend> friends = FriendsAPI.getFriends(ctx.getServerHandler().playerEntity.getUniqueID());
+                    System.out.println(ctx.getServerHandler().playerEntity.getName() + "," + friends.size());
+                    iPixelmon.network.sendTo(new PacketFriendsListRes(friends), ctx.getServerHandler().playerEntity);
+                }
+            });
         }
     }
 }

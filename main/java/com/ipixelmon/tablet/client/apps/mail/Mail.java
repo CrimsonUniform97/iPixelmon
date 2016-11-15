@@ -2,11 +2,8 @@ package com.ipixelmon.tablet.client.apps.mail;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
-import com.ipixelmon.tablet.client.apps.camera.Wallpaper;
 import com.ipixelmon.tablet.client.apps.friends.GuiFriends;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
 
@@ -15,7 +12,7 @@ import java.io.*;
  */
 public class Mail extends App {
 
-    private static Wallpaper icon, icon_new;
+    private static ResourceLocation icon, icon_new;
     private GuiFriends friendsList;
 
     public Mail(String name) {
@@ -48,26 +45,11 @@ public class Mail extends App {
     }
 
     @Override
-    public Wallpaper getIcon() {
+    public ResourceLocation getIcon() {
         return icon;
     }
 
-    private Wallpaper getIcon(boolean isNew) {
-        File file = new File(name.toLowerCase());
-
-        try {
-            OutputStream outputStream = new FileOutputStream(file);
-            InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(
-                    new ResourceLocation(iPixelmon.id, "textures/apps/" + name.toLowerCase() + "/icon" + (isNew ? "_new" : "") + ".png")).getInputStream();
-            IOUtils.copy(inputStream, outputStream);
-            outputStream.close();
-
-            if (file != null)
-                return new Wallpaper(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    private ResourceLocation getIcon(boolean isNew) {
+        return new ResourceLocation(iPixelmon.id, "textures/apps/" + name + "/" + (isNew ? "icon_new.png" : "icon.png"));
     }
 }

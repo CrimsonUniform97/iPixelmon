@@ -53,6 +53,16 @@ public class PacketAddFriendReq implements IMessage {
             try {
                 UUID friendUUID = UUIDManager.getUUID(message.playerName);
 
+                if(friendUUID == null) {
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.NOTFOUND, "none"), ctx.getServerHandler().playerEntity);
+                    return null;
+                }
+
+                if(friendUUID.equals(ctx.getServerHandler().playerEntity.getUniqueID())) {
+                    iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.SELF, "none"), ctx.getServerHandler().playerEntity);
+                    return null;
+                }
+
                 ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class,
                         new SelectionForm("FriendReqs").where("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString())
                                 .where("receiver", friendUUID.toString()));

@@ -142,7 +142,7 @@ public class GuiTablet extends GuiScreen {
         App app;
         Rectangle rec;
 
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, AppHandler.getApps().toArray());
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, App.apps.toArray());
 
         while (tileIterator.hasNext()) {
             app = (App) tileIterator.next();
@@ -196,7 +196,8 @@ public class GuiTablet extends GuiScreen {
             mc.fontRendererObj.setUnicodeFlag(false);
 
             // draw icon
-            app.getIcon().drawWallpaper(0, 0, iconWidth, iconHeight);
+            mc.getTextureManager().bindTexture(app.getIcon());
+            GuiUtil.instance.drawImage(0, 0, iconWidth, iconHeight);
             GlStateManager.popMatrix();
         }
 
@@ -206,7 +207,7 @@ public class GuiTablet extends GuiScreen {
         App app;
         Rectangle rec;
 
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, AppHandler.getApps().toArray());
+        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, App.apps.toArray());
 
         while (tileIterator.hasNext()) {
             app = (App) tileIterator.next();

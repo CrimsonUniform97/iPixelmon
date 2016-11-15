@@ -4,8 +4,8 @@ import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketFriendOnline;
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendRes;
+import com.ipixelmon.tablet.notification.PacketNotification;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
@@ -26,7 +26,7 @@ public class PlayerJoinListener {
             if (result.next())
                 for (String s : result.getString("friends").split(","))
                     if (PlayerUtil.isPlayerOnline(UUID.fromString(s)))
-                        iPixelmon.network.sendTo(new PacketFriendOnline(event.player.getUniqueID(), event.player.getName()), (EntityPlayerMP) PlayerUtil.getPlayer(UUID.fromString(s)));
+                        iPixelmon.network.sendTo(new PacketAddFriendRes(PacketAddFriendRes.ResponseType.UPDATE, "none"), PlayerUtil.getPlayer(UUID.fromString(s)));
         } catch (SQLException e) {
             e.printStackTrace();
         }

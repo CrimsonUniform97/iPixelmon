@@ -1,16 +1,8 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
-import com.google.common.collect.Lists;
-import com.ipixelmon.pixelbay.gui.BasicScrollList;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraftforge.fml.client.GuiScrollingList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by colby on 11/7/2016.
@@ -18,8 +10,6 @@ import java.util.Set;
 public class GuiFriendRequests extends CustomScrollList {
 
     private Minecraft mc;
-
-    // TODO: MAke it to where they can either accept or deny the friend request
 
     public GuiFriendRequests(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
         super(client, x, y, width, height, entryHeight, screen);

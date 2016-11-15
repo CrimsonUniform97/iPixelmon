@@ -18,14 +18,14 @@ import java.util.*;
 // TODO: Once this is done, finish up the mail app
 public class Friends extends App {
 
-    // TODO: Come up with a better icon
-
     private GuiFriends friendsList;
     private GuiFriendRequests requestsList;
     private GuiTextField addFriendTxtField;
     public static Set<Friend> friends = new TreeSet<>();
-    public static Set<FriendRequest> requests;
+    public static Set<FriendRequest> requests = new TreeSet<>();
     private static Object[] message = {"", 0, Calendar.getInstance()};
+
+    // TODO: Add removing friend
 
     public Friends(String name) {
         super(name);
@@ -59,7 +59,7 @@ public class Friends extends App {
         if(Calendar.getInstance().compareTo((Calendar) message[2]) < 0) {
             String txt = (String) message[0];
             mc.fontRendererObj.drawString(txt, screenBounds.getX() +
-                    ((screenBounds.getWidth() - mc.fontRendererObj.getStringWidth(txt) / 2)), screenBounds.getY() + 2, 0xFFFFFF);
+                    ((screenBounds.getWidth() - mc.fontRendererObj.getStringWidth(txt)) / 2), screenBounds.getY() + 2, 0xFFFFFF);
         }
     }
 
@@ -68,8 +68,13 @@ public class Friends extends App {
         super.actionPerformed(button);
 
         if (button.id <= 1) {
-            UUID player = ((FriendRequest) requests.toArray()[requestsList.selectedIndex]).friend;
-            iPixelmon.network.sendToServer(new PacketAcceptDeny(player, button.id == 0));
+            if(requests.toArray().length > requestsList.selectedIndex) {
+                FriendRequest friendRequest = ((FriendRequest) requests.toArray()[requestsList.selectedIndex]);
+                if (friendRequest != null) {
+                    UUID player = friendRequest.friend;
+                    iPixelmon.network.sendToServer(new PacketAcceptDeny(player, button.id == 0));
+                }
+            }
         }
     }
 
@@ -84,7 +89,7 @@ public class Friends extends App {
         super.keyTyped(typedChar, keyCode);
         addFriendTxtField.textboxKeyTyped(typedChar, keyCode);
 
-        if (keyCode == Keyboard.KEY_RETURN)
+        if (keyCode == Keyboard.KEY_RETURN && addFriendTxtField.isFocused())
             iPixelmon.network.sendToServer(new PacketAddFriendReq(addFriendTxtField.getText()));
     }
 
@@ -95,6 +100,7 @@ public class Friends extends App {
 
         this.buttonList.get(0).enabled = requestsList.selectedIndex != -1;
         this.buttonList.get(1).enabled = requestsList.selectedIndex != -1;
+        this.buttonList.get(2).enabled = friendsList.selectedIndex != -1;
     }
 
     @Override
@@ -113,16 +119,18 @@ public class Friends extends App {
 
         friendsList = new GuiFriends(mc, screenBounds.getX() + 8, screenBounds.getY() + 12, 65, 65, 12, this);
 
-        requestsList = new GuiFriendRequests(mc, friendsList.xPosition, friendsList.yPosition + friendsList.height + 12, 65, 65, 12, this);
+        requestsList = new GuiFriendRequests(mc, friendsList.xPosition, friendsList.yPosition + friendsList.height + 34, 65, 65, 12, this);
 
         requestsList.setDrawThumbAllTheTime(true);
         friendsList.setDrawThumbAllTheTime(true);
 
         this.buttonList.add(new TextBtn(0, requestsList.xPosition + 1, requestsList.yPosition + requestsList.height + 2, "Accept"));
         this.buttonList.add(new TextBtn(1, requestsList.xPosition + requestsList.width - 16, this.buttonList.get(0).yPosition, "Deny"));
+        this.buttonList.add(new TextBtn(2, friendsList.xPosition + ((friendsList.width - 24) / 2), friendsList.yPosition + friendsList.height + 2, "Remove"));
 
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;
+        this.buttonList.get(2).enabled = false;
     }
 
     public static void setMessage(String message, int duration) {

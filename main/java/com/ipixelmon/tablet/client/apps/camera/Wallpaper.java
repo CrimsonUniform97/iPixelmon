@@ -96,10 +96,7 @@ public class Wallpaper implements Comparable {
 
         } catch (IndexOutOfBoundsException e) {
             location.delete();
-            // TODO
-            System.out.println("CALLED");
             Gallery.wallpapers.remove(this);
-//            GalleryApp.refreshWallpapers();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,7 +121,6 @@ public class Wallpaper implements Comparable {
             GuiUtil.instance.drawImage((float) x, (float) y, (float) width, (float) height);
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
