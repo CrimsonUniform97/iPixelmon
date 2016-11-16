@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.camera;
+package com.ipixelmon.tablet.client.apps.gallery;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.GuiUtil;

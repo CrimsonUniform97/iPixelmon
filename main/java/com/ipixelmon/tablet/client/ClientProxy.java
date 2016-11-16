@@ -3,7 +3,7 @@ package com.ipixelmon.tablet.client;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.client.apps.mail.Mail;
-import com.ipixelmon.tablet.client.apps.camera.Gallery;
+import com.ipixelmon.tablet.client.apps.gallery.Gallery;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import net.minecraftforge.common.MinecraftForge;
 

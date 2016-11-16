@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

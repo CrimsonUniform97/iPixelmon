@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client;
+package com.ipixelmon;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
@@ -22,14 +22,28 @@ public class GuiMultiLineTextField extends Gui {
     private String text = "";
     private int cursorPos = 0;
     private boolean enabled = false;
+    private boolean unicodeFlag = false;
 
     public GuiMultiLineTextField(int x, int y, int width, int height) {
         bounds = new Rectangle(x, y, width, height);
     }
 
+    public void setUnicodeFlag(boolean unicodeFlag) {
+        this.unicodeFlag = unicodeFlag;
+    }
+
+    public boolean isUnicodeFlagEnabled() {
+        return unicodeFlag;
+    }
+
     public void drawTextField(int x, int y) {
+        if(unicodeFlag)
+            fontRenderer.setUnicodeFlag(true);
         drawBackground();
         fontRenderer.drawSplitString(text, bounds.getX(), bounds.getY(), bounds.getWidth(), 0xFFFFFF);
+
+        if(unicodeFlag)
+            fontRenderer.setUnicodeFlag(false);
 
         if(isEnabled()) {
             drawCursor();
@@ -80,6 +94,9 @@ public class GuiMultiLineTextField extends Gui {
             return;
         }
 
+        if(unicodeFlag)
+         fontRenderer.setUnicodeFlag(true);
+
         List<String> formattedStringList = fontRenderer.listFormattedStringToWidth(text, bounds.getWidth());
 
         int line = (mouseY - bounds.getY()) / fontRenderer.FONT_HEIGHT;
@@ -96,6 +113,9 @@ public class GuiMultiLineTextField extends Gui {
         x = x > bounds.getWidth() ? bounds.getWidth() : x < 0 ? 0 : x;
         cursorPos += fontRenderer.trimStringToWidth(formattedStringList.get(line), x).length() + 1;
         cursorPos = cursorPos > text.length() ? text.length() : cursorPos < 0 ? 0 : cursorPos;
+
+        if(!unicodeFlag)
+            fontRenderer.setUnicodeFlag(false);
     }
 
     public void update() {
@@ -107,6 +127,8 @@ public class GuiMultiLineTextField extends Gui {
     }
 
     private void drawCursor() {
+        if(unicodeFlag)
+            fontRenderer.setUnicodeFlag(true);
         List<String> formattedStringList = fontRenderer.listFormattedStringToWidth(text, bounds.getWidth());
 
         try {
@@ -144,6 +166,9 @@ public class GuiMultiLineTextField extends Gui {
                     ColorPicker.color(255f, 0f, 0f, 255f).getRGB());
         } catch (Exception e) {
         }
+
+        if(unicodeFlag)
+            fontRenderer.setUnicodeFlag(false);
     }
 
     private void drawBackground() {

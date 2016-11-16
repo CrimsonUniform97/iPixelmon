@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.camera;
+package com.ipixelmon.tablet.client.apps.gallery;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

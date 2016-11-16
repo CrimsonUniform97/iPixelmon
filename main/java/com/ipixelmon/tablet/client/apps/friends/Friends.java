@@ -3,6 +3,7 @@ package com.ipixelmon.tablet.client.apps.friends;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.tablet.client.GuiTextField;
+import com.ipixelmon.tablet.client.TextBtn;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendReq;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAcceptDeny;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketRemoveFriend;
@@ -17,7 +18,6 @@ import java.util.*;
 /**
  * Created by colby on 11/4/2016.
  */
-// TODO: Once this is done, finish up the mail app
 public class Friends extends App {
 
     private GuiFriends friendsList;
