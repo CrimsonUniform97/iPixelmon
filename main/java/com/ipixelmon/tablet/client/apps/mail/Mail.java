@@ -50,6 +50,8 @@ public class Mail extends App {
     }
 
     // TODO: Work on this app.
+    // TODO: Implement 'mailbox is full'
+    // TODO: Implement quick response by clicking on the notification
 
     @Override
     public void initGui() {
@@ -63,6 +65,11 @@ public class Mail extends App {
         playerTxtField = new GuiTextField(0, fontRenderer, guiFriends.xPosition + guiFriends.width + 5, guiFriends.yPosition, 65, 10);
         messageTxtField = new GuiMultiLineTextField(playerTxtField.xPosition, playerTxtField.yPosition + playerTxtField.height + 2, 100, 100);
         messageTxtField.setUnicodeFlag(true);
+    }
+
+    @Override
+    public void updateScreen() {
+        playerTxtField.updateCursorCounter();
     }
 
     @Override
