@@ -2,7 +2,7 @@ package com.ipixelmon.tablet.client.apps.friends;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
-import com.ipixelmon.tablet.client.GuiTextField;
+import com.ipixelmon.tablet.client.CustomGuiTextField;
 import com.ipixelmon.tablet.client.TextBtn;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendReq;
 import com.ipixelmon.tablet.client.apps.friends.packet.PacketAcceptDeny;
@@ -22,7 +22,7 @@ public class Friends extends App {
 
     private GuiFriends friendsList;
     private GuiFriendRequests requestsList;
-    private GuiTextField addFriendTxtField;
+    private CustomGuiTextField addFriendTxtField;
     public static Set<Friend> friends = new TreeSet<>();
     public static Set<FriendRequest> requests = new TreeSet<>();
     private static Object[] message = {"", 0, Calendar.getInstance()};
@@ -127,7 +127,7 @@ public class Friends extends App {
 
         FontRenderer fontRenderer = fontRendererObj;
         fontRenderer.setUnicodeFlag(true);
-        addFriendTxtField = new GuiTextField(0, fontRenderer, screenBounds.getX() + screenBounds.getWidth() - 67, screenBounds.getY() + screenBounds.getHeight() - 12, 65, 10);
+        addFriendTxtField = new CustomGuiTextField(0, fontRenderer, screenBounds.getX() + screenBounds.getWidth() - 67, screenBounds.getY() + screenBounds.getHeight() - 12, 65, 10);
 
         friendsList = new GuiFriends(mc, screenBounds.getX() + 8, screenBounds.getY() + 12, 65, 65, 12, this);
 

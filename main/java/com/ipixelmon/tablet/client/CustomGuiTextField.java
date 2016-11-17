@@ -18,7 +18,7 @@ import java.lang.reflect.Field;
 /**
  * Created by colby on 11/13/2016.
  */
-public class GuiTextField  extends Gui {
+public class CustomGuiTextField extends Gui {
     private final int id;
     private final FontRenderer fontRendererInstance;
     public int xPosition;
@@ -65,7 +65,7 @@ public class GuiTextField  extends Gui {
     private GuiPageButtonList.GuiResponder field_175210_x;
     private Predicate<String> field_175209_y = Predicates.<String>alwaysTrue();
 
-    public GuiTextField(int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
+    public CustomGuiTextField(int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
         this.id = componentId;
         this.fontRendererInstance = fontrendererObj;
         this.xPosition = x;
