@@ -51,4 +51,12 @@ public class GuiFriends extends CustomScrollList {
         mc.fontRendererObj.drawString((friend.online ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + friend.name, left + 2, slotTop, 0xFFFFFF, false);
         mc.fontRendererObj.setUnicodeFlag(false);
     }
+
+    public Friend getSelected() {
+        if(selectedIndex > -1) {
+            return (Friend) Friends.friends.toArray()[selectedIndex];
+        } else {
+            return null;
+        }
+    }
 }

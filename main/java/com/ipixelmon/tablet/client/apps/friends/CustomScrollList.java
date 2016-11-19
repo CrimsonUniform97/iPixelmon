@@ -277,7 +277,7 @@ public abstract class CustomScrollList extends Gui {
 
         if (this.mc.theWorld != null)
         {
-            this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
+//            this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
         }
         else // Draw dark dirt background
         {

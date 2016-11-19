@@ -30,9 +30,11 @@ public class Mail extends App {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+
         playerTxtField.drawTextBox();
         guiFriends.drawScreen(mouseX, mouseY, partialTicks);
         messageTxtField.drawTextField(mouseX, mouseY);
+
     }
 
     @Override
@@ -40,6 +42,10 @@ public class Mail extends App {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         playerTxtField.mouseClicked(mouseX, mouseY, mouseButton);
         messageTxtField.mouseClicked(mouseX, mouseY);
+        if(mouseX > guiFriends.xPosition && mouseX < guiFriends.xPosition + guiFriends.width
+                && mouseY > guiFriends.yPosition && mouseY < guiFriends.yPosition + guiFriends.height) {
+            if(guiFriends.getSelected() != null) playerTxtField.setText(guiFriends.getSelected().name);
+        }
     }
 
     @Override
@@ -49,6 +55,9 @@ public class Mail extends App {
         messageTxtField.keyTyped(typedChar, keyCode);
     }
 
+    // TODO: Work on packets.
+
+    // TODO: Tried to scale and it failed. Would have been nice...
     // TODO: Work on this app.
     // TODO: Implement 'mailbox is full'
     // TODO: Implement quick response by clicking on the notification
