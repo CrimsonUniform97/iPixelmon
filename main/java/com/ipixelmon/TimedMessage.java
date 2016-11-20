@@ -1,37 +1,26 @@
 package com.ipixelmon;
 
-public class TimedMessage implements Runnable
-{
+import java.util.Calendar;
 
-    private String message;
-    private int duration;
+public class TimedMessage {
 
-    public TimedMessage(String parMessage, int parDuration)
-    {
-        message = parMessage;
-        duration = parDuration;
+    private Object[] message = {"", Calendar.getInstance()};
+
+    public TimedMessage(String message, int duration) {
+        this.message[0] = message;
     }
 
-    @Override
-    public void run()
-    {
-        while(duration > 0)
-        {
-            try
-            {
-                Thread.sleep(1000L);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            duration--;
-        }
-
-        message = "";
+    public String getMessage() {
+        if (Calendar.getInstance().compareTo((Calendar) message[1]) < 0)
+            return (String) message[0];
+        return "";
     }
 
-    public String getMessage()
-    {
-        return message;
+    public void setMessage(String message, int duration) {
+        this.message[0] = message;
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, duration);
+        this.message[1] = calendar;
     }
+
 }

@@ -37,7 +37,7 @@ public class Gallery extends App {
     private Wallpaper viewingWallpaper;
 
     public Gallery(String name) {
-        super(name);
+        super(name, true);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ipixelmon.tablet.client.apps.friends;
 
+import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.tablet.client.CustomGuiTextField;
@@ -25,10 +26,10 @@ public class Friends extends App {
     private CustomGuiTextField addFriendTxtField;
     public static Set<Friend> friends = new TreeSet<>();
     public static Set<FriendRequest> requests = new TreeSet<>();
-    private static Object[] message = {"", 0, Calendar.getInstance()};
+    public static TimedMessage message = new TimedMessage("", 0);
 
     public Friends(String name) {
-        super(name);
+        super(name, true);
     }
 
     @Override
@@ -65,11 +66,10 @@ public class Friends extends App {
                 addFriendTxtField.yPosition, 0xFFFFFF);
         mc.fontRendererObj.setUnicodeFlag(false);
 
-        if(Calendar.getInstance().compareTo((Calendar) message[2]) < 0) {
-            String txt = (String) message[0];
-            mc.fontRendererObj.drawString(txt, screenBounds.getX() +
-                    ((screenBounds.getWidth() - mc.fontRendererObj.getStringWidth(txt)) / 2), screenBounds.getY() + 2, 0xFFFFFF);
-        }
+
+            mc.fontRendererObj.drawString(message.getMessage(), screenBounds.getX() +
+                    ((screenBounds.getWidth() - mc.fontRendererObj.getStringWidth(message.getMessage())) / 2), screenBounds.getY() + 2, 0xFFFFFF);
+
     }
 
     @Override
@@ -143,14 +143,6 @@ public class Friends extends App {
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;
         this.buttonList.get(2).enabled = false;
-    }
-
-    public static void setMessage(String message, int duration) {
-        Friends.message[0] = message;
-        Friends.message[1] = duration;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, duration);
-        Friends.message[2] = calendar;
     }
 
 

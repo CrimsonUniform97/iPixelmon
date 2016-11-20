@@ -64,7 +64,7 @@ public class GuiSellPopup extends GuiYesNo
             long price = Long.parseLong(textField.getText().replaceAll(",", ""));
             if(price > Integer.MAX_VALUE)
             {
-                new Thread(message = new TimedMessage("Price is too large. Max Value: " + Integer.MAX_VALUE, 5)).start();
+                message.setMessage("Price is too large. Max Value: " + Integer.MAX_VALUE, 5);
                 return;
             }
             if (guiSell.scrollList instanceof ListItem)

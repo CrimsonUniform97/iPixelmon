@@ -69,7 +69,7 @@ public class GuiRegionInfo extends GuiScreen
                 {
                     if(s.equalsIgnoreCase(textField.getText()))
                     {
-                        new Thread(message = new TimedMessage(EnumChatFormatting.RED + "Player is already a member.", 3));
+                        message.setMessage(EnumChatFormatting.RED + "Player is already a member.", 3);
                         return;
                     }
                 }
@@ -78,7 +78,7 @@ public class GuiRegionInfo extends GuiScreen
 
                 if(playerUUID == null)
                 {
-                    new Thread(message = new TimedMessage(EnumChatFormatting.RED + "Player not found.", 3)).start();
+                    message.setMessage(EnumChatFormatting.RED + "Player not found.", 3);
                     return;
                 }
 

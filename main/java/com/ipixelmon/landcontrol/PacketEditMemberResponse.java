@@ -91,7 +91,7 @@ public class PacketEditMemberResponse implements IMessage
                 {
                     screen.scrollList.playerNames.remove(message.player);
                 }
-                new Thread(screen.message = new TimedMessage((message.successful ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + message.message, 3)).start();
+                screen.message.setMessage((message.successful ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + message.message, 3);
             }
         });
     }

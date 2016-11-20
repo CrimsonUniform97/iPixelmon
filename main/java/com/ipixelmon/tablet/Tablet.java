@@ -5,6 +5,10 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.client.apps.friends.packet.*;
+import com.ipixelmon.tablet.client.apps.mail.packet.PacketEditMail;
+import com.ipixelmon.tablet.client.apps.mail.packet.PacketMailConfirmation;
+import com.ipixelmon.tablet.client.apps.mail.packet.PacketReceiveMail;
+import com.ipixelmon.tablet.client.apps.mail.packet.PacketSendMail;
 import com.ipixelmon.tablet.notification.Notification;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import com.ipixelmon.tablet.notification.PacketNotification;
@@ -26,6 +30,7 @@ public class Tablet implements IMod {
 
     @Override
     public void preInit() {
+        // friends packets
         iPixelmon.registerPacket(PacketFriendsListReq.Handler.class, PacketFriendsListReq.class, Side.SERVER);
         iPixelmon.registerPacket(PacketFriendsListRes.Handler.class, PacketFriendsListRes.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAddFriendReq.Handler.class, PacketAddFriendReq.class, Side.SERVER);
@@ -33,6 +38,12 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketAcceptDeny.Handler.class, PacketAcceptDeny.class, Side.SERVER);
         iPixelmon.registerPacket(PacketNotification.Handler.class, PacketNotification.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketRemoveFriend.Handler.class, PacketRemoveFriend.class, Side.SERVER);
+
+        // mail packets
+        iPixelmon.registerPacket(PacketReceiveMail.Handler.class, PacketReceiveMail.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketEditMail.Handler.class, PacketEditMail.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketMailConfirmation.Handler.class, PacketMailConfirmation.class, Side.CLIENT);
     }
 
     @Override

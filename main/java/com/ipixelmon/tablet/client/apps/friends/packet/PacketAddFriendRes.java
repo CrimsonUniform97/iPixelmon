@@ -62,17 +62,17 @@ public class PacketAddFriendRes implements IMessage {
                     new SimpleTextNotification("Friend request already pending.");
                     break;
                 case FRIENDS:
-                    Friends.setMessage("Already friends.", 5);
+                    Friends.message.setMessage("Already friends.", 5);
                     break;
                 case UPDATE:
                     FriendsAPI.populateFriendRequests();
                     FriendsAPI.getFriends(true);
                     break;
                 case SELF:
-                    Friends.setMessage("You cannot add yourself.", 5);
+                    Friends.message.setMessage("You cannot add yourself.", 5);
                     break;
                 case NOTFOUND:
-                    Friends.setMessage("Player not found.", 5);
+                    Friends.message.setMessage("Player not found.", 5);
                     break;
                 case ACCEPT:
                     data = message.player.split(",");

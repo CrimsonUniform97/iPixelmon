@@ -28,6 +28,18 @@ public class GuiMultiLineTextField extends Gui {
         bounds = new Rectangle(x, y, width, height);
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public void setUnicodeFlag(boolean unicodeFlag) {
         this.unicodeFlag = unicodeFlag;
     }

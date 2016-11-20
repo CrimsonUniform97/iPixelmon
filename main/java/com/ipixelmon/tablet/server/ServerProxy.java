@@ -30,6 +30,15 @@ public class ServerProxy extends CommonProxy {
         friendReqForm.add("sentDate", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, friendReqForm);
 
+        CreateForm mailForm = new CreateForm("mail");
+        mailForm.add("receiver", DataType.TEXT);
+        mailForm.add("sender", DataType.TEXT);
+        mailForm.add("message", DataType.TEXT);
+        mailForm.add("sentDate", DataType.TEXT);
+        mailForm.add("hasRead", DataType.BOOLEAN);
+        mailForm.add("mailID", DataType.TEXT);
+        iPixelmon.mysql.createTable(Tablet.class, mailForm);
+
         MinecraftForge.EVENT_BUS.register(new PlayerJoinListener());
     }
 }

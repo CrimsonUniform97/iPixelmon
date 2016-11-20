@@ -20,12 +20,15 @@ public abstract class App extends GuiScreen implements Comparable<App> {
     public final String name;
     public Rectangle screenBounds = new Rectangle();
 
+    public static App activeApp = null;
+
     public static final Set<App> apps = new TreeSet<>();
     public static final Map<String, ResourceLocation> cachedIcons = Maps.newHashMap();
 
-    public App(String name) {
+    public App(String name, boolean register) {
         this.name = name;
-        apps.add(this);
+        if (register)
+            apps.add(this);
     }
 
     @Override
@@ -63,7 +66,7 @@ public abstract class App extends GuiScreen implements Comparable<App> {
     }
 
     public ResourceLocation getIcon() {
-        if(cachedIcons.containsKey(name)) return cachedIcons.get(name);
+        if (cachedIcons.containsKey(name)) return cachedIcons.get(name);
 
         ResourceLocation res = new ResourceLocation(iPixelmon.id, "textures/apps/" + name + "/icon.png");
         cachedIcons.put(name, res);
@@ -75,8 +78,5 @@ public abstract class App extends GuiScreen implements Comparable<App> {
 
         return null;
     }
-
-
-
 
 }

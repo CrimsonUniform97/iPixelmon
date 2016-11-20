@@ -66,7 +66,6 @@ public final class MySQLHandler {
                     createStr += ", " + column + " " + form.dataTypeMap.get(column);
             }
 
-
             database.query("CREATE TABLE IF NOT EXISTS " + mod.getID() + form.table + "(" + createStr + ");");
         } catch (SQLException e) {
             e.printStackTrace();
