@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.client.apps.mail;
 
 import com.ipixelmon.GuiMultiLineTextField;
 import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.client.TextBtn;
 import com.ipixelmon.tablet.client.apps.mail.packet.PacketReceiveMail;
 import net.minecraft.client.gui.GuiButton;
 
@@ -26,7 +27,7 @@ public class GuiViewMail extends App {
         messageField.drawTextField(mouseX, mouseY);
         responseField.drawTextField(mouseX, mouseY);
     }
-// TODO: work on replying and deleting messages
+
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
@@ -47,9 +48,13 @@ public class GuiViewMail extends App {
     @Override
     public void initGui() {
         super.initGui();
+        this.buttonList.clear();
         messageField = new GuiMultiLineTextField(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth() / 2, screenBounds.getHeight() - 30);
         responseField = new GuiMultiLineTextField(messageField.getBounds().getX() + messageField.getBounds().getWidth(),
                 messageField.getBounds().getY(), screenBounds.getWidth() / 2, messageField.getBounds().getHeight());
         messageField.setText(PacketReceiveMail.df.format(mailObject.date) + "\n" + "From: " + mailObject.playerName + "\n\n" + mailObject.message);
+
+        this.buttonList.add(new GuiButton(0, responseField.getBounds().getX() + responseField.getBounds().getWidth() - 51,
+                responseField.getBounds().getY() + responseField.getBounds().getHeight() + 5, 50, 20, "Send"));
     }
 }
