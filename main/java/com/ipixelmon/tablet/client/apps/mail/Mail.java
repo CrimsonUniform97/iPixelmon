@@ -34,6 +34,9 @@ public class Mail extends App {
     private static GuiMultiLineTextField messageTxtField;
     private static InboxScrollList inboxScrollList;
 
+
+    private static ConversationScrollList conversationScrollList;
+
     public Mail(String name) {
         super(name, true);
         icon = getIcon(false);
@@ -52,6 +55,8 @@ public class Mail extends App {
         // TODO: Position this message
         if(!message.getMessage().isEmpty())
             mc.fontRendererObj.drawString(message.getMessage(), 0, 0, 0xFFFFFF, true);
+
+        conversationScrollList.draw(mouseX, mouseY);
     }
 
     @Override
@@ -119,6 +124,8 @@ public class Mail extends App {
 
         this.buttonList.add(new TextBtn(0, messageTxtField.getBounds().getX(),
                 messageTxtField.getBounds().getY() + messageTxtField.getBounds().getHeight(), 50, 10, "Send"));
+
+        conversationScrollList = new ConversationScrollList(0, 0, 100, 100);
     }
 
     @Override
