@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class ConversationScrollList extends  CustomSizeScrollList{
 
-    private static List<String> list = new ArrayList<>();
+    private List<String> list = new ArrayList<>();
 
     public ConversationScrollList(int xPosition, int yPosition, int width, int height) {
         super(xPosition, yPosition, width, height);
@@ -22,6 +22,13 @@ public class ConversationScrollList extends  CustomSizeScrollList{
         list.add("Test 8");
         list.add("Test 9");
         list.add("Test 10");
+        list.add("Test 11");
+        list.add("Test 12");
+        list.add("Test 13");
+        list.add("Test 14");
+        list.add("Test 15");
+        list.add("Test 16");
+        list.add("Test 17");
     }
 
     @Override

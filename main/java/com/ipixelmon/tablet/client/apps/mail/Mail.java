@@ -87,6 +87,7 @@ public class Mail extends App {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
+        conversationScrollList.keyTyped(typedChar, keyCode);
         playerTxtField.textboxKeyTyped(typedChar, keyCode);
         messageTxtField.keyTyped(typedChar, keyCode);
     }
