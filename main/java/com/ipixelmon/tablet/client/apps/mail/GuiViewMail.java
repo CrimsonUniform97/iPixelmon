@@ -21,6 +21,8 @@ public class GuiViewMail extends App {
         this.mailObject = mailObject;
     }
 
+    // TODO: Add the conversation scroll list.
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
