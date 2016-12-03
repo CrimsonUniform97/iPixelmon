@@ -37,12 +37,17 @@ public class ConversationScrollList extends  CustomSizeScrollList{
     }
 
     @Override
-    public void drawObject(int index, int x, int y) {
-        mc.fontRendererObj.drawString(list.get(index), x, y, 0xFFFFFF);
+    public void drawObject(int index) {
+        mc.fontRendererObj.drawString(list.get(index), 0, 0, 0xFFFFFF);
     }
 
     @Override
     public int getSize() {
         return list.size();
+    }
+
+    @Override
+    public void elementClicked(int index, boolean doubleClick) {
+        System.out.println(doubleClick);
     }
 }
