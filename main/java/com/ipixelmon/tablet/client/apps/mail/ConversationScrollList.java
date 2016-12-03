@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by colby on 11/21/2016.
  */
-public class ConversationScrollList extends  CustomSizeScrollList{
+public class ConversationScrollList extends GuiScrollList {
 
     private List<String> list = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class ConversationScrollList extends  CustomSizeScrollList{
 
     @Override
     public int getObjectHeight(int index) {
-        return 10;
+        return index == 5 ? 13 : index == 1 ? 17 : 10;
     }
 
     @Override

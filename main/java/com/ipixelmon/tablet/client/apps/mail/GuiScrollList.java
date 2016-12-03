@@ -9,7 +9,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 
-public abstract class CustomSizeScrollList extends Gui {
+public abstract class GuiScrollList extends Gui {
 
     public int xPosition, yPosition, width, height;
 
@@ -19,8 +19,24 @@ public abstract class CustomSizeScrollList extends Gui {
     private int selected = -1;
     private long lastClickTime = 0L;
 
-    public CustomSizeScrollList(int xPosition, int yPosition, int width, int height) {
+    public GuiScrollList(int xPosition, int yPosition, int width, int height) {
         bounds = new Rectangle(this.xPosition = xPosition, this.yPosition = yPosition, this.width = width, this.height = height);
+    }
+
+    public int getGripWidth() {
+        return 5;
+    }
+
+    public int getSingleUnit() {
+        return 10;
+    }
+
+    public int getMaximumGripSize() {
+        return bounds.getHeight();
+    }
+
+    public int getMinimumGripSize(){
+        return 20;
     }
 
     public void draw(int mouseX, int mouseY) {
@@ -31,19 +47,9 @@ public abstract class CustomSizeScrollList extends Gui {
         float gripSize = bounds.getHeight() * ratio;
         float trackSize = bounds.getHeight();
 
-        float maximumGripSize = trackSize;
-
-        if (gripSize > maximumGripSize)
-            gripSize = maximumGripSize;
-
-
-        float minimalGripSize = 20;
-
-        if (gripSize < minimalGripSize)
-            gripSize = minimalGripSize;
+        gripSize = gripSize > getMaximumGripSize() ? getMaximumGripSize() : gripSize < getMinimumGripSize() ? getMinimumGripSize() : gripSize;
 
         float trackScrollAreaSize = trackSize - gripSize;
-        float aSingleUnit = 10;
         float windowScrollAreaSize = contentHeight - bounds.getHeight();
         float windowPositionRatio = scrollY / windowScrollAreaSize;
         float gripPosition = trackScrollAreaSize * windowPositionRatio;
@@ -51,21 +57,18 @@ public abstract class CustomSizeScrollList extends Gui {
         boolean isHovering = mouseX >= bounds.getX() && mouseX <= bounds.getX() + bounds.getWidth() &&
                 mouseY >= bounds.getY() && mouseY <= bounds.getY() + bounds.getHeight();
 
-        float scrollBarLeft = bounds.getX() + bounds.getWidth() - 5;
+        float scrollBarLeft = bounds.getX() + bounds.getWidth() - getGripWidth();
         float scrollBarRight = bounds.getX() + bounds.getWidth();
 
-        // TODO: Fix double click
-
         if (Mouse.isButtonDown(0)) {
-
             if (this.initialMouseClickY == -1.0F) {
                 if (isHovering) {
                     if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY >= gripPosition && mouseY <= gripPosition + gripSize) {
                         this.initialMouseClickY = (mouseY - bounds.getY()) - gripPosition;
                     } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY < gripPosition) {
-                        scrollY = scrollY - aSingleUnit;
+                        scrollY = scrollY - getSingleUnit();
                     } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY > gripPosition) {
-                        scrollY = scrollY + aSingleUnit;
+                        scrollY = scrollY + getSingleUnit();
                     } else {
                         int totalHeight = 0;
                         for (int i = 0; i < getSize(); i++) {
@@ -77,6 +80,7 @@ public abstract class CustomSizeScrollList extends Gui {
                             totalHeight += getObjectHeight(i);
                         }
                     }
+                    this.initialMouseClickY = (mouseY - bounds.getY()) - gripPosition;
                 }
             } else if (this.initialMouseClickY >= 0.0F) {
                 float newGripPosition = (mouseY - bounds.getY()) - initialMouseClickY;
@@ -97,11 +101,7 @@ public abstract class CustomSizeScrollList extends Gui {
             initialMouseClickY = -1f;
         }
 
-        if (scrollY < 0)
-            scrollY = 0;
-
-        if (scrollY > windowScrollAreaSize)
-            scrollY = windowScrollAreaSize;
+        scrollY = scrollY < 0 ? 0 : scrollY > windowScrollAreaSize ? windowScrollAreaSize : scrollY;
 
         GlStateManager.disableTexture2D();
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -123,25 +123,7 @@ public abstract class CustomSizeScrollList extends Gui {
             GlStateManager.translate(bounds.getX(), bounds.getY() + totalHeight - scrollY, 0);
 
             if(selected == i) {
-                GlStateManager.disableTexture2D();
-                GL11.glDisable(GL11.GL_CULL_FACE);
-
-                GlStateManager.color(128f / 255f, 128f / 255f, 128f / 255f, 1f);
-
-                GL11.glBegin(GL11.GL_QUADS);
-
-                {
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(bounds.getWidth(), 0);
-                    GL11.glVertex2f(bounds.getWidth(), getObjectHeight(i));
-                    GL11.glVertex2f(0, getObjectHeight(i));
-                }
-                GL11.glEnd();
-
-                GlStateManager.color(1, 1, 1, 1);
-
-                GlStateManager.enableTexture2D();
-                GL11.glEnable(GL11.GL_CULL_FACE);
+                drawSelectionBox(i, bounds.getWidth(), getObjectHeight(i));
             }
 
             drawObject(i);
@@ -212,6 +194,28 @@ public abstract class CustomSizeScrollList extends Gui {
             GL11.glVertex2f(scrollBarLeft, bounds.getY() + gripPosition + gripSize);
         }
         GL11.glEnd();
+    }
+
+    public void drawSelectionBox(int index, int width, int height) {
+        GlStateManager.disableTexture2D();
+        GL11.glDisable(GL11.GL_CULL_FACE);
+
+        GlStateManager.color(128f / 255f, 128f / 255f, 128f / 255f, 1f);
+
+        GL11.glBegin(GL11.GL_QUADS);
+
+        {
+            GL11.glVertex2f(0, 0);
+            GL11.glVertex2f(width, 0);
+            GL11.glVertex2f(width, height);
+            GL11.glVertex2f(0, height);
+        }
+        GL11.glEnd();
+
+        GlStateManager.color(1, 1, 1, 1);
+
+        GlStateManager.enableTexture2D();
+        GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
     public abstract int getObjectHeight(int index);
