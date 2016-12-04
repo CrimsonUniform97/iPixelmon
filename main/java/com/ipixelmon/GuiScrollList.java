@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.mail;
+package com.ipixelmon;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -63,14 +63,15 @@ public abstract class GuiScrollList extends Gui {
         if (Mouse.isButtonDown(0)) {
             if (this.initialMouseClickY == -1.0F) {
                 if (isHovering) {
-                    if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY >= gripPosition && mouseY <= gripPosition + gripSize) {
-                        this.initialMouseClickY = (mouseY - bounds.getY()) - gripPosition;
-                    } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY < gripPosition) {
-                        scrollY = scrollY - getSingleUnit();
-                    } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && mouseY > gripPosition) {
-                        scrollY = scrollY + getSingleUnit();
+
+                    if(mouseX >= scrollBarLeft && mouseX < scrollBarRight && (mouseY - bounds.getY() > gripPosition) && (mouseY - bounds.getY()) < gripPosition + gripSize) {
+                        this.initialMouseClickY = Math.abs((mouseY - bounds.getY()) - gripPosition);
+                    } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && (mouseY - bounds.getY()) < gripPosition) {
+                        scrollY -= getSingleUnit();
+                    } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && (mouseY - bounds.getY()) > gripPosition + gripSize) {
+                        scrollY += getSingleUnit();
                     } else {
-                        int totalHeight = 0;
+                         int totalHeight = 0;
                         for (int i = 0; i < getSize(); i++) {
                             if (mouseY >= bounds.getY() + totalHeight - scrollY && mouseY <= (bounds.getY() + totalHeight - scrollY) + getObjectHeight(i)) {
                                 this.elementClicked(i, i == this.selected && System.currentTimeMillis() - this.lastClickTime < 250L);
@@ -80,7 +81,6 @@ public abstract class GuiScrollList extends Gui {
                             totalHeight += getObjectHeight(i);
                         }
                     }
-                    this.initialMouseClickY = (mouseY - bounds.getY()) - gripPosition;
                 }
             } else if (this.initialMouseClickY >= 0.0F) {
                 float newGripPosition = (mouseY - bounds.getY()) - initialMouseClickY;
@@ -94,7 +94,6 @@ public abstract class GuiScrollList extends Gui {
             if (isHovering && scroll != 0) {
                 if (scroll > 0) scroll = -1;
                 else if (scroll < 0) scroll = 1;
-
                 this.scrollY += (float) (scroll * 10 / 2);
             }
 
@@ -110,17 +109,23 @@ public abstract class GuiScrollList extends Gui {
         GlStateManager.enableTexture2D();
         GL11.glEnable(GL11.GL_CULL_FACE);
 
-        ScaledResolution res = new ScaledResolution(mc);
-        double scaleW = mc.displayWidth / res.getScaledWidth_double();
-        double scaleH = mc.displayHeight / res.getScaledHeight_double();
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        double scaleW = Minecraft.getMinecraft().displayWidth / res.getScaledWidth_double();
+        double scaleH = Minecraft.getMinecraft().displayHeight / res.getScaledHeight_double();
+
+        int left = bounds.getX();
+        int bottom = bounds.getY() + bounds.getHeight();
+        int listWidth = bounds.getWidth();
+        int viewHeight = bounds.getHeight();
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (bounds.getX() * scaleW), (int) (mc.displayHeight - (bounds.getY() + bounds.getHeight() * scaleH)),
-                (int) (bounds.getWidth() * scaleW), (int) (bounds.getHeight() * scaleH));
+        GL11.glScissor((int)(left      * scaleW), (int)(mc.displayHeight - (bottom * scaleH)),
+                (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
 
         int totalHeight = 0;
         for (int i = 0; i < getSize(); i++) {
             GlStateManager.pushMatrix();
-            GlStateManager.translate(bounds.getX(), bounds.getY() + totalHeight - scrollY, 0);
+            GlStateManager.translate(bounds.getX(), (bounds.getY() + totalHeight) - scrollY, 0);
 
             if(selected == i) {
                 drawSelectionBox(i, bounds.getWidth(), getObjectHeight(i));
@@ -226,4 +231,7 @@ public abstract class GuiScrollList extends Gui {
 
     public abstract void elementClicked(int index, boolean doubleClick);
 
+    public float getScrollY() {
+        return scrollY;
+    }
 }

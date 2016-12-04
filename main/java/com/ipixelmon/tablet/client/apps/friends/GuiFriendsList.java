@@ -13,11 +13,11 @@ import java.util.Set;
 /**
  * Created by colbymchenry on 11/4/16.
  */
-public class GuiFriends extends CustomScrollList {
+public class GuiFriendsList extends CustomScrollList {
 
     private Minecraft mc;
 
-    public GuiFriends(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
+    public GuiFriendsList(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
         super(client, x, y, width, height, entryHeight, screen);
         mc = client;
         FriendsAPI.getFriends(true);

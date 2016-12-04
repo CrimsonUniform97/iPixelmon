@@ -1,24 +1,21 @@
 package com.ipixelmon.tablet.client.apps.mail;
 
+import com.google.common.collect.Lists;
 import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.GuiMultiLineTextField;
 import com.ipixelmon.tablet.client.CustomGuiTextField;
 import com.ipixelmon.tablet.client.TextBtn;
-import com.ipixelmon.tablet.client.apps.friends.GuiFriends;
-import com.ipixelmon.tablet.client.apps.mail.packet.PacketSendMail;
+import com.ipixelmon.tablet.client.apps.friends.GuiFriendsList;
 import com.ipixelmon.uuidmanager.UUIDManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.*;
-import java.sql.ResultSet;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by colby on 10/28/2016.
@@ -26,16 +23,13 @@ import java.util.*;
 public class Mail extends App {
 
     private static ResourceLocation icon, icon_new;
-    public static final Set<MailObject> messages = new TreeSet<>();
 
     public static TimedMessage message = new TimedMessage("", 0);
     private static CustomGuiTextField playerTxtField;
-    private static GuiFriends guiFriends;
+    private static GuiFriendsList guiFriendsList;
     private static GuiMultiLineTextField messageTxtField;
-    private static InboxScrollList inboxScrollList;
 
-
-    private static ConversationScrollList conversationScrollList;
+    public static Set<Conversation> conversations = new TreeSet<>();
 
     public Mail(String name) {
         super(name, true);
@@ -48,15 +42,12 @@ public class Mail extends App {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         playerTxtField.drawTextBox();
-        guiFriends.drawScreen(mouseX, mouseY, partialTicks);
-        messageTxtField.drawTextField(mouseX, mouseY);
-        inboxScrollList.drawScreen(mouseX, mouseY, partialTicks);
+        guiFriendsList.drawScreen(mouseX, mouseY, partialTicks);
+        messageTxtField.drawTextField();
 
         // TODO: Position this message
         if(!message.getMessage().isEmpty())
             mc.fontRendererObj.drawString(message.getMessage(), 0, 0, 0xFFFFFF, true);
-
-        conversationScrollList.draw(mouseX, mouseY);
     }
 
     @Override
@@ -64,9 +55,10 @@ public class Mail extends App {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         playerTxtField.mouseClicked(mouseX, mouseY, mouseButton);
         messageTxtField.mouseClicked(mouseX, mouseY);
-        if (mouseX > guiFriends.xPosition && mouseX < guiFriends.xPosition + guiFriends.width
-                && mouseY > guiFriends.yPosition && mouseY < guiFriends.yPosition + guiFriends.height) {
-            if (guiFriends.getSelected() != null) playerTxtField.setText(guiFriends.getSelected().name);
+
+        if (mouseX > guiFriendsList.xPosition && mouseX < guiFriendsList.xPosition + guiFriendsList.width
+                && mouseY > guiFriendsList.yPosition && mouseY < guiFriendsList.yPosition + guiFriendsList.height) {
+            if (guiFriendsList.getSelected() != null) playerTxtField.setText(guiFriendsList.getSelected().name);
         }
     }
 
@@ -76,8 +68,7 @@ public class Mail extends App {
 
         if (button.id == 0) {
             if(UUIDManager.getUUID(playerTxtField.getText()) != null) {
-                iPixelmon.network.sendToServer(new PacketSendMail(messageTxtField.getText(), playerTxtField.getText()));
-                // TODO: Clear text fields if sent successfully
+//                iPixelmon.network.sendToServer(new PacketSendMail(messageTxtField.getText(), playerTxtField.getText()));
             }  else {
                 message.setMessage("Player does not exist...", 5);
             }
@@ -87,52 +78,32 @@ public class Mail extends App {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-        conversationScrollList.keyTyped(typedChar, keyCode);
         playerTxtField.textboxKeyTyped(typedChar, keyCode);
         messageTxtField.keyTyped(typedChar, keyCode);
     }
 
-
-    // TODO: Tried to scale and it failed. Would have been nice...
-    // TODO: Work on this app.
-    // TODO: Implement 'mailbox is full'
-    // TODO: Implement quick response by clicking on the notification
-
     @Override
     public void initGui() {
         super.initGui();
-        this.buttonList.clear();
-        guiFriends = new GuiFriends(mc, screenBounds.getX() + 2, screenBounds.getY() + 2, 65, 100, 12, this);
+        buttonList.clear();
+
+        guiFriendsList = new GuiFriendsList(mc, screenBounds.getX() + 2, screenBounds.getY() + 2, 65, 100, 12, this);
 
         FontRenderer fontRenderer = fontRendererObj;
         fontRenderer.setUnicodeFlag(true);
 
-        playerTxtField = new CustomGuiTextField(0, fontRenderer, guiFriends.xPosition + guiFriends.width + 5, guiFriends.yPosition, 65, 10);
+        playerTxtField = new CustomGuiTextField(0, fontRenderer, guiFriendsList.xPosition + guiFriendsList.width + 5, guiFriendsList.yPosition, 65, 10);
         messageTxtField = new GuiMultiLineTextField(playerTxtField.xPosition, playerTxtField.yPosition + playerTxtField.height + 2, 100, 100);
         messageTxtField.setUnicodeFlag(true);
 
-        if (messages.isEmpty()) {
-            ResultSet result = iPixelmon.mysql.query("SELECT mailID AS id FROM tabletMail WHERE" +
-                    " receiver='" + Minecraft.getMinecraft().thePlayer.getUniqueID().toString() + "';");
-            try {
-                while (result.next()) messages.add(new MailObject(UUID.fromString(result.getString("id"))));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        inboxScrollList = new InboxScrollList(mc,screenBounds.getX() +  200,screenBounds.getY() +  10, 115, screenBounds.getHeight() - 20, 30, this);
-
-        this.buttonList.add(new TextBtn(0, messageTxtField.getBounds().getX(),
+        buttonList.add(new TextBtn(0, messageTxtField.getBounds().getX(),
                 messageTxtField.getBounds().getY() + messageTxtField.getBounds().getHeight(), 50, 10, "Send"));
-
-        conversationScrollList = new ConversationScrollList(0, 0, 100, 100);
     }
 
     @Override
     public void updateScreen() {
         playerTxtField.updateCursorCounter();
-        this.buttonList.get(0).enabled = !messageTxtField.getText().isEmpty() && !playerTxtField.getText().isEmpty();
+        buttonList.get(0).enabled = !messageTxtField.getText().isEmpty() && !playerTxtField.getText().isEmpty();
     }
 
     @Override
@@ -148,4 +119,5 @@ public class Mail extends App {
         playerTxtField.setText("");
         messageTxtField.setText("");
     }
+
 }

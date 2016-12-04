@@ -5,19 +5,14 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.client.apps.friends.packet.*;
-import com.ipixelmon.tablet.client.apps.mail.packet.PacketEditMail;
-import com.ipixelmon.tablet.client.apps.mail.packet.PacketMailConfirmation;
-import com.ipixelmon.tablet.client.apps.mail.packet.PacketReceiveMail;
-import com.ipixelmon.tablet.client.apps.mail.packet.PacketSendMail;
-import com.ipixelmon.tablet.notification.Notification;
-import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.tablet.client.apps.mail.packets.PacketReceiveMessage;
+import com.ipixelmon.tablet.client.apps.mail.packets.PacketSendMessage;
 import com.ipixelmon.tablet.notification.PacketNotification;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by colbymchenry on 10/3/16.
@@ -40,10 +35,8 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketRemoveFriend.Handler.class, PacketRemoveFriend.class, Side.SERVER);
 
         // mail packets
-        iPixelmon.registerPacket(PacketReceiveMail.Handler.class, PacketReceiveMail.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketEditMail.Handler.class, PacketEditMail.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketMailConfirmation.Handler.class, PacketMailConfirmation.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketSendMessage.Handler.class, PacketSendMessage.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketReceiveMessage.Handler.class, PacketReceiveMessage.class, Side.CLIENT);
     }
 
     @Override

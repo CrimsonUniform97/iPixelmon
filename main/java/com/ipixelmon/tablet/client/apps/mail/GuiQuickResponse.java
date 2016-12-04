@@ -19,8 +19,8 @@ public class GuiQuickResponse extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         sender.drawTextBox();
-        msgTxtField.drawTextField(mouseX, mouseY);
-        resTxtField.drawTextField(mouseX, mouseY);
+        msgTxtField.drawTextField();
+        resTxtField.drawTextField();
     }
 
     @Override

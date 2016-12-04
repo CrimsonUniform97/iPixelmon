@@ -32,6 +32,10 @@ public class GuiMultiLineTextField extends Gui {
         return bounds;
     }
 
+    public void setBounds(int x, int y, int width, int height) {
+        bounds.setBounds(x, y, width, height);
+    }
+
     public String getText() {
         return text;
     }
@@ -48,7 +52,7 @@ public class GuiMultiLineTextField extends Gui {
         return unicodeFlag;
     }
 
-    public void drawTextField(int x, int y) {
+    public void drawTextField() {
         if(unicodeFlag)
             fontRenderer.setUnicodeFlag(true);
         drawBackground();
@@ -183,7 +187,7 @@ public class GuiMultiLineTextField extends Gui {
             fontRenderer.setUnicodeFlag(false);
     }
 
-    private void drawBackground() {
+    public void drawBackground() {
         drawRect(bounds.getX() - 1, bounds.getY() - 1, bounds.getX() + bounds.getWidth() + 1, bounds.getY() + bounds.getHeight() + 1, -6250336);
         drawRect(bounds.getX(), bounds.getY(), bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight(), -16777216);
     }

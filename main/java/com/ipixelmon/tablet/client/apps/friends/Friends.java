@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class Friends extends App {
 
-    private GuiFriends friendsList;
+    private GuiFriendsList friendsList;
     private GuiFriendRequests requestsList;
     private CustomGuiTextField addFriendTxtField;
     public static Set<Friend> friends = new TreeSet<>();
@@ -129,7 +129,7 @@ public class Friends extends App {
         fontRenderer.setUnicodeFlag(true);
         addFriendTxtField = new CustomGuiTextField(0, fontRenderer, screenBounds.getX() + screenBounds.getWidth() - 67, screenBounds.getY() + screenBounds.getHeight() - 12, 65, 10);
 
-        friendsList = new GuiFriends(mc, screenBounds.getX() + 8, screenBounds.getY() + 12, 65, 65, 12, this);
+        friendsList = new GuiFriendsList(mc, screenBounds.getX() + 8, screenBounds.getY() + 12, 65, 65, 12, this);
 
         requestsList = new GuiFriendRequests(mc, friendsList.xPosition, friendsList.yPosition + friendsList.height + 34, 65, 65, 12, this);
 
