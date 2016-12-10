@@ -8,6 +8,7 @@ import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.ipixelmon.mysql.MySQLHandler;
 import com.ipixelmon.team.TeamMod;
+import lib.PatPeter.SQLibrary.Database;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -39,6 +40,8 @@ public final class iPixelmon {
     public static SimpleNetworkWrapper network;
 
     private static int packetID = 0;
+
+    public static Database clientDb;
 
     @Mod.Instance(id)
     public static iPixelmon instance;

@@ -1,7 +1,10 @@
 package com.ipixelmon.tablet.client.apps.mail.packets;
 
+import com.google.common.collect.Lists;
 import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mysql.InsertForm;
+import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -11,63 +14,108 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by colby on 12/3/2016.
+ * Created by colby on 12/9/2016.
  */
 public class PacketSendMessage implements IMessage {
+
+    UUID messageID;
+    String message;
+    String[] players;
 
     public PacketSendMessage() {
     }
 
-    private String message;
-    private UUID participant;
-
-    public PacketSendMessage(String message, UUID participant) {
+    public PacketSendMessage(String message, UUID messageID) {
         this.message = message;
-        this.participant = participant;
+        this.messageID = messageID;
+    }
+
+    public PacketSendMessage(String message, String... players) {
+        this.message = message;
+        this.players = players;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         message = ByteBufUtils.readUTF8String(buf);
-        participant = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+        if (buf.readBoolean())
+            messageID = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+        else
+            players = ByteBufUtils.readUTF8String(buf).split(",");
+
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, message);
-        ByteBufUtils.writeUTF8String(buf, participant.toString());
+        buf.writeBoolean(messageID != null);
+        if (messageID != null) {
+            ByteBufUtils.writeUTF8String(buf, messageID.toString());
+        } else {
+            String players = "";
+
+            if (this.players.length > 10) return;
+
+            for (String player : this.players) players += player + ",";
+
+            ByteBufUtils.writeUTF8String(buf, players);
+        }
     }
 
     public static class Handler implements IMessageHandler<PacketSendMessage, IMessage> {
 
         @Override
         public IMessage onMessage(PacketSendMessage message, MessageContext ctx) {
-            UUID senderUUID = ctx.getServerHandler().playerEntity.getUniqueID();
-            UUID receiverUUID = message.participant;
-            ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletConversations WHERE (participant1='" + senderUUID.toString() + "' AND" +
-                    " participant2='" + receiverUUID.toString() + "') OR (participant1='" + receiverUUID.toString() + "' AND participant2='" + senderUUID.toString() + "');");
-
-            boolean isNew = false;
-
             try {
-                if (result.next()) {
-                    int parNum = UUID.fromString(result.getString("participant1")).equals(senderUUID) ? 1 : 2;
-                    iPixelmon.mysql.query("UPDATE tabletConversations SET messages='" + (result.getString("messages") + parNum + "," + message.message + ";") + "'" +
-                            " WHERE participant1='" + result.getString("participant1") + "' AND participant2='" + result.getString("participant2") + "';");
+                // if conversation already exists update
+                if (message.messageID != null) {
+                    ResultSet resultSet = iPixelmon.mysql.query("SELECT * FROM tabletMessages WHERE messageID='" + message.messageID.toString() + "';");
+
+                    if (resultSet.next()) {
+
+                        List<UUID> validPlayers = Lists.newArrayList();
+                        for (String s : resultSet.getString("players").split(","))
+                            if (s != null && !s.isEmpty())
+                                validPlayers.add(UUID.fromString(s));
+
+
+                        if (!validPlayers.contains(ctx.getServerHandler().playerEntity)) return null;
+
+                        for (UUID p : validPlayers)
+                            if (PlayerUtil.isPlayerOnline(p))
+                                iPixelmon.network.sendTo(new PacketReceiveMessage(message.messageID, ctx.getServerHandler().playerEntity.getUniqueID(), message.message), PlayerUtil.getPlayer(p));
+                    }
                 } else {
-                    iPixelmon.mysql.query("INSERT INTO tabletConversations (participant1, participant2, messages) VALUES ('" + senderUUID.toString() + "', '" + receiverUUID.toString() + "', '" + (message.message + ";") + "');");
-                    isNew = true;
+                    UUID messageID = UUID.randomUUID();
+
+                    if (message.players.length > 10) return null;
+
+                    String players = "";
+
+                    List<UUID> validPlayers = Lists.newArrayList();
+
+                    UUID uuid;
+                    for (String s : message.players) {
+                        uuid = UUIDManager.getUUID(s);
+                        if (uuid != null) {
+                            players += uuid.toString() + ",";
+                            validPlayers.add(uuid);
+                        }
+                    }
+
+                    players += ctx.getServerHandler().playerEntity.getUniqueID().toString() + ",";
+                    validPlayers.add(ctx.getServerHandler().playerEntity.getUniqueID());
+
+                    iPixelmon.mysql.insert(Tablet.class, new InsertForm("Messages").add("messageID", messageID.toString()).add("players", players));
+
+                    for (UUID p : validPlayers)
+                        if (PlayerUtil.isPlayerOnline(p))
+                            iPixelmon.network.sendTo(new PacketReceiveMessage(messageID, ctx.getServerHandler().playerEntity.getUniqueID(), message.message), PlayerUtil.getPlayer(p));
                 }
-
-                int parNum = UUID.fromString(result.getString("participant1")).equals(senderUUID) ? 1 : 2;
-
-            if(PlayerUtil.isPlayerOnline(receiverUUID))
-                iPixelmon.network.sendTo(new PacketReceiveMessage(UUID.fromString(result.getString("participant1")),
-                        UUID.fromString(result.getString("participant2")), parNum, message.message, isNew), PlayerUtil.getPlayer(receiverUUID));
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -75,4 +123,5 @@ public class PacketSendMessage implements IMessage {
         }
 
     }
+
 }

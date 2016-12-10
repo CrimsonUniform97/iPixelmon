@@ -31,6 +31,15 @@ public abstract class App extends GuiScreen implements Comparable<App> {
             apps.add(this);
     }
 
+    public void setActiveApp(App app) {
+        App.activeApp = app;
+        if (App.activeApp != null) {
+            App.activeApp.screenBounds = screenBounds;
+            App.activeApp.setWorldAndResolution(mc, width, height);
+            App.activeApp.initGui();
+        }
+    }
+
     @Override
     public int compareTo(App o) {
         return o.name.equalsIgnoreCase(name) ? 0 : 1;

@@ -39,6 +39,7 @@ public abstract class GuiScrollList extends Gui {
         return 20;
     }
 
+    // TODO: Fix flickering just because the objects don't fill in the space. Look into GuiScrollingTextField
     public void draw(int mouseX, int mouseY) {
         int contentHeight = getContentHeight();
         contentHeight = contentHeight == 0 ? 1 : contentHeight;
@@ -50,7 +51,7 @@ public abstract class GuiScrollList extends Gui {
         gripSize = gripSize > getMaximumGripSize() ? getMaximumGripSize() : gripSize < getMinimumGripSize() ? getMinimumGripSize() : gripSize;
 
         float trackScrollAreaSize = trackSize - gripSize;
-        float windowScrollAreaSize = contentHeight - bounds.getHeight();
+        float windowScrollAreaSize = getMaxScrollY();
         float windowPositionRatio = scrollY / windowScrollAreaSize;
         float gripPosition = trackScrollAreaSize * windowPositionRatio;
 
@@ -233,5 +234,14 @@ public abstract class GuiScrollList extends Gui {
 
     public float getScrollY() {
         return scrollY;
+    }
+
+    public void setScrollY(float scrollY) {
+        float windowScrollAreaSize = getMaxScrollY();
+        this.scrollY = scrollY < 0 ? 0 : scrollY > windowScrollAreaSize ? windowScrollAreaSize : scrollY;
+    }
+
+    public float getMaxScrollY() {
+        return getContentHeight() - bounds.getHeight();
     }
 }

@@ -1,82 +1,69 @@
 package com.ipixelmon.tablet.client.apps.mail;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.uuidmanager.UUIDManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by colby on 12/3/2016.
+ * Created by colby on 12/9/2016.
  */
 public class Conversation implements Comparable {
 
-    private UUID participant1, participant2;
-    private List<String> messages = Lists.newArrayList();
-    private String participant1Name, participant2Name;
+    public final UUID messageID;
 
-    public Conversation(UUID participant1, UUID participant2) throws SQLException {
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletConversations WHERE participant1='" + participant1.toString() + "' AND participant2='" + participant2.toString() + "';");
+    private Map<UUID, String> players = Maps.newHashMap();
+    private List<String> messages = Lists.newArrayList();
+
+    public Conversation(UUID messageID) throws SQLException {
+        this.messageID = messageID;
+
+        ResultSet result = iPixelmon.clientDb.query("SELECT * FROM tabletMessages WHERE messageID='" + messageID.toString() + "';");
 
         if (result.next()) {
-            this.participant1 = participant1;
-            this.participant2 = participant2;
+            for (String s : result.getString("players").split(","))
+                if (s != null && !s.isEmpty())
+                    players.put(UUID.fromString(s), UUIDManager.getPlayerName(UUID.fromString(s)));
 
-            for (String convoPortion : result.getString("messages").split(";")) {
-                if (!convoPortion.isEmpty()) messages.add(convoPortion);
+            for (String s : result.getString("messages").split("\\u2665")) {
+                if (s != null && !s.isEmpty())
+                    messages.add(s);
             }
-
-            participant1Name = UUIDManager.getPlayerName(participant1);
-            participant2Name = UUIDManager.getPlayerName(participant2);
         }
-    }
-
-    public static List<Conversation> getConversations(UUID participant) throws SQLException {
-        ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletConversations WHERE participant1='" + participant.toString() + "' OR participant2='" + participant.toString() + "';");
-
-        List<Conversation> conversations = Lists.newArrayList();
-
-        while (result.next())
-            conversations.add(new Conversation(UUID.fromString(result.getString("participant1")), UUID.fromString(result.getString("participant2"))));
-
-        return conversations;
-    }
-
-    public void addMessage(UUID participant, String message) {
-        messages.add((participant.equals(participant1) ? 1 : 2) + "," + message);
     }
 
     public List<String> getMessages() {
         return messages;
     }
 
+    public Map<UUID, String> getPlayers() {
+        return players;
+    }
+
+    public void sync() {
+        try {
+            String s = "";
+
+            for (String message : messages) s += message + "\\u2665";
+
+            iPixelmon.clientDb.query("UPDATE tabletMessages SET messages='" + s + "' WHERE messageID='" + messageID.toString() + "';");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public int compareTo(Object o) {
         if (o instanceof Conversation) {
-            Conversation conversation = (Conversation) o;
-            if (conversation.participant1.equals(participant1) && conversation.participant2.equals(participant2))
-                return 0;
+            Conversation c = (Conversation) o;
+            if (c.messageID.equals(messageID)) return 0;
         }
-        return -1;
+        return -999;
     }
-
-    public UUID getParticipant1() {
-        return participant1;
-    }
-
-    public UUID getParticipant2() {
-        return participant2;
-    }
-
-    public String getParticipant1Name() {
-        return participant1Name;
-    }
-
-    public String getParticipant2Name() {
-        return participant2Name;
-    }
-
 }
