@@ -31,9 +31,11 @@ public class Conversation implements Comparable {
                 if (s != null && !s.isEmpty())
                     players.put(UUID.fromString(s), UUIDManager.getPlayerName(UUID.fromString(s)));
 
-            for (String s : result.getString("messages").split("\\u2665")) {
-                if (s != null && !s.isEmpty())
+            for (String s : result.getString("messages").split("\\\\u2665")) {
+                if (s != null && !s.isEmpty()) {
                     messages.add(s);
+                    System.out.println(s);
+                }
             }
         }
     }

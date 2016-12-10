@@ -21,8 +21,6 @@ public class Mail extends App {
     public static Set<Conversation> messages = new TreeSet<>();
     private GuiMessages guiMessages;
 
-    // TODO: Add text field or button to create a message..
-
     public Mail(String name) {
         super(name, true);
         icon = new ResourceLocation(iPixelmon.id, "textures/apps/" + name + "/icon.png");
@@ -59,8 +57,8 @@ public class Mail extends App {
     public void initGui() {
         super.initGui();
         buttonList.clear();
-
-        if(Mail.messages.isEmpty()) {
+        messages.clear();
+//        if(Mail.messages.isEmpty()) {
             try {
                 ResultSet result = iPixelmon.clientDb.query("SELECT * FROM tabletMessages");
 
@@ -70,7 +68,7 @@ public class Mail extends App {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+//        }
 
         int listWidth = screenBounds.getWidth() - 50;
         int listHeight = screenBounds.getHeight() - 10;

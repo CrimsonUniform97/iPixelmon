@@ -107,8 +107,6 @@ public class GuiTextField extends Gui {
             return;
         }
 
-        System.out.println("CALLED");
-
         if(unicodeFlag)
          fontRenderer.setUnicodeFlag(true);
 

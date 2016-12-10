@@ -35,16 +35,15 @@ public abstract class GuiScrollList extends Gui {
         return bounds.getHeight();
     }
 
-    public int getMinimumGripSize(){
+    public int getMinimumGripSize() {
         return 20;
     }
 
-    // TODO: Fix flickering just because the objects don't fill in the space. Look into GuiScrollingTextField
     public void draw(int mouseX, int mouseY) {
         int contentHeight = getContentHeight();
         contentHeight = contentHeight == 0 ? 1 : contentHeight;
 
-        float ratio = bounds.getHeight() / contentHeight;
+        float ratio = (float) bounds.getHeight() / (float) contentHeight;
         float gripSize = bounds.getHeight() * ratio;
         float trackSize = bounds.getHeight();
 
@@ -65,14 +64,12 @@ public abstract class GuiScrollList extends Gui {
             if (this.initialMouseClickY == -1.0F) {
                 if (isHovering) {
 
-                    if(mouseX >= scrollBarLeft && mouseX < scrollBarRight && (mouseY - bounds.getY() > gripPosition) && (mouseY - bounds.getY()) < gripPosition + gripSize) {
-                        this.initialMouseClickY = Math.abs((mouseY - bounds.getY()) - gripPosition);
-                    } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && (mouseY - bounds.getY()) < gripPosition) {
+                    if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && (mouseY - bounds.getY()) < gripPosition) {
                         scrollY -= getSingleUnit();
                     } else if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight && (mouseY - bounds.getY()) > gripPosition + gripSize) {
                         scrollY += getSingleUnit();
                     } else {
-                         int totalHeight = 0;
+                        int totalHeight = 0;
                         for (int i = 0; i < getSize(); i++) {
                             if (mouseY >= bounds.getY() + totalHeight - scrollY && mouseY <= (bounds.getY() + totalHeight - scrollY) + getObjectHeight(i)) {
                                 this.elementClicked(i, i == this.selected && System.currentTimeMillis() - this.lastClickTime < 250L);
@@ -81,7 +78,9 @@ public abstract class GuiScrollList extends Gui {
                             }
                             totalHeight += getObjectHeight(i);
                         }
+                        this.initialMouseClickY = Math.abs((mouseY - bounds.getY()) - gripPosition);
                     }
+
                 }
             } else if (this.initialMouseClickY >= 0.0F) {
                 float newGripPosition = (mouseY - bounds.getY()) - initialMouseClickY;
@@ -101,7 +100,9 @@ public abstract class GuiScrollList extends Gui {
             initialMouseClickY = -1f;
         }
 
-        scrollY = scrollY < 0 ? 0 : scrollY > windowScrollAreaSize ? windowScrollAreaSize : scrollY;
+        if (scrollY > windowScrollAreaSize) scrollY = windowScrollAreaSize;
+        if (scrollY < 0) scrollY = 0;
+        if (Float.isNaN(scrollY)) scrollY = 0;
 
         GlStateManager.disableTexture2D();
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -120,15 +121,15 @@ public abstract class GuiScrollList extends Gui {
         int viewHeight = bounds.getHeight();
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(left      * scaleW), (int)(mc.displayHeight - (bottom * scaleH)),
-                (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
+        GL11.glScissor((int) (left * scaleW), (int) (mc.displayHeight - (bottom * scaleH)),
+                (int) (listWidth * scaleW), (int) (viewHeight * scaleH));
 
         int totalHeight = 0;
         for (int i = 0; i < getSize(); i++) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(bounds.getX(), (bounds.getY() + totalHeight) - scrollY, 0);
 
-            if(selected == i) {
+            if (selected == i) {
                 drawSelectionBox(i, bounds.getWidth(), getObjectHeight(i));
             }
 
@@ -169,7 +170,7 @@ public abstract class GuiScrollList extends Gui {
     private int getContentHeight() {
         int contentHeight = 0;
 
-        for (int i = getSize(); i > 0; i--)
+        for (int i =0; i < getSize(); i++)
             contentHeight += getObjectHeight(i);
 
         return contentHeight;

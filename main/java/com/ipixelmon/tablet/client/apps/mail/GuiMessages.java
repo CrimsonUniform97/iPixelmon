@@ -23,9 +23,9 @@ public class GuiMessages extends GuiScrollList {
 
         String senders = "";
 
-        for(String s : conversation.getPlayers().values()) {
-            if(!s.equalsIgnoreCase(mc.thePlayer.getName())) {
-                if(senders.isEmpty()) {
+        for (String s : conversation.getPlayers().values()) {
+            if (!s.equalsIgnoreCase(mc.thePlayer.getName())) {
+                if (senders.isEmpty()) {
                     senders += s;
                 } else {
                     senders += ", " + s;
@@ -43,6 +43,7 @@ public class GuiMessages extends GuiScrollList {
 
     @Override
     public void elementClicked(int index, boolean doubleClick) {
-        App.getApp(Mail.class).setActiveApp(new AppConversation((Conversation) Mail.messages.toArray()[index]));
+        if (doubleClick)
+            App.getApp(Mail.class).setActiveApp(new AppConversation((Conversation) Mail.messages.toArray()[index]));
     }
 }
