@@ -14,7 +14,7 @@ public abstract class GuiScrollList extends Gui {
     public int xPosition, yPosition, width, height;
 
     private float scrollY = 0, initialMouseClickY = -1f;
-    private Rectangle bounds;
+    protected Rectangle bounds;
     protected Minecraft mc = Minecraft.getMinecraft();
     private int selected = -1;
     private long lastClickTime = 0L;
@@ -105,11 +105,9 @@ public abstract class GuiScrollList extends Gui {
         if (Float.isNaN(scrollY)) scrollY = 0;
 
         GlStateManager.disableTexture2D();
-        GL11.glDisable(GL11.GL_CULL_FACE);
         drawBackground();
         drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
         GlStateManager.enableTexture2D();
-        GL11.glEnable(GL11.GL_CULL_FACE);
 
         ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
         double scaleW = Minecraft.getMinecraft().displayWidth / res.getScaledWidth_double();
@@ -167,7 +165,7 @@ public abstract class GuiScrollList extends Gui {
         this.selected = selected;
     }
 
-    private int getContentHeight() {
+    public int getContentHeight() {
         int contentHeight = 0;
 
         for (int i =0; i < getSize(); i++)
@@ -177,6 +175,7 @@ public abstract class GuiScrollList extends Gui {
     }
 
     public void drawBackground() {
+        GL11.glDisable(GL11.GL_CULL_FACE);
         GlStateManager.color(0f, 0f, 0f, 1f);
         GL11.glBegin(GL11.GL_QUADS);
 
@@ -187,9 +186,11 @@ public abstract class GuiScrollList extends Gui {
             GL11.glVertex2f(bounds.getX(), bounds.getY() + bounds.getHeight());
         }
         GL11.glEnd();
+        GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
     public void drawScrollbar(float scrollBarLeft, float scrollBarRight, float gripPosition, float gripSize) {
+        GL11.glDisable(GL11.GL_CULL_FACE);
         GlStateManager.color(128f / 255f, 128f / 255f, 128f / 255f, 1f);
 
         GL11.glBegin(GL11.GL_QUADS);
@@ -201,6 +202,7 @@ public abstract class GuiScrollList extends Gui {
             GL11.glVertex2f(scrollBarLeft, bounds.getY() + gripPosition + gripSize);
         }
         GL11.glEnd();
+        GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
     public void drawSelectionBox(int index, int width, int height) {

@@ -10,6 +10,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Rectangle;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by colby on 10/28/2016.
@@ -70,9 +72,11 @@ public class GuiTextField extends Gui {
     public void keyTyped(char typedChar, int keyCode) {
         if(!isEnabled()) return;
 
-        if(keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT || keyCode == Keyboard.KEY_TAB || keyCode == Keyboard.KEY_CAPITAL) return;
+        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= -]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher("" + typedChar);
+        boolean b = m.find();
 
-        if(keyCode == Keyboard.KEY_UP || keyCode == Keyboard.KEY_DOWN || keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT) return;
+        if(b && keyCode != Keyboard.KEY_BACK) return;
 
         if(keyCode == Keyboard.KEY_LEFT || keyCode == Keyboard.KEY_RIGHT) {
             cursorPos = keyCode == Keyboard.KEY_LEFT && cursorPos - 1 > -1 ? cursorPos - 1 : keyCode == Keyboard.KEY_RIGHT && cursorPos + 1 < text.length() + 1 ? cursorPos + 1 : cursorPos;
@@ -90,11 +94,6 @@ public class GuiTextField extends Gui {
         } catch (Exception e) {
         }
     }
-
-    /*
-    aaadad5adadwadawdawdawdawdawdawdawdadadwadawdaw5da5weawrawdawdawaeawdawdawrawdawdawdawdwawaw awdawdwa wdadawdawdawdawtradawdwadawdatawadawdadawdawdatadwa5dadadawdawd
-    aaadad5adadwadawdawdawdawdawdawdawdadadwadawdaw5da5weawrawdawdawaeawdawdawrawdawdawdawdwawaw awdawdwa wdad awdawdawdawtradawdwadawdatawadawdadawdawda tadwa5dadadawdawd
-     */
 
     public void mouseClicked(int mouseX, int mouseY) {
 

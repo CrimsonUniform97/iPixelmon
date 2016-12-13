@@ -34,7 +34,6 @@ public class Conversation implements Comparable {
             for (String s : result.getString("messages").split("\\\\u2665")) {
                 if (s != null && !s.isEmpty()) {
                     messages.add(s);
-                    System.out.println(s);
                 }
             }
         }

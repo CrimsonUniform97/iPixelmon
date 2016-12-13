@@ -1,7 +1,11 @@
 package com.ipixelmon.tablet.client.apps.mail;
 
 import com.ipixelmon.GuiScrollingTextField;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.client.apps.mail.packets.PacketSendMessage;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -13,6 +17,7 @@ public class AppConversation extends App {
     GuiConversation guiConversation;
     Conversation conversation;
     GuiScrollingTextField textField;
+    boolean setMax = false;
 
     public AppConversation(Conversation conversation) {
         super("conversation", false);
@@ -36,8 +41,17 @@ public class AppConversation extends App {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-        guiConversation.keyTyped(typedChar, keyCode);
-        textField.keyTyped(typedChar, keyCode);
+
+        if (keyCode != Keyboard.KEY_RETURN)
+            textField.keyTyped(typedChar, keyCode);
+
+        // TODO: Scroll down when new message comes through. Probably needs to be done in PacketReceiveMessage, not here. Figure it out.
+        if (keyCode == Keyboard.KEY_RETURN) {
+            iPixelmon.network.sendToServer(new PacketSendMessage(textField.getTextField().getText(), conversation.messageID));
+            textField.getTextField().setText("");
+            textField.getTextField().mouseClicked(textField.xPosition, textField.yPosition);
+        }
+
     }
 
     @Override
@@ -49,11 +63,25 @@ public class AppConversation extends App {
 
         guiConversation = new GuiConversation((width - listWidth) / 2, (height - listHeight) / 2, listWidth, listHeight - 50, conversation);
         textField = new GuiScrollingTextField(guiConversation.xPosition, guiConversation.yPosition + guiConversation.height + 4, guiConversation.width, 50);
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(250L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                guiConversation.setScrollY(guiConversation.getMaxScrollY());
+            }
+        }.start();
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
+
     }
 
 }

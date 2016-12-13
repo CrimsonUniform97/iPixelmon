@@ -76,14 +76,13 @@ public class PacketSendMessage implements IMessage {
                     ResultSet resultSet = iPixelmon.mysql.query("SELECT * FROM tabletMessages WHERE messageID='" + message.messageID.toString() + "';");
 
                     if (resultSet.next()) {
-
                         List<UUID> validPlayers = Lists.newArrayList();
                         for (String s : resultSet.getString("players").split(","))
                             if (s != null && !s.isEmpty())
                                 validPlayers.add(UUID.fromString(s));
 
 
-                        if (!validPlayers.contains(ctx.getServerHandler().playerEntity)) return null;
+                        if (!validPlayers.contains(ctx.getServerHandler().playerEntity.getUniqueID())) return null;
 
                         for (UUID p : validPlayers)
                             if (PlayerUtil.isPlayerOnline(p))
