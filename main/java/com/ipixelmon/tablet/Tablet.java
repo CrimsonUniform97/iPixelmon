@@ -23,6 +23,8 @@ public class Tablet implements IMod {
         return  "tablet";
     }
 
+    // TODO: Add Pixelbay to the Tablet
+
     @Override
     public void preInit() {
         // friends packets

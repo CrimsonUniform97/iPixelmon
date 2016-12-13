@@ -1,6 +1,8 @@
 package com.ipixelmon.pixelbay.gui.sell;
 
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.BasicScrollList;
+import com.ipixelmon.pixelbay.gui.buy.GuiSearch;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
@@ -23,7 +25,7 @@ public final class GuiSell extends GuiScreen {
     public static final int ID = 987;
 
     protected BasicScrollList scrollList;
-    private int pokemonBtnId, itemBtnId;
+    private int pokemonBtnId, itemBtnId, buyBtnId;
     private int scrollListWidth = 300, scrollListHeight = 150;
 
     @Override
@@ -32,6 +34,7 @@ public final class GuiSell extends GuiScreen {
         scrollList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
+        this.drawBuyBtnIcon();
     }
 
     @Override
@@ -49,6 +52,9 @@ public final class GuiSell extends GuiScreen {
             this.scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this, getItems());
         }
 
+        if(button == this.buttonList.get(this.buyBtnId))
+            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, GuiSearch.ID, null, 0, 0, 0);
+
         scrollList.actionPerformed(button);
     }
 
@@ -62,6 +68,7 @@ public final class GuiSell extends GuiScreen {
         scrollList = new ListItem(this.mc, scrollListWidth, scrollListHeight, posY + 20, posY + 170, posX, 30, this, getItems());
         this.buttonList.add(new GuiButton(pokemonBtnId = 0, posX + scrollList.listWidth, posY + 20 + 20, 20, 20, ""));
         this.buttonList.add(new GuiButton(itemBtnId = 1, posX + scrollList.listWidth, posY + 20 + 40, 20, 20, ""));
+        this.buttonList.add(new GuiButton(buyBtnId = 2, posX + scrollList.listWidth, posY + 20 + 00, 20, 20, ""));
     }
 
     private void drawPokemonBtnIcon()
@@ -89,6 +96,24 @@ public final class GuiSell extends GuiScreen {
         GuiButton itemBtn = this.buttonList.get(this.itemBtnId);
         if (mc.getRenderItem() != null)
             mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, itemBtn.xPosition + ((itemBtn.width - 16) / 2), itemBtn.yPosition + ((itemBtn.height - 16) / 2));
+
+        RenderHelper.disableStandardItemLighting();
+    }
+
+    private void drawBuyBtnIcon()
+    {
+        ItemStack itemStack = new ItemStack(Items.gold_ingot);
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.disableRescaleNormal();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        RenderHelper.enableGUIStandardItemLighting();
+
+        GuiButton buyBtn = this.buttonList.get(this.buyBtnId);
+        if (mc.getRenderItem() != null)
+            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, buyBtn.xPosition + ((buyBtn.width - 16) / 2), buyBtn.yPosition + ((buyBtn.height - 16) / 2));
 
         RenderHelper.disableStandardItemLighting();
     }

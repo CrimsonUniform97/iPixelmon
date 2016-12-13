@@ -9,6 +9,7 @@ import com.ipixelmon.tablet.client.apps.mail.packets.PacketSendMessage;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -48,7 +49,7 @@ public class AppComposeMessage extends App {
         GuiUtil.instance.drawImage(this.buttonList.get(0).xPosition + ((20 - 16) / 2), this.buttonList.get(0).yPosition + ((20 - 16) / 2), 16, 16);
 
         players.drawTextField();
-        message.draw(mouseX, mouseY);
+        message.draw(mouseX, mouseY, Mouse.getDWheel());
     }
 
     @Override

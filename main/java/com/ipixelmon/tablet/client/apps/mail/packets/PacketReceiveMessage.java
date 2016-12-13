@@ -1,6 +1,8 @@
 package com.ipixelmon.tablet.client.apps.mail.packets;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.client.apps.mail.AppConversation;
 import com.ipixelmon.tablet.client.apps.mail.Conversation;
 import com.ipixelmon.tablet.client.apps.mail.Mail;
 import io.netty.buffer.ByteBuf;
@@ -52,6 +54,12 @@ public class PacketReceiveMessage implements IMessage {
                 if (conversation.messageID.equals(message.messageID)) {
                     conversation.getMessages().add(message.player.toString() + "\\u2666" + message.message);
                     conversation.sync();
+
+                    if(App.activeApp instanceof AppConversation) {
+                        AppConversation appConversation = (AppConversation) App.activeApp;
+                        appConversation.getGuiConversation().setScrollY(appConversation.getGuiConversation().getMaxScrollY());
+                    }
+
                     return null;
                 }
             }

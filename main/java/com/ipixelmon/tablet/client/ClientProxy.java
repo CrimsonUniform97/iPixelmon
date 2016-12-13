@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.apps.friends.Friends;
 import com.ipixelmon.tablet.client.apps.mail.Mail;
 import com.ipixelmon.tablet.client.apps.gallery.Gallery;
+import com.ipixelmon.tablet.client.apps.pixelbay.Pixelbay;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -34,6 +35,7 @@ public class ClientProxy extends CommonProxy {
         new Gallery("Gallery");
         new Mail("Mail");
         new Friends("Friends");
+        new Pixelbay("Pixelbay");
     }
 
 }

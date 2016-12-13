@@ -4,8 +4,8 @@ import com.ipixelmon.GuiScrollingTextField;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import com.ipixelmon.tablet.client.apps.mail.packets.PacketSendMessage;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
@@ -14,10 +14,11 @@ import java.io.IOException;
  */
 public class AppConversation extends App {
 
-    GuiConversation guiConversation;
-    Conversation conversation;
-    GuiScrollingTextField textField;
-    boolean setMax = false;
+    private GuiConversation guiConversation;
+    private Conversation conversation;
+    private GuiScrollingTextField textField;
+
+    // TODO: Test conversation between two people.
 
     public AppConversation(Conversation conversation) {
         super("conversation", false);
@@ -28,8 +29,10 @@ public class AppConversation extends App {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        guiConversation.draw(mouseX, mouseY);
-        textField.draw(mouseX, mouseY);
+        int dWheel = Mouse.getDWheel();
+
+        textField.draw(mouseX, mouseY, dWheel);
+        guiConversation.draw(mouseX, mouseY, dWheel);
     }
 
     @Override
@@ -45,7 +48,6 @@ public class AppConversation extends App {
         if (keyCode != Keyboard.KEY_RETURN)
             textField.keyTyped(typedChar, keyCode);
 
-        // TODO: Scroll down when new message comes through. Probably needs to be done in PacketReceiveMessage, not here. Figure it out.
         if (keyCode == Keyboard.KEY_RETURN) {
             iPixelmon.network.sendToServer(new PacketSendMessage(textField.getTextField().getText(), conversation.messageID));
             textField.getTextField().setText("");
@@ -63,25 +65,16 @@ public class AppConversation extends App {
 
         guiConversation = new GuiConversation((width - listWidth) / 2, (height - listHeight) / 2, listWidth, listHeight - 50, conversation);
         textField = new GuiScrollingTextField(guiConversation.xPosition, guiConversation.yPosition + guiConversation.height + 4, guiConversation.width, 50);
-
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(250L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                guiConversation.setScrollY(guiConversation.getMaxScrollY());
-            }
-        }.start();
+        textField.getTextField().setEnabled(true);
+        guiConversation.setScrollY(guiConversation.getMaxScrollY());
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
-
     }
 
+    public GuiConversation getGuiConversation() {
+        return guiConversation;
+    }
 }

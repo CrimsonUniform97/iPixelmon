@@ -62,16 +62,11 @@ public class GuiScrollingTextField extends GuiScrollList {
     @Override
     public void keyTyped(char keycode, int keynum) {
         super.keyTyped(keycode, keynum);
-        int prevHeight = getObjectHeight(0);
         textField.keyTyped(keycode, keynum);
-        int postHeight = getObjectHeight(0);
 
-        // TODO: Get scroll list to move when typing
-        int totalHeight = textField.getCursorLine() * mc.fontRendererObj.FONT_HEIGHT;
-
-        if (totalHeight > height) {
-            setScrollY(getMaxScrollY());
-        }
+        // move the window view to wherever the cursor is
+        int y = textField.getCursorLine() * mc.fontRendererObj.FONT_HEIGHT;
+        setScrollY(y);
     }
 
     public void mouseClicked(int mouseX, int mouseY) {

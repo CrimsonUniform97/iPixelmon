@@ -1,5 +1,6 @@
 package com.ipixelmon.pixelbay.gui.buy;
 
+import com.ipixelmon.pixelbay.gui.sell.GuiSell;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.enums.EnumPokemon;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 
@@ -20,8 +22,9 @@ public class GuiSearch extends GuiScreen
     public static final int ID = 9745;
 
     protected ISearchList searchList;
-    private int searchBtnId, pokemonBtnId, itemBtnId;
+    private int searchBtnId, pokemonBtnId, itemBtnId, sellBtnId;
     private int scrollListWidth = 300, scrollListHeight = 150;
+    private static ResourceLocation sellIcon = new ResourceLocation(iPixelmon.id, "pixelbay/textures/gui/sell.png");
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
@@ -31,6 +34,7 @@ public class GuiSearch extends GuiScreen
         GuiPopupSearch.drawSearchButton(mc, this.buttonList.get(searchBtnId));
         this.drawItemBtnIcon();
         this.drawPokemonBtnIcon();
+        this.drawSellBtnIcon();
     }
 
     @Override
@@ -82,6 +86,9 @@ public class GuiSearch extends GuiScreen
             return;
         }
 
+        if(button == buttonList.get(sellBtnId))
+            Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, GuiSell.ID, null, 0, 0, 0);
+
         searchList.actionPerformed(button);
     }
 
@@ -98,6 +105,16 @@ public class GuiSearch extends GuiScreen
         buttonList.add(new GuiButton(searchBtnId = 0, posX + searchList.listWidth, posY + 20 + 00, 20, 20, ""));
         buttonList.add(new GuiButton(pokemonBtnId = 1, posX + searchList.listWidth, posY + 20 + 20, 20, 20, ""));
         buttonList.add(new GuiButton(itemBtnId = 2, posX + searchList.listWidth, posY + 20 + 40, 20, 20, ""));
+        buttonList.add(new GuiButton(sellBtnId = 3, posX + searchList.listWidth, posY + 20 + 60, 20, 20, ""));
+    }
+
+    private void drawSellBtnIcon()
+    {
+        GlStateManager.enableBlend();
+        GlStateManager.color(1, 1, 1, 1);
+        mc.getTextureManager().bindTexture(sellIcon);
+        GuiButton sellBtn = buttonList.get(sellBtnId);
+        GuiHelper.drawImageQuad(sellBtn.xPosition + ((sellBtn.width - 16) / 2), sellBtn.yPosition + ((sellBtn.height - 16) / 2), 16, 16, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
     }
 
     private void drawPokemonBtnIcon()

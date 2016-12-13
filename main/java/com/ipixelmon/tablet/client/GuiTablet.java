@@ -99,6 +99,7 @@ public class GuiTablet extends GuiScreen {
 
         bgBounds = new Rectangle((width - boundary.getWidth()) / 2, (height - boundary.getHeight()) / 2, boundary.getWidth(), boundary.getHeight());
         screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
+        App.activeApp = null;
         if (App.activeApp != null) {
             App.activeApp.screenBounds = screenBounds;
             App.activeApp.setWorldAndResolution(mc, width, height);

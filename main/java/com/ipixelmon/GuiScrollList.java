@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.client.GuiScrollingList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -39,7 +40,8 @@ public abstract class GuiScrollList extends Gui {
         return 20;
     }
 
-    public void draw(int mouseX, int mouseY) {
+    // have to ask for dWheel to prevent scrolling not working when two scroll lists are in use.
+    public void draw(int mouseX, int mouseY, int dWheel) {
         int contentHeight = getContentHeight();
         contentHeight = contentHeight == 0 ? 1 : contentHeight;
 
@@ -47,6 +49,7 @@ public abstract class GuiScrollList extends Gui {
         float gripSize = bounds.getHeight() * ratio;
         float trackSize = bounds.getHeight();
 
+        // keep the gripSize reasonable.
         gripSize = gripSize > getMaximumGripSize() ? getMaximumGripSize() : gripSize < getMinimumGripSize() ? getMinimumGripSize() : gripSize;
 
         float trackScrollAreaSize = trackSize - gripSize;
@@ -82,15 +85,16 @@ public abstract class GuiScrollList extends Gui {
                     }
 
                 }
-            } else if (this.initialMouseClickY >= 0.0F) {
-                float newGripPosition = (mouseY - bounds.getY()) - initialMouseClickY;
+            } else {
+                boolean above = ((mouseY - bounds.getY()) - gripPosition) < 0;
+                float newGripPosition = (mouseY - bounds.getY()) + (above ? initialMouseClickY : -initialMouseClickY);
                 newGripPosition = newGripPosition < 0 ? 0 : newGripPosition > trackScrollAreaSize ? trackScrollAreaSize : newGripPosition;
                 float newGripPositionRatio = newGripPosition / trackScrollAreaSize;
                 scrollY = newGripPositionRatio * windowScrollAreaSize;
                 gripPosition = newGripPosition;
             }
         } else {
-            int scroll = Mouse.getDWheel();
+            int scroll = dWheel;
             if (isHovering && scroll != 0) {
                 if (scroll > 0) scroll = -1;
                 else if (scroll < 0) scroll = 1;
@@ -100,6 +104,8 @@ public abstract class GuiScrollList extends Gui {
             initialMouseClickY = -1f;
         }
 
+
+        // just some fixes to keep the window from going out of view
         if (scrollY > windowScrollAreaSize) scrollY = windowScrollAreaSize;
         if (scrollY < 0) scrollY = 0;
         if (Float.isNaN(scrollY)) scrollY = 0;
@@ -118,10 +124,13 @@ public abstract class GuiScrollList extends Gui {
         int listWidth = bounds.getWidth();
         int viewHeight = bounds.getHeight();
 
+
+        // use scissoring to make the drawing seem seamless and continuous
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor((int) (left * scaleW), (int) (mc.displayHeight - (bottom * scaleH)),
                 (int) (listWidth * scaleW), (int) (viewHeight * scaleH));
 
+        // draw all of the content object by object
         int totalHeight = 0;
         for (int i = 0; i < getSize(); i++) {
             GlStateManager.pushMatrix();
@@ -168,7 +177,7 @@ public abstract class GuiScrollList extends Gui {
     public int getContentHeight() {
         int contentHeight = 0;
 
-        for (int i =0; i < getSize(); i++)
+        for (int i = 0; i < getSize(); i++)
             contentHeight += getObjectHeight(i);
 
         return contentHeight;

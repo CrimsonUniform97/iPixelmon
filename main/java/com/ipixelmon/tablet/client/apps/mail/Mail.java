@@ -4,6 +4,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.client.App;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
 import java.io.*;
 import java.sql.ResultSet;
@@ -29,7 +30,7 @@ public class Mail extends App {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        guiMessages.draw(mouseX, mouseY);
+        guiMessages.draw(mouseX, mouseY, Mouse.getDWheel());
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
