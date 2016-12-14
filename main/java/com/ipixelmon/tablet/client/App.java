@@ -1,10 +1,16 @@
 package com.ipixelmon.tablet.client;
 
 import com.google.common.collect.Maps;
+import com.ipixelmon.GuiUtil;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.client.apps.gallery.Gallery;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
 import java.io.*;
@@ -18,9 +24,13 @@ import java.util.TreeSet;
 public abstract class App extends GuiScreen implements Comparable<App> {
 
     public final String name;
-    public Rectangle screenBounds = new Rectangle();
+    private Rectangle screenBounds = new Rectangle();
+    private Rectangle bgBounds = new Rectangle();
 
-    public static App activeApp = null;
+    private static final ResourceLocation bgTexture = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/tablet.png");
+    private static final ResourceLocation defaultWallpaper = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/default_wallpaper.png");
+
+    private static App activeApp = null;
 
     public static final Set<App> apps = new TreeSet<>();
     public static final Map<String, ResourceLocation> cachedIcons = Maps.newHashMap();
@@ -32,12 +42,11 @@ public abstract class App extends GuiScreen implements Comparable<App> {
     }
 
     public void setActiveApp(App app) {
-        App.activeApp = app;
-        if (App.activeApp != null) {
-            App.activeApp.screenBounds = screenBounds;
-            App.activeApp.setWorldAndResolution(mc, width, height);
-            App.activeApp.initGui();
-        }
+        Minecraft.getMinecraft().displayGuiScreen(app);
+    }
+
+    public static App getActiveApp() {
+        return activeApp;
     }
 
     @Override
@@ -47,31 +56,35 @@ public abstract class App extends GuiScreen implements Comparable<App> {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        drawTablet();
+        drawWallpaper();
         super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-    }
-
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
     }
 
     @Override
     public void initGui() {
         super.initGui();
+
+        Dimension bgSize = new Dimension(614, 378);
+
+        Dimension boundary = GuiUtil.instance.getScaledDimension(bgSize, new Dimension(width, height));
+
+        float ratioW = (float) boundary.getWidth() / (float) bgSize.getWidth();
+        float ratioH = (float) boundary.getHeight() / (float) bgSize.getHeight();
+
+        int xOffset = ((int) (ratioW * 39));
+        int yOffset = ((int) (ratioH * 38));
+
+        bgBounds = new Rectangle((width - boundary.getWidth()) / 2, (height - boundary.getHeight()) / 2, boundary.getWidth(), boundary.getHeight());
+        screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
+    }
+
+    public Rectangle getBgBounds() {
+        return bgBounds;
+    }
+
+    public Rectangle getScreenBounds() {
+        return screenBounds;
     }
 
     public ResourceLocation getIcon() {
@@ -86,6 +99,28 @@ public abstract class App extends GuiScreen implements Comparable<App> {
         for (App app : apps) if (app.getClass().equals(appClass)) return app;
 
         return null;
+    }
+
+    private void drawWallpaper() {
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        if (Gallery.getWallpaper() != null) {
+            Gallery.getWallpaper().drawWallpaper(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
+        } else {
+            mc.getTextureManager().bindTexture(defaultWallpaper);
+            GuiUtil.instance.drawImage(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
+        }
+
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(0/255f, 0/255f, 0/255f, 128f/255f);
+        this.drawTexturedModalRect(getScreenBounds().getX(), getScreenBounds().getY(), 0, 0, getScreenBounds().getWidth(), getScreenBounds().getHeight());
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableTexture2D();
+    }
+
+    private void drawTablet() {
+        mc.getTextureManager().bindTexture(bgTexture);
+        GuiUtil.instance.drawImage(getBgBounds().getX(), getBgBounds().getY(), getBgBounds().getWidth(), getBgBounds().getHeight());
     }
 
 }

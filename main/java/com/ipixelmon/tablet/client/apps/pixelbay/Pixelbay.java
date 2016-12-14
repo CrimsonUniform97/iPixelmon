@@ -15,19 +15,10 @@ public class Pixelbay extends App {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-//        super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    @Override
     public void initGui() {
         super.initGui();
         Minecraft.getMinecraft().thePlayer.openGui(iPixelmon.instance, GuiSearch.ID, null, 0, 0, 0);
     }
 
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-    }
 
 }

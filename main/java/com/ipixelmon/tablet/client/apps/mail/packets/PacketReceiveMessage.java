@@ -55,8 +55,8 @@ public class PacketReceiveMessage implements IMessage {
                     conversation.getMessages().add(message.player.toString() + "\\u2666" + message.message);
                     conversation.sync();
 
-                    if(App.activeApp instanceof AppConversation) {
-                        AppConversation appConversation = (AppConversation) App.activeApp;
+                    if(App.getActiveApp() instanceof AppConversation) {
+                        AppConversation appConversation = (AppConversation) App.getActiveApp();
                         appConversation.getGuiConversation().setScrollY(appConversation.getGuiConversation().getMaxScrollY());
                     }
 

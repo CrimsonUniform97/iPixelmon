@@ -67,8 +67,8 @@ public class Friends extends App {
         mc.fontRendererObj.setUnicodeFlag(false);
 
 
-            mc.fontRendererObj.drawString(message.getMessage(), screenBounds.getX() +
-                    ((screenBounds.getWidth() - mc.fontRendererObj.getStringWidth(message.getMessage())) / 2), screenBounds.getY() + 2, 0xFFFFFF);
+            mc.fontRendererObj.drawString(message.getMessage(), getScreenBounds().getX() +
+                    ((getScreenBounds().getWidth() - mc.fontRendererObj.getStringWidth(message.getMessage())) / 2), getScreenBounds().getY() + 2, 0xFFFFFF);
 
     }
 
@@ -127,9 +127,9 @@ public class Friends extends App {
 
         FontRenderer fontRenderer = fontRendererObj;
         fontRenderer.setUnicodeFlag(true);
-        addFriendTxtField = new CustomGuiTextField(0, fontRenderer, screenBounds.getX() + screenBounds.getWidth() - 67, screenBounds.getY() + screenBounds.getHeight() - 12, 65, 10);
+        addFriendTxtField = new CustomGuiTextField(0, fontRenderer, getScreenBounds().getX() + getScreenBounds().getWidth() - 67, getScreenBounds().getY() + getScreenBounds().getHeight() - 12, 65, 10);
 
-        friendsList = new GuiFriendsList(mc, screenBounds.getX() + 8, screenBounds.getY() + 12, 65, 65, 12, this);
+        friendsList = new GuiFriendsList(mc, getScreenBounds().getX() + 8, getScreenBounds().getY() + 12, 65, 65, 12, this);
 
         requestsList = new GuiFriendRequests(mc, friendsList.xPosition, friendsList.yPosition + friendsList.height + 34, 65, 65, 12, this);
 

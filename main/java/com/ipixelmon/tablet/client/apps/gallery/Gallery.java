@@ -63,7 +63,7 @@ public class Gallery extends App {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+        TileIterator tileIterator = new TileIterator(getScreenBounds(), columns, rows, wallpapers.toArray());
 
         if(viewingWallpaper != null) {
 
@@ -78,7 +78,7 @@ public class Gallery extends App {
                 viewingWallpaper = null;
             }
 
-            tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+            tileIterator = new TileIterator(getScreenBounds(), columns, rows, wallpapers.toArray());
 
             if(page > tileIterator.getMaxPages()) page = tileIterator.getMaxPages();
 
@@ -117,13 +117,13 @@ public class Gallery extends App {
     @Override
     public void initGui() {
         super.initGui();
-        folderBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 0), 16, 16);
-        reloadBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 1), 16, 16);
-        rightBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
-        leftBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18) - 1, screenBounds.getY() + (18 * 3), 16, 16);
-        setWallpaperBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 0), 16, 16);
-        trashBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 17), screenBounds.getY() + (18 * 1), 16, 16);
-        goBackBounds = new Rectangle(screenBounds.getX() + (screenBounds.getWidth() - 18), screenBounds.getY() + (18 * 2), 16, 16);
+        folderBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18), getScreenBounds().getY() + (18 * 0), 16, 16);
+        reloadBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18), getScreenBounds().getY() + (18 * 1), 16, 16);
+        rightBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18), getScreenBounds().getY() + (18 * 2), 16, 16);
+        leftBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18) - 1, getScreenBounds().getY() + (18 * 3), 16, 16);
+        setWallpaperBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18), getScreenBounds().getY() + (18 * 0), 16, 16);
+        trashBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 17), getScreenBounds().getY() + (18 * 1), 16, 16);
+        goBackBounds = new Rectangle(getScreenBounds().getX() + (getScreenBounds().getWidth() - 18), getScreenBounds().getY() + (18 * 2), 16, 16);
         viewingWallpaper = null;
     }
 
@@ -134,9 +134,9 @@ public class Gallery extends App {
 
     private void drawViewingWallpaperScreen(int mouseX, int mouseY) {
         Dimension boundary = GuiUtil.instance.getScaledDimension(new Dimension(viewingWallpaper.getImage().getWidth(),
-                viewingWallpaper.getImage().getHeight()), new Dimension(screenBounds.getWidth() - 20, screenBounds.getHeight() - 20));
-        viewingWallpaper.drawWallpaper(screenBounds.getX() + 1,
-                screenBounds.getY() + ((screenBounds.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
+                viewingWallpaper.getImage().getHeight()), new Dimension(getScreenBounds().getWidth() - 20, getScreenBounds().getHeight() - 20));
+        viewingWallpaper.drawWallpaper(getScreenBounds().getX() + 1,
+                getScreenBounds().getY() + ((getScreenBounds().getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
         mc.getTextureManager().bindTexture(trashIcon);
         GuiUtil.instance.drawImage(trashBounds.getX(), trashBounds.getY(), trashBounds.getWidth(), trashBounds.getHeight());
@@ -168,7 +168,7 @@ public class Gallery extends App {
     }
 
     private void drawWallpapers(int mouseX, int mouseY) {
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, wallpapers.toArray());
+        TileIterator tileIterator = new TileIterator(getScreenBounds(), columns, rows, wallpapers.toArray());
         Wallpaper wallpaper;
         Rectangle rec;
         while (tileIterator.hasNext()) {

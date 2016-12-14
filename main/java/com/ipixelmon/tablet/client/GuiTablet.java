@@ -19,121 +19,26 @@ import java.util.Map;
 /**
  * Created by colby on 10/28/2016.
  */
-public class GuiTablet extends GuiScreen {
-
-    private static final ResourceLocation bgTexture = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/tablet.png");
-    private static final ResourceLocation defaultWallpaper = new ResourceLocation(iPixelmon.id, "textures/gui/tablet/default_wallpaper.png");
-    private Dimension bgSize = new Dimension(614, 378);
-    private Rectangle bgBounds, screenBounds = new Rectangle();
+public class GuiTablet extends App {
 
     private Map<App, Animation> animations = Maps.newHashMap();
 
     private static final int columns = 4, rows = 2, iconWidth = 64, iconHeight = 64;
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        drawTablet();
-        drawWallpaper();
-        if (App.activeApp != null) {
-            App.activeApp.drawScreen(mouseX, mouseY, partialTicks);
-            return;
-        }
-
-        drawApps(mouseX, mouseY);
+    public GuiTablet() {
+        super("Tablet", false);
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (App.activeApp != null) {
-            if (keyCode == Keyboard.KEY_ESCAPE)
-                App.activeApp = null;
-            else
-                App.activeApp.keyTyped(typedChar, keyCode);
-            return;
-        }
-
-        super.keyTyped(typedChar, keyCode);
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        drawApps(mouseX, mouseY);
     }
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-
-        if (App.activeApp != null) {
-            App.activeApp.mouseClicked(mouseX, mouseY, mouseButton);
-            return;
-        }
-
-        App.activeApp = getAppUnderMouse(mouseX, mouseY);
-        if (App.activeApp != null) {
-            App.activeApp.screenBounds = screenBounds;
-            App.activeApp.setWorldAndResolution(mc, width, height);
-            App.activeApp.initGui();
-        }
-    }
-
-    @Override
-    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
-
-        if(App.activeApp != null) App.activeApp.actionPerformed(button);
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-        Dimension boundary = GuiUtil.instance.getScaledDimension(bgSize, new Dimension(width, height));
-
-        float ratioW = (float) boundary.getWidth() / (float) bgSize.getWidth();
-        float ratioH = (float) boundary.getHeight() / (float) bgSize.getHeight();
-
-        int xOffset = ((int) (ratioW * 39));
-        int yOffset = ((int) (ratioH * 38));
-
-
-        bgBounds = new Rectangle((width - boundary.getWidth()) / 2, (height - boundary.getHeight()) / 2, boundary.getWidth(), boundary.getHeight());
-        screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
-        App.activeApp = null;
-        if (App.activeApp != null) {
-            App.activeApp.screenBounds = screenBounds;
-            App.activeApp.setWorldAndResolution(mc, width, height);
-            App.activeApp.initGui();
-        }
-
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-        if (App.activeApp != null) App.activeApp.updateScreen();
-    }
-
-    private void drawTablet() {
-        mc.getTextureManager().bindTexture(bgTexture);
-        GuiUtil.instance.drawImage(bgBounds.getX(), bgBounds.getY(), bgBounds.getWidth(), bgBounds.getHeight());
-    }
-
-    private void drawWallpaper() {
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableBlend();
-        if (Gallery.getWallpaper() != null) {
-            Gallery.getWallpaper().drawWallpaper(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
-        } else {
-            mc.getTextureManager().bindTexture(defaultWallpaper);
-            GuiUtil.instance.drawImage(screenBounds.getX(), screenBounds.getY(), screenBounds.getWidth(), screenBounds.getHeight());
-        }
-
-        GlStateManager.disableTexture2D();
-        GlStateManager.color(0/255f, 0/255f, 0/255f, 128f/255f);
-        this.drawTexturedModalRect(screenBounds.getX(), screenBounds.getY(), 0, 0, screenBounds.getWidth(), screenBounds.getHeight());
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableTexture2D();
+        setActiveApp(getAppUnderMouse(mouseX, mouseY));
     }
 
     private void drawApps(int mouseX, int mouseY) {
@@ -142,7 +47,7 @@ public class GuiTablet extends GuiScreen {
         App app;
         Rectangle rec;
 
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, App.apps.toArray());
+        TileIterator tileIterator = new TileIterator(getScreenBounds(), columns, rows, App.apps.toArray());
 
         while (tileIterator.hasNext()) {
             app = (App) tileIterator.next();
@@ -207,7 +112,7 @@ public class GuiTablet extends GuiScreen {
         App app;
         Rectangle rec;
 
-        TileIterator tileIterator = new TileIterator(screenBounds, columns, rows, App.apps.toArray());
+        TileIterator tileIterator = new TileIterator(getScreenBounds(), columns, rows, App.apps.toArray());
 
         while (tileIterator.hasNext()) {
             app = (App) tileIterator.next();

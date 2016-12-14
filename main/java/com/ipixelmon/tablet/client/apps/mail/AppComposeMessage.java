@@ -33,8 +33,8 @@ public class AppComposeMessage extends App {
         super.initGui();
         buttonList.clear();
 
-        int listWidth = screenBounds.getWidth() - 50;
-        int listHeight = screenBounds.getHeight() - 10;
+        int listWidth = getScreenBounds().getWidth() - 50;
+        int listHeight = getScreenBounds().getHeight() - 10;
 
         message = new GuiScrollingTextField((width - listWidth) / 2, ((height - listHeight) / 2) + 10, listWidth, listHeight - 10);
         players = new GuiTextField((width - listWidth) / 2, message.yPosition - 12, listWidth, 10);

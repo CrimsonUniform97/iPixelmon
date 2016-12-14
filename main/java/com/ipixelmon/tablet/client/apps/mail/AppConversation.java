@@ -18,8 +18,6 @@ public class AppConversation extends App {
     private Conversation conversation;
     private GuiScrollingTextField textField;
 
-    // TODO: Test conversation between two people.
-
     public AppConversation(Conversation conversation) {
         super("conversation", false);
         this.conversation = conversation;
@@ -60,8 +58,8 @@ public class AppConversation extends App {
     public void initGui() {
         super.initGui();
 
-        int listWidth = screenBounds.getWidth() - 50;
-        int listHeight = screenBounds.getHeight() - 10;
+        int listWidth = getScreenBounds().getWidth() - 50;
+        int listHeight = getScreenBounds().getHeight() - 10;
 
         guiConversation = new GuiConversation((width - listWidth) / 2, (height - listHeight) / 2, listWidth, listHeight - 50, conversation);
         textField = new GuiScrollingTextField(guiConversation.xPosition, guiConversation.yPosition + guiConversation.height + 4, guiConversation.width, 50);

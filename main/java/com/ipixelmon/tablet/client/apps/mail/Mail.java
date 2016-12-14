@@ -30,8 +30,8 @@ public class Mail extends App {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        guiMessages.draw(mouseX, mouseY, Mouse.getDWheel());
         super.drawScreen(mouseX, mouseY, partialTicks);
+        guiMessages.draw(mouseX, mouseY, Mouse.getDWheel());
     }
 
     @Override
@@ -71,8 +71,8 @@ public class Mail extends App {
             }
 //        }
 
-        int listWidth = screenBounds.getWidth() - 50;
-        int listHeight = screenBounds.getHeight() - 10;
+        int listWidth = getScreenBounds().getWidth() - 50;
+        int listHeight = getScreenBounds().getHeight() - 10;
 
         guiMessages = new GuiMessages((width - listWidth) / 2, (height - listHeight) / 2, listWidth, listHeight);
 
