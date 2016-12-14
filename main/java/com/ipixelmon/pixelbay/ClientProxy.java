@@ -14,6 +14,5 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void init() {
-       MinecraftForge.EVENT_BUS.register(new BreakListener());
     }
 }

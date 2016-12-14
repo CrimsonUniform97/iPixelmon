@@ -54,6 +54,8 @@ public class Mail extends App {
         guiMessages.keyTyped(typedChar, keyCode);
     }
 
+    // TODO: Remove conversations and just make it mail. Make a mod for it in vanilla chat.
+
     @Override
     public void initGui() {
         super.initGui();
