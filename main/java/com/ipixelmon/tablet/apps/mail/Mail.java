@@ -1,11 +1,13 @@
 package com.ipixelmon.tablet.apps.mail;
 
+import com.ipixelmon.GuiUtil;
+import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.client.App;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Rectangle;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * Created by colby on 12/14/2016.
@@ -21,29 +23,35 @@ public class Mail extends App {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        drawBackground(getScreenBounds());
+        composeBtn.drawButton(mc, mouseX, mouseY);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        super.actionPerformed(button);
+
+        if (button.equals(composeBtn)) setActiveApp(new ComposeMail());
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        composeBtn.mousePressed(mc, mouseX, mouseY);
     }
 
     @Override
     public void initGui() {
         super.initGui();
+        this.buttonList.clear();
+
+        int stringWidth = mc.fontRendererObj.getStringWidth("Compose Message");
+        this.buttonList.add(composeBtn = new GuiButton(0, getScreenBounds().getX() + getScreenBounds().getWidth() - stringWidth, getScreenBounds().getY(), stringWidth, 20, "Compose Message"));
     }
 
-    private void drawRectFill(int x, int y, int width, int height, Color color) {
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GlStateManager.disableTexture2D();
-        GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-
-        GL11.glBegin(GL11.GL_QUADS);
-        {
-            GL11.glVertex2f(x, y);
-            GL11.glVertex2f(x + width, y);
-            GL11.glVertex2f(x + width, y + height);
-            GL11.glVertex2f(x, y + height);
-        }
-        GL11.glEnd();
-
-        GL11.glColor4f(1, 1, 1, 1);
-        GlStateManager.enableTexture2D();
-        GL11.glEnable(GL11.GL_CULL_FACE);
+    public static void drawBackground(Rectangle bounds) {
+        GuiUtil.drawRectFillBorder(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
+                Color.black, ColorPicker.color(255f, 252f, 211f, 255f), 1);
     }
+
 }

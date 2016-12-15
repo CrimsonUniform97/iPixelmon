@@ -1,5 +1,6 @@
 package com.ipixelmon;
 
+import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -7,6 +8,7 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Dimension;
 
+import java.awt.*;
 import java.nio.FloatBuffer;
 
 public class GuiUtil
@@ -90,6 +92,31 @@ public class GuiUtil
 
     public void drawImage(float x, float y, float width, float height) {
         GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
+    }
+
+    public static void drawRectFill(int x, int y, int width, int height, Color color) {
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GlStateManager.disableTexture2D();
+        GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        {
+            GL11.glVertex2f(x, y);
+            GL11.glVertex2f(x + width, y);
+            GL11.glVertex2f(x + width, y + height);
+            GL11.glVertex2f(x, y + height);
+        }
+        GL11.glEnd();
+
+        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager.enableTexture2D();
+        GL11.glEnable(GL11.GL_CULL_FACE);
+    }
+    public static void drawRectFillBorder(int x, int y, int width, int height, Color fill, Color border, int borderThickness) {
+        GuiUtil.drawRectFill(x, y, width, height, border);
+        GuiUtil.drawRectFill(x + borderThickness, y + borderThickness,
+                width - (borderThickness * 2), height - (borderThickness * 2),
+                fill);
     }
 
 }

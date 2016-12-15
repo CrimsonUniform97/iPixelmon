@@ -33,7 +33,7 @@ public class ClientProxy extends CommonProxy {
         }
 
         new Gallery("Gallery");
-        new Mail("Mail");
+        new Mail("Mail", true);
         new Friends("Friends");
         new Pixelbay("Pixelbay");
     }

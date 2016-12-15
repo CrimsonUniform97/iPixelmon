@@ -3,10 +3,10 @@ package com.ipixelmon.tablet;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.apps.mail.packet.PacketReceiveMail;
+import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.apps.friends.packet.*;
-import com.ipixelmon.tablet.apps.mail.packets.PacketReceiveMessage;
-import com.ipixelmon.tablet.apps.mail.packets.PacketSendMessage;
 import com.ipixelmon.tablet.notification.PacketNotification;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -35,8 +35,8 @@ public class Tablet implements IMod {
         iPixelmon.registerPacket(PacketRemoveFriend.Handler.class, PacketRemoveFriend.class, Side.SERVER);
 
         // mail packets
-        iPixelmon.registerPacket(PacketSendMessage.Handler.class, PacketSendMessage.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketReceiveMessage.Handler.class, PacketReceiveMessage.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketReceiveMail.Handler.class, PacketReceiveMail.class, Side.CLIENT);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.tablet.apps.friends.PlayerJoinListener;
+import com.ipixelmon.tablet.apps.mail.PlayerListener;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -36,5 +37,6 @@ public class ServerProxy extends CommonProxy {
         iPixelmon.mysql.createTable(Tablet.class, messages);
 
         MinecraftForge.EVENT_BUS.register(new PlayerJoinListener());
+        MinecraftForge.EVENT_BUS.register(new PlayerListener());
     }
 }
