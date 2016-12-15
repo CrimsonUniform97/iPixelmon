@@ -1,10 +1,10 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketFriendsListReq;
+import com.ipixelmon.tablet.apps.friends.packet.PacketFriendsListReq;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;

@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.pixelbay;
+package com.ipixelmon.tablet.apps.pixelbay;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.buy.GuiSearch;

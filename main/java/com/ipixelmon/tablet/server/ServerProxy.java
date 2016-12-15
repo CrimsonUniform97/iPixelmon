@@ -5,7 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.client.apps.friends.PlayerJoinListener;
+import com.ipixelmon.tablet.apps.friends.PlayerJoinListener;
 import net.minecraftforge.common.MinecraftForge;
 
 /**

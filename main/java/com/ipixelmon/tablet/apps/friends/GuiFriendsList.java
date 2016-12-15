@@ -1,14 +1,9 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.apps.friends;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.fml.client.GuiScrollingList;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by colbymchenry on 11/4/16.

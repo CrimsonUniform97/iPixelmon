@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.uuidmanager.UUIDManager;
 

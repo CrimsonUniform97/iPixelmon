@@ -1,11 +1,10 @@
-package com.ipixelmon.tablet.client.apps.friends.packet;
+package com.ipixelmon.tablet.apps.friends.packet;
 
 import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.client.apps.friends.Friend;
-import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
+import com.ipixelmon.tablet.apps.friends.FriendsAPI;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

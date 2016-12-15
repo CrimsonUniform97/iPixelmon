@@ -2,10 +2,10 @@ package com.ipixelmon.tablet.client;
 
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.client.apps.friends.Friends;
-import com.ipixelmon.tablet.client.apps.mail.Mail;
-import com.ipixelmon.tablet.client.apps.gallery.Gallery;
-import com.ipixelmon.tablet.client.apps.pixelbay.Pixelbay;
+import com.ipixelmon.tablet.apps.friends.Friends;
+import com.ipixelmon.tablet.apps.mail.Mail;
+import com.ipixelmon.tablet.apps.gallery.Gallery;
+import com.ipixelmon.tablet.apps.pixelbay.Pixelbay;
 import com.ipixelmon.tablet.notification.NotificationOverlay;
 import net.minecraftforge.common.MinecraftForge;
 

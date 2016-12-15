@@ -1,18 +1,15 @@
-package com.ipixelmon.tablet.client.apps.friends.packet;
+package com.ipixelmon.tablet.apps.friends.packet;
 
-import com.ipixelmon.tablet.client.apps.friends.Friend;
-import com.ipixelmon.tablet.client.apps.friends.FriendRequest;
-import com.ipixelmon.tablet.client.apps.friends.Friends;
-import com.ipixelmon.tablet.client.apps.friends.FriendsAPI;
+import com.ipixelmon.tablet.apps.friends.Friend;
+import com.ipixelmon.tablet.apps.friends.FriendRequest;
+import com.ipixelmon.tablet.apps.friends.Friends;
+import com.ipixelmon.tablet.apps.friends.FriendsAPI;
 import com.ipixelmon.tablet.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Date;
 import java.util.UUID;

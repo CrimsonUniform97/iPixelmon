@@ -1,17 +1,12 @@
-package com.ipixelmon.tablet.client.apps.friends;
+package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.SelectionForm;
-import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.client.apps.friends.packet.PacketAddFriendRes;
-import com.ipixelmon.tablet.notification.PacketNotification;
+import com.ipixelmon.tablet.apps.friends.packet.PacketAddFriendRes;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.UUID;
 
 /**

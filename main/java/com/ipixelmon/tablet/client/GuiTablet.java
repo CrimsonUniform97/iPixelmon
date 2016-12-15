@@ -2,15 +2,9 @@ package com.ipixelmon.tablet.client;
 
 import com.google.common.collect.Maps;
 import com.ipixelmon.GuiUtil;
-import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelegg.client.Animation;
-import com.ipixelmon.tablet.client.apps.gallery.Gallery;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
