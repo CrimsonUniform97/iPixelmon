@@ -55,6 +55,8 @@ public abstract class App extends GuiScreen implements Comparable<App> {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableBlend();
         drawTablet();
         drawWallpaper();
         super.drawScreen(mouseX, mouseY, partialTicks);

@@ -1,16 +1,22 @@
 package com.ipixelmon.tablet.apps.mail;
 
 import com.ipixelmon.GuiUtil;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.GuiTablet;
+import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Rectangle;
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +29,7 @@ public class Mail extends App {
         super(name, register);
     }
 
-    private GuiButton composeBtn;
+    private IconBtn composeBtn;
 
     public static List<MailObject> mail = new ArrayList<>();
 
@@ -34,8 +40,9 @@ public class Mail extends App {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawBackground(getScreenBounds());
-        composeBtn.drawButton(mc, mouseX, mouseY);
         listMail.draw(mouseX, mouseY, Mouse.getDWheel());
+        GlStateManager.color(1, 1, 1, 1);
+        composeBtn.drawButton(mc, mouseX, mouseY);
     }
 
     @Override
@@ -48,20 +55,31 @@ public class Mail extends App {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        composeBtn.mousePressed(mc, mouseX, mouseY);
+        if(composeBtn.mousePressed(mc, mouseX, mouseY)) actionPerformed(composeBtn);
     }
 
     @Override
     public void initGui() {
         super.initGui();
         this.buttonList.clear();
+        Mail.mail.clear();
+        try {
+            ResultSet result = iPixelmon.clientDb.query("SELECT * FROM tabletMail");
 
-        int stringWidth = mc.fontRendererObj.getStringWidth("Compose Message") + 10;
-        this.buttonList.add(composeBtn = new GuiButton(0,
-                getScreenBounds().getX() + getScreenBounds().getWidth() - stringWidth,
-                getScreenBounds().getY(), stringWidth, 20, "Compose Message"));
+            while(result.next()) {
+                Mail.mail.add(new MailObject(
+                        PacketSendMail.dateFormat.parse(result.getString("sentDate")),
+                        result.getString("sender"), result.getString("message")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        listMail = new ListMail(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
+        this.composeBtn = new IconBtn(0, getScreenBounds().getX() + getScreenBounds().getWidth() - 30,
+                getScreenBounds().getY() + getScreenBounds().getHeight() - 25, "Compose",
+                new ResourceLocation(iPixelmon.id, "textures/apps/mail/compose.png"));
+        listMail = new ListMail(getScreenBounds().getX() + 4, getScreenBounds().getY() + 4,
+                getScreenBounds().getWidth() - 8, getScreenBounds().getHeight() - 8);
     }
 
     @Override

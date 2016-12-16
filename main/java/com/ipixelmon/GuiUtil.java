@@ -90,7 +90,7 @@ public class GuiUtil
         return new Dimension(new_width, new_height);
     }
 
-    public void drawImage(float x, float y, float width, float height) {
+    public static void drawImage(float x, float y, float width, float height) {
         GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
     }
 

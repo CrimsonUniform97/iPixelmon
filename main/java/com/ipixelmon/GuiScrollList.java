@@ -140,7 +140,12 @@ public abstract class GuiScrollList extends Gui {
                 drawSelectionBox(i, bounds.getWidth(), getObjectHeight(i));
             }
 
-            drawObject(i);
+            int mX = (mouseX - xPosition);
+            mX = mX < 0 ? 0 : mX;
+            int mY = (mouseY - yPosition);
+            mY = mY < 0 ? 0 : mY;
+
+            drawObject(i, mX, mY);
             GlStateManager.popMatrix();
             totalHeight += getObjectHeight(i);
         }
@@ -238,7 +243,7 @@ public abstract class GuiScrollList extends Gui {
 
     public abstract int getObjectHeight(int index);
 
-    public abstract void drawObject(int index);
+    public abstract void drawObject(int index, int mouseX, int mouseY);
 
     public abstract int getSize();
 

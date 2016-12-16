@@ -65,7 +65,7 @@ public class ComposeMail extends App {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         players.mouseClicked(mouseX, mouseY);
         message.mouseClicked(mouseX, mouseY);
-        sendBtn.mousePressed(mc, mouseX, mouseY);
+        if(sendBtn.mousePressed(mc, mouseX, mouseY)) actionPerformed(sendBtn);
     }
 
     @Override
