@@ -2,7 +2,7 @@ package com.ipixelmon.tablet.apps.pixelbay;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.buy.GuiSearch;
-import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.apps.App;
 import net.minecraft.client.Minecraft;
 
 /**

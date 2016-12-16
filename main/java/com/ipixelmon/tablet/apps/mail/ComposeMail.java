@@ -2,11 +2,15 @@ package com.ipixelmon.tablet.apps.mail;
 
 import com.ipixelmon.GuiScrollingTextField;
 import com.ipixelmon.GuiTextField;
+import com.ipixelmon.GuiUtil;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
-import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.apps.App;
 import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -27,23 +31,33 @@ public class ComposeMail extends App {
         super.drawScreen(mouseX, mouseY, partialTicks);
         Mail.drawBackground(getScreenBounds());
         players.drawTextField();
+
+        GuiUtil.drawRectFill(message.xPosition - 1, message.yPosition - 1, message.width + 2, message.height + 2, Color.gray);
         message.draw(mouseX, mouseY, Mouse.getDWheel());
+
         sendBtn.drawButton(mc, mouseX, mouseY);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
+        String pStr = players.getText() + ",";
+        iPixelmon.network.sendToServer(new PacketSendMail(message.getTextField().getText(), pStr.split(",")));
     }
+
+    // TODO: Figure out max string length for network to send and limit it
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
 
-        if (PacketSendMail.checkChar(typedChar))
+        if (!PacketSendMail.checkChar(typedChar) || keyCode == Keyboard.KEY_BACK)
             players.keyTyped(typedChar, keyCode);
 
         message.keyTyped(typedChar, keyCode);
+
+        if(keyCode == Keyboard.KEY_ESCAPE)
+            setActiveApp(App.getApp(Mail.class));
     }
 
     @Override
@@ -55,19 +69,25 @@ public class ComposeMail extends App {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        sendBtn.enabled = !message.getTextField().getText().isEmpty() && !players.getText().isEmpty();
+    }
+
+    @Override
     public void initGui() {
         super.initGui();
         this.buttonList.clear();
 
-        int stringWidth = mc.fontRendererObj.getStringWidth("Send");
+        int stringWidth = mc.fontRendererObj.getStringWidth("Send") + 10;
 
-        players = new GuiTextField(getScreenBounds().getX() + 2, getScreenBounds().getY() + 2,
-                getScreenBounds().getWidth() - 2 - stringWidth, 10);
+        players = new GuiTextField(getScreenBounds().getX() + 6, getScreenBounds().getY() + 9,
+                getScreenBounds().getWidth() - 2 - stringWidth - 12, 10);
         message = new GuiScrollingTextField(players.getBounds().getX(),
-                players.getBounds().getY() + players.getBounds().getHeight() + 2, getScreenBounds().getWidth(),
-                getScreenBounds().getHeight() - players.getBounds().getHeight() - 2);
-        this.buttonList.add(sendBtn = new GuiButton(0,
-                getScreenBounds().getX() + getScreenBounds().getWidth() - stringWidth, players.getBounds().getY(),
-                stringWidth, 20, "Send"));
+                players.getBounds().getY() + players.getBounds().getHeight() + 8, getScreenBounds().getWidth() - 12,
+                getScreenBounds().getHeight() - players.getBounds().getHeight() - 23);
+        sendBtn = new GuiButton(0,
+                getScreenBounds().getX() + getScreenBounds().getWidth() - stringWidth - 5, getScreenBounds().getY() + 5,
+                stringWidth, 20, "Send");
     }
 }

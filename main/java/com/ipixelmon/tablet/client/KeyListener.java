@@ -1,6 +1,6 @@
 package com.ipixelmon.tablet.client;
 
-import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.tablet.apps.GuiTablet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;

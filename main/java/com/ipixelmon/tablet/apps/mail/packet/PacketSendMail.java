@@ -1,13 +1,19 @@
 package com.ipixelmon.tablet.apps.mail.packet;
 
+import com.ipixelmon.PlayerUtil;
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mysql.InsertForm;
+import com.ipixelmon.tablet.Tablet;
+import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.lwjgl.input.Keyboard;
 
-import java.util.regex.Matcher;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -18,9 +24,11 @@ public class PacketSendMail implements IMessage {
     public PacketSendMail() {
     }
 
+    public static DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
     public static boolean checkChar(char c) {
-        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= -]", Pattern.CASE_INSENSITIVE);
-        return p.matcher("" + c).find() && c != Keyboard.KEY_BACK;
+        Pattern p = Pattern.compile("[^a-z0-9 ,]", Pattern.CASE_INSENSITIVE);
+        return p.matcher("" + c).find();
     }
 
     private String message;
@@ -51,6 +59,50 @@ public class PacketSendMail implements IMessage {
 
         @Override
         public IMessage onMessage(PacketSendMail message, MessageContext ctx) {
+
+            List<UUID> players = new ArrayList<>();
+            UUID playerUUID;
+            for(String player : message.players) {
+                if(!player.isEmpty() || player != null) {
+                    playerUUID = UUIDManager.getUUID(player);
+                    if(playerUUID != null) {
+                        players.add(playerUUID);
+                    }
+                }
+            }
+
+            if(players.isEmpty())
+                return null;
+
+
+            Date today = Calendar.getInstance().getTime();
+            String reportDate = dateFormat.format(today);
+
+
+            Iterator iterator = players.listIterator();
+
+            UUID player;
+            while(iterator.hasNext()) {
+                player = (UUID) iterator.next();
+                if(PlayerUtil.isPlayerOnline(player)) {
+                    iPixelmon.network.sendTo(new PacketReceiveMail(reportDate,
+                            ctx.getServerHandler().playerEntity.getName(), message.message),
+                            PlayerUtil.getPlayer(player));
+                    iterator.remove();
+                }
+            }
+
+            if(players.isEmpty()) return null;
+
+            for(UUID p : players) {
+                InsertForm insertForm = new InsertForm("Mail");
+                insertForm.add("sentDate", reportDate);
+                insertForm.add("receiver", p.toString());
+                insertForm.add("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString());
+                insertForm.add("message", message.message);
+
+                iPixelmon.mysql.insert(Tablet.class, insertForm);
+            }
             return null;
         }
 

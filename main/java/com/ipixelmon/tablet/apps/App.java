@@ -1,4 +1,4 @@
-package com.ipixelmon.tablet.client;
+package com.ipixelmon.tablet.apps;
 
 import com.google.common.collect.Maps;
 import com.ipixelmon.GuiUtil;
@@ -8,9 +8,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;

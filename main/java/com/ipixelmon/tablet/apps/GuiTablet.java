@@ -1,8 +1,10 @@
-package com.ipixelmon.tablet.client;
+package com.ipixelmon.tablet.apps;
 
 import com.google.common.collect.Maps;
 import com.ipixelmon.GuiUtil;
 import com.ipixelmon.pixelegg.client.Animation;
+import com.ipixelmon.tablet.apps.App;
+import com.ipixelmon.tablet.client.TileIterator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;

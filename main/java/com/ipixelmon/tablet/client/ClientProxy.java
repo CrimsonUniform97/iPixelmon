@@ -27,7 +27,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new KeyListener());
 
         try {
-            iPixelmon.clientDb.query("CREATE TABLE IF NOT EXISTS tabletMessages (messageID TEXT, players TEXT, messages TEXT);");
+            iPixelmon.clientDb.query("CREATE TABLE IF NOT EXISTS tabletMail (sentDate TEXT, sender TEXT, message TEXT);");
         } catch (SQLException e) {
             e.printStackTrace();
         }

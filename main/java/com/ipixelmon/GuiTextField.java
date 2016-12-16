@@ -72,7 +72,7 @@ public class GuiTextField extends Gui {
     public void keyTyped(char typedChar, int keyCode) {
         if(!isEnabled()) return;
 
-        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= -]", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= - ,]", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher("" + typedChar);
         boolean b = m.find();
 

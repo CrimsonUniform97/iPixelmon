@@ -2,7 +2,7 @@ package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.client.CustomGuiTextField;
 import com.ipixelmon.tablet.client.TextBtn;
 import com.ipixelmon.tablet.apps.friends.packet.PacketAddFriendReq;

@@ -10,7 +10,7 @@ public class PlayerListener {
 
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-
+        // TODO: Look up players send them mail. If they end up being the last on the mail list remove it from the mysql database
     }
 
 }

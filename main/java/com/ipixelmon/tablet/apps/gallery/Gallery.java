@@ -3,7 +3,7 @@ package com.ipixelmon.tablet.apps.gallery;
 import com.google.common.collect.Lists;
 import com.ipixelmon.GuiUtil;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.client.App;
+import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.client.TileIterator;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
