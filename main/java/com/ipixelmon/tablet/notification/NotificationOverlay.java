@@ -50,13 +50,14 @@ public class NotificationOverlay {
 
                 GlStateManager.translate(n.posX, n.posY, 100f);
 
+                int mouseX = Mouse.getX() / event.resolution.getScaleFactor();
+                int mouseY = event.resolution.getScaledHeight() - (Mouse.getY() / event.resolution.getScaleFactor());
+
+                // TODO: Implement mouse position, with 0 being the left hand side of the notification box
                 n.notification.draw();
 
 
                 if (viewingChat) {
-                    int mouseX = Mouse.getX() / event.resolution.getScaleFactor();
-                    int mouseY = event.resolution.getScaledHeight() - (Mouse.getY() / event.resolution.getScaleFactor());
-
                     if (mouseX > n.posX && mouseX < n.posX + n.notification.getWidth() && mouseY > n.posY && mouseY < n.posY + n.notification.getHeight() && Mouse.isButtonDown(0)) {
                         Minecraft.getMinecraft().thePlayer.closeScreen();
                         n.notification.actionPerformed();

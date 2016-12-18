@@ -3,10 +3,13 @@ package com.ipixelmon.party;
 import com.google.common.collect.Maps;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
+import com.ipixelmon.iPixelmon;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,8 +19,7 @@ import java.util.UUID;
  */
 public class PartyMod implements IMod {
 
-    public static final Map<UUID, List<UUID>> parties = Maps.newHashMap();
-    public static final Map<UUID, UUID> invites = Maps.newHashMap();
+    private static final Map<UUID, List<UUID>> parties = Maps.newHashMap();
 
     @Override
     public String getID() {
@@ -26,7 +28,9 @@ public class PartyMod implements IMod {
 
     @Override
     public void preInit() {
-
+        iPixelmon.registerPacket(PacketSendPartyInvite.Handler.class, PacketSendPartyInvite.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketReceivePartyInvite.Handler.class, PacketReceivePartyInvite.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketAcceptOrDenyInvite.Handler.class, PacketAcceptOrDenyInvite.class, Side.SERVER);
     }
 
     @Override
@@ -57,6 +61,28 @@ public class PartyMod implements IMod {
     @Override
     public IGuiHandler getGuiHandler() {
         return null;
+    }
+
+    public static UUID getPlayersParty(UUID player) {
+        for(UUID partyUUID : parties.keySet()) {
+            if(parties.get(partyUUID).contains(player)) return partyUUID;
+        }
+
+        return null;
+    }
+
+    public static void addPlayerToParty(UUID party, UUID player) {
+        for(UUID partyUUID : parties.keySet()) {
+            parties.get(partyUUID).remove(player);
+        }
+
+        if(!parties.containsKey(party)) {
+            List<UUID> players = new ArrayList<>();
+            players.add(player);
+            parties.put(party, players);
+        } else {
+            parties.get(party).add(player);
+        }
     }
 
 }
