@@ -10,7 +10,6 @@ import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by colby on 12/14/2016.
@@ -45,7 +44,7 @@ public class ComposeMail extends App {
             int stringWidth = mc.fontRendererObj.getStringWidth(timedMessage.getMessage());
             mc.fontRendererObj.drawString(timedMessage.getMessage(),
                     getScreenBounds().getX() + ((getScreenBounds().getWidth() - stringWidth) / 2),
-                    getScreenBounds().getY() - 5, 0xFFFFFF);
+                    getScreenBounds().getY() - 15, 0xFFFFFF);
         }
     }
 

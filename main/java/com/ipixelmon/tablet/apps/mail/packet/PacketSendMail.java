@@ -75,8 +75,8 @@ public class PacketSendMail implements IMessage {
             }
 
             if(!playersNotFound.isEmpty()) {
-                playersNotFound = playersNotFound.substring(0, playersNotFound.length() - 2);
-                iPixelmon.network.sendTo(new PacketSendResponse(false, "Players not found " + playersNotFound),
+                playersNotFound = playersNotFound.substring(0, playersNotFound.length() - 1);
+                iPixelmon.network.sendTo(new PacketSendResponse(false, "Players not found " + playersNotFound + "."),
                         ctx.getServerHandler().playerEntity);
                 return null;
             }

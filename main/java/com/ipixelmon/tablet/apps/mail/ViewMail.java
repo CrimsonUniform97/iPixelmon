@@ -40,7 +40,7 @@ public class ViewMail extends App {
             int stringWidth = mc.fontRendererObj.getStringWidth(timedMessage.getMessage());
             mc.fontRendererObj.drawString(timedMessage.getMessage(),
                     getScreenBounds().getX() + ((getScreenBounds().getWidth() - stringWidth) / 2),
-                    getScreenBounds().getY() - 5, 0xFFFFFF);
+                    getScreenBounds().getY() - 15, 0xFFFFFF);
         }
     }
 
