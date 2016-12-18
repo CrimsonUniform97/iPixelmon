@@ -1,6 +1,7 @@
 package com.ipixelmon.tablet.apps.mail;
 
 import com.ipixelmon.GuiScrollingTextField;
+import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
@@ -19,6 +20,7 @@ public class ViewMail extends App {
     private MailObject mailObject;
     private GuiScrollingTextField message, response;
     private IconBtn sendBtn;
+    private TimedMessage timedMessage;
 
     public ViewMail(MailObject mailObject) {
         super("viewMail", false);
@@ -33,6 +35,13 @@ public class ViewMail extends App {
         message.draw(mouseX, mouseY, dWheel);
         response.draw(mouseX, mouseY, dWheel);
         sendBtn.drawButton(mc, mouseX, mouseY);
+
+        if(timedMessage.hasMessage()) {
+            int stringWidth = mc.fontRendererObj.getStringWidth(timedMessage.getMessage());
+            mc.fontRendererObj.drawString(timedMessage.getMessage(),
+                    getScreenBounds().getX() + ((getScreenBounds().getWidth() - stringWidth) / 2),
+                    getScreenBounds().getY() - 5, 0xFFFFFF);
+        }
     }
 
     @Override
@@ -48,8 +57,10 @@ public class ViewMail extends App {
         response.mouseClicked(mouseX, mouseY);
 
         if(sendBtn.mousePressed(mc, mouseX, mouseY)) {
-            // TODO: Send.
-            System.out.println("CALLED");}
+            setActiveApp(App.getApp(Mail.class));
+            iPixelmon.network.sendToServer(new PacketSendMail(message.getTextField().getText(), mailObject.getSender()));
+            Mail.deleteMailFromClientSQL(mailObject);
+        }
     }
 
 
@@ -65,11 +76,20 @@ public class ViewMail extends App {
                 message.width, getScreenBounds().getHeight() - (message.height + 38));
         sendBtn = new IconBtn(0, response.xPosition + response.width - 24, response.yPosition - 19,
                 "Send", new ResourceLocation(iPixelmon.id, "textures/apps/mail/send.png"));
+        timedMessage = new TimedMessage("", 0);
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
         sendBtn.enabled = !response.getTextField().getText().isEmpty();
+    }
+
+    public void handleResponse(boolean success, String message) {
+        if(!success) {
+            timedMessage.setMessage(message, 10);
+        } else {
+            setActiveApp(App.getApp(Mail.class));
+        }
     }
 }

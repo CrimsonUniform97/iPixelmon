@@ -48,16 +48,9 @@ public class Mail extends App {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
-
-        if (button.equals(composeBtn)) setActiveApp(new ComposeMail());
-    }
-
-    @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        if(composeBtn.mousePressed(mc, mouseX, mouseY)) actionPerformed(composeBtn);
+        if(composeBtn.mousePressed(mc, mouseX, mouseY)) setActiveApp(new ComposeMail());
     }
 
     @Override
@@ -96,6 +89,20 @@ public class Mail extends App {
     public static void drawBackground(Rectangle bounds) {
         GuiUtil.drawRectFillBorder(bounds.getX() + 2, bounds.getY() + 2, bounds.getWidth() - 4, bounds.getHeight() - 4,
                 ColorPicker.color(255f, 252f, 211f, 255f), Color.black, 2);
+    }
+
+    public static void deleteMailFromClientSQL(MailObject mailObject) {
+        try {
+            String query = "DELETE FROM tabletMail WHERE sentDate = (SELECT sentDate FROM tabletMail WHERE " +
+                    "sentDate='" + PacketSendMail.dateFormat.format(mailObject.getSentDate()) + "' AND " +
+                    "sender='" + mailObject.getSender() + "' AND " +
+                    "message='" + mailObject.getMessage() + "' LIMIT 1);";
+
+            iPixelmon.clientDb.query(query);
+            Mail.mail.remove(mailObject);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

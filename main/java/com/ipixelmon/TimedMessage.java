@@ -16,6 +16,10 @@ public class TimedMessage {
         return "";
     }
 
+    public boolean hasMessage() {
+        return !getMessage().isEmpty();
+    }
+
     public void setMessage(String message, int duration) {
         this.message[0] = message;
         Calendar calendar = Calendar.getInstance();

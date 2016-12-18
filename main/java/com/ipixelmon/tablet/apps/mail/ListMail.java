@@ -51,17 +51,7 @@ public class ListMail extends GuiScrollList {
             if(Mouse.isButtonDown(0)) {
                 if(!mouseDown) {
                     if(deleteBtn.mousePressed(mc, mouseX, mouseY)) {
-                        try {
-                            String query = "DELETE FROM tabletMail WHERE sentDate = (SELECT sentDate FROM tabletMail WHERE " +
-                                    "sentDate='" + PacketSendMail.dateFormat.format(mailObject.getSentDate()) + "' AND " +
-                                    "sender='" + mailObject.getSender() + "' AND " +
-                                    "message='" + mailObject.getMessage() + "' LIMIT 1);";
-
-                            iPixelmon.clientDb.query(query);
-                            Mail.mail.remove(index);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
+                        Mail.deleteMailFromClientSQL(mailObject);
                     }
                 }
                 mouseDown = true;

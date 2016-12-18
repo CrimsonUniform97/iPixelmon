@@ -5,6 +5,7 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.mail.packet.PacketReceiveMail;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
+import com.ipixelmon.tablet.apps.mail.packet.PacketSendResponse;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.apps.friends.packet.*;
 import com.ipixelmon.tablet.notification.PacketNotification;
@@ -37,6 +38,7 @@ public class Tablet implements IMod {
         // mail packets
         iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);
         iPixelmon.registerPacket(PacketReceiveMail.Handler.class, PacketReceiveMail.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketSendResponse.Handler.class, PacketSendResponse.class, Side.CLIENT);
     }
 
     @Override

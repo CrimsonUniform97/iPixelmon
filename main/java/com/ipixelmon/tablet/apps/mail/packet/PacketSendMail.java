@@ -60,6 +60,7 @@ public class PacketSendMail implements IMessage {
         @Override
         public IMessage onMessage(PacketSendMail message, MessageContext ctx) {
 
+            String playersNotFound = "";
             List<UUID> players = new ArrayList<>();
             UUID playerUUID;
             for(String player : message.players) {
@@ -67,12 +68,24 @@ public class PacketSendMail implements IMessage {
                     playerUUID = UUIDManager.getUUID(player);
                     if(playerUUID != null) {
                         players.add(playerUUID);
+                    } else {
+                        playersNotFound += player + ",";
                     }
                 }
             }
 
-            if(players.isEmpty())
+            if(!playersNotFound.isEmpty()) {
+                playersNotFound = playersNotFound.substring(0, playersNotFound.length() - 2);
+                iPixelmon.network.sendTo(new PacketSendResponse(false, "Players not found " + playersNotFound),
+                        ctx.getServerHandler().playerEntity);
                 return null;
+            }
+
+            if(players.isEmpty()) {
+                iPixelmon.network.sendTo(new PacketSendResponse(false, "Players not found."),
+                        ctx.getServerHandler().playerEntity);
+                return null;
+            }
 
             Date today = Calendar.getInstance().getTime();
             String reportDate = dateFormat.format(today);
@@ -91,17 +104,20 @@ public class PacketSendMail implements IMessage {
                 }
             }
 
-            if(players.isEmpty()) return null;
 // TODO: Can't use ' because mysql messes up
-            for(UUID p : players) {
-                InsertForm insertForm = new InsertForm("Mail");
-                insertForm.add("sentDate", reportDate);
-                insertForm.add("receiver", p.toString());
-                insertForm.add("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString());
-                insertForm.add("message", message.message);
+            if(!players.isEmpty()) {
+                for (UUID p : players) {
+                    InsertForm insertForm = new InsertForm("Mail");
+                    insertForm.add("sentDate", reportDate);
+                    insertForm.add("receiver", p.toString());
+                    insertForm.add("sender", ctx.getServerHandler().playerEntity.getUniqueID().toString());
+                    insertForm.add("message", message.message);
 
-                iPixelmon.mysql.insert(Tablet.class, insertForm);
+                    iPixelmon.mysql.insert(Tablet.class, insertForm);
+                }
             }
+
+            iPixelmon.network.sendTo(new PacketSendResponse(true, ""), ctx.getServerHandler().playerEntity);
             return null;
         }
 

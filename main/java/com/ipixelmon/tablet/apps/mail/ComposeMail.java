@@ -1,9 +1,6 @@
 package com.ipixelmon.tablet.apps.mail;
 
-import com.ipixelmon.GuiScrollingTextField;
-import com.ipixelmon.GuiTextField;
-import com.ipixelmon.GuiUtil;
-import com.ipixelmon.iPixelmon;
+import com.ipixelmon.*;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import com.ipixelmon.tablet.apps.App;
 import net.minecraft.client.gui.GuiButton;
@@ -27,6 +24,7 @@ public class ComposeMail extends App {
     private GuiButton sendBtn;
     private GuiTextField players;
     private GuiScrollingTextField message;
+    private TimedMessage timedMessage;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -42,14 +40,13 @@ public class ComposeMail extends App {
         if(players.getBounds().contains(mouseX, mouseY)) {
             drawHoveringText(Arrays.asList(new String[]{"Separate players with commas ,"}), mouseX, mouseY);
         }
-    }
 
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
-        String pStr = players.getText() + ",";
-        iPixelmon.network.sendToServer(new PacketSendMail(message.getTextField().getText(), pStr.split(",")));
-        setActiveApp(App.getApp(Mail.class));
+        if(timedMessage.hasMessage()) {
+            int stringWidth = mc.fontRendererObj.getStringWidth(timedMessage.getMessage());
+            mc.fontRendererObj.drawString(timedMessage.getMessage(),
+                    getScreenBounds().getX() + ((getScreenBounds().getWidth() - stringWidth) / 2),
+                    getScreenBounds().getY() - 5, 0xFFFFFF);
+        }
     }
 
     // TODO: Figure out max string length for network to send and limit it
@@ -75,7 +72,10 @@ public class ComposeMail extends App {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         players.mouseClicked(mouseX, mouseY);
         message.mouseClicked(mouseX, mouseY);
-        if(sendBtn.mousePressed(mc, mouseX, mouseY)) actionPerformed(sendBtn);
+        if(sendBtn.mousePressed(mc, mouseX, mouseY)) {
+            String pStr = players.getText() + ",";
+            iPixelmon.network.sendToServer(new PacketSendMail(message.getTextField().getText(), pStr.split(",")));
+        }
     }
 
     @Override
@@ -99,5 +99,14 @@ public class ComposeMail extends App {
         sendBtn = new GuiButton(0,
                 getScreenBounds().getX() + getScreenBounds().getWidth() - stringWidth - 5, getScreenBounds().getY() + 5,
                 stringWidth, 20, "Send");
+        timedMessage = new TimedMessage("", 0);
+    }
+
+    public void handleResponse(boolean success, String message) {
+        if(!success) {
+            timedMessage.setMessage(message, 10);
+        } else {
+            setActiveApp(App.getApp(Mail.class));
+        }
     }
 }
