@@ -4,6 +4,7 @@ import com.ipixelmon.GuiScrollingTextField;
 import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.App;
+import com.ipixelmon.tablet.apps.mail.packet.PacketReceiveMail;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +12,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Created by colby on 12/17/2016.
@@ -25,6 +27,13 @@ public class ViewMail extends App {
     public ViewMail(MailObject mailObject) {
         super("viewMail", false);
         this.mailObject = mailObject;
+        try {
+            iPixelmon.clientDb.query("UPDATE tabletMail SET read='1' WHERE" +
+                    " sentDate='" + PacketSendMail.dateFormat.format(mailObject.getSentDate()) + "' AND sender='" + mailObject.getSender() + "'" +
+                    " AND message='" + mailObject.getMessage() + "' AND read='0' LIMIT 1;");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

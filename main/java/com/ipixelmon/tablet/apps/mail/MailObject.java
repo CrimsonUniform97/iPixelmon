@@ -9,11 +9,13 @@ public class MailObject implements Comparable<MailObject> {
 
     private Date sentDate;
     private String sender, message;
+    private boolean read;
 
-    public MailObject(Date sentDate, String sender, String message) {
+    public MailObject(Date sentDate, String sender, String message, boolean read) {
         this.sentDate = sentDate;
         this.sender = sender;
         this.message = message;
+        this.read = read;
     }
 
     public Date getSentDate() {
@@ -28,11 +30,18 @@ public class MailObject implements Comparable<MailObject> {
         return sender;
     }
 
+    public boolean isRead() {
+        return read;
+    }
+
     @Override
     public int compareTo(MailObject o) {
         if (getSentDate() == null || o.getSentDate() == null)
             return 0;
 
-        return getSentDate().compareTo(o.getSentDate());
+        int dateComparison = getSentDate().compareTo(o.getSentDate());
+        int readComparison = (o.isRead() == isRead() ? 0 : (isRead() ? 1 : -1));
+
+        return dateComparison + readComparison;
     }
 }

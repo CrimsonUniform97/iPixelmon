@@ -37,9 +37,13 @@ public class ListMail extends GuiScrollList {
         MailObject mailObject = Mail.mail.get(index);
         int color = getSelected() == index ? 0xFFFFFF : 0x383838;
 
-        mc.fontRendererObj.drawString(PacketSendMail.dateFormat.format(mailObject.getSentDate()), 2, 2, color);
-        mc.fontRendererObj.drawString(mailObject.getSender(), 2, 14, color);
-        mc.fontRendererObj.drawString(mailObject.getMessage(), 2, 26, color);
+        if(mailObject.isRead()) {
+            GuiUtil.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
+        }
+            mc.fontRendererObj.drawString(PacketSendMail.dateFormat.format(mailObject.getSentDate()), 2, 2, color);
+            mc.fontRendererObj.drawString(mailObject.getSender(), 2, 14, color);
+            mc.fontRendererObj.drawString(mailObject.getMessage(), 2, 26, color);
+
 
         if (getSelected() == index) {
             // handle drawing the X

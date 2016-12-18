@@ -57,10 +57,10 @@ public class PacketReceiveMail implements IMessage {
             }
 
 // TODO: Add notification
-            Mail.mail.add(new MailObject(sentDate, message.sender, message.message));
+            Mail.mail.add(new MailObject(sentDate, message.sender, message.message, false));
             try {
-                iPixelmon.clientDb.query("INSERT INTO tabletMail (sentDate, sender, message) VALUES" +
-                        " ('" + message.date + "', '" + message.sender + "', '" + message.message + "');");
+                iPixelmon.clientDb.query("INSERT INTO tabletMail (sentDate, sender, message, read) VALUES" +
+                        " ('" + message.date + "', '" + message.sender + "', '" + message.message + "', '0');");
             } catch (SQLException e) {
                 e.printStackTrace();
             }

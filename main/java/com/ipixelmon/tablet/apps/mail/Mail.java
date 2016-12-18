@@ -64,7 +64,7 @@ public class Mail extends App {
             while(result.next()) {
                 Mail.mail.add(new MailObject(
                         PacketSendMail.dateFormat.parse(result.getString("sentDate")),
-                        result.getString("sender"), result.getString("message")));
+                        result.getString("sender"), result.getString("message"), result.getBoolean("read")));
             }
 
             Collections.sort(Mail.mail);
