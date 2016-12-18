@@ -24,7 +24,7 @@ public class PacketSendMail implements IMessage {
     public PacketSendMail() {
     }
 
-    public static DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    public static DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
     public static boolean checkChar(char c) {
         Pattern p = Pattern.compile("[^a-z0-9 ,]", Pattern.CASE_INSENSITIVE);
@@ -74,7 +74,6 @@ public class PacketSendMail implements IMessage {
             if(players.isEmpty())
                 return null;
 
-
             Date today = Calendar.getInstance().getTime();
             String reportDate = dateFormat.format(today);
 
@@ -93,7 +92,7 @@ public class PacketSendMail implements IMessage {
             }
 
             if(players.isEmpty()) return null;
-
+// TODO: Can't use ' because mysql messes up
             for(UUID p : players) {
                 InsertForm insertForm = new InsertForm("Mail");
                 insertForm.add("sentDate", reportDate);

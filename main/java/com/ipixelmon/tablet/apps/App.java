@@ -40,7 +40,7 @@ public abstract class App extends GuiScreen implements Comparable<App> {
             apps.add(this);
     }
 
-    public void setActiveApp(App app) {
+    public static void setActiveApp(App app) {
         Minecraft.getMinecraft().displayGuiScreen(app);
     }
 
@@ -60,6 +60,12 @@ public abstract class App extends GuiScreen implements Comparable<App> {
         drawTablet();
         drawWallpaper();
         super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        if(keyCode == Keyboard.KEY_ESCAPE) setActiveApp(new GuiTablet());
     }
 
     @Override

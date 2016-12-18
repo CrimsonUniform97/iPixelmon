@@ -9,9 +9,11 @@ import com.ipixelmon.tablet.apps.App;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by colby on 12/14/2016.
@@ -36,6 +38,10 @@ public class ComposeMail extends App {
         message.draw(mouseX, mouseY, Mouse.getDWheel());
 
         sendBtn.drawButton(mc, mouseX, mouseY);
+
+        if(players.getBounds().contains(mouseX, mouseY)) {
+            drawHoveringText(Arrays.asList(new String[]{"Separate players with commas ,"}), mouseX, mouseY);
+        }
     }
 
     @Override
@@ -43,21 +49,25 @@ public class ComposeMail extends App {
         super.actionPerformed(button);
         String pStr = players.getText() + ",";
         iPixelmon.network.sendToServer(new PacketSendMail(message.getTextField().getText(), pStr.split(",")));
+        setActiveApp(App.getApp(Mail.class));
     }
 
     // TODO: Figure out max string length for network to send and limit it
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
 
         if (!PacketSendMail.checkChar(typedChar) || keyCode == Keyboard.KEY_BACK)
             players.keyTyped(typedChar, keyCode);
 
         message.keyTyped(typedChar, keyCode);
 
-        if(keyCode == Keyboard.KEY_ESCAPE)
+        if(keyCode == Keyboard.KEY_ESCAPE) {
             setActiveApp(App.getApp(Mail.class));
+            return;
+        }
+
+        super.keyTyped(typedChar, keyCode);
     }
 
     @Override

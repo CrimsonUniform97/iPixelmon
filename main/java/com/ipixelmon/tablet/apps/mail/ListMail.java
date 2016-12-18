@@ -4,10 +4,12 @@ import com.ipixelmon.GuiScrollList;
 import com.ipixelmon.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
+import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
+
+import java.sql.SQLException;
 
 /**
  * Created by colby on 12/14/2016.
@@ -17,6 +19,8 @@ public class ListMail extends GuiScrollList {
     public ListMail(int xPosition, int yPosition, int width, int height) {
         super(xPosition, yPosition, width, height);
     }
+
+    boolean mouseDown = false;
 
     @Override
     public int getObjectHeight(int index) {
@@ -38,11 +42,31 @@ public class ListMail extends GuiScrollList {
         mc.fontRendererObj.drawString(mailObject.getMessage(), 2, 26, color);
 
         if (getSelected() == index) {
+            // handle drawing the X
             IconBtn deleteBtn = new IconBtn(0, width - 24, 8, "Delete",
                     new ResourceLocation(iPixelmon.id, "textures/apps/mail/x.png"));
             deleteBtn.drawButton(mc, mouseX, mouseY);
-            if(Mouse.isButtonDown(0) && deleteBtn.mousePressed(mc, mouseX, mouseY)) {
-                // TODO: Delete message
+
+            // handle deleting message
+            if(Mouse.isButtonDown(0)) {
+                if(!mouseDown) {
+                    if(deleteBtn.mousePressed(mc, mouseX, mouseY)) {
+                        try {
+                            String query = "DELETE FROM tabletMail WHERE sentDate = (SELECT sentDate FROM tabletMail WHERE " +
+                                    "sentDate='" + PacketSendMail.dateFormat.format(mailObject.getSentDate()) + "' AND " +
+                                    "sender='" + mailObject.getSender() + "' AND " +
+                                    "message='" + mailObject.getMessage() + "' LIMIT 1);";
+
+                            iPixelmon.clientDb.query(query);
+                            Mail.mail.remove(index);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                mouseDown = true;
+            } else {
+                mouseDown = false;
             }
         }
     }
@@ -54,7 +78,9 @@ public class ListMail extends GuiScrollList {
 
     @Override
     public void elementClicked(int index, boolean doubleClick) {
-
+        if(doubleClick) {
+            App.setActiveApp(new ViewMail(Mail.mail.get(index)));
+        }
     }
 
     @Override

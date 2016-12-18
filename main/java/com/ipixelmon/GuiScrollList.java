@@ -112,7 +112,6 @@ public abstract class GuiScrollList extends Gui {
 
         GlStateManager.disableTexture2D();
         drawBackground();
-        drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
         GlStateManager.enableTexture2D();
 
         ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
@@ -142,7 +141,7 @@ public abstract class GuiScrollList extends Gui {
 
             int mX = (mouseX - xPosition);
             mX = mX < 0 ? 0 : mX;
-            int mY = (mouseY - yPosition);
+            int mY = mouseY - ((int) ((bounds.getY() + totalHeight) - scrollY));
             mY = mY < 0 ? 0 : mY;
 
             drawObject(i, mX, mY);
@@ -151,6 +150,10 @@ public abstract class GuiScrollList extends Gui {
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        GlStateManager.disableTexture2D();
+        drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
+        GlStateManager.enableTexture2D();
     }
 
     public void keyTyped(char keycode, int keynum) {

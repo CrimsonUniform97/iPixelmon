@@ -72,7 +72,7 @@ public class GuiTextField extends Gui {
     public void keyTyped(char typedChar, int keyCode) {
         if(!isEnabled()) return;
 
-        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= - ,]", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= - , ? !]", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher("" + typedChar);
         boolean b = m.find();
 
@@ -184,8 +184,8 @@ public class GuiTextField extends Gui {
     }
 
     public void drawBackground() {
-        drawRect(bounds.getX() - 1, bounds.getY() - 1, bounds.getX() + bounds.getWidth() + 1, bounds.getY() + bounds.getHeight() + 1, -6250336);
-        drawRect(bounds.getX(), bounds.getY(), bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight(), -16777216);
+        drawRect(bounds.getX() - 2, bounds.getY() - 2, bounds.getX() + bounds.getWidth() + 2, bounds.getY() + bounds.getHeight() + 2, -6250336);
+        drawRect(bounds.getX() - 1, bounds.getY() - 1, bounds.getX() + bounds.getWidth() + 1, bounds.getY() + bounds.getHeight() + 1, -16777216);
     }
 
     public void setEnabled(boolean enabled) {

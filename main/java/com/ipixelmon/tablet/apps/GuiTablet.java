@@ -7,6 +7,7 @@ import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.client.TileIterator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
@@ -35,6 +36,11 @@ public class GuiTablet extends App {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         setActiveApp(getAppUnderMouse(mouseX, mouseY));
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(keyCode == Keyboard.KEY_ESCAPE) setActiveApp(null);
     }
 
     private void drawApps(int mouseX, int mouseY) {

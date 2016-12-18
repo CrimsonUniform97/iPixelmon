@@ -37,6 +37,11 @@ public class IconBtn extends GuiButton {
         GlStateManager.color(1, 1, 1, 1);
 
         mc.getTextureManager().bindTexture(icon);
+        if(enabled) {
+            GlStateManager.color(1, 1, 1, 1);
+        } else {
+            GlStateManager.color(128f/255f,128f/255f,128f/255f,255f);
+        }
         GuiUtil.drawImage(xPosition, yPosition, 16, 16);
         this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 

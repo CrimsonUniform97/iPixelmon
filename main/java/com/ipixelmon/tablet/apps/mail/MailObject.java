@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by colby on 12/14/2016.
  */
-public class MailObject {
+public class MailObject implements Comparable<MailObject> {
 
     private Date sentDate;
     private String sender, message;
@@ -26,5 +26,13 @@ public class MailObject {
 
     public String getSender() {
         return sender;
+    }
+
+    @Override
+    public int compareTo(MailObject o) {
+        if (getSentDate() == null || o.getSentDate() == null)
+            return 0;
+
+        return getSentDate().compareTo(o.getSentDate());
     }
 }

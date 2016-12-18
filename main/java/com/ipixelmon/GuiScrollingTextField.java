@@ -56,7 +56,8 @@ public class GuiScrollingTextField extends GuiScrollList {
 
     @Override
     public void drawBackground() {
-        super.drawBackground();
+        drawRect(bounds.getX() - 2, bounds.getY() - 2, bounds.getX() + bounds.getWidth() + 2, bounds.getY() + bounds.getHeight() + 2, -6250336);
+        drawRect(bounds.getX() - 1, bounds.getY() - 1, bounds.getX() + bounds.getWidth() + 1, bounds.getY() + bounds.getHeight() + 1, -16777216);
     }
 
     @Override

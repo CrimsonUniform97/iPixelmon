@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,6 +73,9 @@ public class Mail extends App {
                         PacketSendMail.dateFormat.parse(result.getString("sentDate")),
                         result.getString("sender"), result.getString("message")));
             }
+
+            Collections.sort(Mail.mail);
+            Collections.reverse(Mail.mail);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,10 +89,8 @@ public class Mail extends App {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        if (keyCode == Keyboard.KEY_ESCAPE)
-            setActiveApp(new GuiTablet());
         listMail.keyTyped(typedChar, keyCode);
+        super.keyTyped(typedChar, keyCode);
     }
 
     public static void drawBackground(Rectangle bounds) {
