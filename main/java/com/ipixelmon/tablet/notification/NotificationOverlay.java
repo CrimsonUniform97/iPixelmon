@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * Created by colbymchenry on 10/3/16.
@@ -21,14 +20,12 @@ public class NotificationOverlay {
     private NotificationOverlay() {
     }
 
-    protected final LinkedList<NotificationProperties> notifications = new LinkedList<NotificationProperties>();
-
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent event) {
 
         if (event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
 
-        Iterator<NotificationProperties> iterator = notifications.descendingIterator();
+        Iterator<NotificationProperties> iterator = Notification.notificationsForRendering.descendingIterator();
 
         int posY = 0;
 
@@ -53,8 +50,11 @@ public class NotificationOverlay {
                 int mouseX = Mouse.getX() / event.resolution.getScaleFactor();
                 int mouseY = event.resolution.getScaledHeight() - (Mouse.getY() / event.resolution.getScaleFactor());
 
-                // TODO: Implement mouse position, with 0 being the left hand side of the notification box
-                n.notification.draw();
+                int mX = mouseX - (int) n.posX;
+                int mY = mouseY - (int) n.posY;
+                mY = mY < 0 ? 0 : mY;
+
+                n.notification.draw(mX, mY);
 
 
                 if (viewingChat) {
@@ -66,6 +66,7 @@ public class NotificationOverlay {
 
                 if (n.posX >= posX) iterator.remove();
 
+
                 posY += n.notification.getHeight() + 1;
                 GlStateManager.popMatrix();
             }
@@ -75,10 +76,11 @@ public class NotificationOverlay {
     }
 
     protected void addNotification(Notification notification) {
-        notifications.addLast(new NotificationProperties(notification));
+        Notification.notificationsForRendering.addLast(new NotificationProperties(notification));
+        Notification.notifications.addLast(new NotificationProperties(notification));
     }
 
-    protected class NotificationProperties {
+    public class NotificationProperties {
 
         protected Notification notification;
         private double posX, posY, speedX = 200f, speedY = 200f;
@@ -102,6 +104,9 @@ public class NotificationOverlay {
             posY = posY < neededY ? posY + (time * speedY) > neededY ? neededY : posY + (time * speedY) : posY - (time * speedY) < neededY ? neededY : posY - (time * speedY);
         }
 
+        public Notification getNotification() {
+            return notification;
+        }
     }
 
 }

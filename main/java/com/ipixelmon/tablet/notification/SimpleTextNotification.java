@@ -20,7 +20,7 @@ public class SimpleTextNotification extends Notification {
     }
 
     @Override
-    public void draw() {
+    public void draw(int mouseX, int mouseY) {
         GlStateManager.disableTexture2D();
         GlStateManager.color(0, 0, 0, 1);
         drawTexturedModalRect(0, 0, 0, 0, maxWidth, getHeight());

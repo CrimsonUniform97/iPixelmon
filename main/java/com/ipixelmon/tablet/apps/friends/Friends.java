@@ -12,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.*;
@@ -38,7 +39,7 @@ public class Friends extends App {
         super.drawScreen(mouseX, mouseY, partialTicks);
         mc.fontRendererObj.setUnicodeFlag(false);
 
-        friendsList.drawScreen(mouseX, mouseY, partialTicks);
+        friendsList.draw(mouseX, mouseY, Mouse.getDWheel());
         requestsList.drawScreen(mouseX, mouseY, partialTicks);
 
         addFriendTxtField.drawTextBox();
@@ -76,8 +77,8 @@ public class Friends extends App {
     protected void actionPerformed(GuiButton button) throws IOException {
 
         if(button.id == 2) {
-            if(friends.toArray().length > friendsList.selectedIndex) {
-                Friend friend = (Friend) friends.toArray()[friendsList.selectedIndex];
+            if(friends.toArray().length > friendsList.getSelected()) {
+                Friend friend = (Friend) friends.toArray()[friendsList.getSelected()];
                 iPixelmon.network.sendToServer(new PacketRemoveFriend(friend.uuid));
             }
         }
@@ -115,7 +116,7 @@ public class Friends extends App {
 
         this.buttonList.get(0).enabled = requestsList.selectedIndex != -1;
         this.buttonList.get(1).enabled = requestsList.selectedIndex != -1;
-        this.buttonList.get(2).enabled = friendsList.selectedIndex != -1;
+        this.buttonList.get(2).enabled = friendsList.getSelected() != -1;
     }
 
     @Override
@@ -129,12 +130,11 @@ public class Friends extends App {
         fontRenderer.setUnicodeFlag(true);
         addFriendTxtField = new CustomGuiTextField(0, fontRenderer, getScreenBounds().getX() + getScreenBounds().getWidth() - 67, getScreenBounds().getY() + getScreenBounds().getHeight() - 12, 65, 10);
 
-        friendsList = new GuiFriendsList(mc, getScreenBounds().getX() + 8, getScreenBounds().getY() + 12, 65, 65, 12, this);
+        friendsList = new GuiFriendsList(getScreenBounds().getX() + 8, getScreenBounds().getY() + 12, 65, 65);
 
         requestsList = new GuiFriendRequests(mc, friendsList.xPosition, friendsList.yPosition + friendsList.height + 34, 65, 65, 12, this);
 
         requestsList.setDrawThumbAllTheTime(true);
-        friendsList.setDrawThumbAllTheTime(true);
 
         this.buttonList.add(new TextBtn(0, requestsList.xPosition + 1, requestsList.yPosition + requestsList.height + 2, mc.fontRendererObj.getStringWidth("Accept"), 12, "Accept"));
         this.buttonList.add(new TextBtn(1, requestsList.xPosition + requestsList.width - 16, this.buttonList.get(0).yPosition, mc.fontRendererObj.getStringWidth("Deny"), 12, "Deny"));

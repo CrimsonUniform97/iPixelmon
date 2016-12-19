@@ -13,8 +13,8 @@ import org.lwjgl.input.Keyboard;
  */
 public class KeyListener {
 
-    private KeyBinding key = new KeyBinding("key.notifications.test", Keyboard.KEY_N, "key.ipixelmon.test");
-    private KeyBinding key1 = new KeyBinding("key.notifications.test1", Keyboard.KEY_K, "key.ipixelmon.test1");
+    private KeyBinding key = new KeyBinding("key.notificationsForRendering.test", Keyboard.KEY_N, "key.ipixelmon.test");
+    private KeyBinding key1 = new KeyBinding("key.notificationsForRendering.test1", Keyboard.KEY_K, "key.ipixelmon.test1");
 
     private int count = 0;
 

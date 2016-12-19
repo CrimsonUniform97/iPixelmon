@@ -2,6 +2,7 @@ package com.ipixelmon;
 
 import com.ipixelmon.gym.GymMod;
 import com.ipixelmon.landcontrol.LandControl;
+import com.ipixelmon.party.PartyMod;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.tablet.Tablet;
@@ -53,6 +54,7 @@ public final class iPixelmon {
         mods.add(new GymMod());
         mods.add(new TeamMod());
         mods.add(new PixelEgg());
+        mods.add(new PartyMod());
         mods.add(new Tablet());
     }
 

@@ -1,5 +1,6 @@
 package com.ipixelmon.tablet.apps.friends;
 
+import com.ipixelmon.GuiScrollList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
@@ -8,48 +9,45 @@ import net.minecraft.util.EnumChatFormatting;
 /**
  * Created by colbymchenry on 11/4/16.
  */
-public class GuiFriendsList extends CustomScrollList {
+public class GuiFriendsList extends GuiScrollList {
 
-    private Minecraft mc;
 
-    public GuiFriendsList(Minecraft client, int x, int y, int width, int height, int entryHeight, GuiScreen screen) {
-        super(client, x, y, width, height, entryHeight, screen);
-        mc = client;
-        FriendsAPI.getFriends(true);
+    public GuiFriendsList(int xPosition, int yPosition, int width, int height) {
+        super(xPosition, yPosition, width, height);
     }
 
     @Override
-    protected int getSize() {
+    public int getSize() {
         return FriendsAPI.getFriends(false).size();
     }
 
     @Override
-    protected void elementClicked(int index, boolean doubleClick) {
-        selectedIndex = index;
+    public void elementClicked(int index, boolean doubleClick) {
+
     }
 
     @Override
-    protected boolean isSelected(int index) {
-        return index == selectedIndex;
-    }
-
-    @Override
-    protected void drawBackground() {
+    public void drawBackground() {
         drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, -6250336);
         drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
     }
 
     @Override
-    protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
-        Friend friend = (Friend) FriendsAPI.getFriends(false).toArray()[slotIdx];
+    public int getObjectHeight(int index) {
+        return 10;
+    }
+
+    @Override
+    public void drawObject(int index, int mouseX, int mouseY) {
+        Friend friend = (Friend) FriendsAPI.getFriends(false).toArray()[index];
         mc.fontRendererObj.setUnicodeFlag(true);
-        mc.fontRendererObj.drawString((friend.online ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + friend.name, left + 2, slotTop, 0xFFFFFF, false);
+        mc.fontRendererObj.drawString((friend.online ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + friend.name, 2, 0, 0xFFFFFF, false);
         mc.fontRendererObj.setUnicodeFlag(false);
     }
 
-    public Friend getSelected() {
-        if(selectedIndex > -1) {
-            return (Friend) Friends.friends.toArray()[selectedIndex];
+    public Friend getSelectedFriend() {
+        if(getSelected() > -1) {
+            return (Friend) Friends.friends.toArray()[getSelected()];
         } else {
             return null;
         }

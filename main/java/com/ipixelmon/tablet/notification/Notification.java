@@ -1,11 +1,9 @@
 package com.ipixelmon.tablet.notification;
 
-import com.ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.LinkedList;
 
 /**
  * Created by colbymchenry on 10/3/16.
@@ -15,6 +13,9 @@ public abstract class Notification extends Gui {
     protected final int maxWidth;
     protected final long startTime;
     protected Minecraft mc = Minecraft.getMinecraft();
+
+    public static LinkedList<NotificationOverlay.NotificationProperties> notificationsForRendering = new LinkedList<>();
+    public static LinkedList<NotificationOverlay.NotificationProperties> notifications = new LinkedList<>();
 
     public Notification() {
         maxWidth = NotificationOverlay.instance.maxNotificationWidth;

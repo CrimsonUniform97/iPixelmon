@@ -3,6 +3,7 @@ package com.ipixelmon.party.client;
 import com.ipixelmon.GuiUtil;
 import com.ipixelmon.tablet.notification.Notification;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 import java.util.UUID;
@@ -20,12 +21,19 @@ public class NotificationPartyInvite extends Notification {
         super();
         this.playerName = playerName;
         this.partyID = partyID;
+        accept = new GuiButton(0, 0, 22, 35, 20, "Accept");
+        deny = new GuiButton(0, 36, 22, 35, 20, "Deny");
     }
 
+    // TODO: Work on accept and deny.
+
     @Override
-    public void draw() {
-        GuiUtil.drawRectFill(0, 0, getWidth(), getHeight(), Color.black);
-        mc.fontRendererObj.drawString(playerName + " invited you to their party.", 0, 2, 0xFFFFFF);
+    public void draw(int mouseX, int mouseY) {
+        GuiUtil.drawRectFill(- 2, 0, getWidth() + 4, getHeight(), Color.black);
+        mc.fontRendererObj.drawSplitString(playerName + " invited you to their party.", 0, 2, maxWidth,0xFFFFFF);
+
+        accept.drawButton(mc, mouseX, mouseY);
+        deny.drawButton(mc, mouseX, mouseY);
     }
 
     @Override
@@ -35,7 +43,7 @@ public class NotificationPartyInvite extends Notification {
 
     @Override
     public int getHeight() {
-        return 12;
+        return 44;
     }
 
     @Override
@@ -45,6 +53,6 @@ public class NotificationPartyInvite extends Notification {
 
     @Override
     public long getDuration() {
-        return 10;
+        return 10 * 1000L;
     }
 }
