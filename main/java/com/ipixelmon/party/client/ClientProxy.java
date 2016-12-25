@@ -12,7 +12,6 @@ import java.util.UUID;
 public class ClientProxy extends CommonProxy {
 
     // TODO: Make client be able to see who is in their party in the party app
-    public static Map<UUID, String> playersInParty = Maps.newHashMap();
 
     @Override
     public void preInit() {

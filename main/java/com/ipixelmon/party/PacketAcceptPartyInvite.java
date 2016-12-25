@@ -36,16 +36,17 @@ public class PacketAcceptPartyInvite implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketAcceptPartyInvite, IMessage> {
-
+// TODO: Make players be able to view the players in their party.
         @Override
         public IMessage onMessage(PacketAcceptPartyInvite message, MessageContext ctx) {
 
-            PartyMod.addPlayerToParty(message.partyID, ctx.getServerHandler().playerEntity.getUniqueID());
             for (UUID player : PartyMod.getPlayersInParty(message.partyID)) {
-                if (PlayerUtil.isPlayerOnline(player)) {
+                if (PlayerUtil.isPlayerOnline(player) && !player.equals(ctx.getServerHandler().playerEntity.getUniqueID())) {
                     iPixelmon.network.sendTo(new PacketNotification(ctx.getServerHandler().playerEntity.getName() + " joined the party."), PlayerUtil.getPlayer(player));
                 }
             }
+
+            PartyMod.addPlayerToParty(message.partyID, ctx.getServerHandler().playerEntity.getUniqueID());
 
             return null;
         }

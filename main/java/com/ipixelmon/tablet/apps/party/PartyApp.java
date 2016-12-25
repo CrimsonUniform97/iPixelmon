@@ -1,5 +1,6 @@
 package com.ipixelmon.tablet.apps.party;
 
+import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.party.PacketSendPartyInvite;
 import com.ipixelmon.tablet.apps.App;
@@ -8,6 +9,8 @@ import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by colby on 12/18/2016.
@@ -16,6 +19,9 @@ public class PartyApp extends App {
 
     private GuiFriendsList friendsList;
     private GuiButton sendReq;
+    private PlayersInPartyList partyList;
+
+    public static Map<UUID, String> playersInParty = Maps.newHashMap();
 
     public PartyApp(String name, boolean register) {
         super(name, register);

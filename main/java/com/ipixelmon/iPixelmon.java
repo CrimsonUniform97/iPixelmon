@@ -48,14 +48,14 @@ public final class iPixelmon {
     public static iPixelmon instance;
 
     public iPixelmon() {
-        mods.add(new UUIDManager());
-        mods.add(new Pixelbay());
-        mods.add(new LandControl());
-        mods.add(new GymMod());
-        mods.add(new TeamMod());
-        mods.add(new PixelEgg());
-        mods.add(new PartyMod());
-        mods.add(new Tablet());
+        loadMod(new UUIDManager());
+        loadMod(new Pixelbay());
+        loadMod(new LandControl());
+        loadMod(new GymMod());
+        loadMod(new TeamMod());
+        loadMod(new PixelEgg());
+        loadMod(new PartyMod());
+        loadMod(new Tablet());
     }
 
     @Mod.EventHandler
@@ -95,6 +95,10 @@ public final class iPixelmon {
 
     public static final void registerPacket(final Class handlerClass, final Class messageClass, final Side side) {
         network.registerMessage(handlerClass, messageClass, packetID++, side);
+    }
+
+    private void loadMod(IMod mod) {
+        mods.add(mod);
     }
 
 }

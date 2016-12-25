@@ -7,7 +7,9 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by colbymchenry on 10/3/16.
@@ -16,6 +18,7 @@ public class NotificationOverlay {
 
     public static final NotificationOverlay instance = new NotificationOverlay();
     public final int maxNotificationWidth = 100;
+    private static boolean mouseDown = false;
 
     private NotificationOverlay() {
     }
@@ -43,7 +46,19 @@ public class NotificationOverlay {
 
                 boolean viewingChat = Minecraft.getMinecraft().currentScreen instanceof GuiChat;
 
-                n.update(System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration() ? viewingChat ? posX - n.notification.getWidth() : posX : posX - n.notification.getWidth(), posY);
+                if(n.done) {
+                    n.update(posX, posY);
+                } else {
+                    if (System.currentTimeMillis() - n.notification.startTime > n.notification.getDuration()) {
+                        if (viewingChat) {
+                            n.update(posX - n.notification.getWidth(), posY);
+                        } else {
+                            n.update(posX, posY);
+                        }
+                    } else {
+                        n.update(posX - n.notification.getWidth(), posY);
+                    }
+                }
 
                 GlStateManager.translate(n.posX, n.posY, 100f);
 
@@ -52,15 +67,23 @@ public class NotificationOverlay {
 
                 int mX = mouseX - (int) n.posX;
                 int mY = mouseY - (int) n.posY;
-                mY = mY < 0 ? 0 : mY;
 
                 n.notification.draw(mX, mY);
 
+                if(Mouse.isButtonDown(0)) {
+                    if (!mouseDown) {
+                        mouseDown = true;
+                        n.notification.mouseClicked(mX, mY);
+                    }
+                } else {
+                    mouseDown = false;
+                }
 
                 if (viewingChat) {
                     if (mouseX > n.posX && mouseX < n.posX + n.notification.getWidth() && mouseY > n.posY && mouseY < n.posY + n.notification.getHeight() && Mouse.isButtonDown(0)) {
                         Minecraft.getMinecraft().thePlayer.closeScreen();
                         n.notification.actionPerformed();
+                        n.done = true;
                     }
                 }
 
@@ -71,11 +94,12 @@ public class NotificationOverlay {
                 GlStateManager.popMatrix();
             }
         }
+
         Minecraft.getMinecraft().fontRendererObj.setUnicodeFlag(false);
 
     }
 
-    protected void addNotification(Notification notification) {
+    protected synchronized void addNotification(Notification notification) {
         Notification.notificationsForRendering.addLast(new NotificationProperties(notification));
         Notification.notifications.addLast(new NotificationProperties(notification));
     }
@@ -84,6 +108,7 @@ public class NotificationOverlay {
 
         protected Notification notification;
         private double posX, posY, speedX = 200f, speedY = 200f;
+        private boolean done = false;
 
         private double timeOfLastFrame = System.nanoTime() / 1e9;
 

@@ -9,17 +9,14 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by colby on 10/27/2016.
  */
 public class PartyMod implements IMod {
 
-    private static final Map<UUID, List<UUID>> parties = Maps.newHashMap();
+    private static final Map<UUID, TreeSet<UUID>> parties = Maps.newHashMap();
 
     @Override
     public String getID() {
@@ -71,7 +68,7 @@ public class PartyMod implements IMod {
         return null;
     }
 
-    public static List<UUID> getPlayersInParty(UUID party) {
+    public static TreeSet<UUID> getPlayersInParty(UUID party) {
         return parties.get(party);
     }
 
@@ -81,7 +78,7 @@ public class PartyMod implements IMod {
         }
 
         if (!parties.containsKey(party)) {
-            List<UUID> players = new ArrayList<>();
+            TreeSet<UUID> players = new TreeSet<>();
             players.add(player);
             parties.put(party, players);
         } else {

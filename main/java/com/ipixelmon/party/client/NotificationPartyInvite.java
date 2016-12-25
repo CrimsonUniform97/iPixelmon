@@ -33,12 +33,13 @@ public class NotificationPartyInvite extends Notification {
         mc.fontRendererObj.drawSplitString(playerName + " invited you to their party.", 0, 2, maxWidth,0xFFFFFF);
 
         accept.drawButton(mc, mouseX, mouseY);
+    }
 
-        if(Mouse.isButtonDown(0)) {
-            if (accept.mousePressed(mc, mouseX, mouseY)) {
-                iPixelmon.network.sendToServer(new PacketAcceptPartyInvite(partyID));
-            }
-        }
+    @Override
+    public void mouseClicked(int mouseX, int mouseY) {
+        if (accept.mousePressed(mc, mouseX, mouseY))
+            iPixelmon.network.sendToServer(new PacketAcceptPartyInvite(partyID));
+
     }
 
     @Override
