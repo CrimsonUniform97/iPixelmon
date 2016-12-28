@@ -33,7 +33,7 @@ public class ListMail extends GuiScrollList {
     }
 
     @Override
-    public void drawObject(int index, int mouseX, int mouseY) {
+    public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
         MailObject mailObject = Mail.mail.get(index);
         int color = getSelected() == index ? 0xFFFFFF : 0x383838;
 

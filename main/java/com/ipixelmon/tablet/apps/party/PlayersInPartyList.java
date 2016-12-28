@@ -17,8 +17,8 @@ public class PlayersInPartyList extends GuiScrollList {
     }
 
     @Override
-    public void drawObject(int index, int mouseX, int mouseY) {
-        String player = PartyApp.playersInParty.get(index);
+    public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
+        String player = (String) PartyApp.playersInParty.toArray()[index];
         mc.fontRendererObj.drawString(player, 0, 0, 0xFFFFFF);
     }
 
@@ -29,6 +29,11 @@ public class PlayersInPartyList extends GuiScrollList {
 
     @Override
     public void elementClicked(int index, boolean doubleClick) {
+
+    }
+
+    @Override
+    public void mouseClicked(int index, int mouseX, int mouseY, int mouseBtn) {
 
     }
 }

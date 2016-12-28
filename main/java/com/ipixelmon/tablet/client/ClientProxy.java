@@ -36,7 +36,7 @@ public class ClientProxy extends CommonProxy {
 
         new Gallery("Gallery");
         new Mail("Mail", true);
-        new Friends("Friends");
+        new Friends("Friends", true);
         new Pixelbay("Pixelbay");
         new PartyApp("Party", true);
         new NotificationsApp("Notifications", true);

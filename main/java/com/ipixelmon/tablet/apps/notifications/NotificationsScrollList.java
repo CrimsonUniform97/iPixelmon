@@ -18,7 +18,7 @@ public class NotificationsScrollList extends GuiScrollList {
     }
 
     @Override
-    public void drawObject(int index, int mouseX, int mouseY) {
+    public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
         mc.fontRendererObj.setUnicodeFlag(true);
         Notification.notifications.get(index).getNotification().draw(mouseX, mouseY);
         mc.fontRendererObj.setUnicodeFlag(false);

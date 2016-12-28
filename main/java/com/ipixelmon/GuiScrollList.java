@@ -75,7 +75,11 @@ public abstract class GuiScrollList extends Gui {
                         int totalHeight = 0;
                         for (int i = 0; i < getSize(); i++) {
                             if (mouseY >= bounds.getY() + totalHeight - scrollY && mouseY <= (bounds.getY() + totalHeight - scrollY) + getObjectHeight(i)) {
-                                this.elementClicked(i, i == this.selected && System.currentTimeMillis() - this.lastClickTime < 250L);
+
+                                int mX = (mouseX - xPosition);
+                                int mY = mouseY - ((int) ((bounds.getY() + totalHeight) - scrollY));
+
+                                this.elementClicked(i, mX, mY, i == this.selected && System.currentTimeMillis() - this.lastClickTime < 250L);
                                 this.selected = i;
                                 this.lastClickTime = System.currentTimeMillis();
                             }
@@ -140,11 +144,10 @@ public abstract class GuiScrollList extends Gui {
             }
 
             int mX = (mouseX - xPosition);
-            mX = mX < 0 ? 0 : mX;
             int mY = mouseY - ((int) ((bounds.getY() + totalHeight) - scrollY));
-            mY = mY < 0 ? 0 : mY;
+            boolean hovering = mX > 0 && mX < listWidth && mY > 0 && mY < getObjectHeight(i);
 
-            drawObject(i, mX, mY);
+            drawObject(i, mX, mY, hovering);
             GlStateManager.popMatrix();
             totalHeight += getObjectHeight(i);
         }
@@ -246,11 +249,11 @@ public abstract class GuiScrollList extends Gui {
 
     public abstract int getObjectHeight(int index);
 
-    public abstract void drawObject(int index, int mouseX, int mouseY);
+    public abstract void drawObject(int index, int mouseX, int mouseY, boolean isHovering);
 
     public abstract int getSize();
 
-    public abstract void elementClicked(int index, boolean doubleClick);
+    public abstract void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick);
 
     public float getScrollY() {
         return scrollY;

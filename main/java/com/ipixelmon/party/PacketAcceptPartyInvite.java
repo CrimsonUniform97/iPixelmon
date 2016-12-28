@@ -4,6 +4,8 @@ import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.notification.PacketNotification;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -36,13 +38,16 @@ public class PacketAcceptPartyInvite implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketAcceptPartyInvite, IMessage> {
-// TODO: Make players be able to view the players in their party.
+
         @Override
         public IMessage onMessage(PacketAcceptPartyInvite message, MessageContext ctx) {
 
+            EntityPlayerMP entityPlayer;
             for (UUID player : PartyMod.getPlayersInParty(message.partyID)) {
-                if (PlayerUtil.isPlayerOnline(player) && !player.equals(ctx.getServerHandler().playerEntity.getUniqueID())) {
-                    iPixelmon.network.sendTo(new PacketNotification(ctx.getServerHandler().playerEntity.getName() + " joined the party."), PlayerUtil.getPlayer(player));
+                entityPlayer = PlayerUtil.getPlayer(player);
+                if (entityPlayer != null && !player.equals(ctx.getServerHandler().playerEntity.getUniqueID())) {
+                    iPixelmon.network.sendTo(new PacketJoinedParty(ctx.getServerHandler().playerEntity.getName()), entityPlayer);
+                    iPixelmon.network.sendTo(new PacketJoinedParty(entityPlayer.getName()), ctx.getServerHandler().playerEntity);
                 }
             }
 

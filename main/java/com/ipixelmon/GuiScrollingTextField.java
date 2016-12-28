@@ -31,7 +31,7 @@ public class GuiScrollingTextField extends GuiScrollList {
     }
 
     @Override
-    public void drawObject(int index, int mouseX, int mouseY) {
+    public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(-xPosition, -yPosition, 0);
         textField.drawTextField();

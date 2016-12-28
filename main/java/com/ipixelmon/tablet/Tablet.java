@@ -3,11 +3,14 @@ package com.ipixelmon.tablet;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.apps.friends.PacketFriendRequestToClient;
+import com.ipixelmon.tablet.apps.friends.PacketFriendRequestToServer;
+import com.ipixelmon.tablet.apps.friends.PacketFriendStatus;
+import com.ipixelmon.tablet.apps.friends.PacketModifyFriends;
 import com.ipixelmon.tablet.apps.mail.packet.PacketReceiveMail;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendResponse;
 import com.ipixelmon.tablet.client.ClientProxy;
-import com.ipixelmon.tablet.apps.friends.packet.*;
 import com.ipixelmon.tablet.notification.PacketNotification;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -27,13 +30,11 @@ public class Tablet implements IMod {
     @Override
     public void preInit() {
         // friends packets
-        iPixelmon.registerPacket(PacketFriendsListReq.Handler.class, PacketFriendsListReq.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketFriendsListRes.Handler.class, PacketFriendsListRes.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketAddFriendReq.Handler.class, PacketAddFriendReq.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketAddFriendRes.Handler.class, PacketAddFriendRes.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketAcceptDeny.Handler.class, PacketAcceptDeny.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketFriendRequestToClient.Handler.class, PacketFriendRequestToClient.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketFriendRequestToServer.Handler.class, PacketFriendRequestToServer.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketFriendStatus.Handler.class, PacketFriendStatus.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketModifyFriends.Handler.class, PacketModifyFriends.class, Side.SERVER);
         iPixelmon.registerPacket(PacketNotification.Handler.class, PacketNotification.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketRemoveFriend.Handler.class, PacketRemoveFriend.class, Side.SERVER);
 
         // mail packets
         iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);

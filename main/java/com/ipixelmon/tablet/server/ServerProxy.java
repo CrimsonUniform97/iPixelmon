@@ -5,7 +5,6 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.tablet.apps.friends.PlayerJoinListener;
 import com.ipixelmon.tablet.apps.mail.PlayerListener;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -25,7 +24,7 @@ public class ServerProxy extends CommonProxy {
         friendsForm.add("friends", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, friendsForm);
 
-        CreateForm friendReqForm = new CreateForm("FriendReqs");
+        CreateForm friendReqForm = new CreateForm("FriendRequests");
         friendReqForm.add("receiver", DataType.TEXT);
         friendReqForm.add("sender", DataType.TEXT);
         friendReqForm.add("sentDate", DataType.TEXT);
@@ -38,7 +37,7 @@ public class ServerProxy extends CommonProxy {
         messages.add("message", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, messages);
 
-        MinecraftForge.EVENT_BUS.register(new PlayerJoinListener());
         MinecraftForge.EVENT_BUS.register(new PlayerListener());
+        MinecraftForge.EVENT_BUS.register(new com.ipixelmon.tablet.apps.friends.PlayerListener());
     }
 }
