@@ -44,7 +44,7 @@ public class PacketFriendStatus implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendStatus message, MessageContext ctx) {
-            Friends.addFriend(message.id, message.name, message.online);
+            FriendsAPI.Client.addFriend(message.id, message.name, message.online);
             return null;
         }
 

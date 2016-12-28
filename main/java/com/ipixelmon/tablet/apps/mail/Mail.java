@@ -1,15 +1,12 @@
 package com.ipixelmon.tablet.apps.mail;
 
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.apps.App;
-import com.ipixelmon.tablet.apps.GuiTablet;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Rectangle;
 
@@ -19,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,7 +83,7 @@ public class Mail extends App {
     }
 
     public static void drawBackground(Rectangle bounds) {
-        GuiUtil.drawRectFillBorder(bounds.getX() + 2, bounds.getY() + 2, bounds.getWidth() - 4, bounds.getHeight() - 4,
+        iPixelmon.util.gui.drawRectFillBorder(bounds.getX() + 2, bounds.getY() + 2, bounds.getWidth() - 4, bounds.getHeight() - 4,
                 ColorPicker.color(255f, 252f, 211f, 255f), Color.black, 2);
     }
 

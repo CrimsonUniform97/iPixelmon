@@ -1,15 +1,19 @@
-package com.ipixelmon;
+package com.ipixelmon.util;
 
+import com.google.common.base.Splitter;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public final class ItemUtil {
+public class ItemUtil {
 
-    public static final Iterator<ItemStackInfo> getPlayerInvIterator(EntityPlayerMP player) {
+    public final Iterator<ItemStackInfo> getPlayerInvIterator(EntityPlayerMP player) {
         ItemStack[] itemStacks = new ItemStack[player.inventory.mainInventory.length + player.inventory.armorInventory.length];
 
         final List<ItemStackInfo> itemStackList = new ArrayList();
@@ -45,7 +49,7 @@ public final class ItemUtil {
         return iterator;
     }
 
-    public static class ItemStackInfo {
+    public class ItemStackInfo {
         private ItemStack itemStack;
         private int index;
         private InventoryType inventoryType;
@@ -79,6 +83,47 @@ public final class ItemUtil {
 
     public enum InventoryType {
         MAIN_INVENTORY, ARMOR;
+    }
+
+    public final String itemToString(final ItemStack stack) {
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append(Item.getIdFromItem(stack.getItem()));
+        builder.append(",");
+        builder.append(stack.stackSize);
+        builder.append(",");
+        builder.append(stack.getItemDamage());
+        builder.append(",");
+
+        if (stack.getEnchantmentTagList() != null) {
+            NBTTagCompound tag;
+            for (int i = 0; i < stack.getEnchantmentTagList().tagCount(); ++i) {
+                if (stack.getEnchantmentTagList().getCompoundTagAt(i) != null) {
+                    tag = stack.getEnchantmentTagList().getCompoundTagAt(i);
+                    if (tag != null && tag.hasKey("id") && tag.hasKey("lvl")) {
+                        builder.append(tag.getShort("id"));
+                        builder.append(",");
+                        builder.append(tag.getShort("lvl"));
+                        builder.append(",");
+                    }
+                }
+            }
+        }
+
+        builder.deleteCharAt(builder.length() - 1);
+        return builder.toString();
+    }
+
+    public final ItemStack itemFromString(final String str) {
+        Iterator<String> it = Splitter.on(",").split(str).iterator();
+
+        final ItemStack toReturn = new ItemStack(Item.getItemById(Integer.parseInt(it.next())), Integer.parseInt(it.next()), Integer.parseInt(it.next()));
+
+        while(it.hasNext()) {
+            toReturn.addEnchantment(Enchantment.getEnchantmentById(Short.parseShort(it.next())), Short.parseShort(it.next()));
+        }
+
+        return toReturn;
     }
 
 }

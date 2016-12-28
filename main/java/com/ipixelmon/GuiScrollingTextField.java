@@ -45,7 +45,7 @@ public class GuiScrollingTextField extends GuiScrollList {
     }
 
     @Override
-    public void elementClicked(int index, boolean doubleClick) {
+    public void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick) {
 
     }
 

@@ -1,6 +1,6 @@
 package com.ipixelmon.tablet.apps.mail.packet;
 
-import com.ipixelmon.PlayerUtil;
+import com.ipixelmon.util.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.tablet.Tablet;
@@ -96,10 +96,10 @@ public class PacketSendMail implements IMessage {
             UUID player;
             while(iterator.hasNext()) {
                 player = (UUID) iterator.next();
-                if(PlayerUtil.isPlayerOnline(player)) {
+                if(iPixelmon.util.player.isPlayerOnline(player)) {
                     iPixelmon.network.sendTo(new PacketReceiveMail(reportDate,
                             ctx.getServerHandler().playerEntity.getName(), message.message),
-                            PlayerUtil.getPlayer(player));
+                            iPixelmon.util.player.getPlayer(player));
                     iterator.remove();
                 }
             }

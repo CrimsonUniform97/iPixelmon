@@ -1,11 +1,9 @@
 package com.ipixelmon.tablet.apps.friends;
 
-import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -14,11 +12,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -28,8 +21,6 @@ public class PacketFriendRequestToServer implements IMessage {
 
     public PacketFriendRequestToServer() {
     }
-
-    private static DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 
     private UUID player;
     private boolean delete;
@@ -67,12 +58,13 @@ public class PacketFriendRequestToServer implements IMessage {
                 if (!message.delete) {
                     if (!result.next()) {
                         iPixelmon.mysql.insert(Tablet.class, new InsertForm("FriendRequests")
-                                .add("sender", senderIDString).add("receiver", receiverIDString).add("sentDate", dateToString(getCurrentTime())));
+                                .add("sender", senderIDString).add("receiver", receiverIDString).add("sentDate",
+                                        iPixelmon.util.time.dateToString(iPixelmon.util.time.getCurrentTime())));
 
                         // send friend request to receiver
-                        if (PlayerUtil.isPlayerOnline(receiverID)) {
+                        if (iPixelmon.util.player.isPlayerOnline(receiverID)) {
                             iPixelmon.network.sendTo(new PacketFriendRequestToClient(senderName, senderID),
-                                    PlayerUtil.getPlayer(receiverID));
+                                    iPixelmon.util.player.getPlayer(receiverID));
                         }
                     }
                 } else {
@@ -89,21 +81,4 @@ public class PacketFriendRequestToServer implements IMessage {
 
     }
 
-    public static Date getCurrentTime() {
-        return Calendar.getInstance().getTime();
-    }
-
-    public static String dateToString(Date date) {
-        return df.format(date);
-    }
-
-    public static Date stringToDate(String str) {
-        try {
-            return df.parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }

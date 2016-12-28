@@ -1,7 +1,7 @@
 package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.GuiScrollList;
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -27,22 +27,22 @@ public class GuiFriendsList extends GuiScrollList {
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
-        UUID id = (UUID) Friends.getFriends().toArray()[index];
-        mc.fontRendererObj.drawString((Friends.isFriendOnline(id) ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) +
-                Friends.getFriendName(id), 0, 0, 0xFFFFFF);
+        UUID id = (UUID) FriendsAPI.Client.getFriends().toArray()[index];
+        mc.fontRendererObj.drawString((FriendsAPI.Client.isFriendOnline(id) ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) +
+                FriendsAPI.Client.getFriendName(id), 0, 0, 0xFFFFFF);
         if(isHovering) {
             mc.getTextureManager().bindTexture(cross);
-            GuiUtil.drawImage(width - 24, 2, 16, 16);
+            iPixelmon.util.gui.drawImage(width - 24, 2, 16, 16);
 
             if(mouseX > width - 24 && mouseX < width - 24 + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                GuiUtil.drawHoveringText(Arrays.asList(new String[]{"Remove"}), mouseX, mouseY);
+                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Remove"}), mouseX, mouseY);
             }
         }
     }
 
     @Override
     public int getSize() {
-        return Friends.getFriends().size();
+        return FriendsAPI.Client.getFriends().size();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GuiFriendsList extends GuiScrollList {
 
     public UUID getSelectedID() {
         if(getSelected() > -1) {
-            return (UUID) Friends.getFriends().toArray()[getSelected()];
+            return (UUID) FriendsAPI.Client.getFriends().toArray()[getSelected()];
         }
 
         return null;

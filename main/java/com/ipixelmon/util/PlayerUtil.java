@@ -1,4 +1,4 @@
-package com.ipixelmon;
+package com.ipixelmon.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,16 +14,14 @@ import java.util.UUID;
  */
 public class PlayerUtil {
 
-    @SideOnly(Side.SERVER)
-    public static final boolean isPlayerOnline(UUID playerUUID) {
+    public final boolean isPlayerOnline(UUID playerUUID) {
         return getPlayer(playerUUID) != null;
     }
 
-    @SideOnly(Side.SERVER)
-    public static final EntityPlayerMP getPlayer(UUID playerUUID) {
+    public final EntityPlayerMP getPlayer(UUID playerUUID) {
         for (WorldServer worldServer : MinecraftServer.getServer().worldServers)
             for (EntityPlayer player : worldServer.playerEntities)
-                if(player.getUniqueID().equals(playerUUID)) return (EntityPlayerMP) player;
+                if (player.getUniqueID().equals(playerUUID)) return (EntityPlayerMP) player;
 
         return null;
     }

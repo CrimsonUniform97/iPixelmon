@@ -11,16 +11,12 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by colby on 11/4/2016.
  */
 public class Friends extends App {
-
-    private static final Map<UUID, Object[]> friends = new HashMap<>();
-    private static final Map<UUID, String> friendRequests = new HashMap<>();
 
     private GuiFriendsList friendsList;
     private GuiFriendRequestsList friendRequestsList;
@@ -82,50 +78,6 @@ public class Friends extends App {
     public void updateScreen() {
         super.updateScreen();
         this.buttonList.get(0).enabled = !playerName.getText().isEmpty();
-    }
-
-    /**
-     * Friend List handling
-     */
-    public static void addFriend(UUID id, String name, boolean online) {
-        friends.remove(id);
-        friends.put(id, new Object[]{name, online});
-    }
-
-    public static void removeFriend(UUID id) {
-        friends.remove(id);
-    }
-
-    public static boolean isFriendOnline(UUID id) {
-        return (boolean) friends.get(id)[1];
-    }
-
-    public static String getFriendName(UUID id) {
-        return (String) friends.get(id)[0];
-    }
-
-    public static Set<UUID> getFriends() {
-        return friends.keySet();
-    }
-
-
-    /**
-     * Friend Request handling
-     */
-    public static void addFriendRequest(UUID id, String name) {
-        friendRequests.put(id, name);
-    }
-
-    public static void removeFriendRequest(UUID id) {
-        friendRequests.remove(id);
-    }
-
-    public static String getFriendRequestName(UUID id) {
-        return friendRequests.get(id);
-    }
-
-    public static Set<UUID> getFriendRequests() {
-        return friendRequests.keySet();
     }
 
 

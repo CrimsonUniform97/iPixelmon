@@ -1,11 +1,10 @@
 package com.ipixelmon.pixelbay.gui.buy;
 
-import com.ipixelmon.ItemSerializer;
-import com.ipixelmon.ItemUtil;
+import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.pixelbay.Pixelbay;
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.PixelmonUtility;
+import com.ipixelmon.util.PixelmonUtility;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.SelectionForm;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +29,7 @@ public class PacketBuyItem implements IMessage {
     private int price;
 
     public PacketBuyItem(ItemStack itemStack, UUID seller, int price) {
-        this.itemStack = ItemSerializer.itemToString(itemStack);
+        this.itemStack = iPixelmon.util.item.itemToString(itemStack);
         this.seller = seller;
         this.price = price;
     }
@@ -72,7 +71,7 @@ public class PacketBuyItem implements IMessage {
 
                 if (!result.next()) throw new Exception("That listing was not found.");
 
-                Iterator<ItemUtil.ItemStackInfo> iterator = ItemUtil.getPlayerInvIterator(player);
+                Iterator<ItemUtil.ItemStackInfo> iterator = iPixelmon.util.item.getPlayerInvIterator(player);
 
                 boolean hasEmptySlot = false;
                 ItemUtil.ItemStackInfo itemStackInfo;
@@ -86,7 +85,7 @@ public class PacketBuyItem implements IMessage {
 
                 if (!hasEmptySlot) throw new Exception("No empty slots found.");
 
-                player.inventory.addItemStackToInventory(ItemSerializer.itemFromString(message.itemStack));
+                player.inventory.addItemStackToInventory(iPixelmon.util.item.itemFromString(message.itemStack));
                 PixelmonUtility.takeMoney(player.getUniqueID(), message.price);
                 PixelmonUtility.giveMoney(message.seller, message.price);
                 player.addChatComponentMessage(new ChatComponentText(message.price + " PokéDollars deducted from your account."));

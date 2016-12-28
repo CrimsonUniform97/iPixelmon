@@ -1,6 +1,6 @@
 package com.ipixelmon.pixelbay.gui.buy;
 
-import com.ipixelmon.PixelmonUtility;
+import com.ipixelmon.util.PixelmonUtility;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.pixelbay.Pixelbay;
@@ -14,10 +14,6 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.PixelmonUtility;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.DeleteForm;
-import com.ipixelmon.pixelbay.Pixelbay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;

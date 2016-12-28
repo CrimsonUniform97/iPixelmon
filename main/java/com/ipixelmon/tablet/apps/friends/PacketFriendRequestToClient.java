@@ -40,7 +40,7 @@ public class PacketFriendRequestToClient implements IMessage {
 
         @Override
         public IMessage onMessage(PacketFriendRequestToClient message, MessageContext ctx) {
-            Friends.addFriendRequest(message.id, message.player);
+            FriendsAPI.Client.addFriendRequest(message.id, message.player);
             return null;
         }
 

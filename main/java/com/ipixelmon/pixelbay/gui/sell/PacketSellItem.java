@@ -1,8 +1,7 @@
 package com.ipixelmon.pixelbay.gui.sell;
 
 import io.netty.buffer.ByteBuf;
-import com.ipixelmon.ItemSerializer;
-import com.ipixelmon.ItemUtil;
+import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.mysql.InsertForm;
@@ -55,7 +54,7 @@ public final class PacketSellItem implements IMessage {
 
                 if(message.price <= 0) throw new Exception("Price must be greater than zero.");
 
-                Iterator<ItemUtil.ItemStackInfo> iterator = ItemUtil.getPlayerInvIterator(player);
+                Iterator<ItemUtil.ItemStackInfo> iterator = iPixelmon.util.item.getPlayerInvIterator(player);
                 ItemUtil.ItemStackInfo itemStackInfo;
                 boolean foundItemStack = false;
                 while(iterator.hasNext()) {
@@ -74,7 +73,7 @@ public final class PacketSellItem implements IMessage {
 
                 final InsertForm itemForm = new InsertForm("Item");
                 itemForm.add("seller", player.getUniqueID().toString());
-                itemForm.add("item", ItemSerializer.itemToString(message.itemStack));
+                itemForm.add("item", iPixelmon.util.item.itemToString(message.itemStack));
                 itemForm.add("itemName", message.itemStack.getUnlocalizedName().toLowerCase().replaceAll("item.", "").replaceAll("tile.", ""));
                 itemForm.add("price", "" + message.price);
 

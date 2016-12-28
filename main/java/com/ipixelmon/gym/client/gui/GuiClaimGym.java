@@ -1,6 +1,6 @@
 package com.ipixelmon.gym.client.gui;
 
-import com.ipixelmon.PixelmonUtility;
+import com.ipixelmon.util.PixelmonUtility;
 import com.ipixelmon.gym.PacketStorePokemon;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;

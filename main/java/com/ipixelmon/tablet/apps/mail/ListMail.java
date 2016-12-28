@@ -1,15 +1,13 @@
 package com.ipixelmon.tablet.apps.mail;
 
 import com.ipixelmon.GuiScrollList;
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
-
-import java.sql.SQLException;
 
 /**
  * Created by colby on 12/14/2016.
@@ -38,7 +36,7 @@ public class ListMail extends GuiScrollList {
         int color = getSelected() == index ? 0xFFFFFF : 0x383838;
 
         if(mailObject.isRead()) {
-            GuiUtil.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
+            iPixelmon.util.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
         }
             mc.fontRendererObj.drawString(PacketSendMail.dateFormat.format(mailObject.getSentDate()), 2, 2, color);
             mc.fontRendererObj.drawString(mailObject.getSender(), 2, 14, color);
@@ -71,7 +69,7 @@ public class ListMail extends GuiScrollList {
     }
 
     @Override
-    public void elementClicked(int index, boolean doubleClick) {
+    public void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick) {
         if(doubleClick) {
             App.setActiveApp(new ViewMail(Mail.mail.get(index)));
         }
@@ -79,7 +77,7 @@ public class ListMail extends GuiScrollList {
 
     @Override
     public void drawSelectionBox(int index, int width, int height) {
-        GuiUtil.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
+        iPixelmon.util.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
     }
 
     @Override

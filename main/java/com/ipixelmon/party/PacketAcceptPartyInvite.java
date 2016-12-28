@@ -1,10 +1,7 @@
 package com.ipixelmon.party;
 
-import com.ipixelmon.PlayerUtil;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.notification.PacketNotification;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -43,15 +40,17 @@ public class PacketAcceptPartyInvite implements IMessage {
         public IMessage onMessage(PacketAcceptPartyInvite message, MessageContext ctx) {
 
             EntityPlayerMP entityPlayer;
-            for (UUID player : PartyMod.getPlayersInParty(message.partyID)) {
-                entityPlayer = PlayerUtil.getPlayer(player);
+            for (UUID player : PartyAPI.Server.getPlayersInParty(message.partyID)) {
+                entityPlayer = iPixelmon.util.player.getPlayer(player);
                 if (entityPlayer != null && !player.equals(ctx.getServerHandler().playerEntity.getUniqueID())) {
-                    iPixelmon.network.sendTo(new PacketJoinedParty(ctx.getServerHandler().playerEntity.getName()), entityPlayer);
-                    iPixelmon.network.sendTo(new PacketJoinedParty(entityPlayer.getName()), ctx.getServerHandler().playerEntity);
+                    iPixelmon.network.sendTo(new PacketJoinedParty(ctx.getServerHandler().playerEntity.getUniqueID(),
+                            ctx.getServerHandler().playerEntity.getName(), message.partyID), entityPlayer);
+                    iPixelmon.network.sendTo(new PacketJoinedParty(entityPlayer.getUniqueID(), entityPlayer.getName(),
+                            message.partyID), ctx.getServerHandler().playerEntity);
                 }
             }
 
-            PartyMod.addPlayerToParty(message.partyID, ctx.getServerHandler().playerEntity.getUniqueID());
+            PartyAPI.Server.addPlayerToParty(message.partyID, ctx.getServerHandler().playerEntity.getUniqueID());
 
             return null;
         }

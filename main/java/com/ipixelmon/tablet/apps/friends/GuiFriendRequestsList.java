@@ -1,7 +1,7 @@
 package com.ipixelmon.tablet.apps.friends;
 
 import com.ipixelmon.GuiScrollList;
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import net.minecraft.util.ResourceLocation;
 import scala.actors.threadpool.Arrays;
@@ -29,36 +29,36 @@ public class GuiFriendRequestsList extends GuiScrollList {
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
-        UUID id = (UUID) Friends.getFriendRequests().toArray()[index];
-        mc.fontRendererObj.drawString(Friends.getFriendRequestName(id), 0, 0, 0xFFFFFF);
+        UUID id = (UUID) FriendsAPI.Client.getFriendRequests().toArray()[index];
+        mc.fontRendererObj.drawString(FriendsAPI.Client.getFriendRequestName(id), 0, 0, 0xFFFFFF);
 
         crossX = width - 24;
         tickX = crossX - 24;
 
         if (isHovering) {
             mc.getTextureManager().bindTexture(tick);
-            GuiUtil.drawImage(tickX, 2, 16, 16);
+            iPixelmon.util.gui.drawImage(tickX, 2, 16, 16);
             mc.getTextureManager().bindTexture(cross);
-            GuiUtil.drawImage(crossX, 2, 16, 16);
+            iPixelmon.util.gui.drawImage(crossX, 2, 16, 16);
 
             if (mouseX > crossX && mouseX < crossX + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                GuiUtil.drawHoveringText(Arrays.asList(new String[]{"Deny"}), mouseX, mouseY);
+                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Deny"}), mouseX, mouseY);
             }
 
             if (mouseX > tickX && mouseX < tickX + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                GuiUtil.drawHoveringText(Arrays.asList(new String[]{"Accept"}), mouseX, mouseY);
+                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Accept"}), mouseX, mouseY);
             }
         }
     }
 
     @Override
     public int getSize() {
-        return Friends.getFriendRequests().size();
+        return FriendsAPI.Client.getFriendRequests().size();
     }
 
     @Override
     public void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick) {
-        UUID id = (UUID) Friends.getFriendRequests().toArray()[index];
+        UUID id = (UUID) FriendsAPI.Client.getFriendRequests().toArray()[index];
 
         if (mouseX > crossX && mouseX < crossX + 16 && mouseY > 2 && mouseY < 2 + 16) {
             iPixelmon.network.sendToServer(new PacketFriendRequestToServer(id, true));

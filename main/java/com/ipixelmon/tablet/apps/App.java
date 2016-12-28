@@ -1,7 +1,7 @@
 package com.ipixelmon.tablet.apps;
 
 import com.google.common.collect.Maps;
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.gallery.Gallery;
 import net.minecraft.client.Minecraft;
@@ -74,7 +74,7 @@ public abstract class App extends GuiScreen implements Comparable<App> {
 
         Dimension bgSize = new Dimension(614, 378);
 
-        Dimension boundary = GuiUtil.instance.getScaledDimension(bgSize, new Dimension(width, height));
+        Dimension boundary = iPixelmon.util.gui.getScaledDimension(bgSize, new Dimension(width, height));
 
         float ratioW = (float) boundary.getWidth() / (float) bgSize.getWidth();
         float ratioH = (float) boundary.getHeight() / (float) bgSize.getHeight();
@@ -115,7 +115,7 @@ public abstract class App extends GuiScreen implements Comparable<App> {
             Gallery.getWallpaper().drawWallpaper(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
         } else {
             mc.getTextureManager().bindTexture(defaultWallpaper);
-            GuiUtil.instance.drawImage(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
+            iPixelmon.util.gui.drawImage(getScreenBounds().getX(), getScreenBounds().getY(), getScreenBounds().getWidth(), getScreenBounds().getHeight());
         }
 
         GlStateManager.disableTexture2D();
@@ -127,7 +127,7 @@ public abstract class App extends GuiScreen implements Comparable<App> {
 
     private void drawTablet() {
         mc.getTextureManager().bindTexture(bgTexture);
-        GuiUtil.instance.drawImage(getBgBounds().getX(), getBgBounds().getY(), getBgBounds().getWidth(), getBgBounds().getHeight());
+        iPixelmon.util.gui.drawImage(getBgBounds().getX(), getBgBounds().getY(), getBgBounds().getWidth(), getBgBounds().getHeight());
     }
 
 }

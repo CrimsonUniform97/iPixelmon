@@ -29,6 +29,7 @@ public class PartyMod implements IMod {
         iPixelmon.registerPacket(PacketReceivePartyInvite.Handler.class, PacketReceivePartyInvite.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAcceptPartyInvite.Handler.class, PacketAcceptPartyInvite.class, Side.SERVER);
         iPixelmon.registerPacket(PacketJoinedParty.Handler.class, PacketJoinedParty.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketLeaveParty.Handler.class, PacketLeaveParty.class, Side.CLIENT);
     }
 
     @Override
@@ -61,35 +62,5 @@ public class PartyMod implements IMod {
         return null;
     }
 
-    public static UUID getPlayersParty(UUID player) {
-        for (UUID partyUUID : parties.keySet()) {
-            if (parties.get(partyUUID).contains(player)) return partyUUID;
-        }
-
-        return null;
-    }
-
-    public static TreeSet<UUID> getPlayersInParty(UUID party) {
-        return parties.get(party);
-    }
-
-    public static void addPlayerToParty(UUID party, UUID player) {
-        for (UUID partyUUID : parties.keySet()) {
-            parties.get(partyUUID).remove(player);
-        }
-
-        if (!parties.containsKey(party)) {
-            TreeSet<UUID> players = new TreeSet<>();
-            players.add(player);
-            parties.put(party, players);
-        } else {
-            parties.get(party).add(player);
-        }
-    }
-
-    public static void removePlayerFromParty(UUID party, UUID player) {
-        parties.get(party).remove(player);
-        if (parties.get(party).isEmpty()) parties.remove(party);
-    }
 
 }

@@ -3,6 +3,7 @@ package com.ipixelmon.tablet.apps.mail;
 import com.ipixelmon.*;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
 import com.ipixelmon.tablet.apps.App;
+import com.ipixelmon.util.GuiUtil;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -31,7 +32,7 @@ public class ComposeMail extends App {
         Mail.drawBackground(getScreenBounds());
         players.drawTextField();
 
-        GuiUtil.drawRectFill(message.xPosition - 1, message.yPosition - 1, message.width + 2, message.height + 2, Color.gray);
+        iPixelmon.util.gui.drawRectFill(message.xPosition - 1, message.yPosition - 1, message.width + 2, message.height + 2, Color.gray);
         message.draw(mouseX, mouseY, Mouse.getDWheel());
 
         sendBtn.drawButton(mc, mouseX, mouseY);

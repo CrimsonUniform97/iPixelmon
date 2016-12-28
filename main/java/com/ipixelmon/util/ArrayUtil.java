@@ -1,4 +1,4 @@
-package com.ipixelmon;
+package com.ipixelmon.util;
 
 import java.util.Arrays;
 
@@ -7,11 +7,11 @@ import java.util.Arrays;
  */
 public class ArrayUtil {
 
-    public static String toString(String[] objects) {
+    public String toString(String[] objects) {
         return Arrays.toString(objects);
     }
 
-    public static String[] fromString(String string) {
+    public String[] fromString(String string) {
         String[] strings = string.replace("[", "").replace("]", "").split(", ");
         String result[] = new String[strings.length];
         for (int i = 0; i < result.length; i++) {

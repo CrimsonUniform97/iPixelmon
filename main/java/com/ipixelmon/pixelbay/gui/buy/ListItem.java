@@ -1,14 +1,7 @@
 package com.ipixelmon.pixelbay.gui.buy;
 
-import com.ipixelmon.ItemSerializer;
-import com.ipixelmon.PixelmonUtility;
+import com.ipixelmon.util.PixelmonUtility;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.uuidmanager.UUIDManager;
-import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
-import com.ipixelmon.ItemSerializer;
-import com.ipixelmon.PixelmonUtility;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,19 +9,13 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.Rectangle;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class ListItem extends ISearchList
 {
@@ -122,7 +109,7 @@ public class ListItem extends ISearchList
             ItemStack item;
             while (resultItem.next())
             {
-                item = ItemSerializer.itemFromString(resultItem.getString("item"));
+                item = iPixelmon.util.item.itemFromString(resultItem.getString("item"));
                 if (item != null)
                     this.entries.add(new ItemListInfo(item, UUID.fromString(resultItem.getString("seller")), resultItem.getInt("price")));
             }

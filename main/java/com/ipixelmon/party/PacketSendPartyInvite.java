@@ -1,6 +1,6 @@
 package com.ipixelmon.party;
 
-import com.ipixelmon.PlayerUtil;
+import com.ipixelmon.util.PlayerUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
@@ -10,10 +10,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -53,7 +50,7 @@ public class PacketSendPartyInvite implements IMessage{
                 return null;
             }
 
-            EntityPlayerMP player = PlayerUtil.getPlayer(playerUUID);
+            EntityPlayerMP player = iPixelmon.util.player.getPlayer(playerUUID);
 
             // player is not online
             if(player == null) {
@@ -61,11 +58,11 @@ public class PacketSendPartyInvite implements IMessage{
                 return null;
             }
 
-            UUID partyUUID = PartyMod.getPlayersParty(sender.getUniqueID());
+            UUID partyUUID = PartyAPI.Server.getPlayersParty(sender.getUniqueID());
 
             if(partyUUID == null) {
                 partyUUID = UUID.randomUUID();
-                PartyMod.addPlayerToParty(partyUUID, sender.getUniqueID());
+                PartyAPI.Server.addPlayerToParty(partyUUID, sender.getUniqueID());
             }
 
             iPixelmon.network.sendTo(new PacketReceivePartyInvite(partyUUID, sender.getName()), player);

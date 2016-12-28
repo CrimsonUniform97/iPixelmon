@@ -1,9 +1,9 @@
 package com.ipixelmon.tablet.apps;
 
 import com.google.common.collect.Maps;
-import com.ipixelmon.GuiUtil;
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.pixelegg.client.Animation;
-import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.client.TileIterator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -104,7 +104,7 @@ public class GuiTablet extends App {
 
             // draw icon
             mc.getTextureManager().bindTexture(app.getIcon());
-            GuiUtil.instance.drawImage(0, 0, iconWidth, iconHeight);
+            iPixelmon.util.gui.drawImage(0, 0, iconWidth, iconHeight);
             GlStateManager.popMatrix();
         }
 

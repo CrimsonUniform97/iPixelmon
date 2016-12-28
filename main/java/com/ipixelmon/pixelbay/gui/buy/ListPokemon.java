@@ -3,14 +3,11 @@ package com.ipixelmon.pixelbay.gui.buy;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.ipixelmon.PixelmonUtility;
+import com.ipixelmon.util.PixelmonUtility;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.pixelbay.gui.ColorPicker;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;
 
 import java.awt.*;

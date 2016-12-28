@@ -1,5 +1,6 @@
-package com.ipixelmon;
+package com.ipixelmon.util;
 
+import com.ipixelmon.iPixelmon;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.comm.CommandChatHandler;

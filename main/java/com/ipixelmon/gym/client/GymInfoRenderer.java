@@ -50,7 +50,6 @@ public class GymInfoRenderer extends TileEntitySpecialRenderer {
                 try {
                     GlStateManager.pushMatrix();
                     GlStateManager.translate(x + 0.5D, y + 0.5D, z + 0.5D);
-                    // TODO: Work on making this a little more... pretty.
                     renderLivingLabel(tile, EnumChatFormatting.RED + "Power: ★ " + tile.getGym().getPower(), 0, 3, 0, 50);
                     GlStateManager.popMatrix();
                 }catch(Exception e){}

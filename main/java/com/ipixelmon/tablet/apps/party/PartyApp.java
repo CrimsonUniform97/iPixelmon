@@ -4,6 +4,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.party.PacketSendPartyInvite;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.friends.Friends;
+import com.ipixelmon.tablet.apps.friends.FriendsAPI;
 import com.ipixelmon.tablet.apps.friends.GuiFriendsList;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Mouse;
@@ -19,8 +20,6 @@ public class PartyApp extends App {
     private GuiFriendsList friendsList;
     private GuiButton sendReq;
     private PlayersInPartyList partyList;
-
-    public static Set<String> playersInParty = new TreeSet<>();
 
     public PartyApp(String name, boolean register) {
         super(name, register);
@@ -45,7 +44,7 @@ public class PartyApp extends App {
 
         if(button == sendReq) {
             if(friendsList.getSelected() > -1) {
-                iPixelmon.network.sendToServer(new PacketSendPartyInvite(Friends.getFriendName(friendsList.getSelectedID())));
+                iPixelmon.network.sendToServer(new PacketSendPartyInvite(FriendsAPI.Client.getFriendName(friendsList.getSelectedID())));
             }
         }
     }

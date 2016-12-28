@@ -1,6 +1,5 @@
-package com.ipixelmon;
+package com.ipixelmon.util;
 
-import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,32 +12,25 @@ import org.lwjgl.util.Dimension;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
-import java.util.*;
 
-public class GuiUtil
-{
-
-    public static final GuiUtil instance = new GuiUtil();
-
-    private GuiUtil(){}
+public class GuiUtil {
 
     private static final Vec3 LIGHT0_POS = (new Vec3(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
     private static final Vec3 LIGHT1_POS = (new Vec3(-0.20000000298023224D, 1.0D, 0.699999988079071D)).normalize();
 
-    private static FloatBuffer setColorBuffer(double p_74517_0_, double p_74517_2_, double p_74517_4_, double p_74517_6_)
-    {
+    private static FloatBuffer setColorBuffer(double p_74517_0_, double p_74517_2_, double p_74517_4_, double p_74517_6_) {
         /**
          * Update and return colorBuffer with the RGBA values passed as arguments
          */
-        return setColorBuffer((float)p_74517_0_, (float)p_74517_2_, (float)p_74517_4_, (float)p_74517_6_);
+        return setColorBuffer((float) p_74517_0_, (float) p_74517_2_, (float) p_74517_4_, (float) p_74517_6_);
     }
 
     /**
      * Update and return colorBuffer with the RGBA values passed as arguments
      */
     private static FloatBuffer colorBuffer = GLAllocation.createDirectFloatBuffer(16);
-    private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_)
-    {
+
+    private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
         colorBuffer.clear();
         colorBuffer.put(p_74521_0_).put(p_74521_1_).put(p_74521_2_).put(p_74521_3_);
         colorBuffer.flip();
@@ -46,8 +38,7 @@ public class GuiUtil
         return colorBuffer;
     }
 
-    public void setBrightness(float f, float f1, float f2)
-    {
+    public void setBrightness(float f, float f1, float f2) {
         GlStateManager.enableLighting();
         GlStateManager.enableLight(0);
         GlStateManager.enableLight(1);
@@ -94,11 +85,11 @@ public class GuiUtil
         return new Dimension(new_width, new_height);
     }
 
-    public static void drawImage(float x, float y, float width, float height) {
+    public void drawImage(float x, float y, float width, float height) {
         GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
     }
 
-    public static void drawRectFill(int x, int y, int width, int height, Color color) {
+    public void drawRectFill(int x, int y, int width, int height, Color color) {
         GL11.glDisable(GL11.GL_CULL_FACE);
         GlStateManager.disableTexture2D();
         GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
@@ -116,33 +107,30 @@ public class GuiUtil
         GlStateManager.enableTexture2D();
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
-    public static void drawRectFillBorder(int x, int y, int width, int height, Color fill, Color border, int borderThickness) {
-        GuiUtil.drawRectFill(x, y, width, height, border);
-        GuiUtil.drawRectFill(x + borderThickness, y + borderThickness,
+
+    public void drawRectFillBorder(int x, int y, int width, int height, Color fill, Color border, int borderThickness) {
+        drawRectFill(x, y, width, height, border);
+        drawRectFill(x + borderThickness, y + borderThickness,
                 width - (borderThickness * 2), height - (borderThickness * 2),
                 fill);
     }
 
-    public static void drawHoveringText(java.util.List<String> textLines, int x, int y)
-    {
+    public void drawHoveringText(java.util.List<String> textLines, int x, int y) {
         float zLevel = 400f;
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
 
-        if (!textLines.isEmpty())
-        {
+        if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableLighting();
             GlStateManager.disableDepth();
             int i = 0;
 
-            for (String s : textLines)
-            {
+            for (String s : textLines) {
                 int j = font.getStringWidth(s);
 
-                if (j > i)
-                {
+                if (j > i) {
                     i = j;
                 }
             }
@@ -151,8 +139,7 @@ public class GuiUtil
             int i2 = y - 12;
             int k = 8;
 
-            if (textLines.size() > 1)
-            {
+            if (textLines.size() > 1) {
                 k += 2 + (textLines.size() - 1) * 10;
             }
 
@@ -181,13 +168,11 @@ public class GuiUtil
             drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
             drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
 
-            for (int k1 = 0; k1 < textLines.size(); ++k1)
-            {
-                String s1 = (String)textLines.get(k1);
-                font.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
+            for (int k1 = 0; k1 < textLines.size(); ++k1) {
+                String s1 = (String) textLines.get(k1);
+                font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
 
-                if (k1 == 0)
-                {
+                if (k1 == 0) {
                     i2 += 2;
                 }
 
@@ -203,17 +188,16 @@ public class GuiUtil
         }
     }
 
-    public static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
-    {
+    public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
         float zLevel = 300f;
-        float f = (float)(startColor >> 24 & 255) / 255.0F;
-        float f1 = (float)(startColor >> 16 & 255) / 255.0F;
-        float f2 = (float)(startColor >> 8 & 255) / 255.0F;
-        float f3 = (float)(startColor & 255) / 255.0F;
-        float f4 = (float)(endColor >> 24 & 255) / 255.0F;
-        float f5 = (float)(endColor >> 16 & 255) / 255.0F;
-        float f6 = (float)(endColor >> 8 & 255) / 255.0F;
-        float f7 = (float)(endColor & 255) / 255.0F;
+        float f = (float) (startColor >> 24 & 255) / 255.0F;
+        float f1 = (float) (startColor >> 16 & 255) / 255.0F;
+        float f2 = (float) (startColor >> 8 & 255) / 255.0F;
+        float f3 = (float) (startColor & 255) / 255.0F;
+        float f4 = (float) (endColor >> 24 & 255) / 255.0F;
+        float f5 = (float) (endColor >> 16 & 255) / 255.0F;
+        float f6 = (float) (endColor >> 8 & 255) / 255.0F;
+        float f7 = (float) (endColor & 255) / 255.0F;
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -222,10 +206,10 @@ public class GuiUtil
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos((double)right, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos((double)right, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos((double) right, (double) top, (double) zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos((double) left, (double) top, (double) zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos((double) left, (double) bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos((double) right, (double) bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
