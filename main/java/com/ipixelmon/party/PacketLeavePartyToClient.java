@@ -12,15 +12,15 @@ import java.util.UUID;
 /**
  * Created by colbymchenry on 12/28/16.
  */
-public class PacketLeaveParty implements IMessage {
+public class PacketLeavePartyToClient implements IMessage {
 
     private String player;
     private UUID playerID;
 
-    public PacketLeaveParty() {
+    public PacketLeavePartyToClient() {
     }
 
-    public PacketLeaveParty(String player, UUID playerID) {
+    public PacketLeavePartyToClient(String player, UUID playerID) {
         this.player= player;
         this.playerID = playerID;
     }
@@ -39,10 +39,10 @@ public class PacketLeaveParty implements IMessage {
         PartyAPI.Server.removePlayerFromParty(PartyAPI.Server.getPlayersParty(playerID), playerID);
     }
 
-    public static class Handler implements IMessageHandler<PacketLeaveParty, IMessage> {
+    public static class Handler implements IMessageHandler<PacketLeavePartyToClient, IMessage> {
 
         @Override
-        public IMessage onMessage(PacketLeaveParty message, MessageContext ctx) {
+        public IMessage onMessage(PacketLeavePartyToClient message, MessageContext ctx) {
             PartyAPI.Client.removePlayerFromParty(message.playerID);
             new SimpleTextNotification(message.player + " left the party.");
             return null;

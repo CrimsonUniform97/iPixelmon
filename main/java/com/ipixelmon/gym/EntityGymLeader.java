@@ -70,7 +70,7 @@ public class EntityGymLeader extends NPCTrainer {
     @Override
     protected boolean interact(EntityPlayer player) {
         if(getEntityWorld().isRemote) return false;
-
+// TODO: Not working
         try {
             Gym gym = GymMod.getGym(LandControl.getRegion(getEntityWorld(), getPosition()));
             gym.startBattle((EntityPlayerMP) player);

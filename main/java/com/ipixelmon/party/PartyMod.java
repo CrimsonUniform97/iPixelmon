@@ -29,7 +29,8 @@ public class PartyMod implements IMod {
         iPixelmon.registerPacket(PacketReceivePartyInvite.Handler.class, PacketReceivePartyInvite.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAcceptPartyInvite.Handler.class, PacketAcceptPartyInvite.class, Side.SERVER);
         iPixelmon.registerPacket(PacketJoinedParty.Handler.class, PacketJoinedParty.class, Side.CLIENT);
-        iPixelmon.registerPacket(PacketLeaveParty.Handler.class, PacketLeaveParty.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketLeavePartyToClient.Handler.class, PacketLeavePartyToClient.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketLeavePartyToServer.Handler.class, PacketLeavePartyToServer.class, Side.SERVER);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.ipixelmon.party.server;
 
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.party.PacketLeaveParty;
+import com.ipixelmon.party.PacketLeavePartyToClient;
 import com.ipixelmon.party.PartyAPI;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,13 +19,13 @@ public class PlayerListener {
         UUID partyID = PartyAPI.Server.getPlayersParty(event.player.getUniqueID());
 
         if(partyID == null) return;
-
+// TODO: test
         EntityPlayerMP player;
         for(UUID playerID : PartyAPI.Server.getPlayersInParty(partyID)) {
             player = iPixelmon.util.player.getPlayer(playerID);
 
             if(player != null) {
-                iPixelmon.network.sendTo(new PacketLeaveParty(event.player.getName(), event.player.getUniqueID()), player);
+                iPixelmon.network.sendTo(new PacketLeavePartyToClient(event.player.getName(), event.player.getUniqueID()), player);
             }
         }
     }

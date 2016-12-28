@@ -5,6 +5,7 @@ import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.Region;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
+import com.ipixelmon.party.PartyAPI;
 import com.ipixelmon.team.EnumTeam;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
@@ -228,21 +229,40 @@ public class Gym {
     }
 
     public void startBattle(EntityPlayerMP player) throws Exception {
-        if(getGymLeaders().isEmpty()) throw new Exception("There are no gym leaders occupying this gym.");
-
-        EntityPixelmon e = PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj);
-        PlayerParticipant playerParticipant = new PlayerParticipant(player, new EntityPixelmon[]{e});
-
-        // TODO: where parties
+        if (getGymLeaders().isEmpty()) throw new Exception("There are no gym leaders occupying this gym.");
 
         List<TrainerParticipant> trainerParticipants = new ArrayList<>();
-        for(EntityGymLeader gymLeader : getGymLeaders()) {
+        List<PlayerParticipant> playerParticipants = new ArrayList<>();
+
+        EntityPixelmon e = PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj);
+        playerParticipants.add(new PlayerParticipant(player, new EntityPixelmon[]{e}));
+
+        // TODO: Test parties, may need to teleport if all players aren't near the arena
+
+        for (EntityGymLeader gymLeader : getGymLeaders()) {
             trainerParticipants.add(new TrainerParticipant(gymLeader, player, 1));
         }
 
-        playerParticipant.startedBattle = true;
-        BattleParticipant[] team11 = new BattleParticipant[]{playerParticipant};
-        new CustomBattleController(team11, trainerParticipants.toArray(new BattleParticipant[trainerParticipants.size()]), EnumBattleType.Single);
+        UUID partyID = PartyAPI.Server.getPlayersParty(player.getUniqueID());
+
+        if (partyID != null) {
+            EntityPlayerMP entityPlayerMP;
+            for (UUID playerID : PartyAPI.Server.getPlayersInParty(partyID)) {
+                entityPlayerMP = iPixelmon.util.player.getPlayer(playerID);
+
+                if (entityPlayerMP != null) {
+                    e = PixelmonStorage.PokeballManager.getPlayerStorage(entityPlayerMP).getFirstAblePokemon(entityPlayerMP.worldObj);
+                    if (e != null) {
+                        playerParticipants.add(new PlayerParticipant(entityPlayerMP, new EntityPixelmon[]{e}));
+                    }
+                }
+            }
+        }
+
+        for(PlayerParticipant playerParticipant : playerParticipants) playerParticipant.startedBattle = true;
+
+        new CustomBattleController(playerParticipants.toArray(new BattleParticipant[playerParticipants.size()]),
+                trainerParticipants.toArray(new BattleParticipant[trainerParticipants.size()]), EnumBattleType.Single);
     }
 
 }
