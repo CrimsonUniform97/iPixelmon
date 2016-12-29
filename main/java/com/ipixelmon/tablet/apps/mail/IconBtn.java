@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.apps.mail;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.GuiUtil;
+import com.ipixelmon.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -44,7 +45,7 @@ public class IconBtn extends GuiButton {
             GlStateManager.color(128f/255f,128f/255f,128f/255f,255f);
         }
 
-        iPixelmon.util.gui.drawImage(xPosition, yPosition, 16, 16);
+        Utils.Client.gui.drawImage(xPosition, yPosition, 16, 16);
         this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 
         if (this.hovered) {

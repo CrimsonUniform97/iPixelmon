@@ -3,6 +3,7 @@ package com.ipixelmon.party.client;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.party.PacketAcceptPartyInvite;
 import com.ipixelmon.tablet.notification.Notification;
+import com.ipixelmon.util.Utils;
 import net.minecraft.client.gui.GuiButton;
 
 import java.awt.*;
@@ -26,7 +27,7 @@ public class NotificationPartyInvite extends Notification {
 
     @Override
     public void draw(int mouseX, int mouseY) {
-        iPixelmon.util.gui.drawRectFill(- 2, 0, getWidth() + 4, getHeight(), Color.black);
+        Utils.Client.gui.drawRectFill(- 2, 0, getWidth() + 4, getHeight(), Color.black);
         mc.fontRendererObj.drawSplitString(playerName + " invited you to their party.", 0, 2, maxWidth,0xFFFFFF);
 
         accept.drawButton(mc, mouseX, mouseY);

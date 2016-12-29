@@ -3,6 +3,7 @@ package com.ipixelmon.tablet.apps.friends;
 import com.ipixelmon.GuiScrollList;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.util.Utils;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import scala.actors.threadpool.Arrays;
@@ -32,10 +33,10 @@ public class GuiFriendsList extends GuiScrollList {
                 FriendsAPI.Client.getFriendName(id), 0, 0, 0xFFFFFF);
         if(isHovering) {
             mc.getTextureManager().bindTexture(cross);
-            iPixelmon.util.gui.drawImage(width - 24, 2, 16, 16);
+            Utils.Client.gui.drawImage(width - 24, 2, 16, 16);
 
             if(mouseX > width - 24 && mouseX < width - 24 + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Remove"}), mouseX, mouseY);
+                Utils.Client.gui.drawHoveringText(Arrays.asList(new String[]{"Remove"}), mouseX, mouseY);
             }
         }
     }

@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
+import com.ipixelmon.util.Utils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
@@ -83,7 +84,7 @@ public class Mail extends App {
     }
 
     public static void drawBackground(Rectangle bounds) {
-        iPixelmon.util.gui.drawRectFillBorder(bounds.getX() + 2, bounds.getY() + 2, bounds.getWidth() - 4, bounds.getHeight() - 4,
+        Utils.Client.gui.drawRectFillBorder(bounds.getX() + 2, bounds.getY() + 2, bounds.getWidth() - 4, bounds.getHeight() - 4,
                 ColorPicker.color(255f, 252f, 211f, 255f), Color.black, 2);
     }
 

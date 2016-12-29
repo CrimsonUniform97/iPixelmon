@@ -1,13 +1,12 @@
 package com.ipixelmon;
 
+import com.google.common.collect.Maps;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Config {
 
@@ -67,6 +66,27 @@ public class Config {
 
     public boolean hasKey(String parKey) {
         return getValue(parKey) != null;
+    }
+
+    public Map<String, String> toMap() {
+        Map<String, String> map = Maps.newHashMap();
+
+        try {
+            Scanner scanner = new Scanner(configFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("=")) {
+                    if(line.split("=").length > 1) {
+                        map.put(line.split("=")[0], line.split("=")[1]);
+                    }
+                }
+            }
+            scanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return map;
     }
 
     private void set(String parKey, Object parValue) {

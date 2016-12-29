@@ -6,6 +6,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.apps.mail.packet.PacketSendMail;
+import com.ipixelmon.util.Utils;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
@@ -36,7 +37,7 @@ public class ListMail extends GuiScrollList {
         int color = getSelected() == index ? 0xFFFFFF : 0x383838;
 
         if(mailObject.isRead()) {
-            iPixelmon.util.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
+            Utils.Client.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
         }
             mc.fontRendererObj.drawString(PacketSendMail.dateFormat.format(mailObject.getSentDate()), 2, 2, color);
             mc.fontRendererObj.drawString(mailObject.getSender(), 2, 14, color);
@@ -77,7 +78,7 @@ public class ListMail extends GuiScrollList {
 
     @Override
     public void drawSelectionBox(int index, int width, int height) {
-        iPixelmon.util.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
+        Utils.Client.gui.drawRectFill(0, 0, width, height, ColorPicker.color(128f, 128f, 128f, 200f));
     }
 
     @Override

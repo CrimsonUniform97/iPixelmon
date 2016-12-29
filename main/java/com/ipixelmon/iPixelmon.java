@@ -2,6 +2,7 @@ package com.ipixelmon;
 
 import com.ipixelmon.gym.GymMod;
 import com.ipixelmon.landcontrol.LandControl;
+import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.party.PartyMod;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pixelegg.PixelEgg;
@@ -59,6 +60,7 @@ public final class iPixelmon {
         loadMod(new PixelEgg());
         loadMod(new PartyMod());
         loadMod(new Tablet());
+        loadMod(new McStatsMod());
     }
 
     @Mod.EventHandler

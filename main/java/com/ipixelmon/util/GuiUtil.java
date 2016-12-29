@@ -7,12 +7,15 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Dimension;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
 
+@SideOnly(Side.CLIENT)
 public class GuiUtil {
 
     private static final Vec3 LIGHT0_POS = (new Vec3(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
@@ -28,6 +31,7 @@ public class GuiUtil {
     /**
      * Update and return colorBuffer with the RGBA values passed as arguments
      */
+    @SideOnly(Side.CLIENT)
     private static FloatBuffer colorBuffer = GLAllocation.createDirectFloatBuffer(16);
 
     private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {

@@ -3,6 +3,7 @@ package com.ipixelmon.tablet.apps.friends;
 import com.ipixelmon.GuiScrollList;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.util.Utils;
 import net.minecraft.util.ResourceLocation;
 import scala.actors.threadpool.Arrays;
 
@@ -37,16 +38,16 @@ public class GuiFriendRequestsList extends GuiScrollList {
 
         if (isHovering) {
             mc.getTextureManager().bindTexture(tick);
-            iPixelmon.util.gui.drawImage(tickX, 2, 16, 16);
+            Utils.Client.gui.drawImage(tickX, 2, 16, 16);
             mc.getTextureManager().bindTexture(cross);
-            iPixelmon.util.gui.drawImage(crossX, 2, 16, 16);
+            Utils.Client.gui.drawImage(crossX, 2, 16, 16);
 
             if (mouseX > crossX && mouseX < crossX + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Deny"}), mouseX, mouseY);
+                Utils.Client.gui.drawHoveringText(Arrays.asList(new String[]{"Deny"}), mouseX, mouseY);
             }
 
             if (mouseX > tickX && mouseX < tickX + 16 && mouseY > 2 && mouseY < 2 + 16) {
-                iPixelmon.util.gui.drawHoveringText(Arrays.asList(new String[]{"Accept"}), mouseX, mouseY);
+                Utils.Client.gui.drawHoveringText(Arrays.asList(new String[]{"Accept"}), mouseX, mouseY);
             }
         }
     }

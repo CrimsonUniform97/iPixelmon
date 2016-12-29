@@ -5,6 +5,7 @@ import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.apps.App;
 import com.ipixelmon.tablet.client.TileIterator;
+import com.ipixelmon.util.Utils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -91,7 +92,7 @@ public class Gallery extends App {
             wallpaper = (Wallpaper) tileIterator.next();
             rec = tileIterator.getTileBounds();
             if (tileIterator.getPage() == page) {
-                Dimension boundary = iPixelmon.util.gui.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
+                Dimension boundary = Utils.Client.gui.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
 
                 rec.setBounds(rec.getX() + 2, rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
@@ -133,15 +134,15 @@ public class Gallery extends App {
     }
 
     private void drawViewingWallpaperScreen(int mouseX, int mouseY) {
-        Dimension boundary = iPixelmon.util.gui.getScaledDimension(new Dimension(viewingWallpaper.getImage().getWidth(),
+        Dimension boundary = Utils.Client.gui.getScaledDimension(new Dimension(viewingWallpaper.getImage().getWidth(),
                 viewingWallpaper.getImage().getHeight()), new Dimension(getScreenBounds().getWidth() - 20, getScreenBounds().getHeight() - 20));
         viewingWallpaper.drawWallpaper(getScreenBounds().getX() + 1,
                 getScreenBounds().getY() + ((getScreenBounds().getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
         mc.getTextureManager().bindTexture(trashIcon);
-        iPixelmon.util.gui.drawImage(trashBounds.getX(), trashBounds.getY(), trashBounds.getWidth(), trashBounds.getHeight());
+        Utils.Client.gui.drawImage(trashBounds.getX(), trashBounds.getY(), trashBounds.getWidth(), trashBounds.getHeight());
         mc.getTextureManager().bindTexture(setWallpaperIcon);
-        iPixelmon.util.gui.drawImage(setWallpaperBounds.getX(), setWallpaperBounds.getY(), setWallpaperBounds.getWidth(), setWallpaperBounds.getHeight());
+        Utils.Client.gui.drawImage(setWallpaperBounds.getX(), setWallpaperBounds.getY(), setWallpaperBounds.getWidth(), setWallpaperBounds.getHeight());
         mc.getTextureManager().bindTexture(arrowIcon);
 
         GlStateManager.pushMatrix();
@@ -151,7 +152,7 @@ public class Gallery extends App {
             GlStateManager.rotate(180f, 0f, 0f, 0f);
             GlStateManager.scale(1.4f, 1.4f, 1.4f);
             GlStateManager.translate(-goBackBounds.getWidth() / 2, -goBackBounds.getHeight() / 2, 0f);
-            iPixelmon.util.gui.drawImage(0, 0, goBackBounds.getWidth(), goBackBounds.getHeight());
+            Utils.Client.gui.drawImage(0, 0, goBackBounds.getWidth(), goBackBounds.getHeight());
         }
         GlStateManager.popMatrix();
 
@@ -175,7 +176,7 @@ public class Gallery extends App {
             wallpaper = (Wallpaper) tileIterator.next();
             rec = tileIterator.getTileBounds();
             if (tileIterator.getPage() == page) {
-                Dimension boundary = iPixelmon.util.gui.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
+                Dimension boundary = Utils.Client.gui.getScaledDimension(new Dimension(wallpaper.getImage().getWidth(), wallpaper.getImage().getHeight()), new Dimension(rec.getWidth() - 24, rec.getHeight()));
 
                 rec.setBounds(rec.getX() + 2, rec.getY() + ((rec.getHeight() - boundary.getHeight()) / 2), boundary.getWidth(), boundary.getHeight());
 
@@ -189,9 +190,9 @@ public class Gallery extends App {
         }
 
         mc.getTextureManager().bindTexture(folderIcon);
-        iPixelmon.util.gui.drawImage(folderBounds.getX(), folderBounds.getY(), folderBounds.getWidth(), folderBounds.getHeight());
+        Utils.Client.gui.drawImage(folderBounds.getX(), folderBounds.getY(), folderBounds.getWidth(), folderBounds.getHeight());
         mc.getTextureManager().bindTexture(reloadIcon);
-        iPixelmon.util.gui.drawImage(reloadBounds.getX(), reloadBounds.getY(), reloadBounds.getWidth(), reloadBounds.getHeight());
+        Utils.Client.gui.drawImage(reloadBounds.getX(), reloadBounds.getY(), reloadBounds.getWidth(), reloadBounds.getHeight());
         drawArrows();
         drawHoveringText(mouseX, mouseY);
     }
@@ -205,7 +206,7 @@ public class Gallery extends App {
             GlStateManager.translate(rightBounds.getWidth() / 2, rightBounds.getHeight() / 2, 0f);
             GlStateManager.scale(1.4f, 1.4f, 1.4f);
             GlStateManager.translate(-rightBounds.getWidth() / 2, -rightBounds.getHeight() / 2, 0f);
-            iPixelmon.util.gui.drawImage(0, 0, rightBounds.getWidth(), rightBounds.getHeight());
+            Utils.Client.gui.drawImage(0, 0, rightBounds.getWidth(), rightBounds.getHeight());
         }
         GlStateManager.popMatrix();
 
@@ -216,7 +217,7 @@ public class Gallery extends App {
             GlStateManager.rotate(180f, 0f, 0f, 0f);
             GlStateManager.scale(1.4f, 1.4f, 1.4f);
             GlStateManager.translate(-leftBounds.getWidth() / 2, -leftBounds.getHeight() / 2, 0f);
-            iPixelmon.util.gui.drawImage(0, 0, leftBounds.getWidth(), leftBounds.getHeight());
+            Utils.Client.gui.drawImage(0, 0, leftBounds.getWidth(), leftBounds.getHeight());
         }
         GlStateManager.popMatrix();
     }

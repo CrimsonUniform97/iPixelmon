@@ -16,6 +16,7 @@ import javax.imageio.stream.ImageOutputStream;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.GuiUtil;
+import com.ipixelmon.util.Utils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -119,7 +120,7 @@ public class Wallpaper implements Comparable {
             // Send texel data to OpenGL
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, image.getWidth(), image.getHeight(), 0,
                     GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-            iPixelmon.util.gui.drawImage((float) x, (float) y, (float) width, (float) height);
+            Utils.Client.gui.drawImage((float) x, (float) y, (float) width, (float) height);
 
         } catch (Exception e) {
             e.printStackTrace();

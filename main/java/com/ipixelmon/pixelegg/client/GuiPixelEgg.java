@@ -1,6 +1,7 @@
 package com.ipixelmon.pixelegg.client;
 
 import com.ipixelmon.util.GuiUtil;
+import com.ipixelmon.util.Utils;
 import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
 import com.pixelmonmod.pixelmon.client.models.animations.EnumRotation;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
@@ -121,7 +122,7 @@ public class GuiPixelEgg extends GuiScreen
         }
 
         mc.getTextureManager().bindTexture(super_flare);
-        iPixelmon.util.gui.setBrightness(1.6f, 1.8f, 0f);
+        Utils.Client.gui.setBrightness(1.6f, 1.8f, 0f);
         GlStateManager.enableBlend();
         GlStateManager.pushMatrix();
 
@@ -158,7 +159,7 @@ public class GuiPixelEgg extends GuiScreen
             return;
         }
 
-        iPixelmon.util.gui.setBrightness(0.6f, 1.5f, 0f);
+        Utils.Client.gui.setBrightness(0.6f, 1.5f, 0f);
         GlStateManager.enableBlend();
 
         GlStateManager.pushMatrix();
@@ -245,7 +246,7 @@ public class GuiPixelEgg extends GuiScreen
 
     private void drawOrbs()
     {
-        iPixelmon.util.gui.setBrightness(1.6f, 1.8f, 0f);
+        Utils.Client.gui.setBrightness(1.6f, 1.8f, 0f);
         GlStateManager.enableBlend();
         mc.getTextureManager().bindTexture(lens_flares);
         for (Animation a : orbs)

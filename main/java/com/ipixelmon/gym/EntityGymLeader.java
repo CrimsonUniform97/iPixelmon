@@ -127,7 +127,7 @@ public class EntityGymLeader extends NPCTrainer {
         } catch (NullPointerException e) {
         }
     }
-
+// TODO: Don't allow taking damage
     public UUID getPlayerUUID() {
         return UUID.fromString(this.dataWatcher.getWatchableObjectString(20).split(",")[0]);
     }

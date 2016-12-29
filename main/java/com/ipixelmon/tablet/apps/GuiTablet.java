@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.pixelegg.client.Animation;
 import com.ipixelmon.tablet.client.TileIterator;
+import com.ipixelmon.util.Utils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -104,7 +105,7 @@ public class GuiTablet extends App {
 
             // draw icon
             mc.getTextureManager().bindTexture(app.getIcon());
-            iPixelmon.util.gui.drawImage(0, 0, iconWidth, iconHeight);
+            Utils.Client.gui.drawImage(0, 0, iconWidth, iconHeight);
             GlStateManager.popMatrix();
         }
 
