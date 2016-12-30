@@ -14,26 +14,30 @@ public class PacketUpdateEXP implements IMessage {
     }
 
     private long exp;
+    private GatherType gatherType;
 
-    public PacketUpdateEXP(long exp) {
+    public PacketUpdateEXP(long exp, GatherType gatherType) {
         this.exp = exp;
+        this.gatherType = gatherType;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         exp = buf.readLong();
+        gatherType = GatherType.values()[buf.readInt()];
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeLong(exp);
+        buf.writeInt(gatherType.ordinal());
     }
 
     public static class Handler implements IMessageHandler<PacketUpdateEXP, IMessage> {
 
         @Override
         public IMessage onMessage(PacketUpdateEXP message, MessageContext ctx) {
-            McStatsAPI.Client.EXP = message.exp;
+            McStatsAPI.Client.setEXP(message.gatherType, message.exp);
             return null;
         }
 

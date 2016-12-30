@@ -4,11 +4,19 @@ import com.google.common.collect.Maps;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.Config;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mcstats.GatherType;
+import com.ipixelmon.mcstats.McStatsAPI;
 import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.BlockLog;
+import net.minecraft.block.BlockNewLog;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.io.File;
@@ -21,13 +29,14 @@ public class ServerProxy extends CommonProxy {
 
     public static final Config config = new Config(new File(iPixelmon.path, "mcstats.txt"));
 
-    public static Map<Integer, Integer> xpValues = Maps.newHashMap();
-
     @Override
     public void preInit() {
         setupConfig();
-        iPixelmon.mysql.createTable(McStatsMod.class, new CreateForm("STATS")
-                .add("player", DataType.TEXT).add("exp", DataType.LONG));
+        CreateForm statsTable = new CreateForm("STATS").add("player", DataType.TEXT);
+
+        for (GatherType gatherType : GatherType.values()) statsTable.add(gatherType.name(), DataType.LONG);
+
+        iPixelmon.mysql.createTable(McStatsMod.class, statsTable);
     }
 
     @Override
@@ -36,15 +45,48 @@ public class ServerProxy extends CommonProxy {
     }
 
     private void setupConfig() {
-        Map<String, String> allData = config.toMap();
+        try {
+            Map<String, String> allData = config.toMap();
+            for (String key : allData.keySet()) {
+                if (key.contains(".")) {
+                    String[] data = key.split(".");
+                    GatherType gatherType = GatherType.valueOf(data[0].toUpperCase());
+                    Block block;
+                    int meta = 0;
 
-        Block block;
-        for(String key : allData.keySet()) {
-            block = Block.getBlockFromName(key);
+                    if (data[1].contains(":")) {
+                        block = Block.getBlockFromName(data[1].split(":")[0].toLowerCase());
+                        meta = Integer.parseInt(data[1].split(":")[1]);
+                    } else {
+                        block = Block.getBlockFromName(data[1].toLowerCase());
+                    }
 
-            if(block != null) {
-                xpValues.put(Block.getIdFromBlock(block), Integer.parseInt(allData.get(key)));
+                    McStatsAPI.Server.expValueList.add(block, meta, Integer.parseInt(allData.get(key)), gatherType);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            MinecraftServer.getServer().stopServer();
         }
     }
+
+    // TODO: Use for wood breaking tree
+//    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+//    {
+//        int i = 4;
+//        int j = i + 1;
+//
+//        if (worldIn.isAreaLoaded(pos.add(-j, -j, -j), pos.add(j, j, j)))
+//        {
+//            for (BlockPos blockpos : BlockPos.getAllInBox(pos.add(-i, -i, -i), pos.add(i, i, i)))
+//            {
+//                IBlockState iblockstate = worldIn.getBlockState(blockpos);
+//
+//                if (iblockstate.getBlock().isLeaves(worldIn, blockpos))
+//                {
+//                    iblockstate.getBlock().beginLeavesDecay(worldIn, blockpos);
+//                }
+//            }
+//        }
+//    }
 }

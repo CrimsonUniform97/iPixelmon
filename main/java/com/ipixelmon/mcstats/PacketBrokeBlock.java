@@ -1,5 +1,7 @@
 package com.ipixelmon.mcstats;
 
+import com.ipixelmon.mcstats.client.EXPAnimation;
+import com.ipixelmon.mcstats.client.PlayerListener;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -48,6 +50,8 @@ public class PacketBrokeBlock implements IMessage {
             McStatsAPI.Client.renderPos = new BlockPos(message.x, message.y, message.z);
             McStatsAPI.Client.renderStartTime = Calendar.getInstance().getTime();
             McStatsAPI.Client.renderEXP = message.exp;
+            McStatsAPI.Client.expAnimation = null;
+            McStatsAPI.Client.expAnimation = new EXPAnimation();
             return null;
         }
 
