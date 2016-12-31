@@ -1,8 +1,8 @@
 package com.ipixelmon.team.client;
 
+import com.ipixelmon.ColorPicker;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.pixelbay.gui.ColorPicker;
 import com.ipixelmon.team.EnumTeam;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

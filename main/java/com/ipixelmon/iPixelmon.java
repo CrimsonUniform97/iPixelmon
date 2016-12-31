@@ -1,14 +1,11 @@
 package com.ipixelmon;
 
-import com.ipixelmon.gym.GymMod;
-import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mcstats.McStatsMod;
+import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.party.PartyMod;
-import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.quest.QuestMod;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.util.Utils;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.ipixelmon.mysql.MySQLHandler;
 import com.ipixelmon.team.TeamMod;
@@ -29,8 +26,6 @@ import java.util.List;
 
 @Mod(modid = iPixelmon.id, name = iPixelmon.name, version = iPixelmon.version)
 public final class iPixelmon {
-
-    public static final Utils util = new Utils();
 
     public static final String id = "ipixelmon", name = "iPixelmon", version = "dev";
 
@@ -54,9 +49,7 @@ public final class iPixelmon {
 
     public iPixelmon() {
         loadMod(new UUIDManager());
-        loadMod(new Pixelbay());
-        loadMod(new LandControl());
-        loadMod(new GymMod());
+        loadMod(new NotificationMod());
         loadMod(new TeamMod());
         loadMod(new PixelEgg());
         loadMod(new PartyMod());

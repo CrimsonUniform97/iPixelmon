@@ -3,23 +3,15 @@ package com.ipixelmon.mcstats;
 import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mcstats.client.EXPAnimation;
-import com.ipixelmon.mcstats.client.PlayerListener;
 import com.ipixelmon.mcstats.server.EXPValueList;
-import com.ipixelmon.mcstats.server.ServerProxy;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
-import com.ipixelmon.util.Utils;
-import com.pixelmonmod.pixelmon.enums.EnumPotions;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.client.Minecraft;
+import com.ipixelmon.util.PlayerUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -84,7 +76,7 @@ public class McStatsAPI {
             iPixelmon.mysql.update(McStatsMod.class, new UpdateForm("STATS")
                     .set(gatherType.name(), getEXP(playerID, gatherType) + exp).where("player", playerID.toString()));
 
-            EntityPlayerMP player = Utils.player.getPlayer(playerID);
+            EntityPlayerMP player = PlayerUtil.getPlayer(playerID);
 
             if (player != null)
                 McStatsAPI.Server.updatePlayer(player, gatherType);

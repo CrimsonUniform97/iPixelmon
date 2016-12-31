@@ -19,6 +19,7 @@ public abstract class GuiScrollList extends Gui {
     protected Minecraft mc = Minecraft.getMinecraft();
     private int selected = -1;
     private long lastClickTime = 0L;
+    protected boolean drawScrollbarOnTop = true;
 
     public GuiScrollList(int xPosition, int yPosition, int width, int height) {
         bounds = new Rectangle(this.xPosition = xPosition, this.yPosition = yPosition, this.width = width, this.height = height);
@@ -128,6 +129,12 @@ public abstract class GuiScrollList extends Gui {
         int viewHeight = bounds.getHeight();
 
 
+        if(!drawScrollbarOnTop) {
+            GlStateManager.disableTexture2D();
+            drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
+            GlStateManager.enableTexture2D();
+        }
+
         // use scissoring to make the drawing seem seamless and continuous
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor((int) (left * scaleW), (int) (mc.displayHeight - (bottom * scaleH)),
@@ -154,9 +161,11 @@ public abstract class GuiScrollList extends Gui {
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        GlStateManager.disableTexture2D();
-        drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
-        GlStateManager.enableTexture2D();
+        if(drawScrollbarOnTop) {
+            GlStateManager.disableTexture2D();
+            drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
+            GlStateManager.enableTexture2D();
+        }
     }
 
     public void keyTyped(char keycode, int keynum) {

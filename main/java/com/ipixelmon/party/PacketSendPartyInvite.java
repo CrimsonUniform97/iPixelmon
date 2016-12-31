@@ -50,7 +50,7 @@ public class PacketSendPartyInvite implements IMessage{
                 return null;
             }
 
-            EntityPlayerMP player = iPixelmon.util.player.getPlayer(playerUUID);
+            EntityPlayerMP player = PlayerUtil.getPlayer(playerUUID);
 
             // player is not online
             if(player == null) {

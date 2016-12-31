@@ -13,15 +13,15 @@ public class TimeUtil {
 
     private static DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-    public Date getCurrentTime() {
+    public static Date getCurrentTime() {
         return Calendar.getInstance().getTime();
     }
 
-    public String dateToString(Date date) {
+    public  static String dateToString(Date date) {
         return df.format(date);
     }
 
-    public Date stringToDate(String str) {
+    public  static Date stringToDate(String str) {
         try {
             return df.parse(str);
         } catch (ParseException e) {

@@ -1,11 +1,8 @@
 package com.ipixelmon;
 
-import com.google.common.collect.Lists;
-import com.ipixelmon.pixelbay.gui.ColorPicker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Rectangle;
 

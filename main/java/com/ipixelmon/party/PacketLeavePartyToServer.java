@@ -1,6 +1,7 @@
 package com.ipixelmon.party;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.util.PlayerUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -38,7 +39,7 @@ public class PacketLeavePartyToServer implements IMessage {
 
             EntityPlayerMP player;
             for(UUID playerID : PartyAPI.Server.getPlayersInParty(partyID)) {
-                player = iPixelmon.util.player.getPlayer(playerID);
+                player = PlayerUtil.getPlayer(playerID);
 
                 if(player != null) {
                     iPixelmon.network.sendTo(new PacketLeavePartyToClient(ctx.getServerHandler().playerEntity.getName(),

@@ -43,7 +43,7 @@ public class GuiUtil {
         return colorBuffer;
     }
 
-    public void setBrightness(float f, float f1, float f2) {
+    public static void setBrightness(float f, float f1, float f2) {
         GlStateManager.enableLighting();
         GlStateManager.enableLight(0);
         GlStateManager.enableLight(1);
@@ -62,7 +62,7 @@ public class GuiUtil {
         GlStateManager.enableBlend();
     }
 
-    public Dimension getScaledDimension(Dimension imgSize, Dimension boundary) {
+    public static Dimension getScaledDimension(Dimension imgSize, Dimension boundary) {
 
         int original_width = imgSize.getWidth();
         int original_height = imgSize.getHeight();
@@ -90,11 +90,11 @@ public class GuiUtil {
         return new Dimension(new_width, new_height);
     }
 
-    public void drawImage(float x, float y, float width, float height) {
+    public static void drawImage(float x, float y, float width, float height) {
         GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
     }
 
-    public void drawRectFill(int x, int y, int width, int height, Color color) {
+    public static void drawRectFill(int x, int y, int width, int height, Color color) {
         GL11.glDisable(GL11.GL_CULL_FACE);
         GlStateManager.disableTexture2D();
         GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
@@ -113,14 +113,14 @@ public class GuiUtil {
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
-    public void drawRectFillBorder(int x, int y, int width, int height, Color fill, Color border, int borderThickness) {
+    public static void drawRectFillBorder(int x, int y, int width, int height, Color fill, Color border, int borderThickness) {
         drawRectFill(x, y, width, height, border);
         drawRectFill(x + borderThickness, y + borderThickness,
                 width - (borderThickness * 2), height - (borderThickness * 2),
                 fill);
     }
 
-    public void drawHoveringText(java.util.List<String> textLines, int x, int y) {
+    public static void drawHoveringText(java.util.List<String> textLines, int x, int y) {
         float zLevel = 400f;
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
@@ -193,7 +193,7 @@ public class GuiUtil {
         }
     }
 
-    public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
+    public static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
         float zLevel = 300f;
         float f = (float) (startColor >> 24 & 255) / 255.0F;
         float f1 = (float) (startColor >> 16 & 255) / 255.0F;

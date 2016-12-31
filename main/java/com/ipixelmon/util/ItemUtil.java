@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ItemUtil {
 
-    public final Iterator<ItemStackInfo> getPlayerInvIterator(EntityPlayerMP player) {
+    public static final Iterator<ItemStackInfo> getPlayerInvIterator(EntityPlayerMP player) {
         ItemStack[] itemStacks = new ItemStack[player.inventory.mainInventory.length + player.inventory.armorInventory.length];
 
         final List<ItemStackInfo> itemStackList = new ArrayList();
@@ -49,7 +49,7 @@ public class ItemUtil {
         return iterator;
     }
 
-    public class ItemStackInfo {
+    public static class ItemStackInfo {
         private ItemStack itemStack;
         private int index;
         private InventoryType inventoryType;
@@ -85,7 +85,7 @@ public class ItemUtil {
         MAIN_INVENTORY, ARMOR;
     }
 
-    public final String itemToString(final ItemStack stack) {
+    public static final String itemToString(final ItemStack stack) {
         final StringBuilder builder = new StringBuilder();
 
         builder.append(Item.getIdFromItem(stack.getItem()));
@@ -114,7 +114,7 @@ public class ItemUtil {
         return builder.toString();
     }
 
-    public final ItemStack itemFromString(final String str) {
+    public static final ItemStack itemFromString(final String str) {
         Iterator<String> it = Splitter.on(",").split(str).iterator();
 
         final ItemStack toReturn = new ItemStack(Item.getItemById(Integer.parseInt(it.next())), Integer.parseInt(it.next()), Integer.parseInt(it.next()));

@@ -14,11 +14,11 @@ import java.util.UUID;
  */
 public class PlayerUtil {
 
-    public final boolean isPlayerOnline(UUID playerUUID) {
+    public static final boolean isPlayerOnline(UUID playerUUID) {
         return getPlayer(playerUUID) != null;
     }
 
-    public final EntityPlayerMP getPlayer(UUID playerUUID) {
+    public static final EntityPlayerMP getPlayer(UUID playerUUID) {
         for (WorldServer worldServer : MinecraftServer.getServer().worldServers)
             for (EntityPlayer player : worldServer.playerEntities)
                 if (player.getUniqueID().equals(playerUUID)) return (EntityPlayerMP) player;

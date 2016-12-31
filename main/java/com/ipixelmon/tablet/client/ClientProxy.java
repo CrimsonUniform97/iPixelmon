@@ -1,17 +1,10 @@
 package com.ipixelmon.tablet.client;
 
 import com.ipixelmon.CommonProxy;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.tablet.apps.friends.Friends;
-import com.ipixelmon.tablet.apps.mail.Mail;
-import com.ipixelmon.tablet.apps.gallery.Gallery;
-import com.ipixelmon.tablet.apps.notifications.NotificationsApp;
-import com.ipixelmon.tablet.apps.party.PartyApp;
-import com.ipixelmon.tablet.apps.pixelbay.Pixelbay;
-import com.ipixelmon.tablet.notification.NotificationOverlay;
+import com.ipixelmon.notification.NotificationOverlay;
+import com.ipixelmon.tablet.AppBase;
+import com.ipixelmon.tablet.Tablet;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.sql.SQLException;
 
 /**
  * Created by colbymchenry on 10/3/16.
@@ -20,26 +13,37 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit() {
-        Gallery.populateWallpapers();
+        for (AppBase app : Tablet.apps) {
+            if (app.clientProxyClass() != null) {
+                try {
+                    app.clientProxyClass().newInstance().preInit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
     public void init() {
-        MinecraftForge.EVENT_BUS.register(NotificationOverlay.instance);
-        MinecraftForge.EVENT_BUS.register(new KeyListener());
-
-        try {
-            iPixelmon.clientDb.query("CREATE TABLE IF NOT EXISTS tabletMail (sentDate TEXT, sender TEXT, message TEXT, read BOOLEAN);");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (AppBase app : Tablet.apps) {
+            if (app.clientProxyClass() != null) {
+                try {
+                    app.clientProxyClass().newInstance().init();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        new Gallery("Gallery");
-        new Mail("Mail", true);
-        new Friends("Friends", true);
-        new Pixelbay("Pixelbay");
-        new PartyApp("Party", true);
-        new NotificationsApp("Notifications", true);
+        MinecraftForge.EVENT_BUS.register(new KeyListener());
+        // TODO
+//
+//        try {
+//            iPixelmon.clientDb.query("CREATE TABLE IF NOT EXISTS tabletMail (sentDate TEXT, sender TEXT, message TEXT, read BOOLEAN);");
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

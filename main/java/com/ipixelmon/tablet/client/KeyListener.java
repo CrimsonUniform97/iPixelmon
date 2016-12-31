@@ -1,6 +1,6 @@
 package com.ipixelmon.tablet.client;
 
-import com.ipixelmon.tablet.apps.GuiTablet;
+import com.ipixelmon.tablet.GuiTablet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -26,7 +26,7 @@ public class KeyListener {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
         if(key.isPressed()) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiTablet());
+            Minecraft.getMinecraft().displayGuiScreen(new GuiTablet(null));
         }
 
     }
