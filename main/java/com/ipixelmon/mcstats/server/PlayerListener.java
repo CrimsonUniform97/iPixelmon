@@ -10,7 +10,10 @@ import com.ipixelmon.mysql.SelectionForm;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -26,16 +29,27 @@ public class PlayerListener {
 
     @SubscribeEvent
     public void onBreak(BlockEvent.BreakEvent event) {
-        if(event.getPlayer() == null) return;
-// TODO: Implement double drop
+        if (event.getPlayer() == null) return;
+
         EntityPlayerMP player = (EntityPlayerMP) event.getPlayer();
         IBlockState blockState = event.world.getBlockState(event.pos);
         int exp = McStatsAPI.Server.expValueList.getEXP(blockState);
 
-        if(exp == 0) return;
+        if (exp == 0) return;
 
         McStatsAPI.Server.giveEXP(player.getUniqueID(), exp, McStatsAPI.Server.expValueList.getGatherType(blockState));
         iPixelmon.network.sendTo(new PacketBrokeBlock(event.pos.getX(), event.pos.getY(), event.pos.getZ(), exp), player);
+    }
+
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
+
+        try {
+            McStatsAPI.Mining.applySuperBreaker((EntityPlayerMP) event.entityPlayer);
+        } catch (Exception e) {
+            event.entityPlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+        }
     }
 
     @SubscribeEvent
@@ -44,10 +58,10 @@ public class PlayerListener {
                 new SelectionForm("STATS").where("player", event.player.getUniqueID().toString()));
 
         try {
-            if(!result.next()) {
+            if (!result.next()) {
                 InsertForm insertForm = new InsertForm("STATS").add("player", event.player.getUniqueID().toString());
 
-                for(GatherType gatherType : GatherType.values()) insertForm.add(gatherType.name(), 0);
+                for (GatherType gatherType : GatherType.values()) insertForm.add(gatherType.name(), 0);
 
                 iPixelmon.mysql.insert(McStatsMod.class, insertForm);
             }
@@ -55,16 +69,15 @@ public class PlayerListener {
             e.printStackTrace();
         }
 
-        for(GatherType gatherType : GatherType.values())
+        for (GatherType gatherType : GatherType.values())
             McStatsAPI.Server.updatePlayer((EntityPlayerMP) event.player, gatherType);
     }
 
     // TODO: test
     @SubscribeEvent
-    public void onTick(TickEvent.PlayerTickEvent event) {
-        if(McStatsAPI.Mining.getSuperBreakerTimeLeft(event.player.getUniqueID()) == 0) {
-            McStatsAPI.Mining.removeSuperBreakerFromItem(McStatsAPI.Mining.getSuperBreakerItemForPlayer(event.player.getUniqueID()));
-            event.player.addChatComponentMessage(new ChatComponentText("Super Breaker exhausted! Cool down is 240 seconds."));
+    public void onTick(final TickEvent.PlayerTickEvent event) {
+        if (McStatsAPI.Mining.getSuperBreakerTimeLeft(event.player.getUniqueID()) == 0) {
+            McStatsAPI.Mining.removeSuperBreakerFromItem(event.player.getUniqueID());
         }
     }
 

@@ -6,6 +6,7 @@ import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.party.PartyMod;
 import com.ipixelmon.pixelbay.Pixelbay;
 import com.ipixelmon.pixelegg.PixelEgg;
+import com.ipixelmon.quest.QuestMod;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.util.Utils;
 import com.ipixelmon.uuidmanager.UUIDManager;
@@ -61,6 +62,7 @@ public final class iPixelmon {
         loadMod(new PartyMod());
         loadMod(new Tablet());
         loadMod(new McStatsMod());
+        loadMod(new QuestMod());
     }
 
     @Mod.EventHandler

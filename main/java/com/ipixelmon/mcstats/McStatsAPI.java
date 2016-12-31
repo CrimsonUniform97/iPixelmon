@@ -9,13 +9,17 @@ import com.ipixelmon.mcstats.server.ServerProxy;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.Utils;
+import com.pixelmonmod.pixelmon.enums.EnumPotions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -129,49 +133,45 @@ public class McStatsAPI {
 
         // TODO: test
         public static void applySuperBreaker(EntityPlayerMP player) throws Exception {
-            ItemStack inHand = player.getItemInUse();
+            ItemStack inHand = player.inventory.getCurrentItem();
 
             if (inHand == null || !(inHand.getItem() instanceof ItemPickaxe)) return;
 
-            if(getSuperBreakerCoolDown(player.getUniqueID()) == 0) {
+            if (getSuperBreakerCoolDown(player.getUniqueID()) == 0) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.SECOND, 240 + (int) getSuperBreakerDuration(player.getUniqueID()));
+                calendar.add(Calendar.SECOND, 10 + (int) getSuperBreakerDuration(player.getUniqueID()));
                 coolDownSuperBreaker.put(player.getUniqueID(), calendar.getTime());
 
-                if(inHand.isItemEnchanted()) {
-                    NBTTagList tagList = inHand.getEnchantmentTagList();
-                    for (int i = 0; i < tagList.tagCount(); i++) {
-                        if (tagList.getCompoundTagAt(i).getShort("id") == Enchantment.efficiency.effectId) {
-                            inHand.addEnchantment(Enchantment.efficiency,
-                                    5 + tagList.getCompoundTagAt(i).getShort("lvl"));
-                        }
-                    }
-                } else {
-                    inHand.addEnchantment(Enchantment.efficiency, 5);
-                }
+                inHand.addEnchantment(Enchantment.efficiency,
+                        EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand) + 5);
 
                 superBreakerItems.put(player.getUniqueID(), inHand);
             } else {
-                throw new Exception(getSuperBreakerCoolDown(player.getUniqueID()) + " cool down.");
+                throw new Exception("Super Breaker has " + getSuperBreakerCoolDown(player.getUniqueID()) +
+                        " seconds to cool down.");
             }
 
             throw new Exception("Super Breaker enabled for " + getSuperBreakerDuration(player.getUniqueID()) + " seconds!");
 
         }
 
-        public static void removeSuperBreakerFromItem(ItemStack itemStack) {
-            if(itemStack.isItemEnchanted()) {
-                NBTTagList tagList = itemStack.getEnchantmentTagList();
-                for (int i = 0; i < tagList.tagCount(); i++) {
-                    if (tagList.getCompoundTagAt(i).getShort("id") == Enchantment.efficiency.effectId) {
-                        if(tagList.getCompoundTagAt(i).getShort("lvl") == 5) {
-                            tagList.removeTag(i);
-                        } else {
-                            itemStack.addEnchantment(Enchantment.efficiency,
-                                    5 - tagList.getCompoundTagAt(i).getShort("lvl"));
-                        }
-                    }
+        // TODO: Get working
+        public static void removeSuperBreakerFromItem(UUID playerID) {
+            ItemStack inHand = superBreakerItems.get(playerID);
+
+            if (inHand == null || !(inHand.getItem() instanceof ItemPickaxe)) return;
+
+            if (inHand.isItemEnchanted()) {
+                System.out.println("CALLED");
+                int currentLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand);
+                Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(inHand);
+                if(currentLvl == 5) {
+                    enchantments.remove(Enchantment.efficiency.effectId);
+                } else {
+                    enchantments.put(Enchantment.efficiency.effectId, currentLvl - 5);
                 }
+
+                EnchantmentHelper.setEnchantments(enchantments, inHand);
             }
         }
 
@@ -180,10 +180,10 @@ public class McStatsAPI {
         }
 
         public static long getSuperBreakerTimeLeft(UUID playerID) {
-            if(!coolDownSuperBreaker.containsKey(playerID)) return 0;
+            if (!coolDownSuperBreaker.containsKey(playerID)) return 0;
 
             Calendar base = Calendar.getInstance();
-            base.add(Calendar.SECOND, 240);
+            base.add(Calendar.SECOND, 10);
             long timeLeft = (coolDownSuperBreaker.get(playerID).getTime() - base.getTime().getTime()) / 1000;
             timeLeft = timeLeft <= 0 ? 0 : timeLeft;
             return timeLeft;
@@ -194,7 +194,7 @@ public class McStatsAPI {
         }
 
         public static long getSuperBreakerCoolDown(UUID playerID) {
-            if(!coolDownSuperBreaker.containsKey(playerID)) return 0;
+            if (!coolDownSuperBreaker.containsKey(playerID)) return 0;
 
             long coolDown = (coolDownSuperBreaker.get(playerID).getTime() - Calendar.getInstance().getTime().getTime()) / 1000;
             coolDown = coolDown <= 0 ? 0 : coolDown;

@@ -222,7 +222,49 @@ public class GuiUtil {
         GlStateManager.enableTexture2D();
     }
 
-    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime) {
+    public static void renderLabel(String str, double x, double y, double z, float scale, boolean renderBox, FontRenderer fontRenderer, RenderManager renderManager) {
+        float f1 = 0.016666668F * scale;
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x + 0.0F, (float) y, (float) z);
+        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.scale(-f1, -f1, f1);
+        GlStateManager.disableLighting();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        int i = 0;
+
+        if (str.equals("deadmau5")) {
+            i = -10;
+        }
+
+        if(renderBox) {
+            int j = fontRenderer.getStringWidth(str) / 2;
+            GlStateManager.disableTexture2D();
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            worldrenderer.pos((double) (-j - 1), (double) (-1 + i), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (-j - 1), (double) (8 + i), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (j + 1), (double) (8 + i), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (j + 1), (double) (-1 + i), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            tessellator.draw();
+            GlStateManager.enableTexture2D();
+        }
+        fontRenderer.drawString(str, -fontRenderer.getStringWidth(str) / 2, i, 553648127);
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        fontRenderer.drawString(str, -fontRenderer.getStringWidth(str) / 2, i, -1);
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.popMatrix();
+    }
+
+    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime, float scale) {
         //Thanks to Electric-Expansion mod for the majority of this code
         //https://github.com/Alex-hawks/Electric-Expansion/blob/master/src/electricexpansion/client/render/RenderFloatingText.java
         Minecraft mc = Minecraft.getMinecraft();
@@ -238,7 +280,7 @@ public class GuiUtil {
         float dz = z - playerZ;
         float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
-        float scale = 0.45f * 0.10f;
+        scale *= 0.45f;
 
         GL11.glColor4f(1f, 1f, 1f, 0.5f);
         GL11.glPushMatrix();

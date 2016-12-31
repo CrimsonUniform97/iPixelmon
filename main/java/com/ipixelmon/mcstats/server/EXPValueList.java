@@ -1,10 +1,13 @@
 package com.ipixelmon.mcstats.server;
 
 import com.ipixelmon.mcstats.GatherType;
+import com.sun.glass.ui.Window;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by colbymchenry on 12/29/16.
@@ -17,6 +20,8 @@ public class EXPValueList extends ArrayList {
         object[1] = meta;
         object[2] = exp;
         object[3] = gatherType;
+        Logger.getLogger("Minecraft").log(Level.INFO, "Registered " + block.getLocalizedName() + ":" + meta +
+                " for " + exp + " EXP! Gather Type=" + gatherType.name());
         return super.add(object);
     }
 

@@ -1,6 +1,6 @@
 package com.ipixelmon.quest;
 
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 /**
  * Created by colbymchenry on 12/28/16.
  */
-public class EntityQuestGiver extends EntityCreature {
+public class EntityQuestGiver extends EntityLiving {
 
     public EntityQuestGiver(World worldIn) {
         super(worldIn);
@@ -17,6 +17,7 @@ public class EntityQuestGiver extends EntityCreature {
         this.tasks.taskEntries.clear();
         this.targetTasks.taskEntries.clear();
         this.tasks.addTask(0, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+
     }
 
     @Override

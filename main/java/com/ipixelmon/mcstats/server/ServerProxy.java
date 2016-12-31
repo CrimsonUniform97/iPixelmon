@@ -49,7 +49,7 @@ public class ServerProxy extends CommonProxy {
             Map<String, String> allData = config.toMap();
             for (String key : allData.keySet()) {
                 if (key.contains(".")) {
-                    String[] data = key.split(".");
+                    String[] data = key.split("\\.");
                     GatherType gatherType = GatherType.valueOf(data[0].toUpperCase());
                     Block block;
                     int meta = 0;
