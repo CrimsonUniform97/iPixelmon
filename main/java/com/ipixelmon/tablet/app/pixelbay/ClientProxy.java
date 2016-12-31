@@ -1,6 +1,8 @@
 package com.ipixelmon.tablet.app.pixelbay;
 
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.AppProxy;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Created by colby on 12/31/2016.
@@ -19,11 +21,11 @@ public class ClientProxy extends AppProxy {
 
     @Override
     public Object getIcon() {
-        return super.getIcon();
+        return new ResourceLocation(iPixelmon.id, "textures/apps/pixelbay/icon.png");
     }
 
     @Override
     public Object getGuiForApp(Object... parameters) {
-        return super.getGuiForApp(parameters);
+        return new PixelbayGui(parameters);
     }
 }

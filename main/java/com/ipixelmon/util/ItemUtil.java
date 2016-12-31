@@ -1,129 +1,159 @@
 package com.ipixelmon.util;
 
-import com.google.common.base.Splitter;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Created by colby on 12/31/2016.
+ */
 public class ItemUtil {
 
-    public static final Iterator<ItemStackInfo> getPlayerInvIterator(EntityPlayerMP player) {
-        ItemStack[] itemStacks = new ItemStack[player.inventory.mainInventory.length + player.inventory.armorInventory.length];
+    @SideOnly(Side.CLIENT)
+    public static class Client {
 
-        final List<ItemStackInfo> itemStackList = new ArrayList();
-        for (int i = 0; i < itemStacks.length; i++) {
-            if (i < player.inventory.mainInventory.length) {
-                itemStackList.add(new ItemStackInfo(player.inventory.mainInventory[i], i, InventoryType.MAIN_INVENTORY));
-            } else {
-                itemStackList.add(new ItemStackInfo(player.inventory.armorInventory[i - player.inventory.mainInventory.length], i, InventoryType.ARMOR));
-            }
-        }
+        public static void renderItem(ItemStack stack, int x, int y, int width, int height, int mouseX, int mouseY) {
+            Minecraft mc = Minecraft.getMinecraft();
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.enableBlend();
+            mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, String.valueOf(stack.stackSize));
 
-        Iterator<ItemStackInfo> iterator = new Iterator<ItemStackInfo>() {
-
-            ItemStackInfo[] items = itemStackList.toArray(new ItemStackInfo[itemStackList.size()]);
-            int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return index < items.length && items[index] != null;
+            if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                renderToolTip(stack, mouseX, mouseY, width, height);
+                GL11.glEnable(GL11.GL_SCISSOR_TEST);
             }
 
-            @Override
-            public ItemStackInfo next() {
-                return items[index++];
-            }
-
-            @Override
-            public void remove() {
-                items[index] = null;
-            }
-        };
-
-        return iterator;
-    }
-
-    public static class ItemStackInfo {
-        private ItemStack itemStack;
-        private int index;
-        private InventoryType inventoryType;
-
-        public ItemStackInfo(ItemStack itemStack, int index, InventoryType inventoryType) {
-            this.itemStack = itemStack;
-            this.index = index;
-            this.inventoryType = inventoryType;
+            RenderHelper.disableStandardItemLighting();
         }
 
-        public ItemStack getItemStack() {
-            return this.itemStack;
-        }
 
-        public int getIndex() {
-            return this.index;
-        }
+        private static void renderToolTip(ItemStack stack, int x, int y, int width, int height) {
+            Minecraft mc = Minecraft.getMinecraft();
+            List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
 
-        public boolean itemStackEquals(ItemStack itemStack) {
-            return ItemStack.areItemStacksEqual(itemStack, this.itemStack);
-        }
-
-        public void removeFromPlayersInventory(EntityPlayerMP player) {
-            player.inventory.removeStackFromSlot(index);
-        }
-
-        public InventoryType getInventoryType() {
-            return inventoryType;
-        }
-    }
-
-    public enum InventoryType {
-        MAIN_INVENTORY, ARMOR;
-    }
-
-    public static final String itemToString(final ItemStack stack) {
-        final StringBuilder builder = new StringBuilder();
-
-        builder.append(Item.getIdFromItem(stack.getItem()));
-        builder.append(",");
-        builder.append(stack.stackSize);
-        builder.append(",");
-        builder.append(stack.getItemDamage());
-        builder.append(",");
-
-        if (stack.getEnchantmentTagList() != null) {
-            NBTTagCompound tag;
-            for (int i = 0; i < stack.getEnchantmentTagList().tagCount(); ++i) {
-                if (stack.getEnchantmentTagList().getCompoundTagAt(i) != null) {
-                    tag = stack.getEnchantmentTagList().getCompoundTagAt(i);
-                    if (tag != null && tag.hasKey("id") && tag.hasKey("lvl")) {
-                        builder.append(tag.getShort("id"));
-                        builder.append(",");
-                        builder.append(tag.getShort("lvl"));
-                        builder.append(",");
-                    }
+            for (int i = 0; i < list.size(); ++i) {
+                if (i == 0) {
+                    list.set(i, stack.getRarity().rarityColor + (String) list.get(i));
+                } else {
+                    list.set(i, EnumChatFormatting.GRAY + (String) list.get(i));
                 }
             }
+
+            FontRenderer font = stack.getItem().getFontRenderer(stack);
+            drawHoveringText(list, x, y, width, height);
         }
 
-        builder.deleteCharAt(builder.length() - 1);
-        return builder.toString();
-    }
+        private static void drawHoveringText(List<String> textLines, int x, int y, int width, int height) {
+            Minecraft mc = Minecraft.getMinecraft();
+            RenderItem itemRender = mc.getRenderItem();
 
-    public static final ItemStack itemFromString(final String str) {
-        Iterator<String> it = Splitter.on(",").split(str).iterator();
+            if (!textLines.isEmpty()) {
+                GlStateManager.disableRescaleNormal();
+                RenderHelper.disableStandardItemLighting();
+                GlStateManager.disableLighting();
+                GlStateManager.disableDepth();
+                int i = 0;
 
-        final ItemStack toReturn = new ItemStack(Item.getItemById(Integer.parseInt(it.next())), Integer.parseInt(it.next()), Integer.parseInt(it.next()));
+                for (String s : textLines) {
+                    int j = mc.fontRendererObj.getStringWidth(s);
 
-        while(it.hasNext()) {
-            toReturn.addEnchantment(Enchantment.getEnchantmentById(Short.parseShort(it.next())), Short.parseShort(it.next()));
+                    if (j > i) {
+                        i = j;
+                    }
+                }
+
+                int l1 = x + 12;
+                int i2 = y - 12;
+                int k = 8;
+
+                if (textLines.size() > 1) {
+                    k += 2 + (textLines.size() - 1) * 10;
+                }
+
+                if (l1 + i > width) {
+                    l1 -= 28 + i;
+                }
+
+                if (i2 + k + 6 > height) {
+                    i2 = height - k - 6;
+                }
+
+//                this.zLevel = 300.0F;
+                itemRender.zLevel = 300.0F;
+                int l = -267386864;
+                drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
+                drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
+                drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
+                drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
+                drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+                int i1 = 1347420415;
+                int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
+                drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
+                drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
+                drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
+                drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+
+                for (int k1 = 0; k1 < textLines.size(); ++k1) {
+                    String s1 = (String) textLines.get(k1);
+                    mc.fontRendererObj.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+
+                    if (k1 == 0) {
+                        i2 += 2;
+                    }
+
+                    i2 += 10;
+                }
+
+//                this.zLevel = 0.0F;
+                itemRender.zLevel = 0.0F;
+                GlStateManager.enableLighting();
+                GlStateManager.enableDepth();
+                RenderHelper.enableStandardItemLighting();
+                GlStateManager.enableRescaleNormal();
+            }
         }
 
-        return toReturn;
+        private static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
+            float f = (float) (startColor >> 24 & 255) / 255.0F;
+            float f1 = (float) (startColor >> 16 & 255) / 255.0F;
+            float f2 = (float) (startColor >> 8 & 255) / 255.0F;
+            float f3 = (float) (startColor & 255) / 255.0F;
+            float f4 = (float) (endColor >> 24 & 255) / 255.0F;
+            float f5 = (float) (endColor >> 16 & 255) / 255.0F;
+            float f6 = (float) (endColor >> 8 & 255) / 255.0F;
+            float f7 = (float) (endColor & 255) / 255.0F;
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.disableAlpha();
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.shadeModel(7425);
+            Tessellator tessellator = Tessellator.getInstance();
+            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            worldrenderer.pos((double) right, (double) top, (double) 300).color(f1, f2, f3, f).endVertex();
+            worldrenderer.pos((double) left, (double) top, (double) 300).color(f1, f2, f3, f).endVertex();
+            worldrenderer.pos((double) left, (double) bottom, (double) 300).color(f5, f6, f7, f4).endVertex();
+            worldrenderer.pos((double) right, (double) bottom, (double) 300).color(f5, f6, f7, f4).endVertex();
+            tessellator.draw();
+            GlStateManager.shadeModel(7424);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableTexture2D();
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.tablet.app.friends.FriendsApp;
 import com.ipixelmon.tablet.app.gallery.GalleryApp;
+import com.ipixelmon.tablet.app.pixelbay.PixelbayApp;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraft.client.Minecraft;
@@ -32,6 +33,7 @@ public class Tablet implements IMod {
     public Tablet() {
         apps.add(new FriendsApp());
         apps.add(new GalleryApp());
+        apps.add(new PixelbayApp());
     }
 
     @Override
