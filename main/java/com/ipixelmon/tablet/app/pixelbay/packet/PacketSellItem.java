@@ -44,6 +44,9 @@ public class PacketSellItem implements IMessage {
 
         @Override
         public IMessage onMessage(PacketSellItem message, MessageContext ctx) {
+            // TODO: Make max amount of listings per player
+            // TODO: Make a listing last so long
+
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             ItemStack stack = player.inventory.mainInventory[message.slot];
 

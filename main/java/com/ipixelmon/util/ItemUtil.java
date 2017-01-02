@@ -1,11 +1,13 @@
 package com.ipixelmon.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
@@ -39,8 +41,7 @@ public class ItemUtil {
             RenderHelper.disableStandardItemLighting();
         }
 
-
-        private static void renderToolTip(ItemStack stack, int x, int y, int width, int height) {
+        public static void renderToolTip(ItemStack stack, int x, int y, int width, int height) {
             Minecraft mc = Minecraft.getMinecraft();
             List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
 
@@ -53,7 +54,33 @@ public class ItemUtil {
             }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
-            GuiUtil.drawHoveringText(list, x, y, width, height);
+            GuiUtil.drawHoveringText(list, x, y, width, height, 100.0F);
+        }
+
+        public static void renderItem3D(ItemStack itemStack, int x, int y, int scale, float rotY) {
+            Minecraft mc = Minecraft.getMinecraft();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.pushAttrib();
+            GlStateManager.translate(x, y, 400.0F);
+            GlStateManager.scale(scale, scale, scale);
+            GlStateManager.rotate(180f, 1f, 0f, 0f);
+            GlStateManager.rotate(rotY, 0f, 1f, 0f);
+            Block block = Block.getBlockFromItem(itemStack.getItem());
+            if (block != null) GlStateManager.rotate(10f, 1f, 0f, 0f);
+            GlStateManager.depthMask(false);
+            if (block != null) {
+                GlStateManager.enableLighting();
+
+                GuiUtil.setBrightness(1.2D, 1.9D, 1.2D, -2.2D, 1.9D, 1.2D,
+                        0.6F,
+                        0.3F,
+                        0.8F);
+            }
+            mc.getItemRenderer().renderItem(mc.thePlayer, itemStack, ItemCameraTransforms.TransformType.NONE);
+            GlStateManager.depthMask(true);
+            GlStateManager.popAttrib();
+            GlStateManager.popMatrix();
         }
     }
 

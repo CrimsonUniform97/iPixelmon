@@ -31,7 +31,7 @@ public class GuiTablet extends AppGui {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, int dWheel) {
+    public void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
         drawApps(mouseX, mouseY);
     }
 

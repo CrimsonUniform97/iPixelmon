@@ -4,8 +4,12 @@ import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
+import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
+import com.pixelmonmod.pixelmon.client.models.PixelmonModelBase;
+import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
+import com.pixelmonmod.pixelmon.config.PixelmonConfig;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
@@ -17,11 +21,13 @@ import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -72,7 +78,7 @@ public class PixelmonAPI {
             return pixelmon;
         }
 
-        public static final void drawPokeDollar(Minecraft mc, int x, int y, int w, int h, int color) {
+        public static final void renderPokeDollar(Minecraft mc, int x, int y, int w, int h, int color) {
             glPushAttrib(GL_ALL_ATTRIB_BITS);
             {
                 float red = (float) (color >> 16 & 255) / 255.0F;
@@ -87,11 +93,98 @@ public class PixelmonAPI {
             glPopAttrib();
         }
 
-        public static void drawPixelmon(PixelmonData pixelmon, int x, int y, int width, int height) {
+        public static void renderPixelmon2D(PixelmonData pixelmon, int x, int y, int width, int height) {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GuiHelper.bindPokemonSprite(pixelmon, Minecraft.getMinecraft());
             GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
+        }
+
+        public static PixelmonRenderer renderPixelmon3D(PixelmonData pixelmon, boolean spin, GuiScreen screen) {
+            return new PixelmonRenderer(pixelmon, spin, screen);
+        }
+
+        public static void renderPixelmonTip(PixelmonData pixelmon, int x, int y, int width, int height) {
+            List<String> pixelmonInfo = new ArrayList<>();
+            pixelmonInfo.add(pixelmon.name);
+            pixelmonInfo.add("");
+            pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmon.lvl);
+            pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
+            pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + pixelmon.health + "/" + pixelmon.HP);
+            pixelmonInfo.add(EnumChatFormatting.BLUE + "BP: " + PixelmonAPI.getBP(pixelmon));
+            GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
+        }
+
+        public static class PixelmonRenderer implements Runnable {
+            private EntityPixelmon entityPixelmon;
+            private boolean spin, countDown;
+            private float partialTicks, spinCount;
+            private RenderPixelmon renderPixelmon;
+            private GuiScreen screen;
+
+            public PixelmonRenderer(PixelmonData pixelmon, boolean spin, GuiScreen screen) {
+                entityPixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmon.name, Minecraft.getMinecraft().theWorld);
+                entityPixelmon.getLvl().setLevel(pixelmon.lvl);
+                entityPixelmon.setIsShiny(pixelmon.isShiny);
+                entityPixelmon.setForm(pixelmon.form, true);
+                if (pixelmon.heldItem != null)
+                    entityPixelmon.setHeldItem(pixelmon.heldItem);
+                entityPixelmon.gender = pixelmon.gender;
+                entityPixelmon.setGrowth(pixelmon.growth);
+                renderPixelmon = new RenderPixelmon(Minecraft.getMinecraft().getRenderManager());
+                this.spin = spin;
+                this.screen = screen;
+            }
+
+
+            @Override
+            public void run() {
+                while (Minecraft.getMinecraft().currentScreen == screen) {
+                    if (countDown) {
+                        partialTicks -= 0.08F;
+                    } else {
+                        partialTicks += 0.08F;
+                    }
+
+                    if (partialTicks >= 1.0F) {
+                        partialTicks = 1.0F;
+                        countDown = true;
+                    } else if (partialTicks <= 0.0F) {
+                        partialTicks = 0.0F;
+                        countDown = false;
+                    }
+
+                    spinCount += 0.66F;
+
+                    try {
+                        Thread.sleep(20L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            public void render(int x, int y) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(x, y, 400.0F);
+                float width = entityPixelmon.widthDiff / 2;
+                float height = entityPixelmon.heightDiff / 2;
+                GlStateManager.translate(width, height, 0.0F);
+                float scale = 50;
+                GlStateManager.scale(scale, scale, scale);
+                GlStateManager.rotate(180, 1, 0, 0);
+                GlStateManager.rotate(spinCount, 0, 1, 0);
+
+                if (entityPixelmon.baseStats.canSurf) {
+                    GlStateManager.translate(0.0F, 1.0F, 0.0F);
+                }
+
+                GlStateManager.translate(-width, -height, 0.0F);
+                GuiUtil.setBrightness(0.5F, 0.8F, 0.8F);
+                renderPixelmon.renderPixelmon(entityPixelmon, 0, 0, 0, 0, partialTicks, false);
+                GlStateManager.popMatrix();
+                RenderHelper.disableStandardItemLighting();
+            }
         }
 
     }

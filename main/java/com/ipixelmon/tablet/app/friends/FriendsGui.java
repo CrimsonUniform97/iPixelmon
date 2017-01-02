@@ -12,7 +12,7 @@ public class FriendsGui extends AppGui {
     }
 // TODO:
     @Override
-    public void drawScreen(int mouseX, int mouseY, int dWheel) {
+    public void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
 
     }
 

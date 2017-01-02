@@ -2,8 +2,8 @@ package com.ipixelmon.tablet.app.pixelbay;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.tablet.AppGui;
-import com.ipixelmon.tablet.app.pixelbay.lists.GuiInventoryList;
-import com.ipixelmon.tablet.app.pixelbay.lists.GuiPixelmonList;
+import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiInventoryList;
+import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiPixelmonList;
 import net.minecraft.client.gui.GuiButton;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class PixelbayGui extends AppGui {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, int dWheel) {
+    public void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
         inventoryList.draw(mouseX, mouseY, dWheel);
         pixelmonList.draw(mouseX, mouseY, dWheel);
         drawHowTo();

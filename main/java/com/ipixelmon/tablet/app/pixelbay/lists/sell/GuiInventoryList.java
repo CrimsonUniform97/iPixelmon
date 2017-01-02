@@ -1,11 +1,12 @@
-package com.ipixelmon.tablet.app.pixelbay.lists;
+package com.ipixelmon.tablet.app.pixelbay.lists.sell;
 
-import com.ipixelmon.tablet.app.pixelbay.gui.SellGuiItem;
-import com.ipixelmon.tablet.app.pixelbay.gui.SellGuiPixelmon;
+import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGuiItem;
+import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.ItemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL11;
 import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
@@ -32,7 +33,9 @@ public class GuiInventoryList extends IScrollListWithDesign {
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
         ItemUtil.Client.renderItem(items.get(index), 4, 2, this.width, this.height, mouseX, mouseY);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
     }
 
     @Override

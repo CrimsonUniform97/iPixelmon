@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
@@ -33,13 +34,13 @@ public abstract class AppGui extends GuiScreen {
         GlStateManager.enableBlend();
         drawTablet();
         drawWallpaper();
-        drawScreen(mouseX, mouseY, Mouse.getDWheel());
+        drawScreen(mouseX, mouseY, Mouse.getDWheel(), partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if(!(Minecraft.getMinecraft().currentScreen instanceof GuiTablet)) {
+        if(!(Minecraft.getMinecraft().currentScreen instanceof GuiTablet) && keyCode == Keyboard.KEY_ESCAPE) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiTablet(null));
         } else {
             super.keyTyped(typedChar, keyCode);
@@ -64,7 +65,7 @@ public abstract class AppGui extends GuiScreen {
         screenBounds = new Rectangle(bgBounds.getX() + xOffset, bgBounds.getY() + yOffset, boundary.getWidth() - (xOffset * 2), boundary.getHeight() - (yOffset * 2));
     }
 
-    public abstract void drawScreen(int mouseX, int mouseY, int dWheel);
+    public abstract void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks);
 
     private void drawWallpaper() {
         GlStateManager.enableTexture2D();

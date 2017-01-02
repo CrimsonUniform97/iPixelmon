@@ -45,16 +45,20 @@ public class GuiUtil {
     }
 
     public static void setBrightness(float f, float f1, float f2) {
+        setBrightness(LIGHT0_POS.xCoord, LIGHT0_POS.yCoord, LIGHT0_POS.zCoord, LIGHT1_POS.xCoord, LIGHT1_POS.yCoord, LIGHT1_POS.zCoord, f, f1, f2);
+    }
+
+    public static void setBrightness(double x1, double y1, double z1, double x2, double y2, double z2, float f, float f1, float f2) {
         GlStateManager.enableLighting();
         GlStateManager.enableLight(0);
         GlStateManager.enableLight(1);
         GlStateManager.enableColorMaterial();
         GlStateManager.colorMaterial(1032, 5634);
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, (FloatBuffer) setColorBuffer(LIGHT0_POS.xCoord, LIGHT0_POS.yCoord, LIGHT0_POS.zCoord, 0.0D));
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, (FloatBuffer) setColorBuffer(x1, y1, z1, 0.0D));
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, (FloatBuffer) setColorBuffer(f1, f1, f1, 1.0F));
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, (FloatBuffer) setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR, (FloatBuffer) setColorBuffer(f2, f2, f2, 1.0F));
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, (FloatBuffer) setColorBuffer(LIGHT1_POS.xCoord, LIGHT1_POS.yCoord, LIGHT1_POS.zCoord, 0.0D));
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, (FloatBuffer) setColorBuffer(x2, y2, z2, 0.0D));
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, (FloatBuffer) setColorBuffer(f1, f1, f1, 1.0F));
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, (FloatBuffer) setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPECULAR, (FloatBuffer) setColorBuffer(f2, f2, f2, 1.0F));
@@ -236,7 +240,6 @@ public class GuiUtil {
     public static void drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight, float zLevel) {
         Minecraft mc = Minecraft.getMinecraft();
         RenderItem itemRender = mc.getRenderItem();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
@@ -309,8 +312,6 @@ public class GuiUtil {
         }
 
         RenderHelper.disableStandardItemLighting();
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
     }
 
     public static void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor, int zLevel) {

@@ -1,36 +1,33 @@
-package com.ipixelmon.tablet.app.pixelbay.lists;
+package com.ipixelmon.tablet.app.pixelbay.lists.buy;
 
 import com.ipixelmon.GuiScrollList;
-import com.ipixelmon.tablet.app.pixelbay.ItemListing;
-import com.ipixelmon.tablet.app.pixelbay.PixelbayGui;
 
 /**
  * Created by colby on 12/31/2016.
  */
-public class GuiItemListingList extends GuiScrollList {
+public class GuiPixelmonListingList extends GuiScrollList {
 
-    public GuiItemListingList(int xPosition, int yPosition, int width, int height) {
+    public GuiPixelmonListingList(int xPosition, int yPosition, int width, int height) {
         super(xPosition, yPosition, width, height);
     }
 
     @Override
     public int getObjectHeight(int index) {
-        return 20;
+        return 0;
     }
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
-        ItemListing itemListing = PixelbayGui.itemListings.get(index);
+
     }
 
     @Override
     public int getSize() {
-        return PixelbayGui.itemListings.size();
+        return 0;
     }
 
     @Override
     public void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick) {
 
     }
-
 }

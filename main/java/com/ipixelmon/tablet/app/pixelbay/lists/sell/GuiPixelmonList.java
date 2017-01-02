@@ -1,12 +1,12 @@
-package com.ipixelmon.tablet.app.pixelbay.lists;
+package com.ipixelmon.tablet.app.pixelbay.lists.sell;
 
-import com.ipixelmon.tablet.app.pixelbay.gui.SellGuiPixelmon;
-import com.ipixelmon.util.GuiUtil;
+import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGuiPixelmon;
+import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.EnumChatFormatting;
-import java.util.ArrayList;
+import org.lwjgl.opengl.GL11;
+
 import java.util.List;
 
 /**
@@ -34,18 +34,12 @@ public class GuiPixelmonList extends IScrollListWithDesign {
         int width = 24;
         int height = 24;
 
-        PixelmonAPI.Client.drawPixelmon(pixelmon.get(index), x - 5, y - 12, width + 16, height + 16);
+        PixelmonAPI.Client.renderPixelmon2D(pixelmon.get(index), x - 5, y - 12, width + 16, height + 16);
 
         if (mouseX >= x && mouseX <= x + width + 5 && mouseY >= y && mouseY <= y + height) {
-            List<String> pixelmonInfo = new ArrayList<>();
-            PixelmonData pixelmonData = pixelmon.get(index);
-            pixelmonInfo.add(pixelmonData.name);
-            pixelmonInfo.add("");
-            pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmonData.lvl);
-            pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmonData.xp + "/" + pixelmonData.nextLvlXP);
-            pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + pixelmonData.health + "/" + pixelmonData.HP);
-            pixelmonInfo.add(EnumChatFormatting.BLUE + "BP: " + PixelmonAPI.getBP(pixelmonData));
-            GuiUtil.drawHoveringText(pixelmonInfo, mouseX, mouseY, this.width, this.height);
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            PixelmonAPI.Client.renderPixelmonTip(pixelmon.get(index), mouseX, mouseY, this.width, this.height);
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
         }
     }
 
