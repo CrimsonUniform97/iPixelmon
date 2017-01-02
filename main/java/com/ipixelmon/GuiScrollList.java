@@ -128,10 +128,14 @@ public abstract class GuiScrollList extends Gui {
         int listWidth = bounds.getWidth();
         int viewHeight = bounds.getHeight();
 
+        boolean drawScrollbar = gripSize != bounds.getHeight();
 
-        if(!drawScrollbarOnTop) {
+        if(!drawScrollbarOnTop && drawScrollbar) {
             GlStateManager.disableTexture2D();
-            drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(scrollBarLeft, bounds.getY() + gripPosition, 0);
+            drawScrollbar(gripSize);
+            GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
         }
 
@@ -161,9 +165,12 @@ public abstract class GuiScrollList extends Gui {
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        if(drawScrollbarOnTop) {
+        if(drawScrollbarOnTop && drawScrollbar) {
             GlStateManager.disableTexture2D();
-            drawScrollbar(scrollBarLeft, scrollBarRight, gripPosition, gripSize);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(scrollBarLeft, bounds.getY() + gripPosition, 0);
+            drawScrollbar(gripSize);
+            GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
         }
     }
@@ -218,17 +225,17 @@ public abstract class GuiScrollList extends Gui {
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
-    public void drawScrollbar(float scrollBarLeft, float scrollBarRight, float gripPosition, float gripSize) {
+    public void drawScrollbar(float gripSize) {
         GL11.glDisable(GL11.GL_CULL_FACE);
         GlStateManager.color(128f / 255f, 128f / 255f, 128f / 255f, 1f);
 
         GL11.glBegin(GL11.GL_QUADS);
 
         {
-            GL11.glVertex2f(scrollBarLeft, bounds.getY() + gripPosition);
-            GL11.glVertex2f(scrollBarRight, bounds.getY() + gripPosition);
-            GL11.glVertex2f(scrollBarRight, bounds.getY() + gripPosition + gripSize);
-            GL11.glVertex2f(scrollBarLeft, bounds.getY() + gripPosition + gripSize);
+            GL11.glVertex2f(0, 0);
+            GL11.glVertex2f(5, 0);
+            GL11.glVertex2f(5, gripSize);
+            GL11.glVertex2f(0, gripSize);
         }
         GL11.glEnd();
         GL11.glEnable(GL11.GL_CULL_FACE);

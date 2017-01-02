@@ -3,12 +3,15 @@ package com.ipixelmon.tablet;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.app.gallery.GalleryGui;
 import com.ipixelmon.util.GuiUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
+
+import java.io.IOException;
 
 
 /**
@@ -32,6 +35,15 @@ public abstract class AppGui extends GuiScreen {
         drawWallpaper();
         drawScreen(mouseX, mouseY, Mouse.getDWheel());
         super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(!(Minecraft.getMinecraft().currentScreen instanceof GuiTablet)) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiTablet(null));
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 
     @Override

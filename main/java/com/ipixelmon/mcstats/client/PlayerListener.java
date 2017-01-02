@@ -2,6 +2,8 @@ package com.ipixelmon.mcstats.client;
 
 import com.ipixelmon.mcstats.McStatsAPI;
 import com.ipixelmon.util.GuiUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -15,15 +17,17 @@ public class PlayerListener {
         if(McStatsAPI.Client.renderPos != null && McStatsAPI.Client.expAnimation != null) {
             McStatsAPI.Client.expAnimation.update(0, 1);
 
-            GuiUtil.RenderFloatingText(new String[]{"+" + McStatsAPI.Client.renderEXP},
+            Minecraft mc = Minecraft.getMinecraft();
+
+            GuiUtil.renderLabel(EnumChatFormatting.BLACK + "+" + McStatsAPI.Client.renderEXP,
                     McStatsAPI.Client.renderPos.getX() + 0.52f,
                     McStatsAPI.Client.renderPos.getY() + 1 + (float) McStatsAPI.Client.expAnimation.posY - 0.02f,
-                    McStatsAPI.Client.renderPos.getZ() + 0.52f, 0x000000, false, event.partialTicks, 0.10f);
+                    McStatsAPI.Client.renderPos.getZ() + 0.52f,5.45f, false, mc.fontRendererObj, mc.getRenderManager());
 
-            GuiUtil.RenderFloatingText(new String[]{"+" + McStatsAPI.Client.renderEXP},
+            GuiUtil.renderLabel(EnumChatFormatting.YELLOW + "+" + McStatsAPI.Client.renderEXP,
                     McStatsAPI.Client.renderPos.getX() + 0.5f,
                     McStatsAPI.Client.renderPos.getY() + 1 + (float) McStatsAPI.Client.expAnimation.posY,
-                    McStatsAPI.Client.renderPos.getZ() + 0.5f, 0xffea35, false, event.partialTicks, 0.10f);
+                    McStatsAPI.Client.renderPos.getZ() + 0.5f, 5.45f, false, mc.fontRendererObj, mc.getRenderManager());
 
             if(McStatsAPI.Client.expAnimation.done) {
                 McStatsAPI.Client.expAnimation = null;

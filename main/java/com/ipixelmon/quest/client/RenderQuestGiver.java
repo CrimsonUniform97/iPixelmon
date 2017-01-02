@@ -34,8 +34,8 @@ public class RenderQuestGiver extends RenderLiving<EntityQuestGiver>
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
         // TODO: If done with a quest render a exclamation mark
-        GuiUtil.renderLabel(EnumChatFormatting.YELLOW.toString() + EnumChatFormatting.BOLD.toString() + "?", x, y + 3, z, 5.45f, false, this.getFontRendererFromRenderManager(),
-                this.renderManager);
+        GuiUtil.renderLabel(EnumChatFormatting.YELLOW.toString() + EnumChatFormatting.BOLD.toString() + "?", x,
+                y + 3, z, 5.45f, false, this.getFontRendererFromRenderManager(), this.renderManager);
     }
 
     /**

@@ -10,7 +10,7 @@ public class FriendsGui extends AppGui {
     public FriendsGui(Object[] objects) {
         super(objects);
     }
-
+// TODO:
     @Override
     public void drawScreen(int mouseX, int mouseY, int dWheel) {
 

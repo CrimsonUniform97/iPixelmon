@@ -15,6 +15,7 @@ import org.lwjgl.util.Dimension;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class GuiUtil {
@@ -120,108 +121,6 @@ public class GuiUtil {
                 fill);
     }
 
-    public static void drawHoveringText(java.util.List<String> textLines, int x, int y) {
-        float zLevel = 400f;
-        RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-        FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
-
-        if (!textLines.isEmpty()) {
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
-            int i = 0;
-
-            for (String s : textLines) {
-                int j = font.getStringWidth(s);
-
-                if (j > i) {
-                    i = j;
-                }
-            }
-
-            int l1 = x + 12;
-            int i2 = y - 12;
-            int k = 8;
-
-            if (textLines.size() > 1) {
-                k += 2 + (textLines.size() - 1) * 10;
-            }
-
-//            if (l1 + i > this.width)
-//            {
-//                l1 -= 28 + i;
-//            }
-//
-//            if (i2 + k + 6 > this.height)
-//            {
-//                i2 = this.height - k - 6;
-//            }
-
-            zLevel = 300.0F;
-            itemRender.zLevel = 300.0F;
-            int l = -267386864;
-            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
-            int i1 = 1347420415;
-            int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
-
-            for (int k1 = 0; k1 < textLines.size(); ++k1) {
-                String s1 = (String) textLines.get(k1);
-                font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
-
-                if (k1 == 0) {
-                    i2 += 2;
-                }
-
-                i2 += 10;
-            }
-
-            zLevel = 0.0F;
-            itemRender.zLevel = 0.0F;
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
-            RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
-        }
-    }
-
-    public static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
-        float zLevel = 300f;
-        float f = (float) (startColor >> 24 & 255) / 255.0F;
-        float f1 = (float) (startColor >> 16 & 255) / 255.0F;
-        float f2 = (float) (startColor >> 8 & 255) / 255.0F;
-        float f3 = (float) (startColor & 255) / 255.0F;
-        float f4 = (float) (endColor >> 24 & 255) / 255.0F;
-        float f5 = (float) (endColor >> 16 & 255) / 255.0F;
-        float f6 = (float) (endColor >> 8 & 255) / 255.0F;
-        float f7 = (float) (endColor & 255) / 255.0F;
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.shadeModel(7425);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos((double) right, (double) top, (double) zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double) left, (double) top, (double) zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double) left, (double) bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos((double) right, (double) bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
-        tessellator.draw();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-    }
-
     public static void renderLabel(String str, double x, double y, double z, float scale, boolean renderBox, FontRenderer fontRenderer, RenderManager renderManager) {
         float f1 = 0.016666668F * scale;
         GlStateManager.pushMatrix();
@@ -264,70 +163,186 @@ public class GuiUtil {
         GlStateManager.popMatrix();
     }
 
-    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime, float scale) {
-        //Thanks to Electric-Expansion mod for the majority of this code
-        //https://github.com/Alex-hawks/Electric-Expansion/blob/master/src/electricexpansion/client/render/RenderFloatingText.java
+//    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime, float scale) {
+//        //Thanks to Electric-Expansion mod for the majority of this code
+//        //https://github.com/Alex-hawks/Electric-Expansion/blob/master/src/electricexpansion/client/render/RenderFloatingText.java
+//        Minecraft mc = Minecraft.getMinecraft();
+//        RenderManager renderManager = mc.getRenderManager();
+//        FontRenderer fontRenderer = mc.fontRendererObj;
+//
+//        float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
+//        float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
+//        float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+//
+//        float dx = x - playerX;
+//        float dy = y - playerY;
+//        float dz = z - playerZ;
+//        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+//        float multiplier = distance / 120f; //mobs only render ~120 blocks away
+//        scale *= 0.45f;
+//
+//        GL11.glColor4f(1f, 1f, 1f, 0.5f);
+//        GL11.glPushMatrix();
+//        GL11.glTranslatef(dx, dy, dz);
+//        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+//        GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+//        GL11.glScalef(-scale, -scale, scale);
+//        GL11.glDisable(GL11.GL_LIGHTING);
+//        GL11.glDepthMask(false);
+//        GL11.glDisable(GL11.GL_DEPTH_TEST);
+//        GL11.glEnable(GL11.GL_BLEND);
+//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//
+//        int textWidth = 0;
+//        for (String thisMessage : text) {
+//            int thisMessageWidth = mc.fontRendererObj.getStringWidth(thisMessage);
+//
+//            if (thisMessageWidth > textWidth)
+//                textWidth = thisMessageWidth;
+//        }
+//
+//        int lineHeight = 10;
+//
+//        if (renderBlackBox) {
+//            GL11.glDisable(GL11.GL_TEXTURE_2D);
+//            GL11.glBegin(GL11.GL_QUADS);
+//            int stringMiddle = textWidth / 2;
+//            GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
+//            GL11.glVertex3d(-stringMiddle - 1, -1 + 0, 0.0D);
+//            GL11.glVertex3d(-stringMiddle - 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
+//            GL11.glVertex3d(stringMiddle + 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
+//            GL11.glVertex3d(stringMiddle + 1, -1 + 0, 0.0D);
+//            GL11.glEnd();
+//            GL11.glEnable(GL11.GL_TEXTURE_2D);
+//            GL11.glColor4f(1f, 1f, 1f, 1f);
+//        }
+//
+//        int i = 0;
+//        for (String message : text) {
+//            fontRenderer.drawString(message, -textWidth / 2, i * lineHeight, color);
+//            i++;
+//        }
+//
+//        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//        GL11.glDepthMask(true);
+//        GL11.glEnable(GL11.GL_DEPTH_TEST);
+//        GL11.glPopMatrix();
+//    }
+
+    public static void drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight) {
+        drawHoveringText(textLines, x, y, screenWidth, screenHeight, 300.0F);
+    }
+
+    public static void drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight, float zLevel) {
         Minecraft mc = Minecraft.getMinecraft();
-        RenderManager renderManager = mc.getRenderManager();
-        FontRenderer fontRenderer = mc.fontRendererObj;
+        RenderItem itemRender = mc.getRenderItem();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
-        float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
-        float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+        if (!textLines.isEmpty()) {
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableLighting();
+            GlStateManager.enableDepth();
+            int i = 0;
 
-        float dx = x - playerX;
-        float dy = y - playerY;
-        float dz = z - playerZ;
-        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-        float multiplier = distance / 120f; //mobs only render ~120 blocks away
-        scale *= 0.45f;
+            for (String s : textLines) {
+                int j = mc.fontRendererObj.getStringWidth(s);
 
-        GL11.glColor4f(1f, 1f, 1f, 0.5f);
-        GL11.glPushMatrix();
-        GL11.glTranslatef(dx, dy, dz);
-        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(-scale, -scale, scale);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                if (j > i) {
+                    i = j;
+                }
+            }
 
-        int textWidth = 0;
-        for (String thisMessage : text) {
-            int thisMessageWidth = mc.fontRendererObj.getStringWidth(thisMessage);
+            int l1 = x + 12;
+            int i2 = y - 12;
+            int k = 8;
 
-            if (thisMessageWidth > textWidth)
-                textWidth = thisMessageWidth;
+            if (textLines.size() > 1) {
+                k += 2 + (textLines.size() - 1) * 10;
+            }
+
+            if (l1 + i > screenWidth) {
+                l1 -= 28 + i;
+            }
+
+            if (i2 + k + 6 > screenHeight) {
+                i2 = screenHeight - k - 6;
+            }
+
+//                this.zLevel = 300.0F;
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, zLevel);
+            itemRender.zLevel = 300.0F;
+            int l = -267386864;
+            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
+            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
+            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
+            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+            int i1 = 1347420415;
+            int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
+            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
+            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
+            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+            GlStateManager.popMatrix();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, zLevel + 400.0F);
+            for (int k1 = 0; k1 < textLines.size(); ++k1) {
+                String s1 = (String) textLines.get(k1);
+                mc.fontRendererObj.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+
+                if (k1 == 0) {
+                    i2 += 2;
+                }
+
+                i2 += 10;
+            }
+            GlStateManager.popMatrix();
+
+//                this.zLevel = 0.0F;
+            itemRender.zLevel = 0.0F;
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+            GlStateManager.enableRescaleNormal();
         }
 
-        int lineHeight = 10;
+        RenderHelper.disableStandardItemLighting();
 
-        if (renderBlackBox) {
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glBegin(GL11.GL_QUADS);
-            int stringMiddle = textWidth / 2;
-            GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
-            GL11.glVertex3d(-stringMiddle - 1, -1 + 0, 0.0D);
-            GL11.glVertex3d(-stringMiddle - 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
-            GL11.glVertex3d(stringMiddle + 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
-            GL11.glVertex3d(stringMiddle + 1, -1 + 0, 0.0D);
-            GL11.glEnd();
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glColor4f(1f, 1f, 1f, 1f);
-        }
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+    }
 
-        int i = 0;
-        for (String message : text) {
-            fontRenderer.drawString(message, -textWidth / 2, i * lineHeight, color);
-            i++;
-        }
+    public static void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor, int zLevel) {
+        float f = (float) (startColor >> 24 & 255) / 255.0F;
+        float f1 = (float) (startColor >> 16 & 255) / 255.0F;
+        float f2 = (float) (startColor >> 8 & 255) / 255.0F;
+        float f3 = (float) (startColor & 255) / 255.0F;
+        float f4 = (float) (endColor >> 24 & 255) / 255.0F;
+        float f5 = (float) (endColor >> 16 & 255) / 255.0F;
+        float f6 = (float) (endColor >> 8 & 255) / 255.0F;
+        float f7 = (float) (endColor & 255) / 255.0F;
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos( right,  top, (double) zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos( left, top, (double) zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos( left,  bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos( right,  bottom, (double) zLevel).color(f5, f6, f7, f4).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glPopMatrix();
+    public static void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor) {
+        drawGradientRect(left, top, right, bottom, startColor, endColor, 300);
     }
 
 }

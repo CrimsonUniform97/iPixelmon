@@ -16,20 +16,20 @@ import com.pixelmonmod.pixelmon.storage.ComputerBox;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.actors.threadpool.Arrays;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -50,11 +50,11 @@ public class PixelmonAPI {
         return stack;
     }
 
-    public static double getBP(EntityPixelmon pixelmon) {
-        double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.getLvl().getLevel());
-        double Stamina = (pixelmon.baseStats.speed + pixelmon.stats.Speed) * TotalBpMultiplier;
-        double Attack = (pixelmon.baseStats.attack + pixelmon.stats.Attack) * TotalBpMultiplier;
-        double Defense = (pixelmon.baseStats.defence + pixelmon.stats.Defence) * TotalBpMultiplier;
+    public static double getBP(PixelmonData pixelmon) {
+        double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.lvl);
+        double Stamina = (pixelmon.getBaseStats().speed + pixelmon.Speed) * TotalBpMultiplier;
+        double Attack = (pixelmon.getBaseStats().attack + pixelmon.Attack) * TotalBpMultiplier;
+        double Defense = (pixelmon.getBaseStats().defence + pixelmon.Defence) * TotalBpMultiplier;
         return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
     }
 
@@ -66,7 +66,7 @@ public class PixelmonAPI {
         }
 
         public static List<PixelmonData> getPixelmon(boolean fromPokeBalls) {
-            List<PixelmonData> pixelmon = Arrays.asList(ServerStorageDisplay.pokemon);
+            List<PixelmonData> pixelmon = new ArrayList<>(Arrays.asList(ServerStorageDisplay.pokemon));
             pixelmon.removeAll(Collections.singleton(null));
 
             return pixelmon;
@@ -85,6 +85,13 @@ public class PixelmonAPI {
                 GuiHelper.drawImageQuad(x, y, w, h, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
             }
             glPopAttrib();
+        }
+
+        public static void drawPixelmon(PixelmonData pixelmon, int x, int y, int width, int height) {
+            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.enableBlend();
+            GuiHelper.bindPokemonSprite(pixelmon, Minecraft.getMinecraft());
+            GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         }
 
     }
