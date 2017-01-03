@@ -1,5 +1,7 @@
 package com.ipixelmon.tablet.app.pixelbay.gui.sell;
 
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.tablet.app.pixelbay.packet.sell.PacketSellItem;
 import com.ipixelmon.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -11,13 +13,15 @@ import java.io.IOException;
 /**
  * Created by colby on 1/1/2017.
  */
-public class SellGuiItem extends SellGui {
+public class SellGuiItem extends SellGuiPopup {
 
     private ItemStack itemStack;
+    private int slot;
 
     public SellGuiItem(Object[] objects) {
         super(objects);
         itemStack = (ItemStack) objects[0];
+        slot = (int) objects[1];
     }
 
     @Override
@@ -32,34 +36,18 @@ public class SellGuiItem extends SellGui {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == Keyboard.KEY_ESCAPE) super.keyTyped(typedChar, keyCode);
+        super.keyTyped(typedChar, keyCode);
 
         if (keyCode != Keyboard.KEY_BACK && keyCode != Keyboard.KEY_LEFT && keyCode != Keyboard.KEY_RIGHT) {
-            if (!isInt("" + typedChar)) return;
-            if (!isInt(amountField.getText() + typedChar)) return;
-            if (!isInt(priceField.getText() + typedChar)) return;
 
             if (amountField.isFocused()) {
-
-                int amount = Integer.parseInt(amountField.getText() + typedChar);
-                if (amount > itemStack.stackSize || amount <= 0) return;
-            }
-
-            if (priceField.isFocused()) {
-
-                try {
-                    Integer.parseInt("" + typedChar);
-                } catch (NumberFormatException e) {
-                    return;
+                if (!isInt("" + typedChar)) return;
+                int amount = Integer.parseInt(amountField.getText());
+                if (amount > itemStack.stackSize || amount <= 0) {
+                    amountField.setText(amountField.getText().substring(0, amountField.getText().length() - 1));
                 }
-
-
-                int amount = Integer.parseInt(priceField.getText() + typedChar);
-                if (amount <= 0) return;
             }
         }
-        priceField.textboxKeyTyped(typedChar, keyCode);
-        amountField.textboxKeyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -67,13 +55,10 @@ public class SellGuiItem extends SellGui {
 
     }
 
-    private boolean isInt(String str) {
-        try {
-            Integer.parseInt(str);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
+    @Override
+    public void doSale() {
+        iPixelmon.network.sendToServer(new PacketSellItem(slot, Integer.parseInt(priceField.getText()),
+                Integer.parseInt(amountField.getText())));
     }
 
 }

@@ -1,84 +1,70 @@
 package com.ipixelmon.tablet.app.pixelbay.gui.sell;
 
 import com.ipixelmon.tablet.AppGui;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.input.Keyboard;
+import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGui;
+import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiItemListingList;
+import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiPixelmonListingList;
+import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiInventoryList;
+import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiPixelmonList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 
 import java.io.IOException;
 
 /**
- * Created by colby on 1/1/2017.
+ * Created by colby on 1/3/2017.
  */
-public abstract class SellGui extends AppGui {
+public class SellGui extends AppGui {
+
+    private GuiInventoryList inventoryList;
+    private GuiPixelmonList pixelmonList;
 
     public SellGui(Object[] objects) {
         super(objects);
     }
 
-    protected GuiTextField priceField, amountField;
-    protected float rotY;
-
     @Override
-    public final void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
-        // TODO: Draw a textbox to enter the price and then place the position for drawObject with GlTranslate
-        GlStateManager.color(1f, 1f, 1f, 1f);
-        GlStateManager.enableBlend();
-        drawObject(mouseX, mouseY, partialTicks);
-
-        GlStateManager.color(1f, 1f, 1f, 1f);
-        priceField.drawTextBox();
-        amountField.drawTextBox();
+    public void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
+        inventoryList.draw(mouseX, mouseY, dWheel);
+        pixelmonList.draw(mouseX, mouseY, dWheel);
     }
 
     @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        if(keyCode != Keyboard.KEY_BACK && keyCode != Keyboard.KEY_LEFT && keyCode != Keyboard.KEY_RIGHT) {
-            try {
-                Integer.parseInt("" + typedChar);
-            } catch (NumberFormatException e) {
-                return;
-            }
-        }
-        priceField.textboxKeyTyped(typedChar, keyCode);
-        amountField.textboxKeyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public final void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        priceField.mouseClicked(mouseX, mouseY, mouseButton);
-        amountField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    public final void initGui() {
+    protected void actionPerformed(GuiButton button) throws IOException {
+        super.actionPerformed(button);
+        Minecraft.getMinecraft().displayGuiScreen(new BuyGui(null));
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        inventoryList.keyTyped(typedChar, keyCode);
+        pixelmonList.keyTyped(typedChar, keyCode);
+    }
+    // TODO: Test
+    @Override
+    public void initGui() {
         super.initGui();
-        int width = 100;
-        priceField = new GuiTextField(0, mc.fontRendererObj,
-                (this.width - width) / 2,
-                screenBounds.getY() + screenBounds.getHeight() - 40,
-                100 - 20,
-                20);
-        amountField = new GuiTextField(1, mc.fontRendererObj,
-                priceField.xPosition + priceField.width,
-                priceField.yPosition,
-                20,
-                20);
-        init();
+
+        this.buttonList.clear();
+
+        int listWidth = screenBounds.getWidth() - 20;
+        int listHeight = screenBounds.getHeight() - 30;
+        int xPos = screenBounds.getX() + (screenBounds.getWidth() - listWidth) / 2;
+        int yPos = screenBounds.getY() + (screenBounds.getHeight() - listHeight) / 2;
+        yPos += 5;
+        listWidth /= 2;
+
+        inventoryList = new GuiInventoryList(xPos - 5, yPos + 10, listWidth, listHeight - 5);
+        pixelmonList = new GuiPixelmonList(xPos + listWidth + 5, yPos + 10, listWidth, listHeight - 5);
+
+        this.buttonList.add(new GuiButton(0, (this.width - 50) / 2,
+                pixelmonList.yPosition - 27, 50, 20, "Buy"));
     }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-        rotY = rotY >= 360.0F ? 0.0F : rotY + 4.0F;
-        priceField.updateCursorCounter();
-        amountField.updateCursorCounter();
-    }
-
-    public abstract void drawObject(int mouseX, int mouseY, float partialTicks);
-
-    public abstract void init();
 
 }

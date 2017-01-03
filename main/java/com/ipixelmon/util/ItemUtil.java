@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,6 +23,15 @@ import java.util.List;
  * Created by colby on 12/31/2016.
  */
 public class ItemUtil {
+
+    public static String itemToString(ItemStack itemStack) {
+        NBTTagCompound tagCompound = itemStack.writeToNBT(new NBTTagCompound());
+        return tagCompound.toString();
+    }
+
+    public static ItemStack itemFromString(String s) {
+        return ItemStack.loadItemStackFromNBT(NBTUtil.fromString(s));
+    }
 
     @SideOnly(Side.CLIENT)
     public static class Client {
@@ -35,6 +45,7 @@ public class ItemUtil {
                     stack.stackSize > 1 ? String.valueOf(stack.stackSize) : "");
 
             if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 renderToolTip(stack, mouseX, mouseY, screenWidth, screenHeight);
             }
 

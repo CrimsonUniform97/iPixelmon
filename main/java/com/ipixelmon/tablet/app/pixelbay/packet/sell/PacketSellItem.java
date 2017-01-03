@@ -1,13 +1,9 @@
-package com.ipixelmon.tablet.app.pixelbay.packet;
+package com.ipixelmon.tablet.app.pixelbay.packet.sell;
 
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.mysql.InsertForm;
-import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -17,26 +13,29 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketSellItem implements IMessage {
 
-    private int slot;
+    private int slot, amount;
     private long price;
 
     public PacketSellItem() {
     }
 
-    public PacketSellItem(int slot, long price) {
+    public PacketSellItem(int slot, int amount, long price) {
         this.slot = slot;
+        this.amount = amount;
         this.price = price;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         slot = buf.readInt();
+        amount = buf.readInt();
         price = buf.readLong();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slot);
+        buf.writeInt(amount);
         buf.writeLong(price);
     }
 
@@ -44,16 +43,19 @@ public class PacketSellItem implements IMessage {
 
         @Override
         public IMessage onMessage(PacketSellItem message, MessageContext ctx) {
-            // TODO: Make max amount of listings per player
             // TODO: Make a listing last so long
+
+            if(message.price <= 0) return null;
 
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             ItemStack stack = player.inventory.mainInventory[message.slot];
 
+            if(PixelbayAPI.Server.getListingCount(player.getUniqueID()) > PixelbayAPI.maxListings) return null;
+
             if(stack == null) return null;
 
             PixelbayAPI.Server.postItem(player.getUniqueID(), stack, message.price);
-
+            // TODO: Implement amount
             player.inventory.mainInventory[message.slot] = null;
             return null;
         }

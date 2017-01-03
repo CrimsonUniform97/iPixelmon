@@ -1,28 +1,28 @@
 package com.ipixelmon.tablet.app.pixelbay.lists.sell;
 
+import com.google.common.collect.Maps;
 import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGuiItem;
 import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
-import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.ItemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by colby on 12/31/2016.
  */
 public class GuiInventoryList extends IScrollListWithDesign {
 
-    private List<ItemStack> items;
+    private Map<Integer, ItemStack> items = Maps.newHashMap();
 
     public GuiInventoryList(int xPosition, int yPosition, int width, int height) {
         super(xPosition, yPosition, width, height);
-        this.items = new ArrayList<>(Arrays.asList(Minecraft.getMinecraft().thePlayer.inventory.mainInventory));
-        ArrayUtil.cleanNull(this.items);
+        for(int slot = 0; slot < mc.thePlayer.inventory.mainInventory.length; slot++) {
+            if(mc.thePlayer.inventory.mainInventory[slot] != null) {
+                items.put(slot, mc.thePlayer.inventory.mainInventory[slot]);
+            }
+        }
         drawScrollbarOnTop = false;
     }
 
@@ -33,8 +33,7 @@ public class GuiInventoryList extends IScrollListWithDesign {
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        ItemUtil.Client.renderItem(items.get(index), 4, 2, this.width, this.height, mouseX, mouseY);
+        ItemUtil.Client.renderItem((ItemStack) items.values().toArray()[index], 4, 2, this.width, this.height, mouseX, mouseY);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
     }
 
@@ -46,7 +45,8 @@ public class GuiInventoryList extends IScrollListWithDesign {
     @Override
     public void elementClicked(int index, int mouseX, int mouseY, boolean doubleClick) {
         if(doubleClick) {
-            Minecraft.getMinecraft().displayGuiScreen(new SellGuiItem(new Object[]{items.get(index)}));
+            Minecraft.getMinecraft().displayGuiScreen(new SellGuiItem(new Object[]{items.values().toArray()[index],
+                    items.keySet().toArray()[index]}));
         }
     }
 

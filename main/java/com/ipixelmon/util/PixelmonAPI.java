@@ -2,12 +2,17 @@ package com.ipixelmon.util;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
+import com.pixelmonmod.pixelmon.Pixelmon;
+import com.pixelmonmod.pixelmon.PixelmonMethods;
+import com.pixelmonmod.pixelmon.battles.status.StatusType;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
 import com.pixelmonmod.pixelmon.client.models.PixelmonModelBase;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.comm.PixelmonMovesetData;
+import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
 import com.pixelmonmod.pixelmon.config.PixelmonConfig;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
@@ -15,8 +20,10 @@ import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
-import com.pixelmonmod.pixelmon.enums.EnumPokemon;
+import com.pixelmonmod.pixelmon.entities.pixelmon.stats.Gender;
+import com.pixelmonmod.pixelmon.enums.*;
 import com.pixelmonmod.pixelmon.storage.ComputerBox;
+import com.pixelmonmod.pixelmon.storage.PCServer;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import net.minecraft.client.Minecraft;
@@ -25,14 +32,19 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 import scala.actors.threadpool.Arrays;
 
 import java.util.*;
@@ -62,6 +74,14 @@ public class PixelmonAPI {
         double Attack = (pixelmon.getBaseStats().attack + pixelmon.Attack) * TotalBpMultiplier;
         double Defense = (pixelmon.getBaseStats().defence + pixelmon.Defence) * TotalBpMultiplier;
         return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
+    }
+
+    public static int getPixelmonMaxHealth(PixelmonData pixelmonData) {
+        return pixelmonData.HP;
+    }
+
+    public static int getPixelmonHealth(PixelmonData pixelmonData) {
+        return pixelmonData.health;
     }
 
     @SideOnly(Side.CLIENT)
@@ -105,15 +125,18 @@ public class PixelmonAPI {
         }
 
         public static void renderPixelmonTip(PixelmonData pixelmon, int x, int y, int width, int height) {
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
             List<String> pixelmonInfo = new ArrayList<>();
             pixelmonInfo.add(pixelmon.name);
             pixelmonInfo.add("");
             pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmon.lvl);
             pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
-            pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + pixelmon.health + "/" + pixelmon.HP);
+            pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
+                    PixelmonAPI.getPixelmonMaxHealth(pixelmon));
             pixelmonInfo.add(EnumChatFormatting.BLUE + "BP: " + PixelmonAPI.getBP(pixelmon));
             GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
         }
+
 
         public static class PixelmonRenderer implements Runnable {
             private EntityPixelmon entityPixelmon;
@@ -213,6 +236,27 @@ public class PixelmonAPI {
             }
 
             return pixelmonList;
+        }
+
+        public static void removePixelmon(EntityPixelmon pixelmon, EntityPlayerMP player) {
+            MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    PixelmonData pixelmonData = new PixelmonData(pixelmon);
+                    PCServer.deletePokemon(player, -1, pixelmonData.order);
+                    Pixelmon.network.sendTo(new Remove(pixelmonData.pokemonID), player);
+                }
+            });
+        }
+
+        public static String pixelmonToString(EntityPixelmon pixelmon) {
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            pixelmon.writeToNBT(tagCompound);
+            return tagCompound.toString();
+        }
+
+        public static EntityPixelmon pixelmonFromString(String s, World world) {
+            return (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(NBTUtil.fromString(s), world);
         }
 
         public static final void giveMoney(final UUID player, final int balance) {

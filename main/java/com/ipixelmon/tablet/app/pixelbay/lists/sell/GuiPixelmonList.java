@@ -34,12 +34,12 @@ public class GuiPixelmonList extends IScrollListWithDesign {
         int width = 24;
         int height = 24;
 
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
         PixelmonAPI.Client.renderPixelmon2D(pixelmon.get(index), x - 5, y - 12, width + 16, height + 16);
 
         if (mouseX >= x && mouseX <= x + width + 5 && mouseY >= y && mouseY <= y + height) {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
             PixelmonAPI.Client.renderPixelmonTip(pixelmon.get(index), mouseX, mouseY, this.width, this.height);
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
         }
     }
 
