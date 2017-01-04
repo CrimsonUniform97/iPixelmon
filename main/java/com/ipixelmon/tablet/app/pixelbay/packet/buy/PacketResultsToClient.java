@@ -23,18 +23,22 @@ public class PacketResultsToClient implements IMessage {
     private boolean searchForItems;
     private List<ItemListing> items;
     private List<PixelmonListing> pixelmons;
+    private int maxPages;
 
     public PacketResultsToClient(int page, String criteria, boolean searchForItems) {
         this.searchForItems = searchForItems;
         if(searchForItems) {
             this.items = PixelbayAPI.Server.getItemsForSale(page, criteria);
+            this.maxPages = PixelbayAPI.Server.getMaxItemPages();
         } else {
             this.pixelmons = PixelbayAPI.Server.getPixelmonForSale(page, criteria);
+            this.maxPages = PixelbayAPI.Server.getMaxPixelmonPages();
         }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        maxPages = buf.readInt();
         searchForItems = buf.readBoolean();
         int size = buf.readInt();
 
@@ -55,6 +59,7 @@ public class PacketResultsToClient implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeInt(maxPages);
         buf.writeBoolean(searchForItems);
         if(searchForItems) {
             buf.writeInt(items.size());
@@ -76,14 +81,15 @@ public class PacketResultsToClient implements IMessage {
         @Override
         public IMessage onMessage(PacketResultsToClient message, MessageContext ctx) {
             // TODO: Display in PixelbayGui
+
             if(message.searchForItems) {
-                System.out.println(message.items.size());
                 PixelbayAPI.Client.itemListings.clear();
                 PixelbayAPI.Client.itemListings.addAll(message.items);
+                PixelbayAPI.Client.maxItemPages = message.maxPages;
             } else {
-                System.out.println(message.pixelmons.size());
                 PixelbayAPI.Client.pixelmonListings.clear();
                 PixelbayAPI.Client.pixelmonListings.addAll(message.pixelmons);
+                PixelbayAPI.Client.maxPixelmonPages = message.maxPages;
             }
             return null;
         }

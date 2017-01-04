@@ -233,11 +233,11 @@ public class GuiUtil {
 //        GL11.glPopMatrix();
 //    }
 
-    public static void drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight) {
-        drawHoveringText(textLines, x, y, screenWidth, screenHeight, 300.0F);
+    public static int[] drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight) {
+        return drawHoveringText(textLines, x, y, screenWidth, screenHeight, 300.0F);
     }
 
-    public static void drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight, float zLevel) {
+    public static int[] drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight, float zLevel) {
         Minecraft mc = Minecraft.getMinecraft();
         RenderItem itemRender = mc.getRenderItem();
 
@@ -246,48 +246,49 @@ public class GuiUtil {
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableLighting();
             GlStateManager.enableDepth();
-            int i = 0;
+            int width = 0;
 
             for (String s : textLines) {
                 int j = mc.fontRendererObj.getStringWidth(s);
 
-                if (j > i) {
-                    i = j;
+                if (j > width) {
+                    width = j;
                 }
             }
 
             int l1 = x + 12;
             int i2 = y - 12;
-            int k = 8;
+            int height = 8;
 
             if (textLines.size() > 1) {
-                k += 2 + (textLines.size() - 1) * 10;
+                height += 2 + (textLines.size() - 1) * 10;
             }
 
-            if (l1 + i > screenWidth) {
-                l1 -= 28 + i;
+            if (l1 + width > screenWidth) {
+                l1 -= 28 + width;
             }
 
-            if (i2 + k + 6 > screenHeight) {
-                i2 = screenHeight - k - 6;
+            if (i2 + height + 6 > screenHeight) {
+                i2 = screenHeight - height - 6;
             }
+
 
 //                this.zLevel = 300.0F;
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, 0, zLevel);
             itemRender.zLevel = 300.0F;
             int l = -267386864;
-            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+            drawGradientRect(l1 - 3, i2 - 4, l1 + width + 3, i2 - 3, l, l);
+            drawGradientRect(l1 - 3, i2 + height + 3, l1 + width + 3, i2 + height + 4, l, l);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + width + 3, i2 + height + 3, l, l);
+            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + height + 3, l, l);
+            drawGradientRect(l1 + width + 3, i2 - 3, l1 + width + 4, i2 + height + 3, l, l);
             int i1 = 1347420415;
             int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + height + 3 - 1, i1, j1);
+            drawGradientRect(l1 + width + 2, i2 - 3 + 1, l1 + width + 3, i2 + height + 3 - 1, i1, j1);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + width + 3, i2 - 3 + 1, i1, i1);
+            drawGradientRect(l1 - 3, i2 + height + 2, l1 + width + 3, i2 + height + 3, j1, j1);
             GlStateManager.popMatrix();
 
             GlStateManager.pushMatrix();
@@ -302,6 +303,9 @@ public class GuiUtil {
 
                 i2 += 10;
             }
+
+
+
             GlStateManager.popMatrix();
 
 //                this.zLevel = 0.0F;
@@ -309,9 +313,12 @@ public class GuiUtil {
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
             GlStateManager.enableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            return new int[]{width, height};
         }
 
-        RenderHelper.disableStandardItemLighting();
+
+        return new int[]{0, 0};
     }
 
     public static void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor, int zLevel) {

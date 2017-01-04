@@ -4,23 +4,19 @@ import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.tablet.Tablet;
-import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.util.NBTUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +33,7 @@ public class PixelbayAPI {
 
         public static List<ItemListing> itemListings = Lists.newArrayList();
         public static List<PixelmonListing> pixelmonListings = Lists.newArrayList();
+        public static int maxItemPages, maxPixelmonPages;
 
     }
 
@@ -98,6 +95,40 @@ public class PixelbayAPI {
             return pixelmonListings;
         }
 
+        public static int getMaxItemPages() {
+            String query = "SELECT COUNT(*) AS items FROM tabletItems";
+            ResultSet result = iPixelmon.mysql.query(query);
+            try {
+                if(result.next()) {
+                    int results = result.getInt("items");
+                    int pages = results / maxResults;
+                    if (results % maxResults != 0) pages++;
+                    return pages;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+        }
+
+        public static int getMaxPixelmonPages() {
+            String query = "SELECT COUNT(*) AS pixelmons FROM tabletPixelmon";
+            ResultSet result = iPixelmon.mysql.query(query);
+            try {
+                if(result.next()) {
+                    int results = result.getInt("pixelmons");
+                    int pages = results / maxResults;
+                    if (results % maxResults != 0) pages++;
+                    return pages;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+        }
+
         public static void postItem(UUID player, ItemStack stack, long price) {
             InsertForm insertForm = new InsertForm("Items");
             insertForm.add("player", player.toString());
@@ -106,11 +137,11 @@ public class PixelbayAPI {
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 
-        public static void postPixelmon(UUID player, EntityPixelmon pixelmon, long price) {
+        public static void postPixelmon(UUID player, PixelmonData pixelmonData, long price) {
             InsertForm insertForm = new InsertForm("Pixelmon");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
-            insertForm.add("pixelmon", PixelmonAPI.Server.pixelmonToString(pixelmon));
+            insertForm.add("pixelmon", PixelmonAPI.Server.pixelmonDataToString(pixelmonData));
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 

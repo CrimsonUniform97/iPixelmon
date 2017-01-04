@@ -98,7 +98,7 @@ public class PixelmonAPI {
             return pixelmon;
         }
 
-        public static final void renderPokeDollar(Minecraft mc, int x, int y, int w, int h, int color) {
+        public static final void renderPokeDollar(Minecraft mc, int x, int y, int scale, int color) {
             glPushAttrib(GL_ALL_ATTRIB_BITS);
             {
                 float red = (float) (color >> 16 & 255) / 255.0F;
@@ -108,7 +108,9 @@ public class PixelmonAPI {
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
                 GlStateManager.color(red, blue, green, 1);
                 mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/pokedollar.png"));
-                GuiHelper.drawImageQuad(x, y, w, h, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
+                int width = 6;
+                int height = 10;
+                GuiHelper.drawImageQuad(x, y, width * scale, height * scale, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
             }
             glPopAttrib();
         }
@@ -124,7 +126,7 @@ public class PixelmonAPI {
             return new PixelmonRenderer(pixelmon, spin, screen);
         }
 
-        public static void renderPixelmonTip(PixelmonData pixelmon, int x, int y, int width, int height) {
+        public static int[] renderPixelmonTip(PixelmonData pixelmon, int x, int y, int width, int height) {
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
             List<String> pixelmonInfo = new ArrayList<>();
             pixelmonInfo.add(pixelmon.name);
@@ -134,7 +136,7 @@ public class PixelmonAPI {
             pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
                     PixelmonAPI.getPixelmonMaxHealth(pixelmon));
             pixelmonInfo.add(EnumChatFormatting.BLUE + "BP: " + PixelmonAPI.getBP(pixelmon));
-            GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
+            return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
         }
 
 
@@ -249,15 +251,26 @@ public class PixelmonAPI {
             });
         }
 
-        public static String pixelmonToString(EntityPixelmon pixelmon) {
+        public static String entityPixelmonToString(EntityPixelmon pixelmon) {
             NBTTagCompound tagCompound = new NBTTagCompound();
             pixelmon.writeToNBT(tagCompound);
             return tagCompound.toString();
         }
 
-        public static EntityPixelmon pixelmonFromString(String s, World world) {
+        public static EntityPixelmon entityPixelmonFromString(String s, World world) {
             return (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(NBTUtil.fromString(s), world);
         }
+
+        public static PixelmonData pixelmonDataFromString(String str) {
+            return new PixelmonData(NBTUtil.fromString(str));
+        }
+
+        public static String pixelmonDataToString(PixelmonData pixelmonData) {
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            pixelmonData.updatePokemon(tagCompound);
+            return tagCompound.toString();
+        }
+
 
         public static final void giveMoney(final UUID player, final int balance) {
             try {

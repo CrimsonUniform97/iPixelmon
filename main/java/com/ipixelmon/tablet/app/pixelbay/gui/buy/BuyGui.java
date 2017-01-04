@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.app.pixelbay.gui.buy;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.AppGui;
+import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
 import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGui;
 import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiItemListingList;
 import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiPixelmonListingList;
@@ -9,6 +10,7 @@ import com.ipixelmon.tablet.app.pixelbay.packet.buy.PacketRequestPage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -47,7 +49,20 @@ public class BuyGui extends AppGui {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
-        Minecraft.getMinecraft().displayGuiScreen(new SellGui(null));
+        if(button.id == 0) {
+            Minecraft.getMinecraft().displayGuiScreen(new SellGui(null));
+            return;
+        }
+
+        if(isItemPageBtn(button)) {
+            int page = Integer.parseInt(button.displayString);
+            page -=1;
+            iPixelmon.network.sendToServer(new PacketRequestPage(page, itemSearchField.getText(), true));
+        } else {
+            int page = Integer.parseInt(button.displayString);
+            page -=1;
+            iPixelmon.network.sendToServer(new PacketRequestPage(page, pixelmonSearchField.getText(), false));
+        }
     }
 
     @Override
@@ -58,6 +73,16 @@ public class BuyGui extends AppGui {
 
         itemSearchField.textboxKeyTyped(typedChar, keyCode);
         pixelmonSearchField.textboxKeyTyped(typedChar, keyCode);
+
+        boolean pressedEnter = keyCode == Keyboard.KEY_RETURN;
+
+        if(pressedEnter) {
+            if (itemSearchField.isFocused()) {
+                iPixelmon.network.sendToServer(new PacketRequestPage());
+            } else if (pixelmonSearchField.isFocused()) {
+
+            }
+        }
     }
 
     // TODO: Work on popups
@@ -73,8 +98,8 @@ public class BuyGui extends AppGui {
         yPos += 5;
         listWidth /= 2;
 
-        itemList = new GuiItemListingList(xPos - 5, yPos + 10, listWidth, listHeight - 5);
-        pixelmonList = new GuiPixelmonListingList(xPos + listWidth + 5, yPos + 10, listWidth, listHeight - 5);
+        itemList = new GuiItemListingList(xPos - 5, yPos + 10, listWidth, listHeight - 20);
+        pixelmonList = new GuiPixelmonListingList(xPos + listWidth + 5, yPos + 10, listWidth, itemList.height);
 
         itemSearchField = new GuiTextField(0, mc.fontRendererObj, itemList.xPosition + (itemList.width - 100) / 2,
                 itemList.yPosition - 27, 100, 20);
@@ -90,5 +115,32 @@ public class BuyGui extends AppGui {
         super.updateScreen();
         itemSearchField.updateCursorCounter();
         pixelmonSearchField.updateCursorCounter();
+
+        if(this.buttonList.size() > 1) return;
+
+        if(PixelbayAPI.Client.maxItemPages <= 0 && PixelbayAPI.Client.maxPixelmonPages <= 0) return;
+
+        int xOffsetItem = itemList.width / PixelbayAPI.Client.maxItemPages;
+        int xOffsetPixelmon = pixelmonList.width / PixelbayAPI.Client.maxPixelmonPages;
+
+        for(int i = 0; i < PixelbayAPI.Client.maxItemPages; i++) {
+            this.buttonList.add(new PageBtn(this.buttonList.size() + i,
+                    itemList.xPosition + (xOffsetItem * i) + (xOffsetItem / 2),
+                    itemList.yPosition + itemList.height + 8, String.valueOf(i + 1)));
+        }
+
+        for(int i = 0; i < PixelbayAPI.Client.maxPixelmonPages; i++) {
+            this.buttonList.add(new PageBtn(this.buttonList.size() + i,
+                    pixelmonList.xPosition + (xOffsetPixelmon * i) + (xOffsetPixelmon / 2),
+                    pixelmonList.yPosition + pixelmonList.height + 8, String.valueOf(i + 1)));
+        }
+    }
+
+    private boolean isItemPageBtn(GuiButton button) {
+        if(button.xPosition >= itemList.xPosition && button.xPosition <= itemList.xPosition + itemList.width) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

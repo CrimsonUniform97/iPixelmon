@@ -1,10 +1,18 @@
 package com.ipixelmon.tablet.app.pixelbay;
 
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mysql.DeleteForm;
+import com.ipixelmon.tablet.Tablet;
+import com.ipixelmon.util.ItemUtil;
+import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -56,5 +64,26 @@ public class PixelmonListing {
         return new PixelmonListing(player, playerName, price, pixelmon);
     }
 
+    public boolean confirmListing() {
+        ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletPixelmon WHERE " +
+                "player='" + player.toString() + "' AND " +
+                "price='" + price + "' AND " +
+                "pixelmon='" + PixelmonAPI.Server.pixelmonDataToString(pixelmon) + "';");
+        try {
+            if(result.next()) return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return false;
+    }
+
+    public void deleteListing() {
+        iPixelmon.mysql.delete(Tablet.class, new DeleteForm("Pixelmon")
+                .add("player", player.toString())
+                .add("price", price)
+                .add("pixelmon", PixelmonAPI.Server.pixelmonDataToString(pixelmon)));
+    }
 
 }

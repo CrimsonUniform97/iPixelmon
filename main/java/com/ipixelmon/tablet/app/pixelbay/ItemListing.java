@@ -1,9 +1,15 @@
 package com.ipixelmon.tablet.app.pixelbay;
 
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.mysql.DeleteForm;
+import com.ipixelmon.tablet.Tablet;
+import com.ipixelmon.util.ItemUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -52,5 +58,27 @@ public class ItemListing {
         long price = buf.readLong();
         ItemStack item = ByteBufUtils.readItemStack(buf);
         return new ItemListing(player, playerName, price, item);
+    }
+
+    public boolean confirmListing() {
+        ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletItems WHERE " +
+                "player='" + player.toString() + "' AND " +
+                "price='" + price + "' AND " +
+                "item='" + ItemUtil.itemToString(item) + "';");
+        try {
+            if(result.next()) return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return false;
+    }
+
+    public void deleteListing() {
+        iPixelmon.mysql.delete(Tablet.class, new DeleteForm("Items")
+                .add("player", player.toString())
+                .add("price", price)
+                .add("item", ItemUtil.itemToString(item)));
     }
 }

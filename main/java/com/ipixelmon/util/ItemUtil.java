@@ -36,7 +36,7 @@ public class ItemUtil {
     @SideOnly(Side.CLIENT)
     public static class Client {
 
-        public static void renderItem(ItemStack stack, int x, int y, int screenWidth, int screenHeight, int mouseX, int mouseY) {
+        public static int[] renderItem(ItemStack stack, int x, int y, int screenWidth, int screenHeight, int mouseX, int mouseY) {
             Minecraft mc = Minecraft.getMinecraft();
             RenderHelper.enableGUIStandardItemLighting();
             GlStateManager.enableBlend();
@@ -44,15 +44,18 @@ public class ItemUtil {
             mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y,
                     stack.stackSize > 1 ? String.valueOf(stack.stackSize) : "");
 
+            int[] toReturn = new int[2];
+
             if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                renderToolTip(stack, mouseX, mouseY, screenWidth, screenHeight);
+                toReturn = renderToolTip(stack, mouseX, mouseY, screenWidth, screenHeight);
             }
 
             RenderHelper.disableStandardItemLighting();
+            return toReturn;
         }
 
-        public static void renderToolTip(ItemStack stack, int x, int y, int width, int height) {
+        public static int[] renderToolTip(ItemStack stack, int x, int y, int width, int height) {
             Minecraft mc = Minecraft.getMinecraft();
             List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
 
@@ -65,7 +68,7 @@ public class ItemUtil {
             }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
-            GuiUtil.drawHoveringText(list, x, y, width, height, 100.0F);
+            return GuiUtil.drawHoveringText(list, x, y, width, height, 100.0F);
         }
 
         public static void renderItem3D(ItemStack itemStack, int x, int y, int scale, float rotY) {

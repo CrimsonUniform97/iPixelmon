@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.app.pixelbay.packet.sell;
 
 import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
 import com.ipixelmon.util.PixelmonAPI;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
@@ -58,7 +59,7 @@ public class PacketSellPixelmon implements IMessage {
                 EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
                         .getPokemon(message.pixelmonID, player.worldObj);
 
-                PixelbayAPI.Server.postPixelmon(player.getUniqueID(), entityPixelmon, message.price);
+                PixelbayAPI.Server.postPixelmon(player.getUniqueID(), new PixelmonData(entityPixelmon), message.price);
                 PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
             } catch (PlayerNotLoadedException e) {
                 e.printStackTrace();
