@@ -26,7 +26,8 @@ public class ServerProxy extends AppProxy {
         CreateForm pixelmonForm = new CreateForm("Pixelmon");
         pixelmonForm.add("player", DataType.TEXT);
         pixelmonForm.add("price", DataType.LONG);
-        pixelmonForm.add("pixelmon", DataType.TEXT);
+        pixelmonForm.add("pixelmonName", DataType.TEXT);
+        pixelmonForm.add("pixelmonData", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, pixelmonForm);
     }
 }

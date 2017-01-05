@@ -70,6 +70,9 @@ public class PacketPurchaseRequest implements IMessage{
                     return null;
                 }
 
+                PixelmonAPI.Server.takeMoney(player.getUniqueID(), (int) itemListing.getPrice());
+                PixelmonAPI.Server.giveMoney(itemListing.getPlayer(), (int) itemListing.getPrice());
+
                 itemListing.deleteListing();
             } else {
                 PixelmonListing pixelmonListing = (PixelmonListing) message.object;
@@ -78,13 +81,10 @@ public class PacketPurchaseRequest implements IMessage{
 
                 if(balance < pixelmonListing.getPrice()) return null;
 
-//                MinecraftServer.getServer().addScheduledTask(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                });
                 Pixelmon.network.sendTo(new Add(pixelmonListing.getPixelmon()), player);
+
+                PixelmonAPI.Server.takeMoney(player.getUniqueID(), (int) pixelmonListing.getPrice());
+                PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), (int) pixelmonListing.getPrice());
 
                 pixelmonListing.deleteListing();
             }

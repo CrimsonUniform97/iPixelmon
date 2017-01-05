@@ -6,6 +6,7 @@ import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
 import com.ipixelmon.tablet.app.pixelbay.PixelmonListing;
 import com.ipixelmon.util.PixelmonAPI;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -29,10 +30,10 @@ public class PacketResultsToClient implements IMessage {
         this.searchForItems = searchForItems;
         if(searchForItems) {
             this.items = PixelbayAPI.Server.getItemsForSale(page, criteria);
-            this.maxPages = PixelbayAPI.Server.getMaxItemPages();
+            this.maxPages = PixelbayAPI.Server.getMaxItemPages(criteria);
         } else {
             this.pixelmons = PixelbayAPI.Server.getPixelmonForSale(page, criteria);
-            this.maxPages = PixelbayAPI.Server.getMaxPixelmonPages();
+            this.maxPages = PixelbayAPI.Server.getMaxPixelmonPages(criteria);
         }
     }
 
@@ -81,7 +82,6 @@ public class PacketResultsToClient implements IMessage {
         @Override
         public IMessage onMessage(PacketResultsToClient message, MessageContext ctx) {
             // TODO: Display in PixelbayGui
-
             if(message.searchForItems) {
                 PixelbayAPI.Client.itemListings.clear();
                 PixelbayAPI.Client.itemListings.addAll(message.items);

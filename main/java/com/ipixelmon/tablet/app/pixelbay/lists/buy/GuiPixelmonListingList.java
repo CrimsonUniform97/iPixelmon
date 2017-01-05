@@ -6,7 +6,11 @@ import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGuiItem;
 import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGuiPixelmon;
 import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.PixelmonAPI;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 

@@ -25,8 +25,8 @@ import java.util.UUID;
  */
 public class PixelbayAPI {
 
-    public static final int maxResults = 30;
-    public static final int maxListings = 30;
+    public static final int maxResults = 3;
+    public static final int maxListings = 100;
 
     @SideOnly(Side.CLIENT)
     public static class Client {
@@ -42,10 +42,10 @@ public class PixelbayAPI {
 
         public static List<ItemListing> getItemsForSale(int page, String searchFor) {
             String query = "SELECT * FROM tabletItems WHERE item LIKE '%" + searchFor + "%' " +
-                    "LIMIT " + (page * maxResults) + "," + ((page + 1) * maxResults) + ";";
+                    "ORDER BY price LIMIT " + (page * maxResults) + "," + maxResults + ";";
 
             if(searchFor == null || searchFor.isEmpty()) {
-                query = "SELECT * FROM tabletItems LIMIT " + (page * maxResults) + "," + ((page + 1) * maxResults) + ";";
+                query = "SELECT * FROM tabletItems ORDER BY price LIMIT " + (page * maxResults) + "," + maxResults + ";";
             }
 
             ResultSet result = iPixelmon.mysql.query(query);
@@ -68,11 +68,11 @@ public class PixelbayAPI {
         }
 
         public static List<PixelmonListing> getPixelmonForSale(int page, String searchFor) {
-            String query = "SELECT * FROM tabletPixelmon WHERE item LIKE '%" + searchFor + "%' " +
-                    "LIMIT " + (page * maxResults) + "," + ((page + 1) * maxResults) + ";";
+            String query = "SELECT * FROM tabletPixelmon WHERE pixelmonName LIKE '%" + searchFor + "%' " +
+                    "LIMIT " + (page * maxResults) + "," + maxResults + ";";
 
             if(searchFor == null || searchFor.isEmpty()) {
-                query = "SELECT * FROM tabletPixelmon LIMIT " + (page * maxResults) + "," + ((page + 1) * maxResults) + ";";
+                query = "SELECT * FROM tabletPixelmon LIMIT " + (page * maxResults) + "," + maxResults + ";";
             }
 
             ResultSet result = iPixelmon.mysql.query(query);
@@ -83,10 +83,12 @@ public class PixelbayAPI {
                 NBTTagCompound tagCompound;
                 UUID uuid;
                 while (result.next()) {
-                    tagCompound = NBTUtil.fromString(result.getString("pixelmon"));
+                    tagCompound = NBTUtil.fromString(result.getString("pixelmonData"));
                     uuid = UUID.fromString(result.getString("player"));
+                    PixelmonData pixelmonData = new PixelmonData(tagCompound);
+                    pixelmonData.name = result.getString("pixelmonName");
                     pixelmonListings.add(new PixelmonListing(uuid, UUIDManager.getPlayerName(uuid),
-                            result.getLong("price"), new PixelmonData(tagCompound)));
+                            result.getLong("price"), pixelmonData));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -95,8 +97,13 @@ public class PixelbayAPI {
             return pixelmonListings;
         }
 
-        public static int getMaxItemPages() {
+        public static int getMaxItemPages(String searchFor) {
             String query = "SELECT COUNT(*) AS items FROM tabletItems";
+
+            if(searchFor != null || !searchFor.isEmpty()) {
+                query += " WHERE item LIKE '%" + searchFor + "%';";
+            }
+
             ResultSet result = iPixelmon.mysql.query(query);
             try {
                 if(result.next()) {
@@ -112,8 +119,13 @@ public class PixelbayAPI {
             return 0;
         }
 
-        public static int getMaxPixelmonPages() {
+        public static int getMaxPixelmonPages(String searchFor) {
             String query = "SELECT COUNT(*) AS pixelmons FROM tabletPixelmon";
+
+            if(searchFor != null || !searchFor.isEmpty()) {
+                query += " WHERE pixelmonName LIKE '%" + searchFor + "%';";
+            }
+
             ResultSet result = iPixelmon.mysql.query(query);
             try {
                 if(result.next()) {
@@ -141,7 +153,8 @@ public class PixelbayAPI {
             InsertForm insertForm = new InsertForm("Pixelmon");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
-            insertForm.add("pixelmon", PixelmonAPI.Server.pixelmonDataToString(pixelmonData));
+            insertForm.add("pixelmonName", pixelmonData.name);
+            insertForm.add("pixelmonData", PixelmonAPI.Server.pixelmonDataToString(pixelmonData));
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 

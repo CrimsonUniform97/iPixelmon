@@ -54,6 +54,7 @@ public class PacketSellItem implements IMessage {
 
             if(stack == null) return null;
 
+            System.out.println(message.price);
             PixelbayAPI.Server.postItem(player.getUniqueID(), stack, message.price);
             // TODO: Implement amount
             player.inventory.mainInventory[message.slot] = null;

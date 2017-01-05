@@ -57,8 +57,8 @@ public class SellGuiItem extends SellGuiPopup {
 
     @Override
     public void doSale() {
-        iPixelmon.network.sendToServer(new PacketSellItem(slot, Integer.parseInt(priceField.getText()),
-                Integer.parseInt(amountField.getText())));
+        iPixelmon.network.sendToServer(new PacketSellItem(slot, Integer.parseInt(amountField.getText()),
+                Integer.parseInt(priceField.getText())));
     }
 
 }

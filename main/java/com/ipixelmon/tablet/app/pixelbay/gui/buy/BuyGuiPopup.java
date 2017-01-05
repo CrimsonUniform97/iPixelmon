@@ -3,6 +3,8 @@ package com.ipixelmon.tablet.app.pixelbay.gui.buy;
 import com.ipixelmon.tablet.AppGui;
 import net.minecraft.client.gui.GuiButton;
 
+import java.io.IOException;
+
 /**
  * Created by colby on 1/2/2017.
  */
@@ -17,6 +19,11 @@ public abstract class BuyGuiPopup extends AppGui {
     @Override
     public void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
         drawObject(mouseX, mouseY, dWheel, partialTicks);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        doPurchase();
     }
 
     @Override

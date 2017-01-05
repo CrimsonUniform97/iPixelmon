@@ -76,6 +76,7 @@ public class ItemListing {
     }
 
     public void deleteListing() {
+        item.stackSize = item.stackSize <= 0 ? 1 : item.stackSize;
         iPixelmon.mysql.delete(Tablet.class, new DeleteForm("Items")
                 .add("player", player.toString())
                 .add("price", price)

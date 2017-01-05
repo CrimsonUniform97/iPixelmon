@@ -48,4 +48,10 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
     public void doPurchase() {
         iPixelmon.network.sendToServer(new PacketPurchaseRequest(pixelmonListing));
     }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        this.buttonList.get(0).enabled = PixelmonAPI.Client.getBalance() >= pixelmonListing.getPrice();
+    }
 }
