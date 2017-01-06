@@ -8,6 +8,7 @@ import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiInventoryList;
 import com.ipixelmon.tablet.app.pixelbay.lists.sell.GuiPixelmonList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -42,11 +43,16 @@ public class SellGui extends AppGui {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(keyCode == Keyboard.KEY_ESCAPE) {
+            Minecraft.getMinecraft().displayGuiScreen(new BuyGui(null));
+            return;
+        }
+
         super.keyTyped(typedChar, keyCode);
         inventoryList.keyTyped(typedChar, keyCode);
         pixelmonList.keyTyped(typedChar, keyCode);
     }
-    // TODO: Test
+
     @Override
     public void initGui() {
         super.initGui();

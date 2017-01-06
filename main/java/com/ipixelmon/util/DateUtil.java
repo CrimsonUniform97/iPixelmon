@@ -9,9 +9,9 @@ import java.util.Date;
 /**
  * Created by colbymchenry on 12/28/16.
  */
-public class TimeUtil {
+public class DateUtil {
 
-    private static DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public static Date getCurrentTime() {
         return Calendar.getInstance().getTime();

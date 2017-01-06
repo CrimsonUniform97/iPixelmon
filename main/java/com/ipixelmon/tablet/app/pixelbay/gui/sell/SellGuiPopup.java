@@ -1,6 +1,8 @@
 package com.ipixelmon.tablet.app.pixelbay.gui.sell;
 
 import com.ipixelmon.tablet.AppGui;
+import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGui;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,7 +24,6 @@ public abstract class SellGuiPopup extends AppGui {
 
     @Override
     public final void drawScreen(int mouseX, int mouseY, int dWheel, float partialTicks) {
-        // TODO: Draw a textbox to enter the price and then place the position for drawObject with GlTranslate
         GlStateManager.color(1f, 1f, 1f, 1f);
         GlStateManager.enableBlend();
         drawObject(mouseX, mouseY, partialTicks);
@@ -39,6 +40,11 @@ public abstract class SellGuiPopup extends AppGui {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(keyCode == Keyboard.KEY_ESCAPE) {
+            Minecraft.getMinecraft().displayGuiScreen(new SellGui(null));
+            return;
+        }
+
         super.keyTyped(typedChar, keyCode);
         if(keyCode != Keyboard.KEY_BACK && keyCode != Keyboard.KEY_LEFT && keyCode != Keyboard.KEY_RIGHT) {
             if (!isInt("" + typedChar)) return;

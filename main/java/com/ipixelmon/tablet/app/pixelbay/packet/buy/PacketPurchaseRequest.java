@@ -70,8 +70,8 @@ public class PacketPurchaseRequest implements IMessage{
                     return null;
                 }
 
-                PixelmonAPI.Server.takeMoney(player.getUniqueID(), (int) itemListing.getPrice());
-                PixelmonAPI.Server.giveMoney(itemListing.getPlayer(), (int) itemListing.getPrice());
+                PixelmonAPI.Server.takeMoney(player.getUniqueID(),itemListing.getPrice());
+                PixelmonAPI.Server.giveMoney(itemListing.getPlayer(),itemListing.getPrice());
 
                 itemListing.deleteListing();
             } else {
@@ -83,8 +83,8 @@ public class PacketPurchaseRequest implements IMessage{
 
                 Pixelmon.network.sendTo(new Add(pixelmonListing.getPixelmon()), player);
 
-                PixelmonAPI.Server.takeMoney(player.getUniqueID(), (int) pixelmonListing.getPrice());
-                PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), (int) pixelmonListing.getPrice());
+                PixelmonAPI.Server.takeMoney(player.getUniqueID(), pixelmonListing.getPrice());
+                PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), pixelmonListing.getPrice());
 
                 pixelmonListing.deleteListing();
             }

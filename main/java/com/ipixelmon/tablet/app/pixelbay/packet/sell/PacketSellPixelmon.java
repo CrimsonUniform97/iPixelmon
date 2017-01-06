@@ -18,12 +18,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSellPixelmon implements IMessage {
 
     private int[] pixelmonID;
-    private long price;
+    private int price;
 
     public PacketSellPixelmon() {
     }
 
-    public PacketSellPixelmon(int[] pixelmonID, long price) {
+    public PacketSellPixelmon(int[] pixelmonID, int price) {
         this.pixelmonID = pixelmonID;
         this.price = price;
     }
@@ -33,14 +33,14 @@ public class PacketSellPixelmon implements IMessage {
         pixelmonID = new int[2];
         pixelmonID[0] = buf.readInt();
         pixelmonID[1] = buf.readInt();
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(pixelmonID[0]);
         buf.writeInt(pixelmonID[1]);
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static class Handler implements IMessageHandler<PacketSellPixelmon, IMessage> {

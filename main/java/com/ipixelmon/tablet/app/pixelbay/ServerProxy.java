@@ -6,6 +6,8 @@ import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.tablet.AppProxy;
 import com.ipixelmon.tablet.Tablet;
 
+import java.sql.SQLException;
+
 /**
  * Created by colby on 12/31/2016.
  */
@@ -17,17 +19,26 @@ public class ServerProxy extends AppProxy {
 
     @Override
     public void init() {
-        CreateForm itemForm = new CreateForm("Items");
-        itemForm.add("player", DataType.TEXT);
-        itemForm.add("price", DataType.LONG);
-        itemForm.add("item", DataType.TEXT);
-        iPixelmon.mysql.createTable(Tablet.class, itemForm);
+        try {
+            iPixelmon.mysql.getDatabase().query("CREATE TABLE IF NOT EXISTS tabletItems (" +
+                    "player text NOT NULL, " +
+                    "price int NOT NULL, " +
+                    "item text NOT NULL, " +
+                    "postDate datetime NOT NULL DEFAULT NOW());");
 
-        CreateForm pixelmonForm = new CreateForm("Pixelmon");
-        pixelmonForm.add("player", DataType.TEXT);
-        pixelmonForm.add("price", DataType.LONG);
-        pixelmonForm.add("pixelmonName", DataType.TEXT);
-        pixelmonForm.add("pixelmonData", DataType.TEXT);
-        iPixelmon.mysql.createTable(Tablet.class, pixelmonForm);
+            iPixelmon.mysql.getDatabase().query("CREATE TABLE IF NOT EXISTS tabletPixelmon (" +
+                    "player text NOT NULL, " +
+                    "price int NOT NULL, " +
+                    "pixelmonName text NOT NULL, " +
+                    "pixelmonData text NOT NULL, " +
+                    "postDate datetime NOT NULL DEFAULT NOW());");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String query = "DELETE FROM tabletItems WHERE postDate < DATE_SUB(NOW(), INTERVAL 7 DAY);";
+        iPixelmon.mysql.query(query);
+        query = "DELETE FROM tabletPixelmon WHERE postDate < DATE_SUB(NOW(), INTERVAL 7 DAY);";
+        iPixelmon.mysql.query(query);
     }
 }

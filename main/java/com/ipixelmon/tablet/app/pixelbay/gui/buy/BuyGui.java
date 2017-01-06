@@ -125,12 +125,10 @@ public class BuyGui extends AppGui {
 
         this.buttonList.clear();
 
-        if (PixelbayAPI.Client.maxItemPages <= 0 || PixelbayAPI.Client.maxPixelmonPages <= 0) return;
-
         int xOffsetItem = itemList.width /
-                (PixelbayAPI.Client.maxItemPages < MAX_PAGES ? PixelbayAPI.Client.maxItemPages : MAX_PAGES);
+                (PixelbayAPI.Client.maxItemPages <= 0 ? 1 : PixelbayAPI.Client.maxItemPages < MAX_PAGES ? PixelbayAPI.Client.maxItemPages : MAX_PAGES);
         int xOffsetPixelmon = pixelmonList.width /
-                (PixelbayAPI.Client.maxPixelmonPages < MAX_PAGES ? PixelbayAPI.Client.maxPixelmonPages : MAX_PAGES);
+                (PixelbayAPI.Client.maxPixelmonPages <= 0 ? 1 :PixelbayAPI.Client.maxPixelmonPages < MAX_PAGES ? PixelbayAPI.Client.maxPixelmonPages : MAX_PAGES);
 
         int maxPageItem = getMaximumPage(activePageItem, true);
         int maxPagePixelmon = getMaximumPage(activePagePixelmon, false);
@@ -147,7 +145,7 @@ public class BuyGui extends AppGui {
             index++;
         }
 
-        if (index > (MAX_PAGES - 2)) {
+        if (index > (MAX_PAGES - 2) && PixelbayAPI.Client.maxItemPages > MAX_PAGES - 1) {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     itemList.xPosition + (xOffsetItem * index) + (xOffsetItem / 2),
                     itemList.yPosition + itemList.height + 8,
@@ -167,7 +165,7 @@ public class BuyGui extends AppGui {
             index++;
         }
 
-        if (index > (MAX_PAGES - 2)) {
+        if (index > (MAX_PAGES - 2) && PixelbayAPI.Client.maxPixelmonPages > MAX_PAGES - 1) {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     pixelmonList.xPosition + (xOffsetPixelmon * index) + (xOffsetPixelmon / 2),
                     pixelmonList.yPosition + pixelmonList.height + 8,

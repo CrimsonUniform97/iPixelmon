@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.tablet.Tablet;
+import com.ipixelmon.util.DateUtil;
 import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.util.NBTUtil;
 import com.ipixelmon.util.PixelmonAPI;
@@ -45,8 +46,10 @@ public class PixelbayAPI {
                     "ORDER BY price LIMIT " + (page * maxResults) + "," + maxResults + ";";
 
             if(searchFor == null || searchFor.isEmpty()) {
-                query = "SELECT * FROM tabletItems ORDER BY price LIMIT " + (page * maxResults) + "," + maxResults + ";";
+                query = "SELECT * FROM tabletItems ORDER BY price ASC LIMIT " + (page * maxResults) + "," + maxResults + ";";
             }
+
+            System.out.println(query);
 
             ResultSet result = iPixelmon.mysql.query(query);
 
@@ -58,7 +61,7 @@ public class PixelbayAPI {
                 while (result.next()) {
                     stack = ItemUtil.itemFromString(result.getString("item"));
                     uuid = UUID.fromString(result.getString("player"));
-                    items.add(new ItemListing(uuid, UUIDManager.getPlayerName(uuid), result.getLong("price"), stack));
+                    items.add(new ItemListing(uuid, UUIDManager.getPlayerName(uuid), result.getInt("price"), stack));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -88,7 +91,7 @@ public class PixelbayAPI {
                     PixelmonData pixelmonData = new PixelmonData(tagCompound);
                     pixelmonData.name = result.getString("pixelmonName");
                     pixelmonListings.add(new PixelmonListing(uuid, UUIDManager.getPlayerName(uuid),
-                            result.getLong("price"), pixelmonData));
+                            result.getInt("price"), pixelmonData));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -141,15 +144,16 @@ public class PixelbayAPI {
             return 0;
         }
 
-        public static void postItem(UUID player, ItemStack stack, long price) {
+        public static void postItem(UUID player, ItemStack stack, int price) {
             InsertForm insertForm = new InsertForm("Items");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
             insertForm.add("item", ItemUtil.itemToString(stack));
+            System.out.println(DateUtil.dateToString(DateUtil.getCurrentTime()));
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 
-        public static void postPixelmon(UUID player, PixelmonData pixelmonData, long price) {
+        public static void postPixelmon(UUID player, PixelmonData pixelmonData, int price) {
             InsertForm insertForm = new InsertForm("Pixelmon");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);

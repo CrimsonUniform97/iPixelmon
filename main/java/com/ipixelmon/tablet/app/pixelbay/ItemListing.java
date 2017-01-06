@@ -19,10 +19,10 @@ public class ItemListing {
 
     private UUID player;
     private String playerName;
-    private long price;
+    private int price;
     private ItemStack item;
 
-    public ItemListing(UUID player, String playerName, long price, ItemStack item) {
+    public ItemListing(UUID player, String playerName, int price, ItemStack item) {
         this.player = player;
         this.playerName = playerName;
         this.price = price;
@@ -37,7 +37,7 @@ public class ItemListing {
         return playerName;
     }
 
-    public long getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -47,7 +47,7 @@ public class ItemListing {
 
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, player.toString() + "," +  playerName);
-        buf.writeLong(price);
+        buf.writeInt(price);
         ByteBufUtils.writeItemStack(buf, item);
     }
 
@@ -55,7 +55,7 @@ public class ItemListing {
         String[] data = ByteBufUtils.readUTF8String(buf).split(",");
         UUID player = UUID.fromString(data[0]);
         String playerName = data[1];
-        long price = buf.readLong();
+        int price = buf.readInt();
         ItemStack item = ByteBufUtils.readItemStack(buf);
         return new ItemListing(player, playerName, price, item);
     }

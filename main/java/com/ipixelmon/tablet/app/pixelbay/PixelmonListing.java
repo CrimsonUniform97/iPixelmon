@@ -22,10 +22,10 @@ public class PixelmonListing {
 
     private UUID player;
     private String playerName;
-    private long price;
+    private int price;
     private PixelmonData pixelmon;
 
-    public PixelmonListing(UUID player, String playerName, long price, PixelmonData pixelmon) {
+    public PixelmonListing(UUID player, String playerName, int price, PixelmonData pixelmon) {
         this.player = player;
         this.playerName = playerName;
         this.price = price;
@@ -40,7 +40,7 @@ public class PixelmonListing {
         return playerName;
     }
 
-    public long getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -50,7 +50,7 @@ public class PixelmonListing {
 
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, player.toString() + "," + playerName);
-        buf.writeLong(price);
+        buf.writeInt(price);
         pixelmon.encodeInto(buf);
     }
 
@@ -58,7 +58,7 @@ public class PixelmonListing {
         String[] data = ByteBufUtils.readUTF8String(buf).split(",");
         UUID player = UUID.fromString(data[0]);
         String playerName = data[1];
-        long price = buf.readLong();
+        int price = buf.readInt();
         PixelmonData pixelmon = new PixelmonData();
         pixelmon.decodeInto(buf);
         return new PixelmonListing(player, playerName, price, pixelmon);

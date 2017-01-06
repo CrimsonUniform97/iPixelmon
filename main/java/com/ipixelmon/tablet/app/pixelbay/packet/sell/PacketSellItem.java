@@ -14,12 +14,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSellItem implements IMessage {
 
     private int slot, amount;
-    private long price;
+    private int price;
 
     public PacketSellItem() {
     }
 
-    public PacketSellItem(int slot, int amount, long price) {
+    public PacketSellItem(int slot, int amount, int price) {
         this.slot = slot;
         this.amount = amount;
         this.price = price;
@@ -29,22 +29,20 @@ public class PacketSellItem implements IMessage {
     public void fromBytes(ByteBuf buf) {
         slot = buf.readInt();
         amount = buf.readInt();
-        price = buf.readLong();
+        price = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slot);
         buf.writeInt(amount);
-        buf.writeLong(price);
+        buf.writeInt(price);
     }
 
     public static class Handler implements IMessageHandler<PacketSellItem, IMessage> {
 
         @Override
         public IMessage onMessage(PacketSellItem message, MessageContext ctx) {
-            // TODO: Make a listing last so long
-
             if(message.price <= 0) return null;
 
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
@@ -54,10 +52,21 @@ public class PacketSellItem implements IMessage {
 
             if(stack == null) return null;
 
-            System.out.println(message.price);
+            if(stack.stackSize < message.amount) return null;
+
+            ItemStack newStack = stack.copy();
+
+            if(stack.stackSize - message.amount == 0) {
+                player.inventory.mainInventory[message.slot] = null;
+            } else {
+                newStack.stackSize = stack.stackSize - message.amount;
+
+                player.inventory.mainInventory[message.slot] = newStack;
+            }
+
+            stack.stackSize = message.amount;
+
             PixelbayAPI.Server.postItem(player.getUniqueID(), stack, message.price);
-            // TODO: Implement amount
-            player.inventory.mainInventory[message.slot] = null;
             return null;
         }
 

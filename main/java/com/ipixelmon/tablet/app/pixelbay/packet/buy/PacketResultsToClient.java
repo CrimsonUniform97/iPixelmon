@@ -81,7 +81,6 @@ public class PacketResultsToClient implements IMessage {
 
         @Override
         public IMessage onMessage(PacketResultsToClient message, MessageContext ctx) {
-            // TODO: Display in PixelbayGui
             if(message.searchForItems) {
                 PixelbayAPI.Client.itemListings.clear();
                 PixelbayAPI.Client.itemListings.addAll(message.items);

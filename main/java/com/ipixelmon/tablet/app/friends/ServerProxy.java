@@ -5,6 +5,9 @@ import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.tablet.AppProxy;
 import com.ipixelmon.tablet.Tablet;
+import net.minecraftforge.common.MinecraftForge;
+
+import java.sql.SQLException;
 
 /**
  * Created by colby on 12/31/2016.
@@ -23,10 +26,15 @@ public class ServerProxy extends AppProxy {
         friendsForm.add("friends", DataType.TEXT);
         iPixelmon.mysql.createTable(Tablet.class, friendsForm);
 
-        CreateForm friendReqForm = new CreateForm("FriendRequests");
-        friendReqForm.add("receiver", DataType.TEXT);
-        friendReqForm.add("sender", DataType.TEXT);
-        friendReqForm.add("sentDate", DataType.TEXT);
-        iPixelmon.mysql.createTable(Tablet.class, friendReqForm);
+        try {
+            iPixelmon.mysql.getDatabase().query("CREATE TABLE IF NOT EXISTS tabletFriendRequests (" +
+                    "sender text NOT NULL, " +
+                    "receiver text NOT NULL, " +
+                    "sentDate datetime NOT NULL DEFAULT NOW());");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        MinecraftForge.EVENT_BUS.register(new PlayerListener());
     }
 }

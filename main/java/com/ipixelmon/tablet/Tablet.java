@@ -38,20 +38,6 @@ public class Tablet implements IMod {
 
     @Override
     public void preInit() {
-        // friends packets
-//        iPixelmon.registerPacket(PacketFriendRequestToClient.Handler.class, PacketFriendRequestToClient.class, Side.CLIENT);
-//        iPixelmon.registerPacket(PacketFriendRequestToServer.Handler.class, PacketFriendRequestToServer.class, Side.SERVER);
-//        iPixelmon.registerPacket(PacketFriendStatus.Handler.class, PacketFriendStatus.class, Side.CLIENT);
-//        iPixelmon.registerPacket(PacketModifyFriends.Handler.class, PacketModifyFriends.class, Side.SERVER);
-//        iPixelmon.registerPacket(PacketNotification.Handler.class, PacketNotification.class, Side.CLIENT);
-//
-//        // mail packets
-//        iPixelmon.registerPacket(PacketSendMail.Handler.class, PacketSendMail.class, Side.SERVER);
-//        iPixelmon.registerPacket(PacketReceiveMail.Handler.class, PacketReceiveMail.class, Side.CLIENT);
-//        iPixelmon.registerPacket(PacketSendResponse.Handler.class, PacketSendResponse.class, Side.CLIENT);
-
-        // pixelbay packets
-
         for(AppBase app : apps) app.preInit();
     }
 

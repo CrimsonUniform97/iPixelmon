@@ -45,6 +45,15 @@ public class BuyGuiItem extends BuyGuiPopup {
 
         GuiUtil.drawHoveringText(details, screenBounds.getX() - 7, screenBounds.getY() + 17 + height + 10,
                 screenBounds.getWidth(), screenBounds.getHeight());
+
+        int stringWidth = mc.fontRendererObj.getStringWidth(String.valueOf(itemListing.getItem().stackSize));
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(screenBounds.getX() + (screenBounds.getWidth() / 2) + 40, screenBounds.getY() + 130, 0);
+        GlStateManager.translate(stringWidth / 2, mc.fontRendererObj.FONT_HEIGHT / 2, 0);
+        GlStateManager.scale(2F, 2F, 2F);
+        GlStateManager.translate(-(stringWidth / 2), -(mc.fontRendererObj.FONT_HEIGHT / 2), 0);
+        mc.fontRendererObj.drawString(String.valueOf(itemListing.getItem().stackSize), 0, 0, 0xFFFFFF, true);
+        GlStateManager.popMatrix();
     }
 
 

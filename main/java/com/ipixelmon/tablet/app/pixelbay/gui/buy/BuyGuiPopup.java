@@ -1,7 +1,9 @@
 package com.ipixelmon.tablet.app.pixelbay.gui.buy;
 
 import com.ipixelmon.tablet.AppGui;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -35,6 +37,16 @@ public abstract class BuyGuiPopup extends AppGui {
                 (this.width - btnWidth) / 2,
                 screenBounds.getY() + screenBounds.getHeight() - 30,
                 btnWidth, 20, "Buy"));
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(keyCode == Keyboard.KEY_ESCAPE) {
+            Minecraft.getMinecraft().displayGuiScreen(new BuyGui(null));
+            return;
+        }
+
+        super.keyTyped(typedChar, keyCode);
     }
 
     @Override
