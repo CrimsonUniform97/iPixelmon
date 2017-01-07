@@ -6,7 +6,7 @@
       "flip-v": true
     },
     "textures": {
-      "#Material.001": "ipixelmon:blocks/pixelegg_crack1"
+      "#Material.001": "ipixelmon:items/pixelegg_crack1"
     },
     "model": "ipixelmon:pixelegg.obj"
   },

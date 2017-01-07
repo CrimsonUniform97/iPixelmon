@@ -1,5 +1,6 @@
 package com.ipixelmon;
 
+import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.party.PartyMod;
@@ -52,6 +53,7 @@ public final class iPixelmon {
         loadMod(new NotificationMod());
         loadMod(new TeamMod());
         loadMod(new PixelEgg());
+        loadMod(new LandControl());
         loadMod(new PartyMod());
         loadMod(new Tablet());
         loadMod(new McStatsMod());

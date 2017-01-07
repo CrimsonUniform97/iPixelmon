@@ -1,15 +1,20 @@
-package com.ipixelmon.pixelegg.client;
+package com.ipixelmon.landcontrol;
 
 import com.ipixelmon.CommonProxy;
-import com.ipixelmon.pixelegg.egg.PixelEggItem;
 
+/**
+ * Created by colby on 1/6/2017.
+ */
 public class ClientProxy extends CommonProxy {
+
     @Override
     public void preInit() {
-        PixelEggItem.instance.initModel();
     }
 
     @Override
     public void init() {
+        ToolCupboardBlock.instance.initModel();
+        ToolCupboardItem.instance.initModel();
     }
+
 }

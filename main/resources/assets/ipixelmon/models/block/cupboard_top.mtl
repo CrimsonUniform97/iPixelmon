@@ -1,0 +1,8 @@
+# Blender MTL File: 'cupBoard_top.blend'
+# Material Count: 2
+
+newmtl Material.001
+map_Kd ipixelmon:blocks/cupboard_top
+
+newmtl Material.007
+map_Kd ipixelmon:blocks/cupboard

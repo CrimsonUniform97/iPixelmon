@@ -12,7 +12,10 @@ import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import com.ipixelmon.iPixelmon;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -35,6 +38,8 @@ public class PixelEggItem extends Item
 
     public static final PixelEggItem instance = new PixelEggItem();
 
+    public static net.minecraft.block.properties.PropertyInteger META = PropertyInteger.create("meta", 0, 1);
+
     private PixelEggItem()
     {
         setUnlocalizedName("pixelegg");
@@ -44,9 +49,9 @@ public class PixelEggItem extends Item
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        final ModelResourceLocation normalModel = new ModelResourceLocation(getRegistryName(), "inventory");
-        final ModelResourceLocation crackedModel = new ModelResourceLocation(getRegistryName() + "_crack1", "inventory");
-        final ModelResourceLocation cracked2Model = new ModelResourceLocation(getRegistryName() + "_crack2", "inventory");
+        final ModelResourceLocation normalModel = new ModelResourceLocation(iPixelmon.id + ":pixelegg", "inventory");
+        final ModelResourceLocation crackedModel = new ModelResourceLocation(iPixelmon.id + ":pixelegg_crack1", "inventory");
+        final ModelResourceLocation cracked2Model = new ModelResourceLocation(iPixelmon.id + ":pixelegg_crack2", "inventory");
 
         ModelBakery.registerItemVariants(this, normalModel, crackedModel, cracked2Model);
 

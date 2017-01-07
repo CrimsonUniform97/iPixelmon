@@ -6,15 +6,20 @@
       "flip-v": true
     },
     "textures": {
-      "#Material.042": "ipixelmon:blocks/laptop/screen.png",
-      "#Material.002": "ipixelmon:blocks/laptop/keys.png"
+      "layer0": "ipixelmon:items/toolCupboard"
     },
-    "model": "ipixelmon:pixelegg.obj"
+    "model": "ipixelmon:cupboard.obj"
   },
   "variants": {
-    "normal": [
-      {}
-    ],
+    "facing=west,meta=0": { "model" : "ipixelmon:cupboard.obj", "y": 180},
+    "facing=west,meta=1": { "model" : "ipixelmon:cupboard_top.obj", "y": 180},
+    "facing=north,meta=0": { "model" : "ipixelmon:cupboard.obj", "y": 270},
+    "facing=north,meta=1": { "model" : "ipixelmon:cupboard_top.obj", "y": 270},
+    "facing=east,meta=0": { "model" : "ipixelmon:cupboard.obj", "y": 0},
+    "facing=east,meta=1": { "model" : "ipixelmon:cupboard_top.obj", "y": 0},
+    "facing=south,meta=0": { "model" : "ipixelmon:cupboard.obj", "y": 90},
+    "facing=south,meta=1": { "model" : "ipixelmon:cupboard_top.obj", "y": 90}
+    ,
     "inventory": [
       {
         "transform": {
