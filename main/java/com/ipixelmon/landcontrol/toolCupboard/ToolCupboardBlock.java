@@ -1,6 +1,9 @@
-package com.ipixelmon.landcontrol;
+package com.ipixelmon.landcontrol.toolCupboard;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.landcontrol.client.PlayerListener;
+import com.ipixelmon.landcontrol.packet.PacketOpenGui;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -12,6 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -70,8 +75,28 @@ public class ToolCupboardBlock extends BlockContainer {
 
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-        // TODO: Check for overlap
-        return worldIn.isAirBlock(pos.up());
+        return worldIn.isAirBlock(pos.up()) && LandControlAPI.Server.getTileEntity(worldIn, pos) == null;
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(worldIn.isRemote) {
+            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof ToolCupboardTileEntity) {
+                ToolCupboardTileEntity tileEntity = (ToolCupboardTileEntity) worldIn.getTileEntity(pos);
+                if (tileEntity.getBaseTile() != null && playerIn.isSneaking()) {
+                    if (PlayerListener.selectedTile != null && PlayerListener.selectedTile == tileEntity.getBaseTile()) {
+                        PlayerListener.selectedTile = null;
+                    } else {
+                        PlayerListener.selectedTile = tileEntity.getBaseTile();
+                    }
+                }
+            } else {
+                PlayerListener.selectedTile = null;
+            }
+            return true;
+        }
+
+        return true;
     }
 
     @Override
@@ -103,9 +128,13 @@ public class ToolCupboardBlock extends BlockContainer {
         return this.getDefaultState().withProperty(MODEL, meta == 0 ? 0 : 1);
     }
 
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(MODEL);
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        if(state.getBlock() == this) {
+            return state.getValue(MODEL);
+        }
+
+        return 0;
     }
 
     @Override

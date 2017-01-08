@@ -8,6 +8,7 @@ public class TimedMessage {
 
     public TimedMessage(String message, int duration) {
         this.message[0] = message;
+        setMessage(message, duration);
     }
 
     public String getMessage() {

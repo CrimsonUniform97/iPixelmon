@@ -1,4 +1,4 @@
-package com.ipixelmon.landcontrol;
+package com.ipixelmon.landcontrol.toolCupboard;
 
 import com.ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,7 +38,7 @@ public class ToolCupboardItem extends Item {
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (worldIn.isRemote) return true;
 
-        if(!ToolCupboardBlock.instance.canPlaceBlockAt(worldIn, pos.offset(side))) return false;
+        if (!ToolCupboardBlock.instance.canPlaceBlockAt(worldIn, pos.offset(side))) return false;
 
         ToolCupboardBlock.instance.onBlockPlacedBy(worldIn, pos.offset(side), ToolCupboardBlock.instance.getDefaultState(), playerIn, stack);
 

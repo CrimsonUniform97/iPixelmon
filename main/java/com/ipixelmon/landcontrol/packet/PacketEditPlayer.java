@@ -1,6 +1,9 @@
 package com.ipixelmon.landcontrol.packet;
 
-import com.ipixelmon.landcontrol.ToolCupboardTileEntity;
+import com.ipixelmon.iPixelmon;
+import com.ipixelmon.landcontrol.toolCupboard.Network;
+import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
+import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -57,21 +60,48 @@ public class PacketEditPlayer implements IMessage {
             ToolCupboardTileEntity tileEntity = (ToolCupboardTileEntity) world.getTileEntity(message.pos);
 
             if (tileEntity == null) return null;
+            if (tileEntity.getBaseTile() == null) return null;
 
-            if(!tileEntity.haveAccess.contains(player.getUniqueID())) return null;
+            tileEntity = tileEntity.getBaseTile();
 
-            UUID playerToEdit = UUIDManager.getUUID(message.player);
+            if(!tileEntity.getAccessSet().contains(player.getUniqueID())) return null;
 
-            if (playerToEdit == null) return null;
 
-            if (message.add)
-                tileEntity.getPlayers().put(playerToEdit, UUIDManager.getPlayerName(playerToEdit));
-            else
-                tileEntity.getPlayers().remove(playerToEdit);
 
-            tileEntity.markDirty();
-            world.markBlockForUpdate(message.pos);
+            Network network = tileEntity.getNetwork();
 
+            // stop players that aren't in the network from adding players
+            if(network.exists() && !network.getPlayers().contains(player.getUniqueID())) return null;
+
+            // TODO: Update client side immediately, and test if player is not the ID of the network what happens, but they are added
+            /**
+             * ADD
+             */
+            if (message.add) {
+                UUID playerToEdit = UUIDManager.getUUID(message.player);
+
+                if (playerToEdit == null) {
+                    iPixelmon.network.sendTo(new PacketGuiResponse("Player does not exist."), player);
+                    return null;
+                }
+
+                if(!network.exists()) network.create();
+                network.addPlayer(playerToEdit);
+            }
+            /**
+             * REMOVE
+             */
+            else {
+              if(!network.exists()) return null;
+
+              UUID playerToEdit = UUID.fromString(message.player);
+
+              network.removePlayer(playerToEdit);
+
+//              if(network.getPlayers().isEmpty()) network.delete();
+            }
+
+            iPixelmon.network.sendTo(new PacketGuiResponse("success"), player);
             return null;
         }
 

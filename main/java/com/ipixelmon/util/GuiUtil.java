@@ -167,71 +167,71 @@ public class GuiUtil {
         GlStateManager.popMatrix();
     }
 
-//    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime, float scale) {
-//        //Thanks to Electric-Expansion mod for the majority of this code
-//        //https://github.com/Alex-hawks/Electric-Expansion/blob/master/src/electricexpansion/client/render/RenderFloatingText.java
-//        Minecraft mc = Minecraft.getMinecraft();
-//        RenderManager renderManager = mc.getRenderManager();
-//        FontRenderer fontRenderer = mc.fontRendererObj;
-//
-//        float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
-//        float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
-//        float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
-//
-//        float dx = x - playerX;
-//        float dy = y - playerY;
-//        float dz = z - playerZ;
-//        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-//        float multiplier = distance / 120f; //mobs only render ~120 blocks away
-//        scale *= 0.45f;
-//
-//        GL11.glColor4f(1f, 1f, 1f, 0.5f);
-//        GL11.glPushMatrix();
-//        GL11.glTranslatef(dx, dy, dz);
-//        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-//        GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-//        GL11.glScalef(-scale, -scale, scale);
-//        GL11.glDisable(GL11.GL_LIGHTING);
-//        GL11.glDepthMask(false);
-//        GL11.glDisable(GL11.GL_DEPTH_TEST);
-//        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//
-//        int textWidth = 0;
-//        for (String thisMessage : text) {
-//            int thisMessageWidth = mc.fontRendererObj.getStringWidth(thisMessage);
-//
-//            if (thisMessageWidth > textWidth)
-//                textWidth = thisMessageWidth;
-//        }
-//
-//        int lineHeight = 10;
-//
-//        if (renderBlackBox) {
-//            GL11.glDisable(GL11.GL_TEXTURE_2D);
-//            GL11.glBegin(GL11.GL_QUADS);
-//            int stringMiddle = textWidth / 2;
-//            GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
-//            GL11.glVertex3d(-stringMiddle - 1, -1 + 0, 0.0D);
-//            GL11.glVertex3d(-stringMiddle - 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
-//            GL11.glVertex3d(stringMiddle + 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
-//            GL11.glVertex3d(stringMiddle + 1, -1 + 0, 0.0D);
-//            GL11.glEnd();
-//            GL11.glEnable(GL11.GL_TEXTURE_2D);
-//            GL11.glColor4f(1f, 1f, 1f, 1f);
-//        }
-//
-//        int i = 0;
-//        for (String message : text) {
-//            fontRenderer.drawString(message, -textWidth / 2, i * lineHeight, color);
-//            i++;
-//        }
-//
-//        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-//        GL11.glDepthMask(true);
-//        GL11.glEnable(GL11.GL_DEPTH_TEST);
-//        GL11.glPopMatrix();
-//    }
+    public static void RenderFloatingText(String[] text, float x, float y, float z, int color, boolean renderBlackBox, float partialTickTime, float scale) {
+        //Thanks to Electric-Expansion mod for the majority of this code
+        //https://github.com/Alex-hawks/Electric-Expansion/blob/master/src/electricexpansion/client/render/RenderFloatingText.java
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderManager renderManager = mc.getRenderManager();
+        FontRenderer fontRenderer = mc.fontRendererObj;
+
+        float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
+        float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
+        float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+
+        float dx = x - playerX;
+        float dy = y - playerY;
+        float dz = z - playerZ;
+        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        float multiplier = distance / 120f; //mobs only render ~120 blocks away
+        scale *= 0.45f;
+
+        GL11.glColor4f(1f, 1f, 1f, 0.5f);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(dx, dy, dz);
+        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glScalef(-scale, -scale, scale);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        int textWidth = 0;
+        for (String thisMessage : text) {
+            int thisMessageWidth = mc.fontRendererObj.getStringWidth(thisMessage);
+
+            if (thisMessageWidth > textWidth)
+                textWidth = thisMessageWidth;
+        }
+
+        int lineHeight = 10;
+
+        if (renderBlackBox) {
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_QUADS);
+            int stringMiddle = textWidth / 2;
+            GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
+            GL11.glVertex3d(-stringMiddle - 1, -1 + 0, 0.0D);
+            GL11.glVertex3d(-stringMiddle - 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
+            GL11.glVertex3d(stringMiddle + 1, 8 + lineHeight * text.length - lineHeight, 0.0D);
+            GL11.glVertex3d(stringMiddle + 1, -1 + 0, 0.0D);
+            GL11.glEnd();
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glColor4f(1f, 1f, 1f, 1f);
+        }
+
+        int i = 0;
+        for (String message : text) {
+            fontRenderer.drawString(message, -textWidth / 2, i * lineHeight, color);
+            i++;
+        }
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glPopMatrix();
+    }
 
     public static int[] drawHoveringText(java.util.List<String> textLines, int x, int y, int screenWidth, int screenHeight) {
         return drawHoveringText(textLines, x, y, screenWidth, screenHeight, 300.0F);
@@ -351,6 +351,70 @@ public class GuiUtil {
 
     public static void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor) {
         drawGradientRect(left, top, right, bottom, startColor, endColor, 300);
+    }
+
+    public static void drawSquareInWorld(int x, int y, int z, float width, float height, float rotY, float partialTickTime, int color) {
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderManager renderManager = mc.getRenderManager();
+        FontRenderer fontRenderer = mc.fontRendererObj;
+
+        float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
+        float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
+        float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+
+        float dx = x - playerX;
+        float dy = y - playerY;
+        float dz = z - playerZ;
+//        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+//        float multiplier = distance / 120f; //mobs only render ~120 blocks away
+
+        GL11.glColor4f(1f, 1f, 1f, 0.5f);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(dx, dy, dz);
+//        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(rotY, 0.0F, 1.0F, 0.0F);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+//        int textWidth = 0;
+//        for (String thisMessage : text) {
+//            int thisMessageWidth = mc.fontRendererObj.getStringWidth(thisMessage);
+//
+//            if (thisMessageWidth > textWidth)
+//                textWidth = thisMessageWidth;
+//        }
+
+//        int lineHeight = 10;
+
+        if (true) {
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_QUADS);
+            Color c = new Color(color);
+            GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), 0.5F);
+
+            GL11.glVertex3f(0, 0, 0.0F);
+            GL11.glVertex3f(0, height, 0.0F);
+            GL11.glVertex3f(width, height, 0.0F);
+            GL11.glVertex3f(width, 0, 0.0F);
+
+            GL11.glEnd();
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glColor4f(1f, 1f, 1f, 1f);
+        }
+
+//        int i = 0;
+//        for (String message : text) {
+//            fontRenderer.drawString(message, -textWidth / 2, i * lineHeight, color);
+//            i++;
+//        }
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glPopMatrix();
     }
 
 }
