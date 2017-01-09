@@ -1,6 +1,9 @@
-package com.ipixelmon.landcontrol.server.regions;
+package com.ipixelmon.landcontrol.regions.packet;
 
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.landcontrol.regions.EnumRegionProperty;
+import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -63,16 +66,22 @@ public class PacketModifyRegion implements IMessage {
             if(message.key.equalsIgnoreCase("addPlayer")) {
                 UUID playerID = UUIDManager.getUUID(message.value);
 
-                // TODO: Tell GUI
-                if(playerID == null) return null;
+                if(playerID == null) {
+                    iPixelmon.network.sendTo(new PacketModifyRegionResponse("Player does not exist."), player);
+                    return null;
+                }
 
                 region.addMember(playerID);
             } else if (message.key.equalsIgnoreCase("removePlayer")) {
                 UUID playerID = UUID.fromString(message.value);
                 region.removeMember(playerID);
+            } else if (message.key.equalsIgnoreCase("enterMsg")) {
+                if(message.value.length() > 100) return null;
+                region.setEnterMsg(message.value);
+            } else if (message.key.equalsIgnoreCase("leaveMsg")) {
+                if(message.value.length() > 100) return null;
+                region.setLeaveMsg(message.value);
             }
-
-            // TODO: Add and remove members
 
             return null;
         }

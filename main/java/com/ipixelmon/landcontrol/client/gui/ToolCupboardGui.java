@@ -2,8 +2,8 @@ package com.ipixelmon.landcontrol.client.gui;
 
 import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.packet.PacketBindNetwork;
-import com.ipixelmon.landcontrol.packet.PacketEditPlayer;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketBindNetwork;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketEditPlayer;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

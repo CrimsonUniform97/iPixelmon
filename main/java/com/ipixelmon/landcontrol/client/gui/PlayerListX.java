@@ -1,7 +1,8 @@
 package com.ipixelmon.landcontrol.client.gui;
 
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.server.regions.PacketModifyRegion;
+import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegion;
 import com.ipixelmon.util.GuiUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -15,12 +16,13 @@ import java.util.UUID;
  */
 public class PlayerListX extends PlayerList {
 
-    private UUID regionID;
     private static final ResourceLocation xTexture = new ResourceLocation(iPixelmon.id, "textures/apps/mail/x.png");
 
-    public PlayerListX(int xPosition, int yPosition, int width, int height, UUID regionID, Map<UUID, String> players) {
-        super(xPosition, yPosition, width, height, players);
-        this.regionID =regionID;
+    private Region region;
+
+    public PlayerListX(int xPosition, int yPosition, int width, int height, Region region) {
+        super(xPosition, yPosition, width, height, region.membersMapClient);
+        this.region = region;
     }
 
     @Override
@@ -38,7 +40,8 @@ public class PlayerListX extends PlayerList {
             GuiUtil.drawImage(x, y, 16, 16);
 
             if (Mouse.isButtonDown(0) && hoveringX) {
-                iPixelmon.network.sendToServer(new PacketModifyRegion(regionID, "removePlayer", ((UUID) players.keySet().toArray()[index]).toString()));
+                iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "removePlayer",
+                        (players.keySet().toArray()[index]).toString()));
                 players.remove(players.keySet().toArray()[index]);
             }
         }

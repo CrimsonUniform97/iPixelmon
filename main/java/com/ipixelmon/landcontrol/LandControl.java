@@ -4,11 +4,12 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.client.ClientProxy;
-import com.ipixelmon.landcontrol.packet.*;
+import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegionResponse;
+import com.ipixelmon.landcontrol.toolCupboard.packet.*;
 import com.ipixelmon.landcontrol.server.CommandRegion;
 import com.ipixelmon.landcontrol.server.ServerProxy;
-import com.ipixelmon.landcontrol.server.regions.PacketModifyRegion;
-import com.ipixelmon.landcontrol.server.regions.PacketOpenRegionGui;
+import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegion;
+import com.ipixelmon.landcontrol.regions.packet.PacketOpenRegionGui;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardBlock;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
@@ -43,6 +44,7 @@ public class LandControl implements IMod {
 
         iPixelmon.registerPacket(PacketOpenRegionGui.Handler.class, PacketOpenRegionGui.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketModifyRegion.Handler.class, PacketModifyRegion.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketModifyRegionResponse.Handler.class, PacketModifyRegionResponse.class, Side.CLIENT);
     }
 
     @Override

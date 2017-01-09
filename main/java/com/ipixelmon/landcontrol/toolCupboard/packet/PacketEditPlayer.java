@@ -1,9 +1,8 @@
-package com.ipixelmon.landcontrol.packet;
+package com.ipixelmon.landcontrol.toolCupboard.packet;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.toolCupboard.Network;
-import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;

@@ -1,4 +1,4 @@
-package com.ipixelmon.landcontrol.packet;
+package com.ipixelmon.landcontrol.toolCupboard.packet;
 
 import com.google.common.collect.Maps;
 import com.ipixelmon.landcontrol.client.gui.ToolCupboardGui;

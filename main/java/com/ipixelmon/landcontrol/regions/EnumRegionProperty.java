@@ -1,4 +1,4 @@
-package com.ipixelmon.landcontrol.server.regions;
+package com.ipixelmon.landcontrol.regions;
 
 /**
  * Created by colby on 1/8/2017.
@@ -16,6 +16,10 @@ public enum EnumRegionProperty {
         }
 
         return false;
+    }
+
+    public static EnumRegionProperty fromOrdinal(int i) {
+        return EnumRegionProperty.values()[i];
     }
 
 }

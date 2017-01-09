@@ -3,7 +3,7 @@ package com.ipixelmon.landcontrol.server;
 import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
-import com.ipixelmon.landcontrol.packet.PacketOpenGui;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketOpenGui;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardBlock;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -1,7 +1,7 @@
 package com.ipixelmon.landcontrol.server;
 
 import com.ipixelmon.landcontrol.LandControlAPI;
-import com.ipixelmon.landcontrol.server.regions.Region;
+import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.util.WorldEditAPI;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

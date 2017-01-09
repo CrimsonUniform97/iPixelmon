@@ -1,4 +1,4 @@
-package com.ipixelmon.landcontrol.server.regions;
+package com.ipixelmon.landcontrol.regions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -7,9 +7,13 @@ import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.ArrayUtil;
+import com.ipixelmon.uuidmanager.UUIDManager;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -24,6 +28,10 @@ public class Region implements Comparable<Region> {
     private Set<SubRegion> subRegions = new TreeSet<>();
     private Set<UUID> members = new TreeSet<>();
     private Map<EnumRegionProperty, Boolean> properties = Maps.newHashMap();
+    private String enterMsg, leaveMsg;
+
+    public String ownerNameClient;
+    public Map<UUID, String> membersMapClient = Maps.newHashMap();
 
     public Region(UUID id) {
         this.id = id;
@@ -65,6 +73,10 @@ public class Region implements Comparable<Region> {
         }
     }
 
+    private Region() {
+
+    }
+
     public boolean getProperty(EnumRegionProperty property) {
         return properties.get(property);
     }
@@ -76,6 +88,24 @@ public class Region implements Comparable<Region> {
 
     public Map<EnumRegionProperty, Boolean> getProperties() {
         return properties;
+    }
+
+    public void setEnterMsg(String enterMsg) {
+        this.enterMsg = enterMsg;
+        setViaMySQL("enterMsg", enterMsg);
+    }
+
+    public String getEnterMsg() {
+        return enterMsg;
+    }
+
+    public void setLeaveMsg(String leaveMsg) {
+        this.leaveMsg = leaveMsg;
+        setViaMySQL("leaveMsg", leaveMsg);
+    }
+
+    public String getLeaveMsg() {
+        return leaveMsg;
     }
 
     public UUID getOwner() {
@@ -117,6 +147,14 @@ public class Region implements Comparable<Region> {
         return AxisAlignedBB.fromBounds(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
     }
 
+    public BlockPos getMin() {
+        return min;
+    }
+
+    public BlockPos getMax() {
+        return max;
+    }
+
     public UUID getID() {
         return id;
     }
@@ -147,4 +185,62 @@ public class Region implements Comparable<Region> {
 
         return -999;
     }
+
+    public void toBytes(ByteBuf buf) {
+        // write all properties
+        for(EnumRegionProperty property : EnumRegionProperty.values()) {
+            buf.writeByte(property.ordinal());
+            buf.writeBoolean(getProperty(property));
+        }
+
+        // write id, owner, and owner's name
+        ByteBufUtils.writeUTF8String(buf, id.toString());
+        ByteBufUtils.writeUTF8String(buf, owner.toString());
+        ByteBufUtils.writeUTF8String(buf, UUIDManager.getPlayerName(owner));
+
+        // write min and max
+        buf.writeInt(min.getX());
+        buf.writeInt(min.getY());
+        buf.writeInt(min.getZ());
+        buf.writeInt(max.getX());
+        buf.writeInt(max.getY());
+        buf.writeInt(max.getZ());
+
+        // write members
+        buf.writeInt(members.size());
+        for(UUID member : members) {
+            ByteBufUtils.writeUTF8String(buf, member.toString());
+            ByteBufUtils.writeUTF8String(buf, UUIDManager.getPlayerName(member));
+        }
+
+        // write enterMsg and leaveMsg
+        ByteBufUtils.writeUTF8String(buf, enterMsg);
+        ByteBufUtils.writeUTF8String(buf, leaveMsg);
+    }
+
+    public static Region fromBytes(ByteBuf buf) {
+        Region region = new Region();
+
+        for(EnumRegionProperty property : EnumRegionProperty.values()) {
+            region.properties.put(EnumRegionProperty.fromOrdinal(buf.readByte()), buf.readBoolean());
+        }
+
+        region.id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+        region.owner = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+        region.ownerNameClient = ByteBufUtils.readUTF8String(buf);
+
+        region.min = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        region.max = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+
+        int membersSize = buf.readInt();
+        for(int i = 0; i < membersSize; i++) {
+            region.membersMapClient.put(UUID.fromString(ByteBufUtils.readUTF8String(buf)), ByteBufUtils.readUTF8String(buf));
+        }
+
+        region.enterMsg = ByteBufUtils.readUTF8String(buf);
+        region.leaveMsg = ByteBufUtils.readUTF8String(buf);
+
+        return region;
+    }
+
 }

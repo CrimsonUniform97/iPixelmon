@@ -2,14 +2,18 @@ package com.ipixelmon.landcontrol.client.gui;
 
 import com.google.common.collect.Lists;
 import com.ipixelmon.GuiTickBox;
+import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.server.regions.EnumRegionProperty;
-import com.ipixelmon.landcontrol.server.regions.PacketModifyRegion;
+import com.ipixelmon.landcontrol.regions.EnumRegionProperty;
+import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.landcontrol.regions.SubRegion;
+import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -30,25 +34,14 @@ public class RegionGui extends GuiScreen {
     private static int POS_X, POS_Y;
     private List<GuiTickBox> tickBoxList = Lists.newArrayList();
     private PlayerListX playerList;
-    private GuiTextField addPlayerField, entranceMessageField, exitMessageField;
-    private GuiButton addPlayerBtn;
+    private GuiTextField addPlayerField, enterMsgField, leaveMsgField;
+    private GuiButton addPlayerBtn, enterMsgBtn, leaveMsgBtn;
+    public TimedMessage infoMessage = new TimedMessage("", 0);
 
-    private UUID regionID;
-    private String owner;
-    private BlockPos min, max;
-    private boolean isSubRegion;
+    private Region region;
 
-    private Map<EnumRegionProperty, Boolean> properties;
-    private Map<UUID, String> players;
-
-    public RegionGui(UUID regionID, boolean isSubRegion, String owner, BlockPos min, BlockPos max, Map<EnumRegionProperty, Boolean> properties, Map<UUID, String> players) {
-        this.regionID = regionID;
-        this.isSubRegion = isSubRegion;
-        this.owner = owner;
-        this.min = min;
-        this.max = max;
-        this.properties = properties;
-        this.players = players;
+    public RegionGui(Region region) {
+        this.region = region;
     }
 
     @Override
@@ -56,27 +49,14 @@ public class RegionGui extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         drawDefaultBackground();
-
-        mc.getTextureManager().bindTexture(bgTexture);
-        drawTexturedModalRect(POS_X, POS_Y, 0, 0, BG_WIDTH, BG_HEIGHT);
+        drawBackground();
 
         for (GuiTickBox tickBox : tickBoxList) tickBox.draw(mc, mouseX, mouseY);
 
-
-        fontRendererObj.drawStringWithShadow("Min: " + min.getX() + ", " + min.getY() + ", " + min.getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 56, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Max: " + max.getX() + ", " + max.getY() + ", " + max.getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 43, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Region Type: " + (isSubRegion ? "SubRegion" : "Region"), POS_X + 10, POS_Y + BG_HEIGHT - 30, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Owner: " + owner, POS_X + 10, POS_Y + BG_HEIGHT - 17, 0xFFFFFF);
-
-        fontRendererObj.drawStringWithShadow("Members:", playerList.xPosition, playerList.yPosition - 10, 0xFFFFFF);
-        playerList.draw(mouseX, mouseY, Mouse.getDWheel());
-        addPlayerField.drawTextBox();
-        addPlayerBtn.drawButton(mc, mouseX, mouseY);
-
-        fontRendererObj.drawStringWithShadow("Enter Message: ", POS_X + 10, entranceMessageField.yPosition + (11 / 2), 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Leave Message: ", POS_X + 10, exitMessageField.yPosition + (11 / 2), 0xFFFFFF);
-        entranceMessageField.drawTextBox();
-        exitMessageField.drawTextBox();
+        drawRegionInfo();
+        drawMembersArea(mouseX, mouseY);
+        drawMsgFields(mouseX, mouseY);
+        drawInfoMessage();
     }
 
     @Override
@@ -86,7 +66,7 @@ public class RegionGui extends GuiScreen {
         addPlayerField.textboxKeyTyped(typedChar, keyCode);
 
         if (keyCode == Keyboard.KEY_RETURN && !addPlayerField.getText().isEmpty() && addPlayerBtn.enabled)
-            iPixelmon.network.sendToServer(new PacketModifyRegion(regionID, "addPlayer", addPlayerField.getText()));
+            iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "addPlayer", addPlayerField.getText()));
     }
 
     @Override
@@ -94,14 +74,20 @@ public class RegionGui extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (GuiTickBox tickBox : tickBoxList)
             if (tickBox.mouseClicked(mouseX, mouseY)) {
-                iPixelmon.network.sendToServer(new PacketModifyRegion(regionID, tickBox.getKey(), String.valueOf(tickBox.getValue())));
+                iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), tickBox.getKey(), String.valueOf(tickBox.getValue())));
             }
 
-        if (owner.equalsIgnoreCase(mc.thePlayer.getName()))
+        if (region.getOwner().equals(mc.thePlayer.getUniqueID()))
             addPlayerField.mouseClicked(mouseX, mouseY, mouseButton);
 
         if (addPlayerBtn.mousePressed(mc, mouseX, mouseY) && !addPlayerField.getText().isEmpty() && addPlayerBtn.enabled)
-            iPixelmon.network.sendToServer(new PacketModifyRegion(regionID, "addPlayer", addPlayerField.getText()));
+            iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "addPlayer", addPlayerField.getText()));
+
+        if (enterMsgBtn.mousePressed(mc, mouseX, mouseY))
+            iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "enterMsg", enterMsgField.getText()));
+
+        if (leaveMsgBtn.mousePressed(mc, mouseX, mouseY))
+            iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "leaveMsg", leaveMsgField.getText()));
     }
 
     @Override
@@ -111,40 +97,106 @@ public class RegionGui extends GuiScreen {
         POS_X = (this.width - BG_WIDTH) / 2;
         POS_Y = (this.height - BG_HEIGHT) / 2;
 
-        tickBoxList.clear();
-
-        int yTotal = -16;
-        int i = 0;
-        for (EnumRegionProperty property : properties.keySet()) {
-            if (yTotal + 25 >= BG_HEIGHT - 140) yTotal = -16;
-            tickBoxList.add(new GuiTickBox(POS_X + 50 + (i < 4 ? 30 : 150),
-                    POS_Y + (yTotal += 25), property.name(), properties.get(property)));
-            i++;
-        }
-
-        if (!(owner.equalsIgnoreCase(Minecraft.getMinecraft().thePlayer.getName()))) {
-            for (GuiTickBox tickBox : tickBoxList) tickBox.enabled = false;
-        }
-
-        playerList = new PlayerListX(POS_X + BG_WIDTH - 125, POS_Y + BG_HEIGHT - 70, 120, 35, regionID, players);
-        addPlayerField = new GuiTextField(0, fontRendererObj, playerList.xPosition + 1,
-                playerList.yPosition + playerList.height + 5, playerList.width - 37, 20);
-        addPlayerBtn = new GuiButton(0, addPlayerField.xPosition + addPlayerField.width + 2, addPlayerField.yPosition, 35, 20, "Add");
-        addPlayerBtn.enabled = false;
-        addPlayerField.setEnabled(false);
-
-        entranceMessageField = new GuiTextField(1, fontRendererObj,playerList.xPosition +  - 37, playerList.yPosition - 57, 156, 20);
-        exitMessageField = new GuiTextField(2, fontRendererObj,entranceMessageField.xPosition,
-                entranceMessageField.yPosition + 23, entranceMessageField.width, entranceMessageField.height);
+        initTickBoxList();
+        initMembersArea();
+        initMsgFields();
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
         addPlayerField.updateCursorCounter();
-        addPlayerBtn.enabled = owner.equalsIgnoreCase(mc.thePlayer.getName()) ? !addPlayerField.getText().isEmpty() : false;
-        addPlayerField.setEnabled(owner.equalsIgnoreCase(mc.thePlayer.getName()));
+        addPlayerBtn.enabled = region.getOwner().equals(mc.thePlayer.getUniqueID()) ? !addPlayerField.getText().isEmpty() : false;
+        addPlayerField.setEnabled(region.getOwner().equals(mc.thePlayer.getUniqueID()));
     }
 
+    private void drawRegionInfo() {
+        fontRendererObj.drawStringWithShadow("Min: " + region.getMin().getX() + ", " + region.getMin().getY() + ", "
+                + region.getMin().getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 56, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Max: " + region.getMax().getX() + ", " + region.getMax().getY() + ", "
+                + region.getMax().getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 43, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Region Type: " + ((region instanceof SubRegion) ? "SubRegion" : "Region"),
+                POS_X + 10, POS_Y + BG_HEIGHT - 30, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Owner: " + region.ownerNameClient, POS_X + 10,
+                POS_Y + BG_HEIGHT - 17, 0xFFFFFF);
+    }
 
+    private void drawBackground() {
+        mc.getTextureManager().bindTexture(bgTexture);
+        drawTexturedModalRect(POS_X, POS_Y, 0, 0, BG_WIDTH, BG_HEIGHT);
+    }
+
+    private void drawMembersArea(int mouseX, int mouseY) {
+        fontRendererObj.drawStringWithShadow("Members:", playerList.xPosition, playerList.yPosition - 10,
+                0xFFFFFF);
+        playerList.draw(mouseX, mouseY, Mouse.getDWheel());
+        addPlayerField.drawTextBox();
+        addPlayerBtn.drawButton(mc, mouseX, mouseY);
+    }
+
+    private void drawMsgFields(int mouseX, int mouseY) {
+        fontRendererObj.drawStringWithShadow("Enter Message: ", POS_X + 10, enterMsgField.yPosition + (11 / 2),
+                0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Leave Message: ", POS_X + 10, leaveMsgField.yPosition + (11 / 2),
+                0xFFFFFF);
+        enterMsgField.drawTextBox();
+        leaveMsgField.drawTextBox();
+        enterMsgBtn.drawButton(mc, mouseX, mouseY);
+        leaveMsgBtn.drawButton(mc, mouseX, mouseY);
+    }
+
+    private void drawInfoMessage() {
+        if(infoMessage.hasMessage()) {
+            int xOffset = (BG_WIDTH - fontRendererObj.getStringWidth(infoMessage.getMessage())) / 2;
+            fontRendererObj.drawString(EnumChatFormatting.RED.toString() + EnumChatFormatting.ITALIC.toString() +
+                    infoMessage.getMessage(), POS_X + xOffset, POS_Y - fontRendererObj.FONT_HEIGHT, 0xFFFFFF);
+        }
+    }
+
+    private void initTickBoxList() {
+        tickBoxList.clear();
+
+        int yTotal = -16;
+        int i = 0;
+        for (EnumRegionProperty property : EnumRegionProperty.values()) {
+            if (yTotal + 25 >= BG_HEIGHT - 140) yTotal = -16;
+            tickBoxList.add(new GuiTickBox(POS_X + 50 + (i < 4 ? 30 : 150),
+                    POS_Y + (yTotal += 25), property.name(), region.getProperty(property)));
+            i++;
+        }
+
+        if (!(region.getOwner().equals(mc.thePlayer.getUniqueID()))) {
+            for (GuiTickBox tickBox : tickBoxList) tickBox.enabled = false;
+        }
+    }
+
+    private void initMembersArea() {
+        playerList = new PlayerListX(POS_X + BG_WIDTH - 125, POS_Y + BG_HEIGHT - 70, 120,
+                35, region);
+        addPlayerField = new GuiTextField(0, fontRendererObj, playerList.xPosition + 1,
+                playerList.yPosition + playerList.height + 5, playerList.width - 37, 20);
+        addPlayerBtn = new GuiButton(0, addPlayerField.xPosition + addPlayerField.width + 2,
+                addPlayerField.yPosition, 35, 20, "Add");
+        addPlayerBtn.enabled = false;
+        addPlayerField.setEnabled(false);
+    }
+
+    private void initMsgFields() {
+        enterMsgField = new GuiTextField(1, fontRendererObj, playerList.xPosition + -37,
+                playerList.yPosition - 57, 156 - 55, 20);
+        leaveMsgField = new GuiTextField(2, fontRendererObj, enterMsgField.xPosition,
+                enterMsgField.yPosition + 23, enterMsgField.width, enterMsgField.height);
+
+        // TODO: Enable adding color to text in message. Could use the selection from the field and add some color popup window, YEAH!
+        enterMsgField.setMaxStringLength(100);
+        leaveMsgField.setMaxStringLength(100);
+
+
+        enterMsgBtn = new GuiButton(1,
+                enterMsgField.xPosition + enterMsgField.width, enterMsgField.yPosition,
+                50, 20, "Set");
+        leaveMsgBtn = new GuiButton(2,
+                leaveMsgField.xPosition + leaveMsgField.width, leaveMsgField.yPosition,
+                50, 20, "Set");
+    }
 }

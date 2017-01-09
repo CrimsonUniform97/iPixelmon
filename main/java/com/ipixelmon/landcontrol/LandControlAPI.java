@@ -1,12 +1,10 @@
 package com.ipixelmon.landcontrol;
 
 import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.server.regions.EnumRegionProperty;
-import com.ipixelmon.landcontrol.server.regions.Region;
-import com.ipixelmon.landcontrol.server.regions.SubRegion;
+import com.ipixelmon.landcontrol.regions.EnumRegionProperty;
+import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.landcontrol.regions.SubRegion;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
-import com.ipixelmon.mysql.CreateForm;
-import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.util.ArrayUtil;
@@ -167,7 +165,8 @@ public class LandControlAPI {
                         "min text NOT NULL, " +
                         "max text NOT NULL, " +
                         "owner text NOT NULL, " +
-                        "members text NOT NULL,";
+                        "enterMsg text, " +
+                        "leaveMsg text,";
 
                 StringBuilder builder = new StringBuilder(columns);
 
