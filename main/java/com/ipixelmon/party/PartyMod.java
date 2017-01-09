@@ -4,8 +4,7 @@ import com.google.common.collect.Maps;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -24,7 +23,7 @@ public class PartyMod implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
         iPixelmon.registerPacket(PacketSendPartyInvite.Handler.class, PacketSendPartyInvite.class, Side.SERVER);
         iPixelmon.registerPacket(PacketReceivePartyInvite.Handler.class, PacketReceivePartyInvite.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketAcceptPartyInvite.Handler.class, PacketAcceptPartyInvite.class, Side.SERVER);
@@ -34,7 +33,7 @@ public class PartyMod implements IMod {
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
 
     }
 

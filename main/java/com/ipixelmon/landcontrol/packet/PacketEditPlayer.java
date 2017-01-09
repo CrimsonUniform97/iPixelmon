@@ -1,9 +1,11 @@
 package com.ipixelmon.landcontrol.packet;
 
+import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.toolCupboard.Network;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
+import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,6 +16,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -100,6 +104,13 @@ public class PacketEditPlayer implements IMessage {
 
 //              if(network.getPlayers().isEmpty()) network.delete();
             }
+
+            List<String> players = Lists.newArrayList();
+            Map<UUID, String> playerMap = network.getPlayerMap();
+
+            for(UUID id : playerMap.keySet()) players.add(id.toString() + ";" + playerMap.get(id));
+
+            iPixelmon.network.sendTo(new PacketGuiResponse("update=" + ArrayUtil.toString(players.toArray(new String[players.size()]))), player);
 
             iPixelmon.network.sendTo(new PacketGuiResponse("success"), player);
             return null;

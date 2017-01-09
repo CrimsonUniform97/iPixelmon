@@ -18,5 +18,6 @@ public final class CreateForm {
         return this;
     }
 
+    public final CreateForm setTable(String parTable) { this.table = parTable; return this; }
 
 }

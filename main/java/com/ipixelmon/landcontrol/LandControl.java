@@ -4,14 +4,16 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.client.ClientProxy;
-import com.ipixelmon.landcontrol.packet.PacketBindNetwork;
-import com.ipixelmon.landcontrol.packet.PacketEditPlayer;
-import com.ipixelmon.landcontrol.packet.PacketGuiResponse;
-import com.ipixelmon.landcontrol.packet.PacketOpenGui;
+import com.ipixelmon.landcontrol.packet.*;
+import com.ipixelmon.landcontrol.server.CommandRegion;
 import com.ipixelmon.landcontrol.server.ServerProxy;
+import com.ipixelmon.landcontrol.server.regions.PacketModifyRegion;
+import com.ipixelmon.landcontrol.server.regions.PacketOpenRegionGui;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardBlock;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -29,7 +31,7 @@ public class LandControl implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
         GameRegistry.registerTileEntity(ToolCupboardTileEntity.class, "tileEntityCupboard");
         GameRegistry.registerBlock(ToolCupboardBlock.instance);
         GameRegistry.registerItem(ToolCupboardItem.instance);
@@ -38,15 +40,18 @@ public class LandControl implements IMod {
         iPixelmon.registerPacket(PacketEditPlayer.Handler.class, PacketEditPlayer.class, Side.SERVER);
         iPixelmon.registerPacket(PacketGuiResponse.Handler.class, PacketGuiResponse.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketBindNetwork.Handler.class, PacketBindNetwork.class, Side.SERVER);
+
+        iPixelmon.registerPacket(PacketOpenRegionGui.Handler.class, PacketOpenRegionGui.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketModifyRegion.Handler.class, PacketModifyRegion.class, Side.SERVER);
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
     }
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
-
+        event.registerServerCommand(new CommandRegion());
     }
 
     @Override

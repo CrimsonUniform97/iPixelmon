@@ -8,6 +8,8 @@ import com.ipixelmon.team.client.ClientProxy;
 import com.ipixelmon.team.client.PacketChooseTeam;
 import com.ipixelmon.team.server.PacketOpenTeamMenu;
 import com.ipixelmon.team.server.ServerProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -26,13 +28,13 @@ public class TeamMod implements IMod
     }
 
     @Override
-    public void preInit()
+    public void preInit(FMLPreInitializationEvent event)
     {
 
     }
 
     @Override
-    public void init()
+    public void init(FMLInitializationEvent event)
     {
         iPixelmon.registerPacket(PacketOpenTeamMenu.Handler.class, PacketOpenTeamMenu.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketChooseTeam.Handler.class, PacketChooseTeam.class, Side.SERVER);

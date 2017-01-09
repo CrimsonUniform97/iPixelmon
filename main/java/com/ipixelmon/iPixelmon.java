@@ -73,14 +73,14 @@ public final class iPixelmon {
 
         proxy.preInit();
 
-        for(IMod mod : mods) mod.preInit();
+        for(IMod mod : mods) mod.preInit(event);
     }
 
     @Mod.EventHandler
     public final void init(final FMLInitializationEvent event) {
         proxy.init();
 
-        for(IMod mod : mods) mod.init();
+        for(IMod mod : mods) mod.init(event);
     }
 
     @Mod.EventHandler

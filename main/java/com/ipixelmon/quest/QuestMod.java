@@ -6,6 +6,8 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.quest.client.ClientProxy;
 import com.ipixelmon.quest.packet.PacketQuestInfoToClient;
 import com.ipixelmon.quest.server.ServerProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -23,14 +25,14 @@ public class QuestMod implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
         EntityRegistry.registerModEntity(EntityQuestGiver.class, "entityQuestGiver", 488, iPixelmon.instance,
                 80, 3, false, 0xFFFFFF, 0x000000);
         iPixelmon.registerPacket(PacketQuestInfoToClient.Handler.class, PacketQuestInfoToClient.class, Side.CLIENT);
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
 
     }
 

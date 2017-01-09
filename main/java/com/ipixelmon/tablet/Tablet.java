@@ -9,6 +9,8 @@ import com.ipixelmon.tablet.app.pixelbay.PixelbayApp;
 import com.ipixelmon.tablet.client.ClientProxy;
 import com.ipixelmon.tablet.server.ServerProxy;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -37,12 +39,12 @@ public class Tablet implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
         for(AppBase app : apps) app.preInit();
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
 
         for(AppBase app : apps) app.init();
     }

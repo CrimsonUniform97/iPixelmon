@@ -79,7 +79,9 @@ public class PacketOpenGui implements IMessage {
                     ToolCupboardTileEntity tileEntity = (ToolCupboardTileEntity) world.getTileEntity(message.pos);
 
                     if(tileEntity != null)
-                        Minecraft.getMinecraft().displayGuiScreen(new ToolCupboardGui(tileEntity, message.hasNetwork, message.players));
+                        Minecraft.getMinecraft().displayGuiScreen(new ToolCupboardGui(tileEntity,
+                                message.hasNetwork && message.players.containsKey(Minecraft.getMinecraft().thePlayer.getUniqueID()),
+                                message.players));
                 }
             });
 

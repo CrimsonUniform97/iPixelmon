@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class PlayerList extends GuiScrollList {
 
-    private Map<UUID, String> players;
+    protected Map<UUID, String> players;
 
     public PlayerList(int xPosition, int yPosition, int width, int height, Map<UUID, String> players) {
         super(xPosition, yPosition, width, height);
@@ -19,12 +19,12 @@ public class PlayerList extends GuiScrollList {
 
     @Override
     public int getObjectHeight(int index) {
-        return 10;
+        return 20;
     }
 
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
-        mc.fontRendererObj.drawString((String) players.values().toArray()[index], 0, 0, 0xFFFFFF);
+        mc.fontRendererObj.drawString((String) players.values().toArray()[index], 3, (getObjectHeight(index) - mc.fontRendererObj.FONT_HEIGHT) / 2, 0xFFFFFF);
     }
 
     @Override

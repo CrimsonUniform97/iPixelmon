@@ -5,15 +5,12 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.packet.PacketOpenGui;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardBlock;
-import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardItem;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
-import com.ipixelmon.uuidmanager.UUIDManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 

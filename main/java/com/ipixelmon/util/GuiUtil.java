@@ -392,8 +392,11 @@ public class GuiUtil {
         if (true) {
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glBegin(GL11.GL_QUADS);
-            Color c = new Color(color);
-            GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), 0.5F);
+            float red = (float)(color >> 16 & 255) / 255.0F;
+            float blue = (float)(color >> 8 & 255) / 255.0F;
+            float green = (float)(color & 255) / 255.0F;
+            float alpha = (float)(color >> 24 & 255) / 255.0F;
+            GL11.glColor4f(red, green, blue, 0.5F);
 
             GL11.glVertex3f(0, 0, 0.0F);
             GL11.glVertex3f(0, height, 0.0F);

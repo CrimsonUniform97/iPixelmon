@@ -2,6 +2,8 @@ package com.ipixelmon.notification;
 
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -17,12 +19,12 @@ public class NotificationMod implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
 
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
 
     }
 

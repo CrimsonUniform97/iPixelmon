@@ -5,8 +5,7 @@ import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mcstats.client.ClientProxy;
 import com.ipixelmon.mcstats.server.ServerProxy;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -23,13 +22,13 @@ public class McStatsMod implements IMod {
     }
 
     @Override
-    public void preInit() {
+    public void preInit(FMLPreInitializationEvent event) {
         iPixelmon.registerPacket(PacketUpdateEXP.Handler.class, PacketUpdateEXP.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketBrokeBlock.Handler.class, PacketBrokeBlock.class, Side.CLIENT);
     }
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent event) {
 
     }
 

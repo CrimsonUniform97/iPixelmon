@@ -150,4 +150,9 @@ public class ToolCupboardGui extends GuiScreen {
     public GuiTextField getPlayerField() {
         return playerField;
     }
+
+    public void updatePlayerList(Map<UUID, String> players) {
+        this.players = players;
+        this.playerList.players = players;
+    }
 }
