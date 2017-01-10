@@ -3,40 +3,29 @@ package com.ipixelmon.util;
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.PixelmonMethods;
-import com.pixelmonmod.pixelmon.battles.status.StatusType;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
-import com.pixelmonmod.pixelmon.client.gui.pokedex.GuiPokedex;
-import com.pixelmonmod.pixelmon.client.models.PixelmonModelBase;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.comm.PixelmonMovesetData;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
-import com.pixelmonmod.pixelmon.config.PixelmonConfig;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
-import com.pixelmonmod.pixelmon.entities.pixelmon.stats.Gender;
 import com.pixelmonmod.pixelmon.enums.*;
 import com.pixelmonmod.pixelmon.storage.ComputerBox;
 import com.pixelmonmod.pixelmon.storage.PCServer;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -68,7 +57,7 @@ public class PixelmonAPI {
         return stack;
     }
 
-    public static double getBP(PixelmonData pixelmon) {
+    public static double getCP(PixelmonData pixelmon) {
         double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.lvl);
         double Stamina = (pixelmon.getBaseStats().speed + pixelmon.Speed) * TotalBpMultiplier;
         double Attack = (pixelmon.getBaseStats().attack + pixelmon.Attack) * TotalBpMultiplier;
@@ -135,7 +124,7 @@ public class PixelmonAPI {
             pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
             pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
                     PixelmonAPI.getPixelmonMaxHealth(pixelmon));
-            pixelmonInfo.add(EnumChatFormatting.BLUE + "BP: " + PixelmonAPI.getBP(pixelmon));
+            pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
             return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
         }
 

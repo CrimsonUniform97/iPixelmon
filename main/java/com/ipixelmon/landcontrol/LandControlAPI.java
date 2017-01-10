@@ -167,7 +167,8 @@ public class LandControlAPI {
                         "owner text NOT NULL, " +
                         "members text NOT NULL, " +
                         "enterMsg text, " +
-                        "leaveMsg text,";
+                        "leaveMsg text, " +
+                        "world text,";
 
                 StringBuilder builder = new StringBuilder(columns);
 

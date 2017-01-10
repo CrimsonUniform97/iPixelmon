@@ -9,8 +9,10 @@ import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
@@ -23,6 +25,9 @@ import java.util.*;
  */
 public class Region implements Comparable<Region> {
 
+    public List<EntityPlayer> playersInside = Lists.newArrayList();
+
+    private World world;
     protected UUID id, owner;
     private BlockPos min, max;
     private Set<SubRegion> subRegions = new TreeSet<>();
@@ -155,6 +160,15 @@ public class Region implements Comparable<Region> {
 
     public BlockPos getMax() {
         return max;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+        setViaMySQL("world", world.getWorldInfo().getWorldName());
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     public UUID getID() {
