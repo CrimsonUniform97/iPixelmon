@@ -165,6 +165,7 @@ public class LandControlAPI {
                         "min text NOT NULL, " +
                         "max text NOT NULL, " +
                         "owner text NOT NULL, " +
+                        "members text NOT NULL, " +
                         "enterMsg text, " +
                         "leaveMsg text,";
 

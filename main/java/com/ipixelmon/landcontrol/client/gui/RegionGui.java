@@ -37,6 +37,7 @@ public class RegionGui extends GuiScreen {
     private GuiTextField addPlayerField, enterMsgField, leaveMsgField;
     private GuiButton addPlayerBtn, enterMsgBtn, leaveMsgBtn;
     public TimedMessage infoMessage = new TimedMessage("", 0);
+    private ColorPopupWindow colorPopupWindow = new ColorPopupWindow();
 
     private Region region;
 
@@ -57,6 +58,7 @@ public class RegionGui extends GuiScreen {
         drawMembersArea(mouseX, mouseY);
         drawMsgFields(mouseX, mouseY);
         drawInfoMessage();
+        colorPopupWindow.draw();
     }
 
     @Override
@@ -64,6 +66,8 @@ public class RegionGui extends GuiScreen {
         super.keyTyped(typedChar, keyCode);
         playerList.keyTyped(typedChar, keyCode);
         addPlayerField.textboxKeyTyped(typedChar, keyCode);
+        enterMsgField.textboxKeyTyped(typedChar, keyCode);
+        leaveMsgField.textboxKeyTyped(typedChar, keyCode);
 
         if (keyCode == Keyboard.KEY_RETURN && !addPlayerField.getText().isEmpty() && addPlayerBtn.enabled)
             iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "addPlayer", addPlayerField.getText()));
@@ -88,6 +92,26 @@ public class RegionGui extends GuiScreen {
 
         if (leaveMsgBtn.mousePressed(mc, mouseX, mouseY))
             iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "leaveMsg", leaveMsgField.getText()));
+
+        enterMsgField.mouseClicked(mouseX, mouseY, mouseButton);
+        leaveMsgField.mouseClicked(mouseX, mouseY, mouseButton);
+
+        if (enterMsgField.isFocused() || leaveMsgField.isFocused()) {
+            boolean enabled = colorPopupWindow.isEnabled();
+            colorPopupWindow.mousePressed(mouseX, mouseY, mouseButton);
+
+            if(enabled) {
+                if (enterMsgField.isFocused()) {
+                    StringBuilder builder = new StringBuilder(enterMsgField.getText());
+                    builder.insert(enterMsgField.getCursorPosition(), colorPopupWindow.getSelectedColor().toString());
+                    enterMsgField.setText(builder.toString());
+                } else if (leaveMsgField.isFocused()) {
+                    StringBuilder builder = new StringBuilder(leaveMsgField.getText());
+                    builder.insert(leaveMsgField.getCursorPosition(), colorPopupWindow.getSelectedColor().toString());
+                    leaveMsgField.setText(builder.toString());
+                }
+            }
+        }
     }
 
     @Override
@@ -146,7 +170,7 @@ public class RegionGui extends GuiScreen {
     }
 
     private void drawInfoMessage() {
-        if(infoMessage.hasMessage()) {
+        if (infoMessage.hasMessage()) {
             int xOffset = (BG_WIDTH - fontRendererObj.getStringWidth(infoMessage.getMessage())) / 2;
             fontRendererObj.drawString(EnumChatFormatting.RED.toString() + EnumChatFormatting.ITALIC.toString() +
                     infoMessage.getMessage(), POS_X + xOffset, POS_Y - fontRendererObj.FONT_HEIGHT, 0xFFFFFF);
@@ -183,7 +207,7 @@ public class RegionGui extends GuiScreen {
 
     private void initMsgFields() {
         enterMsgField = new GuiTextField(1, fontRendererObj, playerList.xPosition + -37,
-                playerList.yPosition - 57, 156 - 55, 20);
+                playerList.yPosition - 57, 156 - 35, 20);
         leaveMsgField = new GuiTextField(2, fontRendererObj, enterMsgField.xPosition,
                 enterMsgField.yPosition + 23, enterMsgField.width, enterMsgField.height);
 
@@ -191,12 +215,15 @@ public class RegionGui extends GuiScreen {
         enterMsgField.setMaxStringLength(100);
         leaveMsgField.setMaxStringLength(100);
 
+        enterMsgField.setText(region.getEnterMsg() == null ? "" : region.getEnterMsg());
+        leaveMsgField.setText(region.getLeaveMsg() == null ? "" : region.getLeaveMsg());
+
 
         enterMsgBtn = new GuiButton(1,
-                enterMsgField.xPosition + enterMsgField.width, enterMsgField.yPosition,
-                50, 20, "Set");
+                enterMsgField.xPosition + enterMsgField.width + 5, enterMsgField.yPosition,
+                30, 20, "Set");
         leaveMsgBtn = new GuiButton(2,
-                leaveMsgField.xPosition + leaveMsgField.width, leaveMsgField.yPosition,
-                50, 20, "Set");
+                leaveMsgField.xPosition + leaveMsgField.width + 5, leaveMsgField.yPosition,
+                30, 20, "Set");
     }
 }

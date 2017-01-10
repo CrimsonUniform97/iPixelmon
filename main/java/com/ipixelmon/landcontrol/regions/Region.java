@@ -28,7 +28,7 @@ public class Region implements Comparable<Region> {
     private Set<SubRegion> subRegions = new TreeSet<>();
     private Set<UUID> members = new TreeSet<>();
     private Map<EnumRegionProperty, Boolean> properties = Maps.newHashMap();
-    private String enterMsg, leaveMsg;
+    private String enterMsg = "null", leaveMsg = "null";
 
     public String ownerNameClient;
     public Map<UUID, String> membersMapClient = Maps.newHashMap();
@@ -96,6 +96,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getEnterMsg() {
+        if(enterMsg.equalsIgnoreCase("null")) return null;
         return enterMsg;
     }
 
@@ -105,6 +106,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getLeaveMsg() {
+        if(leaveMsg.equalsIgnoreCase("null")) return null;
         return leaveMsg;
     }
 
