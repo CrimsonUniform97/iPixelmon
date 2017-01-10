@@ -34,7 +34,7 @@ public class RegionGui extends GuiScreen {
     private static int POS_X, POS_Y;
     private List<GuiTickBox> tickBoxList = Lists.newArrayList();
     private PlayerListX playerList;
-    private GuiTextField addPlayerField, enterMsgField, leaveMsgField;
+    private CustomTextField addPlayerField, enterMsgField, leaveMsgField;
     private GuiButton addPlayerBtn, enterMsgBtn, leaveMsgBtn;
     public TimedMessage infoMessage = new TimedMessage("", 0);
     private ColorPopupWindow colorPopupWindow = new ColorPopupWindow();
@@ -65,9 +65,9 @@ public class RegionGui extends GuiScreen {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
         playerList.keyTyped(typedChar, keyCode);
-        addPlayerField.textboxKeyTyped(typedChar, keyCode);
-        enterMsgField.textboxKeyTyped(typedChar, keyCode);
-        leaveMsgField.textboxKeyTyped(typedChar, keyCode);
+        addPlayerField.keyTyped(typedChar, keyCode);
+        enterMsgField.keyTyped(typedChar, keyCode);
+        leaveMsgField.keyTyped(typedChar, keyCode);
 
         if (keyCode == Keyboard.KEY_RETURN && !addPlayerField.getText().isEmpty() && addPlayerBtn.enabled)
             iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "addPlayer", addPlayerField.getText()));
@@ -82,7 +82,7 @@ public class RegionGui extends GuiScreen {
             }
 
         if (region.getOwner().equals(mc.thePlayer.getUniqueID()))
-            addPlayerField.mouseClicked(mouseX, mouseY, mouseButton);
+            addPlayerField.mouseClicked(mouseX, mouseY);
 
         if (addPlayerBtn.mousePressed(mc, mouseX, mouseY) && !addPlayerField.getText().isEmpty() && addPlayerBtn.enabled)
             iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "addPlayer", addPlayerField.getText()));
@@ -93,24 +93,27 @@ public class RegionGui extends GuiScreen {
         if (leaveMsgBtn.mousePressed(mc, mouseX, mouseY))
             iPixelmon.network.sendToServer(new PacketModifyRegion(region.getID(), "leaveMsg", leaveMsgField.getText()));
 
-        enterMsgField.mouseClicked(mouseX, mouseY, mouseButton);
-        leaveMsgField.mouseClicked(mouseX, mouseY, mouseButton);
+        boolean enabled = colorPopupWindow.isEnabled();
 
         if (enterMsgField.isFocused() || leaveMsgField.isFocused()) {
-            boolean enabled = colorPopupWindow.isEnabled();
             colorPopupWindow.mousePressed(mouseX, mouseY, mouseButton);
 
-            if(enabled) {
+            if (enabled) {
                 if (enterMsgField.isFocused()) {
                     StringBuilder builder = new StringBuilder(enterMsgField.getText());
-                    builder.insert(enterMsgField.getCursorPosition(), colorPopupWindow.getSelectedColor().toString());
+                    builder.insert(enterMsgField.getCursorPos(), colorPopupWindow.getSelectedColor().toString());
                     enterMsgField.setText(builder.toString());
                 } else if (leaveMsgField.isFocused()) {
                     StringBuilder builder = new StringBuilder(leaveMsgField.getText());
-                    builder.insert(leaveMsgField.getCursorPosition(), colorPopupWindow.getSelectedColor().toString());
+                    builder.insert(leaveMsgField.getCursorPos(), colorPopupWindow.getSelectedColor().toString());
                     leaveMsgField.setText(builder.toString());
                 }
             }
+        }
+
+        if (!enabled) {
+            enterMsgField.mouseClicked(mouseX, mouseY);
+            leaveMsgField.mouseClicked(mouseX, mouseY);
         }
     }
 
@@ -129,7 +132,6 @@ public class RegionGui extends GuiScreen {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        addPlayerField.updateCursorCounter();
         addPlayerBtn.enabled = region.getOwner().equals(mc.thePlayer.getUniqueID()) ? !addPlayerField.getText().isEmpty() : false;
         addPlayerField.setEnabled(region.getOwner().equals(mc.thePlayer.getUniqueID()));
     }
@@ -154,17 +156,17 @@ public class RegionGui extends GuiScreen {
         fontRendererObj.drawStringWithShadow("Members:", playerList.xPosition, playerList.yPosition - 10,
                 0xFFFFFF);
         playerList.draw(mouseX, mouseY, Mouse.getDWheel());
-        addPlayerField.drawTextBox();
+        addPlayerField.drawTextField();
         addPlayerBtn.drawButton(mc, mouseX, mouseY);
     }
 
     private void drawMsgFields(int mouseX, int mouseY) {
-        fontRendererObj.drawStringWithShadow("Enter Message: ", POS_X + 10, enterMsgField.yPosition + (11 / 2),
+        fontRendererObj.drawStringWithShadow("Enter Message: ", POS_X + 10, enterMsgField.getBounds().getY() + (11 / 2),
                 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Leave Message: ", POS_X + 10, leaveMsgField.yPosition + (11 / 2),
+        fontRendererObj.drawStringWithShadow("Leave Message: ", POS_X + 10, leaveMsgField.getBounds().getY() + (11 / 2),
                 0xFFFFFF);
-        enterMsgField.drawTextBox();
-        leaveMsgField.drawTextBox();
+        enterMsgField.drawTextField();
+        leaveMsgField.drawTextField();
         enterMsgBtn.drawButton(mc, mouseX, mouseY);
         leaveMsgBtn.drawButton(mc, mouseX, mouseY);
     }
@@ -197,33 +199,33 @@ public class RegionGui extends GuiScreen {
     private void initMembersArea() {
         playerList = new PlayerListX(POS_X + BG_WIDTH - 125, POS_Y + BG_HEIGHT - 70, 120,
                 35, region);
-        addPlayerField = new GuiTextField(0, fontRendererObj, playerList.xPosition + 1,
+        addPlayerField = new CustomTextField(playerList.xPosition + 1,
                 playerList.yPosition + playerList.height + 5, playerList.width - 37, 20);
-        addPlayerBtn = new GuiButton(0, addPlayerField.xPosition + addPlayerField.width + 2,
-                addPlayerField.yPosition, 35, 20, "Add");
+        addPlayerBtn = new GuiButton(0, addPlayerField.getBounds().getX() + addPlayerField.getBounds().getWidth() + 2,
+                addPlayerField.getBounds().getY(), 35, 20, "Add");
         addPlayerBtn.enabled = false;
         addPlayerField.setEnabled(false);
     }
 
     private void initMsgFields() {
-        enterMsgField = new GuiTextField(1, fontRendererObj, playerList.xPosition + -37,
+        enterMsgField = new CustomTextField( playerList.xPosition + -37,
                 playerList.yPosition - 57, 156 - 35, 20);
-        leaveMsgField = new GuiTextField(2, fontRendererObj, enterMsgField.xPosition,
-                enterMsgField.yPosition + 23, enterMsgField.width, enterMsgField.height);
+        leaveMsgField = new CustomTextField( enterMsgField.getBounds().getX(),
+                enterMsgField.getBounds().getY() + 23, enterMsgField.getBounds().getWidth(), enterMsgField.getBounds().getHeight());
 
-        // TODO: Enable adding color to text in message. Could use the selection from the field and add some color popup window, YEAH!
-        enterMsgField.setMaxStringLength(100);
-        leaveMsgField.setMaxStringLength(100);
+        // TODO: Clicking with formatted text still needs work...
+//        enterMsgField.setMaxStringLength(100);
+//        leaveMsgField.setMaxStringLength(100);
 
         enterMsgField.setText(region.getEnterMsg() == null ? "" : region.getEnterMsg());
         leaveMsgField.setText(region.getLeaveMsg() == null ? "" : region.getLeaveMsg());
 
 
         enterMsgBtn = new GuiButton(1,
-                enterMsgField.xPosition + enterMsgField.width + 5, enterMsgField.yPosition,
+                enterMsgField.getBounds().getX() + enterMsgField.getBounds().getWidth() + 5, enterMsgField.getBounds().getY(),
                 30, 20, "Set");
         leaveMsgBtn = new GuiButton(2,
-                leaveMsgField.xPosition + leaveMsgField.width + 5, leaveMsgField.yPosition,
+                leaveMsgField.getBounds().getX() + leaveMsgField.getBounds().getWidth() + 5, leaveMsgField.getBounds().getY(),
                 30, 20, "Set");
     }
 }

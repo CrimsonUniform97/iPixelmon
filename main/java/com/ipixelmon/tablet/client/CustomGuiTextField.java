@@ -40,7 +40,7 @@ public class CustomGuiTextField extends Gui {
      */
     private boolean canLoseFocus = true;
     /**
-     * If this value is true along with isEnabled, keyTyped will process the keys.
+     * If this value is true along with isFocused, keyTyped will process the keys.
      */
     private boolean isFocused;
     /**

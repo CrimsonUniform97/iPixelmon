@@ -32,13 +32,14 @@ public class ColorPopupWindow extends Gui {
                     y += 10;
                     x = 0;
                 }
+
+                colors.put(new Rectangle(x, y, 8, 8), color);
             } else {
                 y += 10;
                 x = 0;
+                colors.put(new Rectangle(x, y, Minecraft.getMinecraft().fontRendererObj.getStringWidth(color.getFriendlyName()), 9), color);
             }
 
-
-            colors.put(new Rectangle(x, y, 8, 8), color);
             x += 8;
         }
 

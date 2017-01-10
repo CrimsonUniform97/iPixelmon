@@ -20,9 +20,10 @@ public class GuiTextField extends Gui {
     private final Rectangle bounds;
     private String text = "";
     private int cursorPos = 0;
-    private boolean enabled = false;
+    private boolean focused = false;
     private boolean unicodeFlag = false;
-
+    private boolean enabled = true;
+// TODO: ADD isFocused and Enabling disabling clicking
     public GuiTextField(int x, int y, int width, int height) {
         bounds = new Rectangle(x, y, width, height);
     }
@@ -51,6 +52,14 @@ public class GuiTextField extends Gui {
         return unicodeFlag;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public void drawTextField() {
         if(unicodeFlag)
             fontRenderer.setUnicodeFlag(true);
@@ -60,13 +69,14 @@ public class GuiTextField extends Gui {
         if(unicodeFlag)
             fontRenderer.setUnicodeFlag(false);
 
-        if(isEnabled()) {
+        if(isFocused()) {
             drawCursor();
         }
 
     }
 
     public void keyTyped(char typedChar, int keyCode) {
+        if(!isFocused()) return;
         if(!isEnabled()) return;
 
         Pattern p = Pattern.compile("[^a-z0-9 ^!-+ ^`~ ^_= - , ? !]", Pattern.CASE_INSENSITIVE);
@@ -94,9 +104,11 @@ public class GuiTextField extends Gui {
 
     public void mouseClicked(int mouseX, int mouseY) {
 
-        setEnabled(bounds.contains(mouseX, mouseY));
-
         if(!isEnabled()) return;
+
+        setFocused(bounds.contains(mouseX, mouseY));
+
+        if(!isFocused()) return;
 
         if(text.isEmpty()) {
             cursorPos = 0;
@@ -169,10 +181,9 @@ public class GuiTextField extends Gui {
 
             int strWidth = fontRenderer.getStringWidth(formattedStringList.get(line).substring(0, cursorPos - count));
 
-            fontRenderer.drawString("|",
-                    bounds.getX() + strWidth,
-                    bounds.getY() + (line * fontRenderer.FONT_HEIGHT),
-                    ColorPicker.color(255f, 0f, 0f, 255f).getRGB());
+            int x = bounds.getX() + strWidth;
+            int y = bounds.getY() + (line * fontRenderer.FONT_HEIGHT);
+            Gui.drawRect(x, y - 1, x + 1, y + 1 + this.fontRenderer.FONT_HEIGHT, -3092272);
         } catch (Exception e) {
         }
 
@@ -185,12 +196,12 @@ public class GuiTextField extends Gui {
         drawRect(bounds.getX() - 1, bounds.getY() - 1, bounds.getX() + bounds.getWidth() + 1, bounds.getY() + bounds.getHeight() + 1, -16777216);
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isFocused() {
+        return focused;
     }
 
     public int getCursorPos() {

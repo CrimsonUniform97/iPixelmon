@@ -38,8 +38,6 @@ public class PixelEggItem extends Item
 
     public static final PixelEggItem instance = new PixelEggItem();
 
-    public static net.minecraft.block.properties.PropertyInteger META = PropertyInteger.create("meta", 0, 1);
-
     private PixelEggItem()
     {
         setUnlocalizedName("pixelegg");

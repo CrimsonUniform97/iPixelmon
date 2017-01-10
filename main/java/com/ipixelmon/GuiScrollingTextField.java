@@ -71,7 +71,7 @@ public class GuiScrollingTextField extends GuiScrollList {
     }
 
     public void mouseClicked(int mouseX, int mouseY) {
-        textField.setEnabled(textField.getBounds().contains(mouseX, mouseY));
+        textField.setFocused(textField.getBounds().contains(mouseX, mouseY));
 
         if (mouseY >= yPosition && mouseY <= yPosition + height && mouseX >= textField.getBounds().getX() &&
                 mouseX <= textField.getBounds().getX() + textField.getBounds().getWidth()) {
