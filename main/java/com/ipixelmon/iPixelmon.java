@@ -1,5 +1,6 @@
 package com.ipixelmon;
 
+import com.ipixelmon.gym.GymMod;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.notification.NotificationMod;
@@ -58,6 +59,7 @@ public final class iPixelmon {
         loadMod(new Tablet());
         loadMod(new McStatsMod());
         loadMod(new QuestMod());
+        loadMod(new GymMod());
     }
 
     @Mod.EventHandler

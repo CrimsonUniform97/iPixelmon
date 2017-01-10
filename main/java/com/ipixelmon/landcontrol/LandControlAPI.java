@@ -13,6 +13,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -36,6 +37,7 @@ public class LandControlAPI {
     @SideOnly(Side.SERVER)
     public static class Server {
 
+        public static final EventBus EVENT_BUS = new EventBus();
         public static Set<Region> regions = new TreeSet<>();
 
         public static ToolCupboardTileEntity getTileEntity(World world, BlockPos pos) {

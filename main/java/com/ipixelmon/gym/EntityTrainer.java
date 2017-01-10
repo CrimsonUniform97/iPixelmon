@@ -1,12 +1,16 @@
 package com.ipixelmon.gym;
 
 import com.ipixelmon.team.TeamMod;
+import com.ipixelmon.util.SkinUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
+import com.mojang.authlib.GameProfile;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -17,6 +21,8 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     private UUID playerID;
     private BlockPos pos;
     private EntityPixelmon pixelmon;
+
+    public float pixelmonDisplayRotY = 0.0F;
 
     // http://pixelmonmod.com/wiki/index.php?title=NPC_Editor
     public EntityTrainer(World world, BlockPos pos, UUID playerID, EntityPixelmon pixelmon) {
@@ -52,6 +58,18 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         playerID = UUID.fromString(tagCompund.getString("playerID"));
     }
 
+//    public void setPlayerUUID(UUID playerUUID) {
+//        try {
+//            this.dataWatcher.updateObject(20, playerUUID.toString() + "," + pixelmon.getName() + "," + pixelmon.getIsShiny() + "," +
+//                    pixelmon.getForm() + "," + pixelmon.getLvl().getLevel() + "," + pixelmon.getGrowth().index);
+//        } catch (NullPointerException e) {
+//        }
+//    }
+//    // TODO: Don't allow taking damage
+//    public UUID getPlayerUUID() {
+//        return UUID.fromString(this.dataWatcher.getWatchableObjectString(20).split(",")[0]);
+//    }
+
     @Override
     public String getDisplayText() {
         return TeamMod.getPlayerTeam(playerID).colorChat() + playerName;
@@ -64,5 +82,16 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @Override
     public int compareTo(EntityTrainer o) {
         return o.playerID.equals(playerID) ? 0 : -999;
+    }
+
+    public ResourceLocation getSkin() {
+        ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
+        GameProfile profile = new GameProfile(playerID, UUIDManager.getPlayerName(playerID));
+        if (profile != null) {
+            if (SkinUtil.loadSkin(playerID) != null) {
+                resourcelocation = SkinUtil.loadSkin(playerID);
+            }
+        }
+        return resourcelocation;
     }
 }
