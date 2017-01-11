@@ -68,7 +68,7 @@ public class PixelmonListing {
         ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletPixelmon WHERE " +
                 "player='" + player.toString() + "' AND " +
                 "price='" + price + "' AND " +
-                "pixelmon='" + PixelmonAPI.Server.pixelmonDataToString(pixelmon) + "';");
+                "pixelmon='" + PixelmonAPI.pixelmonDataToString(pixelmon) + "';");
         try {
             if(result.next()) return true;
         } catch (SQLException e) {
@@ -83,7 +83,7 @@ public class PixelmonListing {
         iPixelmon.mysql.delete(Tablet.class, new DeleteForm("Pixelmon")
                 .add("player", player.toString())
                 .add("price", price)
-                .add("pixelmon", PixelmonAPI.Server.pixelmonDataToString(pixelmon)));
+                .add("pixelmon", PixelmonAPI.pixelmonDataToString(pixelmon)));
     }
 
 }

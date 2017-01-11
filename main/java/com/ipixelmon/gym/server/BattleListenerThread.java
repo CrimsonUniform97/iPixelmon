@@ -13,9 +13,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by colby on 10/16/2016.
- */
 public class BattleListenerThread implements Runnable {
 
     private Map<PlayerParticipant, Integer> battleCounter = Maps.newHashMap();

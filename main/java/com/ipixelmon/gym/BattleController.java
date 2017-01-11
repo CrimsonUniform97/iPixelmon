@@ -6,9 +6,6 @@ import com.pixelmonmod.pixelmon.battles.controller.log.BattleLog;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.enums.EnumBattleType;
 
-/**
- * Created by colby on 1/10/2017.
- */
 public class BattleController extends BattleControllerBase {
 
     public BattleController(BattleParticipant[] team1, BattleParticipant[] team2, EnumBattleType battleType) throws Exception {

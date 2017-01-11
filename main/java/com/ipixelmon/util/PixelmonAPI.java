@@ -65,6 +65,27 @@ public class PixelmonAPI {
         return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
     }
 
+    public static String entityPixelmonToString(EntityPixelmon pixelmon) {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        pixelmon.writeToNBT(tagCompound);
+        return tagCompound.toString();
+    }
+
+    public static EntityPixelmon entityPixelmonFromString(String s, World world) {
+        return (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(NBTUtil.fromString(s), world);
+    }
+
+    public static PixelmonData pixelmonDataFromString(String str) {
+        return new PixelmonData(NBTUtil.fromString(str));
+    }
+
+    public static String pixelmonDataToString(PixelmonData pixelmonData) {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        pixelmonData.updatePokemon(tagCompound);
+        return tagCompound.toString();
+    }
+
+
     public static int getPixelmonMaxHealth(PixelmonData pixelmonData) {
         return pixelmonData.HP;
     }
@@ -239,27 +260,6 @@ public class PixelmonAPI {
                 }
             });
         }
-
-        public static String entityPixelmonToString(EntityPixelmon pixelmon) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            pixelmon.writeToNBT(tagCompound);
-            return tagCompound.toString();
-        }
-
-        public static EntityPixelmon entityPixelmonFromString(String s, World world) {
-            return (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(NBTUtil.fromString(s), world);
-        }
-
-        public static PixelmonData pixelmonDataFromString(String str) {
-            return new PixelmonData(NBTUtil.fromString(str));
-        }
-
-        public static String pixelmonDataToString(PixelmonData pixelmonData) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            pixelmonData.updatePokemon(tagCompound);
-            return tagCompound.toString();
-        }
-
 
         public static final void giveMoney(final UUID player, final int balance) {
             try {

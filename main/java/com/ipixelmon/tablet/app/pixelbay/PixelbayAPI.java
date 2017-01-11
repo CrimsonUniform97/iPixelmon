@@ -158,7 +158,7 @@ public class PixelbayAPI {
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
             insertForm.add("pixelmonName", pixelmonData.name);
-            insertForm.add("pixelmonData", PixelmonAPI.Server.pixelmonDataToString(pixelmonData));
+            insertForm.add("pixelmonData", PixelmonAPI.pixelmonDataToString(pixelmonData));
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 

@@ -3,10 +3,8 @@ package com.ipixelmon.gym.server;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.gym.GymAPI;
 import com.pixelmonmod.pixelmon.Pixelmon;
+import net.minecraftforge.common.MinecraftForge;
 
-/**
- * Created by colby on 1/10/2017.
- */
 public class ServerProxy extends CommonProxy{
     @Override
     public void preInit() {
@@ -16,5 +14,6 @@ public class ServerProxy extends CommonProxy{
     @Override
     public void init() {
         Pixelmon.EVENT_BUS.register(new PixelmonListener());
+        MinecraftForge.EVENT_BUS.register(new PixelmonListener());
     }
 }

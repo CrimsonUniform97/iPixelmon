@@ -25,4 +25,7 @@ public final class InsertForm {
         return this;
     }
 
+    public Map<String, String> getValueMap() {
+        return valueMap;
+    }
 }

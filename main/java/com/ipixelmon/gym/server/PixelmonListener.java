@@ -11,16 +11,19 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by colby on 1/10/2017.
- */
 public class PixelmonListener {
+
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent event) {
+        System.out.println("CALLED");
+    }
 
     @SubscribeEvent
     public void battleStarted(BattleStartedEvent event) {

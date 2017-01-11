@@ -43,8 +43,11 @@ public class RegionListener {
         Region region = LandControlAPI.Server.getRegionAt(event.pos);
         if (region == null) return;
 
+        // TODO: Test sub regions
         if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather) {
-            iPixelmon.network.sendTo(new PacketOpenRegionGui(region), (EntityPlayerMP) event.entityPlayer);
+            SubRegion subRegion = region.getSubRegionAt(event.pos);
+            iPixelmon.network.sendTo(new PacketOpenRegionGui(subRegion != null ? subRegion : region),
+                    (EntityPlayerMP) event.entityPlayer);
             event.setCanceled(true);
             return;
         }

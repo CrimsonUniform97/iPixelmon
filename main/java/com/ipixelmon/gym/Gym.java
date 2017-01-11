@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.team.EnumTeam;
@@ -15,13 +16,20 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipa
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumBattleType;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCarpet;
+import net.minecraft.block.BlockStainedGlass;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,7 +50,7 @@ import java.util.*;
  * Defeating all the Pokemon at a gym: +50 Prestige on top of the individual bonuses
  */
 
-public class Gym {
+public class Gym implements Comparable<Gym>{
 
     private static final int[] LEVELS = {0, 2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000};
 
@@ -52,6 +60,7 @@ public class Gym {
     private List<BlockPos> seats = Lists.newArrayList();
     private int prestige = 0;
     private Map<UUID, Integer> que = Maps.newHashMap();
+    private BlockPos startBattlePlate;
 
     private Set<EntityTrainer> trainerEntities = new TreeSet<>();
 
@@ -68,10 +77,19 @@ public class Gym {
                 parseTrainers(result.getString("trainers"));
                 team = EnumTeam.valueOf(result.getString("team"));
                 prestige = result.getInt("prestige");
+                String[] array = ArrayUtil.fromString(result.getString("startBattlePlate"));
+                if (array.length == 3)
+                    startBattlePlate = new BlockPos(Integer.parseInt(array[0]), Integer.parseInt(array[1]),
+                            Integer.parseInt(array[2]));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Gym(UUID id, UUID regionID) {
+        this.id = id;
+        this.regionID = regionID;
     }
 
     public UUID getID() {
@@ -84,6 +102,16 @@ public class Gym {
         }
 
         return 0;
+    }
+
+    public BlockPos getStartBattlePlate() {
+        return startBattlePlate;
+    }
+
+    public void setStartBattlePlate(BlockPos pos) {
+        String[] s = new String[]{String.valueOf(pos.getX()), String.valueOf(pos.getY()), String.valueOf(pos.getZ())};
+        startBattlePlate = pos;
+        setViaMySQL("startBattlePlate", ArrayUtil.toString(s));
     }
 
     public int getAvailableSeats() {
@@ -113,7 +141,7 @@ public class Gym {
 
         this.trainers.put(player, pixelmon);
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.Server.entityPixelmonToString(this.trainers.get(p)));
+            trainers.add(p.toString() + ";" + PixelmonAPI.entityPixelmonToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -124,7 +152,7 @@ public class Gym {
 
         this.trainers.remove(player);
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.Server.entityPixelmonToString(this.trainers.get(p)));
+            trainers.add(p.toString() + ";" + PixelmonAPI.entityPixelmonToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -196,23 +224,32 @@ public class Gym {
             if (!s.isEmpty()) {
                 String[] data = s.split(";");
                 UUID player = UUID.fromString(data[0]);
-                EntityPixelmon pixelmon = PixelmonAPI.Server.entityPixelmonFromString(data[1], getRegion().getWorld());
+                EntityPixelmon pixelmon = PixelmonAPI.entityPixelmonFromString(data[1], getRegion().getWorld());
                 trainers.put(player, pixelmon);
             }
         }
     }
 
     public void updateColoredBlocks() {
-        // TODO: add stained glass above beacon
         World world = getRegion().getWorld();
         AxisAlignedBB bounds = getRegion().getBounds();
         BlockPos pos;
+        Block block;
         for (int x = (int) bounds.minX; x < bounds.maxX; x++) {
             for (int y = (int) bounds.minY; y < bounds.maxY; y++) {
                 for (int z = (int) bounds.minZ; z < bounds.maxZ; z++) {
                     pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos) != null && world.getBlockState(pos).getBlock() == Blocks.wool)
-                        world.setBlockState(pos, Blocks.wool.getDefaultState().withProperty(BlockCarpet.COLOR, getTeam().colorDye()));
+                    if(world.getBlockState(pos) != null) {
+                        block = world.getBlockState(pos).getBlock();
+
+                        if(block == Blocks.wool) {
+                            world.setBlockState(pos, Blocks.wool.getDefaultState().withProperty(BlockCarpet.COLOR,
+                                    getTeam().colorDye()));
+                        }else if (block == Blocks.stained_glass) {
+                            world.setBlockState(pos, Blocks.stained_glass.getDefaultState().withProperty(BlockStainedGlass.COLOR,
+                                    getTeam().colorDye()));
+                        }
+                    }
                 }
             }
         }
@@ -238,7 +275,7 @@ public class Gym {
     public void battle(EntityPlayerMP player) {
         List<TrainerParticipant> trainers = Lists.newArrayList();
         List<PlayerParticipant> players = Lists.newArrayList();
-
+// TODO: Make it to where player can claim gym...
         try {
             /**
              * Setup player pokemons
@@ -268,5 +305,43 @@ public class Gym {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static Gym fromBytes(ByteBuf buf) {
+        UUID id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+        UUID region = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+
+        Gym gym = new Gym(id, region);
+        gym.team =  EnumTeam.valueOf(ByteBufUtils.readUTF8String(buf));
+        gym.prestige = buf.readInt();
+
+        int trainersSize = buf.readInt();
+
+        for(int i = 0; i < trainersSize; i++) {
+            String[] data = ByteBufUtils.readUTF8String(buf).split(",");
+            gym.trainers.put(UUID.fromString(data[0]),
+                    PixelmonAPI.entityPixelmonFromString(data[1], Minecraft.getMinecraft().theWorld));
+        }
+
+        return gym;
+    }
+
+    @SideOnly(Side.SERVER)
+    public void toBytes(ByteBuf buf) {
+        ByteBufUtils.writeUTF8String(buf, id.toString());
+        ByteBufUtils.writeUTF8String(buf, regionID.toString());
+        ByteBufUtils.writeUTF8String(buf, team.name());
+        buf.writeInt(prestige);
+        buf.writeInt(trainers.size());
+
+        for(UUID id : trainers.keySet()) {
+            ByteBufUtils.writeUTF8String(buf, id.toString() + "," + PixelmonAPI.entityPixelmonToString(trainers.get(id)));
+        }
+    }
+
+    @Override
+    public int compareTo(Gym o) {
+        return id.equals(o.id) || regionID.equals(o.regionID) ? 0 : -999;
     }
 }

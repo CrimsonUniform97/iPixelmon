@@ -15,6 +15,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init() {
+        KeyListener.registerKeyBindings();
         RenderingRegistry.registerEntityRenderingHandler(EntityTrainer.class, EntityTrainerRenderer::new);
     }
 }

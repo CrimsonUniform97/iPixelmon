@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -173,6 +174,13 @@ public class Region implements Comparable<Region> {
 
     public UUID getID() {
         return id;
+    }
+
+    public SubRegion getSubRegionAt(BlockPos pos) {
+        for(SubRegion subRegion : getSubRegions()) {
+            if(subRegion.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) return subRegion;
+        }
+        return null;
     }
 
     protected ResultSet getResult() {

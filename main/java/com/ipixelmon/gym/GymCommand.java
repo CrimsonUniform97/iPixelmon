@@ -5,6 +5,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 
@@ -23,7 +24,7 @@ public class GymCommand implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/gym create\n/gym addseat\n/gym delseat";
+        return "/gym create\n/gym addseat\n/gym delseat\n/gym startplate";
     }
 
     @Override
@@ -36,18 +37,23 @@ public class GymCommand implements ICommand {
         EntityPlayerMP player = (EntityPlayerMP) sender;
         Gym gym = GymAPI.Server.getGym(player.getPosition());
 
-        if(args[0].equalsIgnoreCase("create")) {
+        if (args[0].equalsIgnoreCase("create")) {
             if (gym != null) {
                 player.addChatComponentMessage(new ChatComponentText("Gym already exists here."));
                 return;
             } else {
-                if(LandControlAPI.Server.getRegionAt(player.getPosition()) == null) {
+                if (LandControlAPI.Server.getRegionAt(player.getPosition()) == null) {
                     player.addChatComponentMessage(new ChatComponentText("No region there."));
                     return;
                 }
 
-                gym = GymAPI.Server.createGym(player.getPosition());
-                gym.updateColoredBlocks();
+                MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gym g = GymAPI.Server.createGym(player.getPosition());
+                        g.updateColoredBlocks();
+                    }
+                });
                 player.addChatComponentMessage(new ChatComponentText("Gym created."));
             }
         } else if (args[0].equalsIgnoreCase("addseat")) {
@@ -56,26 +62,34 @@ public class GymCommand implements ICommand {
                 return;
             }
 
-            if(gym.getSeats().size() >= 10) {
+            if (gym.getSeats().size() >= 10) {
                 player.addChatComponentMessage(new ChatComponentText("Max seats set."));
                 return;
             }
 
             gym.addSeat(player.getPosition());
             player.addChatComponentMessage(new ChatComponentText("Seat added."));
-        }else if (args[0].equalsIgnoreCase("delseat")) {
+        } else if (args[0].equalsIgnoreCase("delseat")) {
             if (gym == null) {
                 player.addChatComponentMessage(new ChatComponentText("Gym not found."));
                 return;
             }
 
-            if(!gym.getSeats().contains(player.getPosition())) {
+            if (!gym.getSeats().contains(player.getPosition())) {
                 player.addChatComponentMessage(new ChatComponentText("Seat not found."));
                 return;
             }
 
             gym.removeSeat(player.getPosition());
             player.addChatComponentMessage(new ChatComponentText("Seat removed."));
+        } else if (args[0].equalsIgnoreCase("startplate")) {
+            if (gym == null) {
+                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                return;
+            }
+
+            gym.setStartBattlePlate(player.getPosition());
+            player.addChatComponentMessage(new ChatComponentText("StartBattlePlate set."));
         }
     }
 
