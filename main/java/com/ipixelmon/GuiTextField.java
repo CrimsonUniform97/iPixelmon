@@ -23,7 +23,7 @@ public class GuiTextField extends Gui {
     private boolean focused = false;
     private boolean unicodeFlag = false;
     private boolean enabled = true;
-// TODO: ADD isFocused and Enabling disabling clicking
+
     public GuiTextField(int x, int y, int width, int height) {
         bounds = new Rectangle(x, y, width, height);
     }

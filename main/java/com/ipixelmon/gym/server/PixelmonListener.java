@@ -2,6 +2,7 @@ package com.ipixelmon.gym.server;
 
 import com.ipixelmon.gym.*;
 import com.ipixelmon.landcontrol.LandControl;
+import com.ipixelmon.landcontrol.regions.EnterRegionEvent;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.api.events.*;
@@ -11,6 +12,8 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -21,8 +24,17 @@ import java.util.List;
 public class PixelmonListener {
 
     @SubscribeEvent
-    public void onInteract(PlayerInteractEvent event) {
-        System.out.println("CALLED");
+    public void enterGym(EnterRegionEvent event) {
+        Gym gym = GymAPI.Server.getGym(event.region.getCenter());
+
+        if (gym == null) return;
+
+        event.player.addChatComponentMessage(new ChatComponentText(
+                EnumChatFormatting.BOLD.toString() + EnumChatFormatting.GOLD.toString() + "You entered a " +
+                        EnumChatFormatting.RED.toString() + "gym" + EnumChatFormatting.GOLD.toString() + "! " +
+                        "Press " + EnumChatFormatting.BLUE.toString() + "G" +
+                        EnumChatFormatting.GOLD.toString() + " to view gym info."
+        ));
     }
 
     @SubscribeEvent
@@ -32,7 +44,7 @@ public class PixelmonListener {
             participants.addAll(Arrays.asList(event.participant1));
             participants.addAll(Arrays.asList(event.participant2));
 
-            for(BattleParticipant participant : participants) {
+            for (BattleParticipant participant : participants) {
                 if (participant instanceof TrainerParticipant) {
                     if (GymAPI.Server.getGym(participant.getEntity().getPosition()) != null) {
                         event.setCanceled(true);
@@ -42,17 +54,18 @@ public class PixelmonListener {
             }
 
             boolean foundPlayer = false;
-            for(BattleParticipant participant : participants) {
-                if(participant instanceof PlayerParticipant) {
+            for (BattleParticipant participant : participants) {
+                if (participant instanceof PlayerParticipant) {
                     foundPlayer = true;
                 }
             }
 
-            if(!foundPlayer) {
+            if (!foundPlayer) {
                 event.setCanceled(true);
                 return;
             }
-        }catch(Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @SubscribeEvent

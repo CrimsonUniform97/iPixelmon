@@ -182,6 +182,10 @@ public class Gym implements Comparable<Gym>{
         setViaMySQL("seats", ArrayUtil.toString(seats.toArray(new String[seats.size()])));
     }
 
+    public Set<EntityTrainer> getTrainerEntities() {
+        return trainerEntities;
+    }
+
     public int getPrestige() {
         return prestige;
     }

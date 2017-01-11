@@ -57,17 +57,19 @@ public class LandControlAPI {
             return null;
         }
 
-        public static Region getRegionAt(BlockPos pos) {
+        public static Region getRegionAt(World world, BlockPos pos) {
             for (Region region : LandControlAPI.Server.regions) {
-                if (region.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) {
-                    return region;
+                if(region.getWorld().equals(world)) {
+                    if (region.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) {
+                        return region;
+                    }
                 }
             }
             return null;
         }
 
 
-        public static Region createRegion(BlockPos min, BlockPos max) {
+        public static Region createRegion(World world, BlockPos min, BlockPos max) {
             BlockPos minPos = new BlockPos(Math.min(min.getX(), max.getX()), Math.min(min.getY(), max.getY()), Math.min(min.getZ(), max.getZ()));
             BlockPos maxPos = new BlockPos(Math.max(min.getX(), max.getX()), Math.max(min.getY(), max.getY()), Math.max(min.getZ(), max.getZ()));
             UUID id = UUID.randomUUID();
@@ -76,6 +78,7 @@ public class LandControlAPI {
             insertForm.add("id", id.toString());
             insertForm.add("owner", id.toString());
             insertForm.add("members", ArrayUtil.toString(new String[]{""}));
+            insertForm.add("world", world.getWorldInfo().getWorldName());
 
             insertForm.add("min", ArrayUtil.toString(new String[]{
                     String.valueOf(minPos.getX()),

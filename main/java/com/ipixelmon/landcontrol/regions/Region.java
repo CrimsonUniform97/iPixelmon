@@ -8,13 +8,19 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
+import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
@@ -28,7 +34,7 @@ public class Region implements Comparable<Region> {
 
     public List<EntityPlayer> playersInside = Lists.newArrayList();
 
-    private World world;
+    private String world;
     protected UUID id, owner;
     private BlockPos min, max;
     private Set<SubRegion> subRegions = new TreeSet<>();
@@ -62,6 +68,7 @@ public class Region implements Comparable<Region> {
                 }
 
                 owner = UUID.fromString(result.getString("owner"));
+                world = result.getString("world");
 
                 for(EnumRegionProperty propertyType : EnumRegionProperty.values())
                     properties.put(propertyType, result.getBoolean(propertyType.name()));
@@ -155,6 +162,15 @@ public class Region implements Comparable<Region> {
         return AxisAlignedBB.fromBounds(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
     }
 
+    public BlockPos getCenter() {
+        Vector minVec = new Vector(min.getX(), min.getY(), min.getZ());
+        Vector maxVec = new Vector(max.getX(), max.getY(), max.getZ());
+
+        com.sk89q.worldedit.regions.Region r = new CuboidRegion(minVec, maxVec);
+        Vector center = r.getCenter();
+        return new BlockPos(center.getBlockX(), center.getBlockY(), center.getBlockZ());
+    }
+
     public BlockPos getMin() {
         return min;
     }
@@ -164,13 +180,19 @@ public class Region implements Comparable<Region> {
     }
 
     public void setWorld(World world) {
-        this.world = world;
+        this.world = world.getWorldInfo().getWorldName();
         setViaMySQL("world", world.getWorldInfo().getWorldName());
     }
 
+    @SideOnly(Side.SERVER)
     public World getWorld() {
-        return world;
+        for(World w : MinecraftServer.getServer().worldServers) {
+            if(w.getWorldInfo().getWorldName().equals(world)) return w;
+        }
+        return null;
     }
+
+    public String getWorldName() { return world; }
 
     public UUID getID() {
         return id;
@@ -205,7 +227,7 @@ public class Region implements Comparable<Region> {
     public int compareTo(Region o) {
         if (o.id.equals(id)) return 0;
 
-        if (o.getBounds().intersectsWith(getBounds())) return 0;
+        if (o.world.equalsIgnoreCase(world) && o.getBounds().intersectsWith(getBounds())) return 0;
 
         return -999;
     }
@@ -221,6 +243,7 @@ public class Region implements Comparable<Region> {
         ByteBufUtils.writeUTF8String(buf, id.toString());
         ByteBufUtils.writeUTF8String(buf, owner.toString());
         ByteBufUtils.writeUTF8String(buf, UUIDManager.getPlayerName(owner));
+        ByteBufUtils.writeUTF8String(buf, getWorldName());
 
         // write min and max
         buf.writeInt(min.getX());
@@ -252,6 +275,7 @@ public class Region implements Comparable<Region> {
         region.id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
         region.owner = UUID.fromString(ByteBufUtils.readUTF8String(buf));
         region.ownerNameClient = ByteBufUtils.readUTF8String(buf);
+        region.world = ByteBufUtils.readUTF8String(buf);
 
         region.min = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         region.max = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());

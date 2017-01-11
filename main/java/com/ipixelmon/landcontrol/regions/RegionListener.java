@@ -24,7 +24,7 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onBreak(BlockEvent.BreakEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.pos);
+        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.breakBlocks)) event.setCanceled(true);
@@ -32,7 +32,7 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onPlace(BlockEvent.PlaceEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.pos);
+        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.placeBlocks)) event.setCanceled(true);
@@ -40,13 +40,14 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.pos);
+        System.out.println("CALLED");
+        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
         if (region == null) return;
-
+        System.out.println("CALLED1");
         // TODO: Test sub regions
         if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather) {
-            SubRegion subRegion = region.getSubRegionAt(event.pos);
-            iPixelmon.network.sendTo(new PacketOpenRegionGui(subRegion != null ? subRegion : region),
+//            SubRegion subRegion = region.getSubRegionAt(event.pos);
+            iPixelmon.network.sendTo(new PacketOpenRegionGui(region),
                     (EntityPlayerMP) event.entityPlayer);
             event.setCanceled(true);
             return;
@@ -63,7 +64,7 @@ public class RegionListener {
     public void onDamage(LivingHurtEvent event) {
         if (!(event.entity instanceof EntityPlayer)) return;
 
-        Region region = LandControlAPI.Server.getRegionAt(event.entity.getPosition());
+        Region region = LandControlAPI.Server.getRegionAt(event.entity.worldObj, event.entity.getPosition());
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.invincible)) event.setCanceled(true);
@@ -93,7 +94,7 @@ public class RegionListener {
             region.playersInside.removeAll(toRemove);
         }
 
-        Region region = LandControlAPI.Server.getRegionAt(event.player.getPosition());
+        Region region = LandControlAPI.Server.getRegionAt(event.player.worldObj, event.player.getPosition());
 
         if (region == null) return;
 

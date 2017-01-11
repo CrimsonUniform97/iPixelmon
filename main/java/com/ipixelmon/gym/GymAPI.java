@@ -9,6 +9,7 @@ import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,8 +31,8 @@ public class GymAPI {
 
         public static Set<Gym> gyms = new TreeSet<>();
 
-        public static Gym createGym(BlockPos pos) {
-            Region region = LandControlAPI.Server.getRegionAt(pos);
+        public static Gym createGym(World world, BlockPos pos) {
+            Region region = LandControlAPI.Server.getRegionAt(world, pos);
             if (region == null) return null;
 
             if (getGym(pos) != null) return null;

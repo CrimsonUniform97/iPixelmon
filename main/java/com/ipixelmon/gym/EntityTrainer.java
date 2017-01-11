@@ -9,7 +9,9 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -84,6 +86,12 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         return o.playerID.equals(playerID) ? 0 : -999;
     }
 
+    /**
+     * Disables damage to the entity by not having any code inside method
+     */
+    @Override
+    protected void damageEntity(DamageSource damageSrc, float damageAmount) {}
+
     public ResourceLocation getSkin() {
         ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
         GameProfile profile = new GameProfile(playerID, UUIDManager.getPlayerName(playerID));
@@ -93,5 +101,11 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
             }
         }
         return resourcelocation;
+    }
+
+    // TODO: May need to change this for culling
+    @Override
+    public AxisAlignedBB getEntityBoundingBox() {
+        return super.getEntityBoundingBox();
     }
 }

@@ -42,7 +42,7 @@ public class GymCommand implements ICommand {
                 player.addChatComponentMessage(new ChatComponentText("Gym already exists here."));
                 return;
             } else {
-                if (LandControlAPI.Server.getRegionAt(player.getPosition()) == null) {
+                if (LandControlAPI.Server.getRegionAt(player.worldObj, player.getPosition()) == null) {
                     player.addChatComponentMessage(new ChatComponentText("No region there."));
                     return;
                 }
@@ -50,7 +50,7 @@ public class GymCommand implements ICommand {
                 MinecraftServer.getServer().addScheduledTask(new Runnable() {
                     @Override
                     public void run() {
-                        Gym g = GymAPI.Server.createGym(player.getPosition());
+                        Gym g = GymAPI.Server.createGym(player.worldObj, player.getPosition());
                         g.updateColoredBlocks();
                     }
                 });

@@ -31,7 +31,6 @@ public class Tablet implements IMod {
 
     public static List<AppBase> apps = Lists.newArrayList();
 
-    // TODO: Test and add other apps
     public Tablet() {
         apps.add(new FriendsApp());
         apps.add(new GalleryApp());

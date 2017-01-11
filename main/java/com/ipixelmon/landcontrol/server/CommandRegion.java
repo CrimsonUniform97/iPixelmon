@@ -43,16 +43,17 @@ public class CommandRegion extends CommandBase {
 
             BlockPos min = new BlockPos(region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
             BlockPos max = new BlockPos(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
-
+            System.out.println(LandControlAPI.Server.regions.size());
             // TODO: Test
-            if(LandControlAPI.Server.getRegionAt(center) != null) {
+            if(LandControlAPI.Server.getRegionAt(player.worldObj, center) != null) {
                 SubRegion s = LandControlAPI.Server.createSubRegion(min, max);
                 if(s != null) {
                     s.setOwner(player.getUniqueID());
                     player.addChatComponentMessage(new ChatComponentText("SubRegion created."));
+                    return;
                 }
             } else {
-                Region r = LandControlAPI.Server.createRegion(min, max);
+                Region r = LandControlAPI.Server.createRegion(player.worldObj, min, max);
                 if (r != null) {
                     r.setOwner(player.getUniqueID());
                     player.addChatComponentMessage(new ChatComponentText("Region created."));
