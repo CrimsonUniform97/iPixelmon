@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
@@ -64,6 +65,8 @@ public final class iPixelmon {
 
     @Mod.EventHandler
     public final void preInit(final FMLPreInitializationEvent event) {
+        GameRegistry.registerBlock(HiddenBlock.instance);
+
         path.getParentFile().mkdirs();
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel(id);

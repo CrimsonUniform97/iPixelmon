@@ -13,6 +13,10 @@ import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,6 +58,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         setBattleType(EnumBattleType.Single);
         setBattleAIMode(EnumBattleAIMode.Tactical);
         this.playerName = UUIDManager.getPlayerName(playerID);
+        enablePersistence();
 
         sendData();
     }
@@ -64,8 +69,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     }
 
     @Override
-    public void initAI() {
-    }
+    public void initAI() {}
 
     public void sendData() {
         try {

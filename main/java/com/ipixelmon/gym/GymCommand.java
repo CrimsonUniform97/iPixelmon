@@ -88,7 +88,7 @@ public class GymCommand implements ICommand {
                 return;
             }
 
-            gym.setStartBattlePlate(player.getPosition());
+            gym.setTeleportPos(player.getPosition());
             player.addChatComponentMessage(new ChatComponentText("StartBattlePlate set."));
         } else if (args[0].equalsIgnoreCase("respawn")) {
             if (gym == null) {

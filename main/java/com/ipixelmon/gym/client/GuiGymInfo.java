@@ -119,6 +119,8 @@ public class GuiGymInfo extends GuiScreen {
         }
     }
 
+    // TODO: Start battle
+
     @Override
     public void initGui() {
         super.initGui();
@@ -134,6 +136,9 @@ public class GuiGymInfo extends GuiScreen {
 
         this.buttonList.add(new MCButton(2, (this.width - 55) / 2, (this.height - 20) / 2, 55,
                 "Claim Gym!", 4));
+
+        this.buttonList.get(0).enabled = false;
+        this.buttonList.get(1).enabled = false;
 
         this.buttonList.get(0).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(1).visible = !gym.getTrainerEntities().isEmpty();
@@ -155,7 +160,6 @@ public class GuiGymInfo extends GuiScreen {
         guiPickPixelmon.updateScreen();
         this.buttonList.get(0).enabled = !(page <= 0);
         this.buttonList.get(1).enabled = !(page >= gym.getTrainers().size() - 1);
-        this.buttonList.get(2).enabled = gym.getAvailableSeats() > 0;//
     }
 
     private class MCButton extends GuiButton {

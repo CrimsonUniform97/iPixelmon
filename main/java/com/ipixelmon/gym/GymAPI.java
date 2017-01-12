@@ -77,7 +77,7 @@ public class GymAPI {
             createForm.add("region", DataType.TEXT);
             createForm.add("trainers", DataType.TEXT);
             createForm.add("seats", DataType.TEXT);
-            createForm.add("startBattlePlate", DataType.TEXT);
+            createForm.add("teleportPos", DataType.TEXT);
             createForm.add("team", DataType.TEXT);
             createForm.add("prestige", DataType.INT);
             iPixelmon.mysql.createTable(GymMod.class, createForm);

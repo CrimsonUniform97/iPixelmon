@@ -1,6 +1,9 @@
 package com.ipixelmon;
 
 import lib.PatPeter.SQLibrary.SQLite;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 
 import java.util.ArrayList;
@@ -15,6 +18,9 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void preInit() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(HiddenBlock.instance), 0 , new ModelResourceLocation(HiddenBlock.instance.getRegistryName(), "inventory"));
+
+
         iPixelmon.clientDb = new SQLite(Logger.getLogger("Minecraft"), iPixelmon.id, iPixelmon.path.getAbsolutePath(), "data", ".sqlite");
         iPixelmon.clientDb.open();
 
@@ -32,6 +38,8 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void init() {
+
+
         for(CommonProxy proxy : proxies) proxy.init();
 
     }

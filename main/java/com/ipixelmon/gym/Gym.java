@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.regions.Region;
-import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.team.EnumTeam;
@@ -23,13 +22,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCarpet;
 import net.minecraft.block.BlockStainedGlass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -63,7 +60,7 @@ public class Gym implements Comparable<Gym>{
     private List<BlockPos> seats = Lists.newArrayList();
     private int prestige = 0;
     private Map<UUID, Integer> que = Maps.newHashMap();
-    private BlockPos startBattlePlate;
+    private BlockPos teleportPos;
 
     private Set<EntityTrainer> trainerEntities = new TreeSet<>();
 
@@ -80,9 +77,9 @@ public class Gym implements Comparable<Gym>{
                 parseTrainers(result.getString("trainers"));
                 team = EnumTeam.valueOf(result.getString("team"));
                 prestige = result.getInt("prestige");
-                String[] array = ArrayUtil.fromString(result.getString("startBattlePlate"));
+                String[] array = ArrayUtil.fromString(result.getString("teleportPos"));
                 if (array.length == 3)
-                    startBattlePlate = new BlockPos(Integer.parseInt(array[0]), Integer.parseInt(array[1]),
+                    teleportPos = new BlockPos(Integer.parseInt(array[0]), Integer.parseInt(array[1]),
                             Integer.parseInt(array[2]));
             }
         } catch (SQLException e) {
@@ -100,21 +97,21 @@ public class Gym implements Comparable<Gym>{
     }
 
     public int getLevel() {
-        for (int i = LEVELS.length; i > 0; i--) {
+        for (int i = LEVELS.length - 1; i > 0; i--) {
             if (getPrestige() > LEVELS[i]) return i;
         }
 
         return 0;
     }
 
-    public BlockPos getStartBattlePlate() {
-        return startBattlePlate;
+    public BlockPos getTeleportPos() {
+        return teleportPos;
     }
 
-    public void setStartBattlePlate(BlockPos pos) {
+    public void setTeleportPos(BlockPos pos) {
         String[] s = new String[]{String.valueOf(pos.getX()), String.valueOf(pos.getY()), String.valueOf(pos.getZ())};
-        startBattlePlate = pos;
-        setViaMySQL("startBattlePlate", ArrayUtil.toString(s));
+        teleportPos = pos;
+        setViaMySQL("teleportPos", ArrayUtil.toString(s));
     }
 
     public int getAvailableSeats() {

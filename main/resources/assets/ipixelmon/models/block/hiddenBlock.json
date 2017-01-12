@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "ipixelmon:blocks/hiddenBlock",
+    "up": "ipixelmon:blocks/hiddenBlock",
+    "north": "ipixelmon:blocks/hiddenBlock",
+    "east": "ipixelmon:blocks/hiddenBlock",
+    "south": "ipixelmon:blocks/hiddenBlock",
+    "west": "ipixelmon:blocks/hiddenBlock",
+    "particle": "ipixelmon:blocks/hiddenBlock"
+  }
+}
