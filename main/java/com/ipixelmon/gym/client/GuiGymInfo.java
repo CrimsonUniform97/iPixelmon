@@ -53,8 +53,6 @@ public class GuiGymInfo extends GuiScreen {
         }
     }
 
-    // TODO: Work on gui
-
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         GlStateManager.color(1, 1, 1, 1);
@@ -141,11 +139,9 @@ public class GuiGymInfo extends GuiScreen {
         this.buttonList.get(1).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(2).visible = gym.getTrainerEntities().isEmpty();
 
-        // TODO: Send packet to server that they selected a pokemon
         guiPickPixelmon = new GuiPickPixelmon(this) {
             @Override
             public void onSelect(PixelmonData pixelmonData) {
-                System.out.println("CALLED");
                 iPixelmon.network.sendToServer(new PacketClaimGymToServer(gym.getID(), pixelmonData.pokemonID));
             }
         };
@@ -159,6 +155,7 @@ public class GuiGymInfo extends GuiScreen {
         guiPickPixelmon.updateScreen();
         this.buttonList.get(0).enabled = !(page <= 0);
         this.buttonList.get(1).enabled = !(page >= gym.getTrainers().size() - 1);
+        this.buttonList.get(2).enabled = gym.getAvailableSeats() > 0;
     }
 
     private class MCButton extends GuiButton {
