@@ -90,6 +90,14 @@ public class GymCommand implements ICommand {
 
             gym.setStartBattlePlate(player.getPosition());
             player.addChatComponentMessage(new ChatComponentText("StartBattlePlate set."));
+        } else if (args[0].equalsIgnoreCase("respawn")) {
+            if (gym == null) {
+                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                return;
+            }
+
+            gym.reloadLivingEntities();
+            player.addChatComponentMessage(new ChatComponentText("Spawned."));
         }
     }
 

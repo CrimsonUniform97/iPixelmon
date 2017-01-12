@@ -33,7 +33,7 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
 
     @Override
     public void drawObject(int mouseX, int mouseY, int dWheel, float partialTicks) {
-        pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, screenBounds.getY() + 150);
+        pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, screenBounds.getY() + 150, 50);
         int[] bounds = PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmon(), screenBounds.getX() - 7,
                 screenBounds.getY() + 17, this.width, this.height);
 

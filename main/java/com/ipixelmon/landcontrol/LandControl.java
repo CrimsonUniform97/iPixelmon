@@ -6,7 +6,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.client.ClientProxy;
 import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegionResponse;
 import com.ipixelmon.landcontrol.toolCupboard.packet.*;
-import com.ipixelmon.landcontrol.server.CommandRegion;
+import com.ipixelmon.landcontrol.regions.CommandRegion;
 import com.ipixelmon.landcontrol.server.ServerProxy;
 import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegion;
 import com.ipixelmon.landcontrol.regions.packet.PacketOpenRegionGui;

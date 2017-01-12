@@ -30,13 +30,16 @@ public abstract class GuiPickPixelmon extends Gui {
         this.parent = parent;
         pixelmonDataList = PixelmonAPI.Client.getPixelmon(true);
 
+        PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
         for (PixelmonData pixelmonData : pixelmonDataList) {
-            pixelmonRendererList.add(PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, parent));
+            pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, parent);
+            pixelmonRendererList.add(pixelmonRenderer);
+            new Thread(pixelmonRenderer).start();
         }
     }
 
     public void drawScreen(Minecraft mc, int mouseX, int mouseY) {
-        if(!enabled) return;
+        if (!enabled) return;
 
         GlStateManager.color(1, 1, 1, 1);
 
@@ -50,7 +53,8 @@ public abstract class GuiPickPixelmon extends Gui {
          * Draw pokemon
          */
         if (!pixelmonRendererList.isEmpty()) {
-            pixelmonRendererList.get(page).render(POS_X + ((BG_WIDTH - 100) / 2), POS_Y + ((BG_HEIGHT - 100) / 2));
+            pixelmonRendererList.get(page).render(parent.width / 2, POS_Y + BG_HEIGHT - 40, 50);
+            PixelmonAPI.Client.renderPixelmonTip(pixelmonDataList.get(page), POS_X, POS_Y + 24, parent.width, parent.height);
         }
 
         left.drawButton(mc, mouseX, mouseY);
@@ -59,7 +63,7 @@ public abstract class GuiPickPixelmon extends Gui {
     }
 
     public void mouseClicked(Minecraft mc, int mouseX, int mouseY) {
-        if(!enabled) return;
+        if (!enabled) return;
 
         if (left.mousePressed(mc, mouseX, mouseY)) {
             page = page - 1 < 0 ? 0 : page - 1;
@@ -88,8 +92,9 @@ public abstract class GuiPickPixelmon extends Gui {
     }
 
     public void updateScreen() {
-        left.enabled = page >= pixelmonDataList.size() - 1;
-        right.enabled = page >= pixelmonDataList.size() - 1;
+        left.enabled = !(page <= 0);
+        right.enabled = !(page >= pixelmonDataList.size() - 1);
+        select.enabled = !pixelmonDataList.get(page).isFainted;
     }
 
     public abstract void onSelect(PixelmonData pixelmonData);

@@ -9,10 +9,13 @@ import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.team.EnumTeam;
+import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumBattleType;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
@@ -56,7 +59,7 @@ public class Gym implements Comparable<Gym>{
 
     private UUID id, regionID;
     private EnumTeam team = EnumTeam.None;
-    private Map<UUID, EntityPixelmon> trainers = Maps.newHashMap();
+    private Map<UUID, PixelmonData> trainers = Maps.newHashMap();
     private List<BlockPos> seats = Lists.newArrayList();
     private int prestige = 0;
     private Map<UUID, Integer> que = Maps.newHashMap();
@@ -132,16 +135,21 @@ public class Gym implements Comparable<Gym>{
         updateColoredBlocks();
     }
 
-    public Map<UUID, EntityPixelmon> getTrainers() {
+    public Map<UUID, PixelmonData> getTrainers() {
         return trainers;
     }
 
     public void addTrainer(UUID player, EntityPixelmon pixelmon) {
         List<String> trainers = Lists.newArrayList();
 
-        this.trainers.put(player, pixelmon);
+        if(this.trainers.isEmpty()) {
+            setTeam(TeamMod.getPlayerTeam(player));
+            updateColoredBlocks();
+        }
+
+        this.trainers.put(player, new PixelmonData(pixelmon));
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.entityPixelmonToString(this.trainers.get(p)));
+            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonDataToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -152,7 +160,7 @@ public class Gym implements Comparable<Gym>{
 
         this.trainers.remove(player);
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.entityPixelmonToString(this.trainers.get(p)));
+            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonDataToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -228,8 +236,7 @@ public class Gym implements Comparable<Gym>{
             if (!s.isEmpty()) {
                 String[] data = s.split(";");
                 UUID player = UUID.fromString(data[0]);
-                EntityPixelmon pixelmon = PixelmonAPI.entityPixelmonFromString(data[1], getRegion().getWorld());
-                trainers.put(player, pixelmon);
+                trainers.put(player, PixelmonAPI.pixelmonDataFromString(data[1]));
             }
         }
     }
@@ -259,21 +266,24 @@ public class Gym implements Comparable<Gym>{
         }
     }
 
-    public void loadEntities(WorldEvent.Load event) {
-        if (event.world != getRegion().getWorld()) return;
+    public void reloadLivingEntities() {
+        World world = getRegion().getWorld();
 
-        World world = event.world;
         for (EntityTrainer trainer : world.getEntitiesWithinAABB(EntityTrainer.class, getRegion().getBounds())) {
             world.removeEntity(trainer);
         }
 
+        trainerEntities.clear();
+
         int i = 0;
         for (UUID trainer : trainers.keySet()) {
-            trainerEntities.add(new EntityTrainer(world, seats.get(i), trainer, trainers.get(trainer)));
+            EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(trainers.get(trainer).name, world);
+            trainers.get(trainer).updatePokemon(pixelmon.getEntityData());
+            EntityTrainer entityTrainer = new EntityTrainer(world, seats.get(i), trainer, pixelmon);
+            world.spawnEntityInWorld(entityTrainer);
+            trainerEntities.add(entityTrainer);
             i++;
         }
-
-        for (EntityTrainer trainer : trainerEntities) world.spawnEntityInWorld(trainer);
     }
 
     public void battle(EntityPlayerMP player) {
@@ -323,9 +333,9 @@ public class Gym implements Comparable<Gym>{
         int trainersSize = buf.readInt();
 
         for(int i = 0; i < trainersSize; i++) {
-            String[] data = ByteBufUtils.readUTF8String(buf).split(",");
+            String[] data = ByteBufUtils.readUTF8String(buf).split(";");
             gym.trainers.put(UUID.fromString(data[0]),
-                    PixelmonAPI.entityPixelmonFromString(data[1], Minecraft.getMinecraft().theWorld));
+                    PixelmonAPI.pixelmonDataFromString(data[1]));
         }
 
         return gym;
@@ -340,7 +350,7 @@ public class Gym implements Comparable<Gym>{
         buf.writeInt(trainers.size());
 
         for(UUID id : trainers.keySet()) {
-            ByteBufUtils.writeUTF8String(buf, id.toString() + "," + PixelmonAPI.entityPixelmonToString(trainers.get(id)));
+            ByteBufUtils.writeUTF8String(buf, id.toString() + ";" + PixelmonAPI.pixelmonDataToString(trainers.get(id)));
         }
     }
 

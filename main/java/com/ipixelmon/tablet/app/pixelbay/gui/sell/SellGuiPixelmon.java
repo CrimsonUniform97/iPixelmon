@@ -25,7 +25,7 @@ public class SellGuiPixelmon extends SellGuiPopup {
     @Override
     public void drawObject(int mouseX, int mouseY, float partialTicks) {
         this.amountField.setText("1");
-        pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, priceField.yPosition - 2);
+        pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, priceField.yPosition - 2, 50);
         PixelmonAPI.Client.renderPixelmonTip(pixelmonData, screenBounds.getX() - 7, screenBounds.getY() + 17, this.width, this.height);
     }
 

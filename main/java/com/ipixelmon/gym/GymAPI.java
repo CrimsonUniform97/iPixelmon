@@ -63,6 +63,14 @@ public class GymAPI {
             return null;
         }
 
+        public static Gym getGym(UUID id) {
+            for(Gym gym : gyms) {
+                if(gym.getID().equals(id)) return gym;
+            }
+
+            return null;
+        }
+
         public static void initGymSQL() {
             CreateForm createForm = new CreateForm("Gyms");
             createForm.add("id", DataType.TEXT);
@@ -73,16 +81,22 @@ public class GymAPI {
             createForm.add("team", DataType.TEXT);
             createForm.add("prestige", DataType.INT);
             iPixelmon.mysql.createTable(GymMod.class, createForm);
+        }
 
+        public static void loadGyms() {
             ResultSet result = iPixelmon.mysql.selectAllFrom(GymMod.class, new SelectionForm("Gyms"));
             try {
+                Gym gym;
                 while(result.next()) {
-                    gyms.add(new Gym(UUID.fromString(result.getString("id"))));
+                    gyms.add(gym = new Gym(UUID.fromString(result.getString("id"))));
+                    gym.reloadLivingEntities();
+                    gym.updateColoredBlocks();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
 
     }
 

@@ -76,12 +76,16 @@ public class PixelmonAPI {
     }
 
     public static PixelmonData pixelmonDataFromString(String str) {
-        return new PixelmonData(NBTUtil.fromString(str));
+        NBTTagCompound tagCompound = NBTUtil.fromString(str);
+        PixelmonData pixelmonData = new PixelmonData(tagCompound);
+        pixelmonData.name = tagCompound.getString("name");
+        return pixelmonData;
     }
 
     public static String pixelmonDataToString(PixelmonData pixelmonData) {
         NBTTagCompound tagCompound = new NBTTagCompound();
         pixelmonData.updatePokemon(tagCompound);
+        tagCompound.setString("name", pixelmonData.name);
         return tagCompound.toString();
     }
 
@@ -143,7 +147,12 @@ public class PixelmonAPI {
             pixelmonInfo.add("");
             pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmon.lvl);
             pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
-            pixelmonInfo.add(EnumChatFormatting.RED + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
+            float half =PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 2;
+            float third =PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 3;
+            float health = PixelmonAPI.getPixelmonHealth(pixelmon);
+            EnumChatFormatting healthColor = health <= half ? EnumChatFormatting.RED : health <= third ?
+                    EnumChatFormatting.GOLD : EnumChatFormatting.GREEN;
+            pixelmonInfo.add(healthColor + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
                     PixelmonAPI.getPixelmonMaxHealth(pixelmon));
             pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
             return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
@@ -199,13 +208,12 @@ public class PixelmonAPI {
                 }
             }
 
-            public void render(int x, int y) {
+            public void render(int x, int y, float scale) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(x, y, 400.0F);
                 float width = entityPixelmon.widthDiff / 2;
                 float height = entityPixelmon.heightDiff / 2;
                 GlStateManager.translate(width, height, 0.0F);
-                float scale = 50;
                 GlStateManager.scale(scale, scale, scale);
                 GlStateManager.rotate(180, 1, 0, 0);
                 GlStateManager.rotate(spinCount, 0, 1, 0);

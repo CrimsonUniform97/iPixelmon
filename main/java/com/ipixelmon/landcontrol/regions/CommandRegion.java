@@ -1,4 +1,4 @@
-package com.ipixelmon.landcontrol.server;
+package com.ipixelmon.landcontrol.regions;
 
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.regions.Region;

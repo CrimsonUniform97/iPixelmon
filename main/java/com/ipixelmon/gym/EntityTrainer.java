@@ -1,40 +1,51 @@
 package com.ipixelmon.gym;
 
 import com.ipixelmon.team.TeamMod;
+import com.ipixelmon.util.ArrayUtil;
+import com.ipixelmon.util.PixelmonAPI;
 import com.ipixelmon.util.SkinUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
+import com.pixelmonmod.pixelmon.AI.AITrainerInBattle;
+import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.ai.EntityAIWatchClosest2;
+import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.actors.threadpool.Arrays;
 
+import java.util.List;
 import java.util.UUID;
 
 public class EntityTrainer extends NPCTrainer implements Comparable<EntityTrainer> {
 
     private String playerName;
     private UUID playerID;
-    private BlockPos pos;
     private EntityPixelmon pixelmon;
 
     public float pixelmonDisplayRotY = 0.0F;
 
+    public EntityTrainer(World world) {
+        super(world);
+    }
+
     // http://pixelmonmod.com/wiki/index.php?title=NPC_Editor
     public EntityTrainer(World world, BlockPos pos, UUID playerID, EntityPixelmon pixelmon) {
         super(world);
-        this.pos = pos;
-        this.playerID = playerID;
         this.pixelmon = pixelmon;
-
+        this.playerID = playerID;
         this.targetTasks.taskEntries.clear();
         this.tasks.taskEntries.clear();
+        this.tasks.addTask(0, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(1, new AITrainerInBattle(this));
         setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
         setEncounterMode(EnumEncounterMode.Unlimited);
         this.getPokemonStorage().addToParty(pixelmon);
@@ -43,47 +54,72 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         setBattleType(EnumBattleType.Single);
         setBattleAIMode(EnumBattleAIMode.Tactical);
         this.playerName = UUIDManager.getPlayerName(playerID);
+
+        sendData();
+    }
+
+    @Override
+    public float getEyeHeight() {
+        return this.height * 0.35f;
     }
 
     @Override
     public void initAI() {}
 
-    @Override
-    public void writeToNBT(NBTTagCompound tagCompund) {
-        super.writeToNBT(tagCompund);
-        tagCompund.setString("playerID", playerID.toString());
+    public void sendData() {
+        try {
+            String[] array = new String[]{
+                    playerID.toString(),
+                    TeamMod.getPlayerTeam(playerID).colorChat().toString() + playerName,
+                    PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon))
+            };
+
+            this.dataWatcher.updateObject(20, ArrayUtil.toString(array));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompund) {
-        super.readFromNBT(tagCompund);
-        playerID = UUID.fromString(tagCompund.getString("playerID"));
-    }
+    @SideOnly(Side.CLIENT)
+    public List<String> loadData() {
+        String[] array = ArrayUtil.fromString(this.dataWatcher.getWatchableObjectString(20));
+        if(array.length == 3) {
+            if(!array[0].isEmpty() && !array[1].isEmpty() && !array[2].isEmpty()) {
+                playerID = UUID.fromString(array[0]);
+                playerName = array[1];
+                PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(array[2]);
 
-//    public void setPlayerUUID(UUID playerUUID) {
-//        try {
-//            this.dataWatcher.updateObject(20, playerUUID.toString() + "," + pixelmon.getName() + "," + pixelmon.getIsShiny() + "," +
-//                    pixelmon.getForm() + "," + pixelmon.getLvl().getLevel() + "," + pixelmon.getGrowth().index);
-//        } catch (NullPointerException e) {
-//        }
-//    }
-//    // TODO: Don't allow taking damage
-//    public UUID getPlayerUUID() {
-//        return UUID.fromString(this.dataWatcher.getWatchableObjectString(20).split(",")[0]);
-//    }
+                if (pixelmon == null) {
+                    pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, worldObj);
+                    pixelmonData.updatePokemon(pixelmon.getEntityData());
+                }
+            }
+        }
 
-    @Override
-    public String getDisplayText() {
-        return TeamMod.getPlayerTeam(playerID).colorChat() + playerName;
+        return Arrays.asList(array);
     }
 
     public EntityPixelmon getPixelmon() {
         return pixelmon;
     }
 
+    public UUID getPlayerID() {
+        return playerID;
+    }
+
+    @Override
+    public String getDisplayText() {
+        return playerName;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return new ChatComponentText(playerName);
+    }
+
     @Override
     public int compareTo(EntityTrainer o) {
-        return o.playerID.equals(playerID) ? 0 : -999;
+        return o.getPlayerID().equals(getPlayerID()) ? 0 : -999;
     }
 
     /**
@@ -92,20 +128,32 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @Override
     protected void damageEntity(DamageSource damageSrc, float damageAmount) {}
 
+    @SideOnly(Side.CLIENT)
     public ResourceLocation getSkin() {
         ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
-        GameProfile profile = new GameProfile(playerID, UUIDManager.getPlayerName(playerID));
-        if (profile != null) {
-            if (SkinUtil.loadSkin(playerID) != null) {
-                resourcelocation = SkinUtil.loadSkin(playerID);
+
+        if(playerID != null && playerName != null) {
+            GameProfile profile = new GameProfile(playerID, playerName);
+            if (profile != null) {
+                if (SkinUtil.loadSkin(getPlayerID()) != null) {
+                    resourcelocation = SkinUtil.loadSkin(getPlayerID());
+                }
             }
         }
+
         return resourcelocation;
     }
 
-    // TODO: May need to change this for culling
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return null;
+    }
+
+
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
-        return super.getEntityBoundingBox();
+        float scale = 2.0f;
+        return AxisAlignedBB.fromBounds(posX - scale, posY, posZ - scale, posX + scale, posY + scale, posZ + scale);
     }
+
 }

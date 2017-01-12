@@ -2,6 +2,7 @@ package com.ipixelmon.gym.client;
 
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.gym.EntityTrainer;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 /**
@@ -16,6 +17,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         KeyListener.registerKeyBindings();
-        RenderingRegistry.registerEntityRenderingHandler(EntityTrainer.class, EntityTrainerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityTrainer.class,
+                new EntityTrainerRenderer(Minecraft.getMinecraft().getRenderManager()));
     }
 }
