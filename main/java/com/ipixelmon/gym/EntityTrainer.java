@@ -64,7 +64,8 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     }
 
     @Override
-    public void initAI() {}
+    public void initAI() {
+    }
 
     public void sendData() {
         try {
@@ -83,16 +84,14 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @SideOnly(Side.CLIENT)
     public List<String> loadData() {
         String[] array = ArrayUtil.fromString(this.dataWatcher.getWatchableObjectString(20));
-        if(array.length == 3) {
-            if(!array[0].isEmpty() && !array[1].isEmpty() && !array[2].isEmpty()) {
-                playerID = UUID.fromString(array[0]);
-                playerName = array[1];
-                PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(array[2]);
+        if (array.length == 3 && !array[0].isEmpty() && !array[1].isEmpty() && !array[2].isEmpty()) {
+            playerID = UUID.fromString(array[0]);
+            playerName = array[1];
+            PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(array[2]);
 
-                if (pixelmon == null) {
-                    pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, worldObj);
-                    pixelmonData.updatePokemon(pixelmon.getEntityData());
-                }
+            if (pixelmon == null) {
+                pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, worldObj);
+                pixelmonData.updatePokemon(pixelmon.getEntityData());
             }
         }
 
@@ -126,13 +125,14 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
      * Disables damage to the entity by not having any code inside method
      */
     @Override
-    protected void damageEntity(DamageSource damageSrc, float damageAmount) {}
+    protected void damageEntity(DamageSource damageSrc, float damageAmount) {
+    }
 
     @SideOnly(Side.CLIENT)
     public ResourceLocation getSkin() {
         ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
 
-        if(playerID != null && playerName != null) {
+        if (playerID != null && playerName != null) {
             GameProfile profile = new GameProfile(playerID, playerName);
             if (profile != null) {
                 if (SkinUtil.loadSkin(getPlayerID()) != null) {
