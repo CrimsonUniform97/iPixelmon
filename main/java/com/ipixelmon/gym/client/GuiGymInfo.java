@@ -155,7 +155,7 @@ public class GuiGymInfo extends GuiScreen {
         guiPickPixelmon.updateScreen();
         this.buttonList.get(0).enabled = !(page <= 0);
         this.buttonList.get(1).enabled = !(page >= gym.getTrainers().size() - 1);
-        this.buttonList.get(2).enabled = gym.getAvailableSeats() > 0;
+        this.buttonList.get(2).enabled = gym.getAvailableSeats() > 0;//
     }
 
     private class MCButton extends GuiButton {
