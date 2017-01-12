@@ -82,14 +82,14 @@ public class GymCommand implements ICommand {
 
             gym.removeSeat(player.getPosition());
             player.addChatComponentMessage(new ChatComponentText("Seat removed."));
-        } else if (args[0].equalsIgnoreCase("startplate")) {
+        } else if (args[0].equalsIgnoreCase("teleportpos")) {
             if (gym == null) {
                 player.addChatComponentMessage(new ChatComponentText("Gym not found."));
                 return;
             }
 
             gym.setTeleportPos(player.getPosition());
-            player.addChatComponentMessage(new ChatComponentText("StartBattlePlate set."));
+            player.addChatComponentMessage(new ChatComponentText("TeleportPos set."));
         } else if (args[0].equalsIgnoreCase("respawn")) {
             if (gym == null) {
                 player.addChatComponentMessage(new ChatComponentText("Gym not found."));
