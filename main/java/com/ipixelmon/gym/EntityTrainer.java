@@ -1,32 +1,27 @@
 package com.ipixelmon.gym;
 
+import com.ipixelmon.gym.packet.EntityTrainerSyncPacket;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.team.TeamMod;
-import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import com.ipixelmon.util.SkinUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.mojang.authlib.GameProfile;
 import com.pixelmonmod.pixelmon.AI.AITrainerInBattle;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.comm.SetTrainerData;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.ai.EntityAIWatchClosest2;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.actors.threadpool.Arrays;
-
-import java.util.List;
 import java.util.UUID;
 
 public class EntityTrainer extends NPCTrainer implements Comparable<EntityTrainer> {
@@ -48,8 +43,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         this.playerID = playerID;
         this.targetTasks.taskEntries.clear();
         this.tasks.taskEntries.clear();
-        this.tasks.addTask(0, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(1, new AITrainerInBattle(this));
+        this.tasks.addTask(0, new AITrainerInBattle(this));
         setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
         setEncounterMode(EnumEncounterMode.Unlimited);
         this.getPokemonStorage().addToParty(pixelmon);
@@ -57,10 +51,10 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         setBossMode(EnumBossMode.NotBoss);
         setBattleType(EnumBattleType.Single);
         setBattleAIMode(EnumBattleAIMode.Tactical);
-        this.playerName = UUIDManager.getPlayerName(playerID);
+        this.playerName = TeamMod.getPlayerTeam(playerID).colorChat().toString() + UUIDManager.getPlayerName(playerID);
         enablePersistence();
 
-        sendData();
+        update(new SetTrainerData(playerName, "Bring it on!", "Eat shit!", "Damn you!", 12, new ItemStack[]{}));
     }
 
     @Override
@@ -69,37 +63,52 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     }
 
     @Override
-    public void initAI() {}
+    public void initAI() {
+    }
 
-    public void sendData() {
-        try {
-            String[] array = new String[]{
-                    playerID.toString(),
-                    TeamMod.getPlayerTeam(playerID).colorChat().toString() + playerName,
-                    PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon))
-            };
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
 
-            this.dataWatcher.updateObject(20, ArrayUtil.toString(array));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        if (!worldObj.isRemote) {
+            Gym gym = GymAPI.Server.getGym(getPosition());
+
+            if(gym == null) {
+                worldObj.removeEntity(this);
+                return;
+            }
+
+            if(!gym.getSeats().containsKey(getPosition().down(1))) {
+                worldObj.removeEntity(this);
+                return;
+            }
+
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            writeToNBT(tagCompound);
+            iPixelmon.network.sendToAllAround(new EntityTrainerSyncPacket(getEntityId(), tagCompound),
+                    new NetworkRegistry.TargetPoint(dimension, posX, posY, posZ, 40));
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public List<String> loadData() {
-        String[] array = ArrayUtil.fromString(this.dataWatcher.getWatchableObjectString(20));
-        if (array.length == 3 && !array[0].isEmpty() && !array[1].isEmpty() && !array[2].isEmpty()) {
-            playerID = UUID.fromString(array[0]);
-            playerName = array[1];
-            PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(array[2]);
-
-            if (pixelmon == null) {
-                pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, worldObj);
-                pixelmonData.updatePokemon(pixelmon.getEntityData());
-            }
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompund) {
+        super.readFromNBT(tagCompund);
+        if(pixelmon == null) {
+            pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(tagCompund.getString("pixelmonName"), worldObj);
+            PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(tagCompund.getString("pixelmon"));
+            pixelmonData.updatePokemon(pixelmon.getEntityData());
+            playerName = tagCompund.getString("playerName");
+            playerID = UUID.fromString(tagCompund.getString("playerID"));
         }
+    }
 
-        return Arrays.asList(array);
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompund) {
+        super.writeToNBT(tagCompund);
+        tagCompund.setString("pixelmonName", pixelmon.getName());
+        tagCompund.setString("pixelmon", PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon)));
+        tagCompund.setString("playerName", playerName);
+        tagCompund.setString("playerID", playerID.toString());
     }
 
     public EntityPixelmon getPixelmon() {

@@ -43,7 +43,7 @@ public class GymAPI {
             insertForm.add("region", region.getID().toString());
             insertForm.add("trainers", "[]");
             insertForm.add("seats", "[]");
-            insertForm.add("startBattlePlate", "[]");
+            insertForm.add("teleportPos", "[]");
             insertForm.add("team", "None");
             insertForm.add("prestige", "0");
 

@@ -11,11 +11,14 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.Vec3i;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +90,18 @@ public class PixelmonListener {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent.WorldTickEvent event) {
+        for(Gym gym : GymAPI.Server.gyms) {
+            if(gym.getRegion().getWorld().equals(event.world)) {
+                List<Entity> entities = event.world.getEntitiesWithinAABB(EntityTrainer.class, gym.getRegion().getBounds());
+
+                if(entities.size() != gym.getTrainers().size()) gym.reloadLivingEntities();
+
+            }
         }
     }
 

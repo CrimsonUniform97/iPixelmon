@@ -3,6 +3,7 @@ package com.ipixelmon.gym.client;
 import com.google.common.collect.Lists;
 import com.ipixelmon.gym.EntityTrainer;
 import com.ipixelmon.gym.Gym;
+import com.ipixelmon.gym.packet.PacketBattle;
 import com.ipixelmon.gym.packet.PacketClaimGymToServer;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.GuiUtil;
@@ -16,6 +17,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;
 
@@ -68,13 +70,29 @@ public class GuiGymInfo extends GuiScreen {
         mc.getTextureManager().bindTexture(BG_TEXTURE);
         drawTexturedModalRect(POS_X, POS_Y, 0, 0, BG_WIDTH, BG_HEIGHT);
 
+        /**
+         * Draw team name
+         */
+        String teamTxt = gym.getTeam().colorChat().toString() + EnumChatFormatting.BOLD.toString() + gym.getTeam().name();
+        mc.fontRendererObj.drawString(teamTxt, (this.width - fontRendererObj.getStringWidth(teamTxt)) / 2, POS_Y + 10,
+                0xFFFFFF, true);
+
+        /**
+         * Draw prestige stats
+         */
+        int level = gym.getLevel() + 1;
+        level = level > 9 ? 9 : level;
+        String prestigeTxt = (gym.getPrestige() / 1000D) + "K/" + (Gym.LEVELS[level] / 1000) + "K Prestige";
+        fontRendererObj.drawString(EnumChatFormatting.YELLOW + prestigeTxt,
+                POS_X + BG_WIDTH - fontRendererObj.getStringWidth(prestigeTxt) - 5, POS_Y + 5, 0xFFFFFF, true);
+
         if (!gym.getTrainerEntities().isEmpty()) {
             /**
              * Draw player
              */
             int x = (this.width / 2) - 30;
             int y = POS_Y + BG_HEIGHT - 90;
-            GuiUtil.drawEntityOnScreen(x, y, 70,
+            GuiUtil.drawEntityOnScreen(x, y, 50,
                     -(mouseX - x), -(mouseY - y) - 40, (EntityTrainer) gym.getTrainerEntities().toArray()[page]);
 
             /**
@@ -116,6 +134,11 @@ public class GuiGymInfo extends GuiScreen {
                 guiPickPixelmon.enabled = true;
                 break;
             }
+            case 3: {
+                Minecraft.getMinecraft().displayGuiScreen(null);
+                iPixelmon.network.sendToServer(new PacketBattle(gym));
+                break;
+            }
         }
     }
 
@@ -137,9 +160,13 @@ public class GuiGymInfo extends GuiScreen {
         this.buttonList.add(new MCButton(2, (this.width - 55) / 2, (this.height - 20) / 2, 55,
                 "Claim Gym!", 4));
 
+        this.buttonList.add(new GuiButton(3, POS_X + ((BG_WIDTH - 50) / 2), POS_Y + BG_HEIGHT - 25,
+                50, 20, EnumChatFormatting.BOLD + "BATTLE"));
+
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;
 
+        this.buttonList.get(3).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(0).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(1).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(2).visible = gym.getTrainerEntities().isEmpty();

@@ -40,10 +40,9 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
-        System.out.println("CALLED");
         Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
         if (region == null) return;
-        System.out.println("CALLED1");
+
         // TODO: Test sub regions
         if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather) {
 //            SubRegion subRegion = region.getSubRegionAt(event.pos);

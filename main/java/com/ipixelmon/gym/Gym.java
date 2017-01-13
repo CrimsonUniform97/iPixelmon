@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,14 +51,14 @@ import java.util.*;
  * Defeating all the Pokemon at a gym: +50 Prestige on top of the individual bonuses
  */
 
-public class Gym implements Comparable<Gym>{
+public class Gym implements Comparable<Gym> {
 
-    private static final int[] LEVELS = {0, 2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000};
+    public static final int[] LEVELS = {0, 2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000};
 
     private UUID id, regionID;
     private EnumTeam team = EnumTeam.None;
     private Map<UUID, PixelmonData> trainers = Maps.newHashMap();
-    private List<BlockPos> seats = Lists.newArrayList();
+    private Map<BlockPos, Float> seats = Maps.newHashMap();
     private int prestige = 0;
     private Map<UUID, Integer> que = Maps.newHashMap();
     private BlockPos teleportPos;
@@ -98,7 +99,7 @@ public class Gym implements Comparable<Gym>{
 
     public int getLevel() {
         for (int i = LEVELS.length - 1; i > 0; i--) {
-            if (getPrestige() > LEVELS[i]) return i;
+            if (getPrestige() >= LEVELS[i]) return i;
         }
 
         return 0;
@@ -136,10 +137,12 @@ public class Gym implements Comparable<Gym>{
         return trainers;
     }
 
+    // TODO: May need to save as EntityPixelmon to save the moves and stuff, especially in pixelbay for
+    // TODO: when the pokemon is sold. Need to test and see if it syncs the moves in pixelbay
     public void addTrainer(UUID player, EntityPixelmon pixelmon) {
         List<String> trainers = Lists.newArrayList();
 
-        if(this.trainers.isEmpty()) {
+        if (this.trainers.isEmpty()) {
             setTeam(TeamMod.getPlayerTeam(player));
             updateColoredBlocks();
         }
@@ -163,15 +166,20 @@ public class Gym implements Comparable<Gym>{
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
     }
 
-    public List<BlockPos> getSeats() {
+    public Map<BlockPos, Float> getSeats() {
         return seats;
     }
 
-    public void addSeat(BlockPos pos) {
+    public void addSeat(BlockPos pos, float yaw) {
         List<String> seats = Lists.newArrayList();
-        this.seats.add(pos);
-        for (BlockPos b : this.seats) {
-            seats.add(b.getX() + ";" + b.getY() + ";" + b.getZ());
+
+        int direction = MathHelper.floor_double((double)(yaw * 4.0F / 360.0F) + 0.5D) & 3;
+
+        float[] numbers = new float[]{0, 90, 180, -90};
+
+        this.seats.put(pos, numbers[direction]);
+        for (BlockPos b : this.seats.keySet()) {
+            seats.add(b.getX() + ";" + b.getY() + ";" + b.getZ() + ";" + numbers[direction]);
         }
 
         setViaMySQL("seats", ArrayUtil.toString(seats.toArray(new String[seats.size()])));
@@ -180,8 +188,8 @@ public class Gym implements Comparable<Gym>{
     public void removeSeat(BlockPos pos) {
         List<String> seats = Lists.newArrayList();
         this.seats.remove(pos);
-        for (BlockPos b : this.seats) {
-            seats.add(b.getX() + ";" + b.getY() + ";" + b.getZ());
+        for (BlockPos b : this.seats.keySet()) {
+            seats.add(b.getX() + ";" + b.getY() + ";" + b.getZ() + ";" + this.seats.get(b));
         }
 
         setViaMySQL("seats", ArrayUtil.toString(seats.toArray(new String[seats.size()])));
@@ -196,12 +204,19 @@ public class Gym implements Comparable<Gym>{
     }
 
     public void setPrestige(int prestige) {
-        this.prestige = prestige;
+        int prevLevel = getLevel();
 
-        if (this.prestige < 0) {
-            this.prestige = 0;
-            setTeam(EnumTeam.None);
+        this.prestige = prestige;
+        this.prestige = this.prestige <0 ? 0 : this.prestige > LEVELS[LEVELS.length - 1] ? LEVELS[LEVELS.length - 1] : this.prestige;
+
+        int postLevel = getLevel();
+
+        if(postLevel < prevLevel) {
             removeTrainer((UUID) trainers.keySet().toArray()[trainers.size() - 1]);
+        }
+
+        if(trainers.isEmpty()) {
+            setTeam(EnumTeam.None);
         }
 
         setViaMySQL("prestige", String.valueOf(prestige));
@@ -221,7 +236,8 @@ public class Gym implements Comparable<Gym>{
         for (String s : array) {
             if (!s.isEmpty()) {
                 String[] data = s.split(";");
-                seats.add(new BlockPos(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                seats.put(new BlockPos(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2])),
+                        Float.parseFloat(data[3]));
             }
         }
     }
@@ -247,13 +263,13 @@ public class Gym implements Comparable<Gym>{
             for (int y = (int) bounds.minY; y < bounds.maxY; y++) {
                 for (int z = (int) bounds.minZ; z < bounds.maxZ; z++) {
                     pos = new BlockPos(x, y, z);
-                    if(world.getBlockState(pos) != null) {
+                    if (world.getBlockState(pos) != null) {
                         block = world.getBlockState(pos).getBlock();
 
-                        if(block == Blocks.wool) {
+                        if (block == Blocks.wool) {
                             world.setBlockState(pos, Blocks.wool.getDefaultState().withProperty(BlockCarpet.COLOR,
                                     getTeam().colorDye()));
-                        }else if (block == Blocks.stained_glass) {
+                        } else if (block == Blocks.stained_glass) {
                             world.setBlockState(pos, Blocks.stained_glass.getDefaultState().withProperty(BlockStainedGlass.COLOR,
                                     getTeam().colorDye()));
                         }
@@ -274,30 +290,33 @@ public class Gym implements Comparable<Gym>{
 
         int i = 0;
         for (UUID trainer : trainers.keySet()) {
-            EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(trainers.get(trainer).name, world);
-            trainers.get(trainer).updatePokemon(pixelmon.getEntityData());
-            EntityTrainer entityTrainer = new EntityTrainer(world, seats.get(i), trainer, pixelmon);
-            world.spawnEntityInWorld(entityTrainer);
-            trainerEntities.add(entityTrainer);
-            i++;
+            if(seats.size() > i) {
+                EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(trainers.get(trainer).name, world);
+                trainers.get(trainer).updatePokemon(pixelmon.getEntityData());
+                pixelmon.getLvl().setLevel(trainers.get(trainer).lvl);
+
+                EntityTrainer entityTrainer = new EntityTrainer(world, (BlockPos) seats.keySet().toArray()[i], trainer, pixelmon);
+
+                world.spawnEntityInWorld(entityTrainer);
+
+                entityTrainer.rotationYaw = (float) seats.values().toArray()[i];
+
+                trainerEntities.add(entityTrainer);
+                i++;
+            }
         }
     }
 
+    // TODO: Add que functionality.
     public void battle(EntityPlayerMP player) {
         List<TrainerParticipant> trainers = Lists.newArrayList();
         List<PlayerParticipant> players = Lists.newArrayList();
-// TODO: Make it to where player can claim gym...
+
         try {
             /**
              * Setup player pokemons
              */
-            List<int[]> ablePlayerPixelmons = PixelmonStorage.PokeballManager.getPlayerStorage(player).getAllAblePokemonIDs();
-            EntityPixelmon[] playerPixelmons = new EntityPixelmon[ablePlayerPixelmons.size()];
-            for (int i = 0; i < ablePlayerPixelmons.size(); i++) {
-                int[] id = ablePlayerPixelmons.get(i);
-                playerPixelmons[i] = PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(id, player.worldObj);
-            }
-            players.add(new PlayerParticipant(player, playerPixelmons));
+            players.add(new PlayerParticipant(player, PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj)));
 
             /**
              * Setup trainer pokemons
@@ -324,12 +343,12 @@ public class Gym implements Comparable<Gym>{
         UUID region = UUID.fromString(ByteBufUtils.readUTF8String(buf));
 
         Gym gym = new Gym(id, region);
-        gym.team =  EnumTeam.valueOf(ByteBufUtils.readUTF8String(buf));
+        gym.team = EnumTeam.valueOf(ByteBufUtils.readUTF8String(buf));
         gym.prestige = buf.readInt();
 
         int trainersSize = buf.readInt();
 
-        for(int i = 0; i < trainersSize; i++) {
+        for (int i = 0; i < trainersSize; i++) {
             String[] data = ByteBufUtils.readUTF8String(buf).split(";");
             gym.trainers.put(UUID.fromString(data[0]),
                     PixelmonAPI.pixelmonDataFromString(data[1]));
@@ -346,7 +365,7 @@ public class Gym implements Comparable<Gym>{
         buf.writeInt(prestige);
         buf.writeInt(trainers.size());
 
-        for(UUID id : trainers.keySet()) {
+        for (UUID id : trainers.keySet()) {
             ByteBufUtils.writeUTF8String(buf, id.toString() + ";" + PixelmonAPI.pixelmonDataToString(trainers.get(id)));
         }
     }

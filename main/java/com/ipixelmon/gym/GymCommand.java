@@ -67,7 +67,7 @@ public class GymCommand implements ICommand {
                 return;
             }
 
-            gym.addSeat(player.getPosition());
+            gym.addSeat(player.getPosition(), player.rotationYaw);
             player.addChatComponentMessage(new ChatComponentText("Seat added."));
         } else if (args[0].equalsIgnoreCase("delseat")) {
             if (gym == null) {
@@ -75,7 +75,7 @@ public class GymCommand implements ICommand {
                 return;
             }
 
-            if (!gym.getSeats().contains(player.getPosition())) {
+            if (!gym.getSeats().containsKey(player.getPosition())) {
                 player.addChatComponentMessage(new ChatComponentText("Seat not found."));
                 return;
             }

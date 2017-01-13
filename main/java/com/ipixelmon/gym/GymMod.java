@@ -3,9 +3,7 @@ package com.ipixelmon.gym;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.gym.client.ClientProxy;
-import com.ipixelmon.gym.packet.PacketClaimGymToServer;
-import com.ipixelmon.gym.packet.PacketOpenGymGuiToClient;
-import com.ipixelmon.gym.packet.PacketOpenGymGuiToServer;
+import com.ipixelmon.gym.packet.*;
 import com.ipixelmon.gym.server.BattleListenerThread;
 import com.ipixelmon.gym.server.ServerProxy;
 import com.ipixelmon.iPixelmon;
@@ -30,6 +28,8 @@ public class GymMod implements IMod {
         iPixelmon.registerPacket(PacketOpenGymGuiToClient.Handler.class, PacketOpenGymGuiToClient.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketOpenGymGuiToServer.Handler.class, PacketOpenGymGuiToServer.class, Side.SERVER);
         iPixelmon.registerPacket(PacketClaimGymToServer.Handler.class, PacketClaimGymToServer.class, Side.SERVER);
+        iPixelmon.registerPacket(EntityTrainerSyncPacket.Handler.class, EntityTrainerSyncPacket.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketBattle.Handler.class, PacketBattle.class, Side.SERVER);
     }
 
     @Override

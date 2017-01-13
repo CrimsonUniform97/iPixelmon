@@ -30,20 +30,13 @@ public class EntityTrainerRenderer extends RenderNPC {
         if (!(npc instanceof EntityTrainer)) return;
         EntityTrainer trainer = (EntityTrainer) npc;
 
-        if(trainer.getPlayerID() == null) {
-            trainer.loadData();
-            return;
-        }
+        if(trainer.getPlayerID() == null) return;
 
         if (com.pixelmonmod.pixelmon.client.ClientProxy.battleManager.battleEnded) {
             if (trainer.getPixelmon() != null) {
                 if(d == 0.0 && d1 == 0.0 && d2 == 0.0) return;
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(d, d1 + 1.3D, d2);
-
-                if (trainer.getPixelmon().baseStats.canSurf) {
-                    GlStateManager.translate(0.0F, 1.0F, 0.0F);
-                }
 
                 float scale = 0.05f;
                 GlStateManager.translate(scale, scale, scale);
