@@ -58,7 +58,7 @@ public class Gym implements Comparable<Gym> {
 
     private UUID id, regionID;
     private EnumTeam team = EnumTeam.None;
-    private Map<UUID, PixelmonData> trainers = Maps.newHashMap();
+    private Map<UUID, EntityPixelmon> trainers = Maps.newHashMap();
     private Map<BlockPos, Float> seats = Maps.newHashMap();
     private int prestige = 0;
     private Set<UUID> que = new TreeSet<>();
@@ -138,12 +138,10 @@ public class Gym implements Comparable<Gym> {
         updateColoredBlocks();
     }
 
-    public Map<UUID, PixelmonData> getTrainers() {
+    public Map<UUID, EntityPixelmon> getTrainers() {
         return trainers;
     }
 
-    // TODO: May need to save as EntityPixelmon to save the moves and stuff, especially in pixelbay for
-    // TODO: when the pokemon is sold. Need to test and see if it syncs the moves in pixelbay
     public void addTrainer(UUID player, EntityPixelmon pixelmon) {
         List<String> trainers = Lists.newArrayList();
 
@@ -152,9 +150,9 @@ public class Gym implements Comparable<Gym> {
             updateColoredBlocks();
         }
 
-        this.trainers.put(player, new PixelmonData(pixelmon));
+        this.trainers.put(player, pixelmon);
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonDataToString(this.trainers.get(p), pixelmon.getName()));
+            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -165,7 +163,7 @@ public class Gym implements Comparable<Gym> {
 
         this.trainers.remove(player);
         for (UUID p : this.trainers.keySet()) {
-            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonDataToString(this.trainers.get(p), this.trainers.get(p).name));
+            trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonToString(this.trainers.get(p)));
         }
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
@@ -261,7 +259,7 @@ public class Gym implements Comparable<Gym> {
             if (!s.isEmpty()) {
                 String[] data = s.split(";");
                 UUID player = UUID.fromString(data[0]);
-                trainers.put(player, PixelmonAPI.pixelmonDataFromString(data[1]));
+                trainers.put(player, PixelmonAPI.pixelmonFromString(data[1], getRegion().getWorld()));
             }
         }
     }
@@ -303,16 +301,9 @@ public class Gym implements Comparable<Gym> {
         int i = 0;
         for (UUID trainer : trainers.keySet()) {
             if (seats.size() > i) {
-                EntityPixelmon pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(trainers.get(trainer).name, world);
-                trainers.get(trainer).updatePokemon(pixelmon.getEntityData());
-                pixelmon.getLvl().setLevel(trainers.get(trainer).lvl);
-
-                EntityTrainer entityTrainer = new EntityTrainer(world, (BlockPos) seats.keySet().toArray()[i], trainer, pixelmon);
-
+                EntityTrainer entityTrainer = new EntityTrainer(world, (BlockPos) seats.keySet().toArray()[i], trainer, trainers.get(trainer));
                 world.spawnEntityInWorld(entityTrainer);
-
                 entityTrainer.rotationYaw = (float) seats.values().toArray()[i];
-
                 trainerEntities.add(entityTrainer);
                 i++;
             }
@@ -379,7 +370,7 @@ public class Gym implements Comparable<Gym> {
         for (int i = 0; i < trainersSize; i++) {
             String[] data = ByteBufUtils.readUTF8String(buf).split(";");
             gym.trainers.put(UUID.fromString(data[0]),
-                    PixelmonAPI.pixelmonDataFromString(data[1]));
+                    PixelmonAPI.pixelmonFromString(data[1], iPixelmon.proxy.getDefaultWorld()));
         }
 
         int seatsSize = buf.readInt();
@@ -400,7 +391,7 @@ public class Gym implements Comparable<Gym> {
         buf.writeInt(trainers.size());
 
         for (UUID id : trainers.keySet()) {
-            ByteBufUtils.writeUTF8String(buf, id.toString() + ";" + PixelmonAPI.pixelmonDataToString(trainers.get(id), trainers.get(id).name));
+            ByteBufUtils.writeUTF8String(buf, id.toString() + ";" + PixelmonAPI.pixelmonToString(trainers.get(id)));
         }
 
         buf.writeInt(getSeats().size());

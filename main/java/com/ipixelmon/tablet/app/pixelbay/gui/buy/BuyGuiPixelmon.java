@@ -23,7 +23,7 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
     public BuyGuiPixelmon(Object[] objects) {
         super(objects);
         this.pixelmonListing = (PixelmonListing) objects[0];
-        pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonListing.getPixelmonData(), true, this);
+        pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonListing.getPixelmon(), true, this);
         new Thread(pixelmonRenderer).start();
         details.add(EnumChatFormatting.YELLOW + "Seller: " + pixelmonListing.getPlayerName());
 
@@ -35,7 +35,7 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
     @Override
     public void drawObject(int mouseX, int mouseY, int dWheel, float partialTicks) {
         pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, screenBounds.getY() + 150, 50);
-        int[] bounds = PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmonData(), screenBounds.getX() - 7,
+        int[] bounds = PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmon(), screenBounds.getX() - 7,
                 screenBounds.getY() + 17, this.width, this.height);
 
         int width = bounds[0];

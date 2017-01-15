@@ -3,11 +3,11 @@ package com.ipixelmon.util;
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.PixelmonMethods;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Add;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
@@ -16,10 +16,8 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
 import com.pixelmonmod.pixelmon.enums.*;
-import com.pixelmonmod.pixelmon.storage.ComputerBox;
-import com.pixelmonmod.pixelmon.storage.PCServer;
-import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
-import com.pixelmonmod.pixelmon.storage.PlayerStorage;
+import com.pixelmonmod.pixelmon.listener.EntityPlayerExtension;
+import com.pixelmonmod.pixelmon.storage.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -49,9 +46,29 @@ public class PixelmonAPI {
 
     // TODO: Update everything to the new AI
 
+    public static PixelmonData entityToData(EntityPixelmon pixelmon) {
+        NBTTagCompound n = new NBTTagCompound();
+        pixelmon.writeToNBT(n);
+        n.setString("id", "Pixelmon");
+        n.setBoolean("IsInBall", true);
+        n.setBoolean("IsShiny", pixelmon.getIsShiny());
+        if (pixelmon.getHeldItem() != null) {
+            n.setTag("HeldItem", pixelmon.getHeldItem().getTagCompound());
+        }
+
+//        PlayerStorage.addToParty()
+
+//        n.func_74768_a("PixelmonOrder", this.getNextOpen());
+//        this.partyPokemon[this.getNextOpen()] = n;
+        if (pixelmon.getHealth() > 0.0F) {
+            n.setBoolean("IsFainted", false);
+        }
+
+        return new PixelmonData(n);
+    }
+
     public static String pixelmonToString(EntityPixelmon p) {
         NBTTagCompound n = new NBTTagCompound();
-        p.func_70014_b(n);
         p.writeToNBT(n);
         n.setString("id", p.getPokemonName());
         n.setBoolean("IsInBall", true);
@@ -84,11 +101,11 @@ public class PixelmonAPI {
         return stack;
     }
 
-    public static double getCP(PixelmonData pixelmon) {
-        double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.lvl);
-        double Stamina = (pixelmon.getBaseStats().speed + pixelmon.Speed) * TotalBpMultiplier;
-        double Attack = (pixelmon.getBaseStats().attack + pixelmon.Attack) * TotalBpMultiplier;
-        double Defense = (pixelmon.getBaseStats().defence + pixelmon.Defence) * TotalBpMultiplier;
+    public static double getCP(EntityPixelmon pixelmon) {
+        double TotalBpMultiplier = 0.095 * Math.sqrt(pixelmon.getLvl().getLevel());
+        double Stamina = (pixelmon.baseStats.speed + pixelmon.stats.Speed) * TotalBpMultiplier;
+        double Attack = (pixelmon.baseStats.attack + pixelmon.stats.Attack) * TotalBpMultiplier;
+        double Defense = (pixelmon.baseStats.defence + pixelmon.stats.Defence) * TotalBpMultiplier;
         return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
     }
 
@@ -107,11 +124,23 @@ public class PixelmonAPI {
             return UpdateCurrency.playerMoney;
         }
 
-        public static List<PixelmonData> getPixelmon(boolean fromPokeBalls) {
+        public static List<EntityPixelmon> getPixelmon(boolean fromPokeBalls) {
             List<PixelmonData> pixelmon = new ArrayList<>(Arrays.asList(ServerStorageDisplay.pokemon));
             pixelmon.removeAll(Collections.singleton(null));
 
-            return pixelmon;
+            List<EntityPixelmon> entityPixelmons = Lists.newArrayList();
+
+            for (PixelmonData pixelmonData : pixelmon) {
+                EntityPixelmon entityPixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name, iPixelmon.proxy.getDefaultWorld());
+                NBTTagCompound tagCompound = new NBTTagCompound();
+                entityPixelmon.writeToNBT(tagCompound);
+                pixelmonData.updatePokemon(tagCompound);
+                entityPixelmon.readFromNBT(tagCompound);
+                entityPixelmon.setPokemonId(pixelmonData.pokemonID);
+                entityPixelmons.add(entityPixelmon);
+            }
+
+            return entityPixelmons;
         }
 
         public static final void renderPokeDollar(Minecraft mc, int x, int y, int scale, int color) {
@@ -123,7 +152,7 @@ public class PixelmonAPI {
                 float alpha = (float) (color >> 24 & 255) / 255.0F;
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
                 GlStateManager.color(red, blue, green, 1);
-                mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id,"textures/gui/pokedollar.png"));
+                mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id, "textures/gui/pokedollar.png"));
                 int width = 6;
                 int height = 10;
                 GuiHelper.drawImageQuad(x, y, width * scale, height * scale, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
@@ -131,52 +160,45 @@ public class PixelmonAPI {
             glPopAttrib();
         }
 
-        public static void renderPixelmon2D(PixelmonData pixelmon, int x, int y, int width, int height) {
+        public static void renderPixelmon2D(EntityPixelmon pixelmon, int x, int y, int width, int height) {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
-            GuiHelper.bindPokemonSprite(pixelmon, Minecraft.getMinecraft());
+            GuiHelper.bindPokemonSprite(PixelmonAPI.entityToData(pixelmon), Minecraft.getMinecraft());
             GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         }
 
-        public static PixelmonRenderer renderPixelmon3D(PixelmonData pixelmon, boolean spin, GuiScreen screen) {
+        public static PixelmonRenderer renderPixelmon3D(EntityPixelmon pixelmon, boolean spin, GuiScreen screen) {
             return new PixelmonRenderer(pixelmon, spin, screen);
         }
 
-        public static int[] renderPixelmonTip(PixelmonData pixelmon, int x, int y, int width, int height) {
+        public static int[] renderPixelmonTip(EntityPixelmon pixelmon, int x, int y, int width, int height) {
+            PixelmonData pixelmonData = PixelmonAPI.entityToData(pixelmon);
+
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
             List<String> pixelmonInfo = new ArrayList<>();
-            pixelmonInfo.add(pixelmon.name);
+            pixelmonInfo.add(pixelmonData.name);
             pixelmonInfo.add("");
-            pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmon.lvl);
-            pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
-            float half = PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 2;
-            float third = PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 3;
-            float health = PixelmonAPI.getPixelmonHealth(pixelmon);
+            pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmonData.lvl);
+            pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmonData.xp + "/" + pixelmonData.nextLvlXP);
+            float half = pixelmonData.HP / 2;
+            float third = pixelmonData.HP / 3;
+            float health = pixelmonData.HP;
             EnumChatFormatting healthColor = health <= half ? EnumChatFormatting.RED : health <= third ?
                     EnumChatFormatting.GOLD : EnumChatFormatting.GREEN;
-            pixelmonInfo.add(healthColor + "HP: " + PixelmonAPI.getPixelmonHealth(pixelmon) + "/" +
-                    PixelmonAPI.getPixelmonMaxHealth(pixelmon));
+            pixelmonInfo.add(healthColor + "HP: " + pixelmonData.health + "/" + pixelmonData.HP);
             pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
             return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
         }
 
-
         public static class PixelmonRenderer implements Runnable {
-            private EntityPixelmon entityPixelmon;
+            private EntityPixelmon pixelmon;
             private boolean spin, countDown;
             private float partialTicks, spinCount;
             private RenderPixelmon renderPixelmon;
             private GuiScreen screen;
 
-            public PixelmonRenderer(PixelmonData pixelmon, boolean spin, GuiScreen screen) {
-                entityPixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmon.name, Minecraft.getMinecraft().theWorld);
-                entityPixelmon.getLvl().setLevel(pixelmon.lvl);
-                entityPixelmon.setIsShiny(pixelmon.isShiny);
-                entityPixelmon.setForm(pixelmon.form, true);
-                if (pixelmon.heldItem != null)
-                    entityPixelmon.setHeldItem(pixelmon.heldItem);
-                entityPixelmon.gender = pixelmon.gender;
-                entityPixelmon.setGrowth(pixelmon.growth);
+            public PixelmonRenderer(EntityPixelmon pixelmon, boolean spin, GuiScreen screen) {
+                this.pixelmon = pixelmon;
                 renderPixelmon = new RenderPixelmon(Minecraft.getMinecraft().getRenderManager());
                 this.spin = spin;
                 this.screen = screen;
@@ -210,23 +232,24 @@ public class PixelmonAPI {
                 }
             }
 
+            // TODO: Fix spin
             public void render(int x, int y, float scale) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(x, y, 400.0F);
-                float width = entityPixelmon.widthDiff / 2;
-                float height = entityPixelmon.heightDiff / 2;
+                float width = pixelmon.widthDiff / 2;
+                float height = pixelmon.heightDiff / 2;
                 GlStateManager.translate(width, height, 0.0F);
                 GlStateManager.scale(scale, scale, scale);
                 GlStateManager.rotate(180, 1, 0, 0);
                 GlStateManager.rotate(spinCount, 0, 1, 0);
 
-                if (entityPixelmon.baseStats.canSurf) {
+                if (pixelmon.baseStats.canSurf) {
                     GlStateManager.translate(0.0F, 1.0F, 0.0F);
                 }
 
                 GlStateManager.translate(-width, -height, 0.0F);
                 GuiUtil.setBrightness(0.5F, 0.8F, 0.8F);
-                renderPixelmon.renderPixelmon(entityPixelmon, 0, 0, 0, 0, partialTicks, false);
+                renderPixelmon.renderPixelmon(pixelmon, 0, 0, 0, 0, partialTicks, false);
                 GlStateManager.popMatrix();
                 RenderHelper.disableStandardItemLighting();
             }

@@ -2,6 +2,7 @@ package com.ipixelmon;
 
 import com.ipixelmon.mysql.MySQLHandler;
 import lib.PatPeter.SQLibrary.MySQL;
+import net.minecraft.world.World;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -26,5 +27,7 @@ public abstract class CommonProxy {
     public final Config getConfig() {
         return new Config(new File(iPixelmon.path, "config.txt"));
     }
+
+    public World getDefaultWorld() { return null; }
 
 }

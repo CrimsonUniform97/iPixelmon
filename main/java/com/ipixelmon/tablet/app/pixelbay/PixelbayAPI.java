@@ -86,9 +86,9 @@ public class PixelbayAPI {
                 NBTTagCompound tagCompound;
                 UUID uuid;
                 while (result.next()) {
-                    tagCompound = NBTUtil.fromString(result.getString("pixelmonData"));
                     uuid = UUID.fromString(result.getString("player"));
-                    EntityPixelmon pixelmon = PixelmonAPI.getPokemonEntity(tagCompound, MinecraftServer.getServer().getEntityWorld());
+                    EntityPixelmon pixelmon = PixelmonAPI.pixelmonFromString(result.getString("pixelmonData"),
+                            MinecraftServer.getServer().getEntityWorld());
                     pixelmonListings.add(new PixelmonListing(uuid, UUIDManager.getPlayerName(uuid),
                             result.getInt("price"), pixelmon));
                 }
@@ -157,7 +157,7 @@ public class PixelbayAPI {
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
             insertForm.add("pixelmonName", pixelmon.getName());
-            insertForm.add("pixelmonData", PixelmonAPI.getNBT(pixelmon).toString());
+            insertForm.add("pixelmonData", PixelmonAPI.pixelmonToString(pixelmon));
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 

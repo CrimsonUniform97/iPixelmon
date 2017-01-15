@@ -48,10 +48,10 @@ public class GuiPixelmonListingList extends IScrollListWithDesign {
                         + (hasEnough ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + pixelmonListing.getPrice(),
                 x + width + 16, getObjectHeight(index) - 12, 0xFFFFFF);
 
-        PixelmonAPI.Client.renderPixelmon2D(pixelmonListing.getPixelmonData(), x - 5, y - 12, width + 16, height + 16);
+        PixelmonAPI.Client.renderPixelmon2D(pixelmonListing.getPixelmon(), x - 5, y - 12, width + 16, height + 16);
 
         if (mouseX >= x && mouseX <= x + width + 5 && mouseY >= y && mouseY <= y + height) {
-            PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmonData(), mouseX, mouseY, this.width, this.height);
+            PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmon(), mouseX, mouseY, this.width, this.height);
         }
     }
 

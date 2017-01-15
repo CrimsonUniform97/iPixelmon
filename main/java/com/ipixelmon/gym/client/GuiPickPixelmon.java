@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -20,7 +21,7 @@ public abstract class GuiPickPixelmon extends Gui {
     private int POS_X, POS_Y;
 
     private List<PixelmonAPI.Client.PixelmonRenderer> pixelmonRendererList = Lists.newArrayList();
-    private List<PixelmonData> pixelmonDataList = Lists.newArrayList();
+    private List<EntityPixelmon> pixelmonList = Lists.newArrayList();
     private int page = 0;
     private GuiButton left, right, select;
     private GuiScreen parent;
@@ -28,11 +29,11 @@ public abstract class GuiPickPixelmon extends Gui {
 
     public GuiPickPixelmon(GuiScreen parent) {
         this.parent = parent;
-        pixelmonDataList = PixelmonAPI.Client.getPixelmon(true);
+        pixelmonList = PixelmonAPI.Client.getPixelmon(true);
 
         PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
-        for (PixelmonData pixelmonData : pixelmonDataList) {
-            pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, parent);
+        for (EntityPixelmon pixelmon : pixelmonList) {
+            pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmon, true, parent);
             pixelmonRendererList.add(pixelmonRenderer);
             new Thread(pixelmonRenderer).start();
         }
@@ -54,7 +55,7 @@ public abstract class GuiPickPixelmon extends Gui {
          */
         if (!pixelmonRendererList.isEmpty()) {
             pixelmonRendererList.get(page).render(parent.width / 2, POS_Y + BG_HEIGHT - 40, 50);
-            PixelmonAPI.Client.renderPixelmonTip(pixelmonDataList.get(page), POS_X, POS_Y + 24, parent.width, parent.height);
+            PixelmonAPI.Client.renderPixelmonTip(pixelmonList.get(page), POS_X, POS_Y + 24, parent.width, parent.height);
         }
 
         left.drawButton(mc, mouseX, mouseY);
@@ -68,9 +69,9 @@ public abstract class GuiPickPixelmon extends Gui {
         if (left.mousePressed(mc, mouseX, mouseY)) {
             page = page - 1 < 0 ? 0 : page - 1;
         } else if (right.mousePressed(mc, mouseX, mouseY)) {
-            page = page + 1 >= pixelmonDataList.size() ? pixelmonDataList.size() - 1 : page + 1;
+            page = page + 1 >= pixelmonList.size() ? pixelmonList.size() - 1 : page + 1;
         } else if (select.mousePressed(mc, mouseX, mouseY)) {
-            onSelect(pixelmonDataList.get(page));
+            onSelect(pixelmonList.get(page));
         }
     }
 
@@ -86,16 +87,16 @@ public abstract class GuiPickPixelmon extends Gui {
         select = new GuiButton(2, POS_X + ((BG_WIDTH - 50) / 2), POS_Y + BG_HEIGHT - 25,
                 50, 20, "Select");
 
-        left.enabled = !pixelmonDataList.isEmpty();
-        right.enabled = !pixelmonDataList.isEmpty();
-        select.enabled = !pixelmonDataList.isEmpty();
+        left.enabled = !pixelmonList.isEmpty();
+        right.enabled = !pixelmonList.isEmpty();
+        select.enabled = !pixelmonList.isEmpty();
     }
 
     public void updateScreen() {
         left.enabled = !(page <= 0);
-        right.enabled = !(page >= pixelmonDataList.size() - 1);
-        select.enabled = !pixelmonDataList.get(page).isFainted;
+        right.enabled = !(page >= pixelmonList.size() - 1);
+        select.enabled = !pixelmonList.get(page).isFainted;
     }
 
-    public abstract void onSelect(PixelmonData pixelmonData);
+    public abstract void onSelect(EntityPixelmon pixelmon);
 }

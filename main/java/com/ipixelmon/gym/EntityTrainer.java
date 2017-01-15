@@ -94,9 +94,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     public void readFromNBT(NBTTagCompound tagCompund) {
         super.readFromNBT(tagCompund);
         if(pixelmon == null) {
-            pixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(tagCompund.getString("pixelmonName"), worldObj);
-            PixelmonData pixelmonData = PixelmonAPI.pixelmonDataFromString(tagCompund.getString("pixelmon"));
-            pixelmonData.updatePokemon(pixelmon.getEntityData());
+            pixelmon = PixelmonAPI.pixelmonFromString(tagCompund.getString("pixelmon"), worldObj);
             playerName = tagCompund.getString("playerName");
             playerID = UUID.fromString(tagCompund.getString("playerID"));
         }
@@ -105,8 +103,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @Override
     public void writeToNBT(NBTTagCompound tagCompund) {
         super.writeToNBT(tagCompund);
-        tagCompund.setString("pixelmonName", pixelmon.getName());
-        tagCompund.setString("pixelmon", PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon), pixelmon.getName()));
+        tagCompund.setString("pixelmon", PixelmonAPI.pixelmonToString(pixelmon));
         tagCompund.setString("playerName", playerName);
         tagCompund.setString("playerID", playerID.toString());
     }

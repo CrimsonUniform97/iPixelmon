@@ -1,5 +1,8 @@
 package com.ipixelmon;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,4 +26,8 @@ public final class ServerProxy extends CommonProxy {
         for(CommonProxy proxy : proxies) proxy.init();
     }
 
+    @Override
+    public World getDefaultWorld() {
+        return MinecraftServer.getServer().getEntityWorld();
+    }
 }

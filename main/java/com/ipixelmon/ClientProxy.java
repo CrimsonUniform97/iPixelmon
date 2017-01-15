@@ -1,8 +1,10 @@
 package com.ipixelmon;
 
 import lib.PatPeter.SQLibrary.SQLite;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 
@@ -44,4 +46,8 @@ public final class ClientProxy extends CommonProxy {
 
     }
 
+    @Override
+    public World getDefaultWorld() {
+        return Minecraft.getMinecraft().theWorld;
+    }
 }

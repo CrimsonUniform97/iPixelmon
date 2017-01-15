@@ -21,6 +21,8 @@ public class SkinUtil {
     private static final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
     private static final File skinCacheDir = new File("skinCache");
 
+    // TODO: Delete all cached skins once game ends
+
     public static ResourceLocation loadSkin(UUID playerid) {
         final ResourceLocation resourcelocation = new ResourceLocation("skins/" + playerid.toString() + ".png");
         ITextureObject itextureobject = textureManager.getTexture(resourcelocation);

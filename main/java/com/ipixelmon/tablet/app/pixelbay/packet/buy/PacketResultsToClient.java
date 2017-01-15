@@ -54,7 +54,7 @@ public class PacketResultsToClient implements IMessage {
             this.pixelmons = Lists.newArrayList();
 
             for(int i = 0; i < size; i++) {
-                this.pixelmons.add(PixelmonListing.fromBytes(buf, Side.CLIENT));
+                this.pixelmons.add(PixelmonListing.fromBytes(buf));
             }
         }
     }
@@ -73,7 +73,7 @@ public class PacketResultsToClient implements IMessage {
             buf.writeInt(pixelmons.size());
 
             for (PixelmonListing pixelmonListing : pixelmons) {
-                pixelmonListing.toBytes(buf, Side.SERVER);
+                pixelmonListing.toBytes(buf);
             }
         }
     }

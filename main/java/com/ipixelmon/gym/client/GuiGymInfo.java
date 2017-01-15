@@ -41,17 +41,15 @@ public class GuiGymInfo extends GuiScreen {
 
         PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
         for (UUID id : gym.getTrainers().keySet()) {
-            PixelmonData pixelmonData = gym.getTrainers().get(id);
-            EntityPixelmon entityPixelmon = (EntityPixelmon) PixelmonEntityList.createEntityByName(pixelmonData.name,
-                    Minecraft.getMinecraft().theWorld);
-            pixelmonData.updatePokemon(entityPixelmon.getEntityData());
+
+            EntityPixelmon entityPixelmon = gym.getTrainers().get(id);
 
             EntityTrainer entityTrainer = new EntityTrainer(Minecraft.getMinecraft().theWorld,
                     Minecraft.getMinecraft().thePlayer.getPosition(), id, entityPixelmon);
 
             gym.getTrainerEntities().add(entityTrainer);
 
-            renderers.put(entityTrainer.getPlayerID(), pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, this));
+            renderers.put(entityTrainer.getPlayerID(), pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(entityPixelmon, true, this));
             new Thread(pixelmonRenderer).start();
         }
     }
@@ -103,8 +101,7 @@ public class GuiGymInfo extends GuiScreen {
              */
             PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer = renderers.get(entityTrainer.getPlayerID());
             pixelmonRenderer.render((this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 30);
-            PixelmonAPI.Client.renderPixelmonTip((PixelmonData) gym.getTrainers().values().toArray()[page], POS_X,
-                    POS_Y + 24, this.width, this.height);
+            PixelmonAPI.Client.renderPixelmonTip(entityTrainer.getPixelmon(), POS_X, POS_Y + 24, this.width, this.height);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -183,8 +180,8 @@ public class GuiGymInfo extends GuiScreen {
 
         guiPickPixelmon = new GuiPickPixelmon(this) {
             @Override
-            public void onSelect(PixelmonData pixelmonData) {
-                iPixelmon.network.sendToServer(new PacketJoinGym(gym.getID(), pixelmonData.pokemonID));
+            public void onSelect(EntityPixelmon pixelmonData) {
+                iPixelmon.network.sendToServer(new PacketJoinGym(gym.getID(), pixelmonData.getPokemonId()));
             }
         };
 

@@ -30,7 +30,7 @@ public class PacketPurchaseResponse implements IMessage {
         if(isItem) {
             object = ItemListing.fromBytes(buf);
         } else {
-            object = PixelmonListing.fromBytes(buf, Side.CLIENT);
+            object = PixelmonListing.fromBytes(buf);
         }
     }
 
@@ -40,7 +40,7 @@ public class PacketPurchaseResponse implements IMessage {
         if(isItem) {
             ((ItemListing) object).toBytes(buf);
         } else {
-            ((PixelmonListing) object).toBytes(buf, Side.SERVER);
+            ((PixelmonListing) object).toBytes(buf);
         }
     }
 

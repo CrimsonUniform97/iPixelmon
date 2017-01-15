@@ -3,7 +3,7 @@ package com.ipixelmon.tablet.app.pixelbay.gui.sell;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.app.pixelbay.packet.sell.PacketSellPixelmon;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 
 import java.io.IOException;
 
@@ -12,13 +12,13 @@ import java.io.IOException;
  */
 public class SellGuiPixelmon extends SellGuiPopup {
 
-    private PixelmonData pixelmonData;
+    private EntityPixelmon pixelmon;
     private PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
 
     public SellGuiPixelmon(Object[] objects) {
         super(objects);
-        pixelmonData = (PixelmonData) objects[0];
-        pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, this);
+        pixelmon = (EntityPixelmon) objects[0];
+        pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmon, true, this);
         new Thread(pixelmonRenderer).start();
     }
 
@@ -26,7 +26,7 @@ public class SellGuiPixelmon extends SellGuiPopup {
     public void drawObject(int mouseX, int mouseY, float partialTicks) {
         this.amountField.setText("1");
         pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, priceField.yPosition - 2, 50);
-        PixelmonAPI.Client.renderPixelmonTip(pixelmonData, screenBounds.getX() - 7, screenBounds.getY() + 17, this.width, this.height);
+        PixelmonAPI.Client.renderPixelmonTip(pixelmon, screenBounds.getX() - 7, screenBounds.getY() + 17, this.width, this.height);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SellGuiPixelmon extends SellGuiPopup {
 
     @Override
     public void doSale() {
-        iPixelmon.network.sendToServer(new PacketSellPixelmon(pixelmonData.pokemonID, Integer.parseInt(priceField.getText())));
+        iPixelmon.network.sendToServer(new PacketSellPixelmon(pixelmon.getPokemonId(), Integer.parseInt(priceField.getText())));
     }
 
 }

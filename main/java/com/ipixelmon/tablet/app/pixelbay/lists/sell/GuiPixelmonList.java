@@ -4,6 +4,7 @@ import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGuiPixelmon;
 import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class GuiPixelmonList extends IScrollListWithDesign {
 
-    private List<PixelmonData> pixelmon;
+    private List<EntityPixelmon> pixelmon;
 
     public GuiPixelmonList(int xPosition, int yPosition, int width, int height) {
         super(xPosition, yPosition, width, height);

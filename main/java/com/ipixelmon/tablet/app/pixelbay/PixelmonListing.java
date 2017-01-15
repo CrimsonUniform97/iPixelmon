@@ -4,6 +4,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.util.ItemUtil;
+import com.ipixelmon.util.NBTUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
@@ -30,7 +31,6 @@ public class PixelmonListing {
     private String playerName;
     private int price;
     private EntityPixelmon pixelmon;
-    private PixelmonData pixelmonData;
 
     public PixelmonListing(UUID player, String playerName, int price, EntityPixelmon pixelmon) {
         this.player = player;
@@ -55,61 +55,30 @@ public class PixelmonListing {
         return pixelmon;
     }
 
-    @Nullable
-    public PixelmonData getPixelmonData() {
-        return pixelmonData;
-    }
-
-    public void toBytes(ByteBuf buf, Side side) {
+    public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, player.toString() + "," + playerName);
         buf.writeInt(price);
-        ByteBufUtils.writeUTF8String(buf, PixelmonAPI.getNBT(pixelmon).toString());
-
-        if (side == Side.SERVER) {
-            pixelmonData = new PixelmonData(pixelmon);
-            pixelmonData.encodeInto(buf);
-        }
+        ByteBufUtils.writeUTF8String(buf, PixelmonAPI.pixelmonToString(pixelmon));
     }
 
-    public static PixelmonListing fromBytes(ByteBuf buf, Side side) {
+    public static PixelmonListing fromBytes(ByteBuf buf) {
         String[] data = ByteBufUtils.readUTF8String(buf).split(",");
         UUID player = UUID.fromString(data[0]);
         String playerName = data[1];
+
         int price = buf.readInt();
-        NBTTagCompound tagCompound = PixelmonAPI.nbtFromString(ByteBufUtils.readUTF8String(buf));
 
-        EntityPixelmon entityPixelmon;
+        EntityPixelmon pixelmon = PixelmonAPI.pixelmonFromString(ByteBufUtils.readUTF8String(buf), iPixelmon.proxy.getDefaultWorld());
 
-        if (side == Side.CLIENT) {
-            entityPixelmon = doItClient(tagCompound);
-        } else {
-            entityPixelmon = doItServer(tagCompound);
-        }
-
-        PixelmonData pixelmonData = new PixelmonData();
-        if(side == Side.CLIENT) {
-            pixelmonData.decodeInto(buf);
-        }
-        PixelmonListing pixelmonListing = new PixelmonListing(player, playerName, price, entityPixelmon);
-        pixelmonListing.pixelmonData = pixelmonData;
+        PixelmonListing pixelmonListing = new PixelmonListing(player, playerName, price, pixelmon);
         return pixelmonListing;
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static EntityPixelmon doItClient(NBTTagCompound tagCompound) {
-        return PixelmonAPI.getPokemonEntity(tagCompound, Minecraft.getMinecraft().theWorld);
-    }
-
-    @SideOnly(Side.SERVER)
-    private static EntityPixelmon doItServer(NBTTagCompound tagCompound) {
-        return PixelmonAPI.getPokemonEntity(tagCompound, MinecraftServer.getServer().getEntityWorld());
     }
 
     public boolean confirmListing() {
         ResultSet result = iPixelmon.mysql.query("SELECT * FROM tabletPixelmon WHERE " +
                 "player='" + player.toString() + "' AND " +
                 "price='" + price + "' AND " +
-                "pixelmonData='" + PixelmonAPI.getNBT(pixelmon).toString() + "';");
+                "pixelmonData='" + PixelmonAPI.pixelmonToString(pixelmon) + "';");
 
         try {
             return result.next();
@@ -124,7 +93,7 @@ public class PixelmonListing {
         iPixelmon.mysql.delete(Tablet.class, new DeleteForm("Pixelmon")
                 .add("player", player.toString())
                 .add("price", price)
-                .add("pixelmonData", PixelmonAPI.getNBT(pixelmon).toString()));
+                .add("pixelmonData", PixelmonAPI.pixelmonToString(pixelmon)));
     }
 
 }

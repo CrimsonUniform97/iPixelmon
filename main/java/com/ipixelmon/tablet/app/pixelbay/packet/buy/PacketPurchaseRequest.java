@@ -47,7 +47,7 @@ public class PacketPurchaseRequest implements IMessage{
         if(isItem) {
             object = ItemListing.fromBytes(buf);
         } else {
-            object = PixelmonListing.fromBytes(buf, Side.SERVER);
+            object = PixelmonListing.fromBytes(buf);
         }
     }
 
@@ -57,7 +57,7 @@ public class PacketPurchaseRequest implements IMessage{
         if(isItem) {
             ((ItemListing) object).toBytes(buf);
         } else {
-            ((PixelmonListing) object).toBytes(buf, Side.CLIENT);
+            ((PixelmonListing) object).toBytes(buf);
         }
     }
 
@@ -86,11 +86,16 @@ public class PacketPurchaseRequest implements IMessage{
             } else {
                 PixelmonListing pixelmonListing = (PixelmonListing) message.object;
 
-                if(!pixelmonListing.confirmListing()) return null;
+                if(!pixelmonListing.confirmListing()) {
+                    pixelmonListing.deleteListing();
+                    return null;
+                }
 
                 if(balance < pixelmonListing.getPrice()) return null;
 
                 EntityPixelmon entityPixelmon = pixelmonListing.getPixelmon();
+
+                pixelmonListing.deleteListing();
 
                 entityPixelmon.caughtBall = EnumPokeballs.PokeBall;
                 entityPixelmon.friendship.initFromCapture();
@@ -104,8 +109,6 @@ public class PacketPurchaseRequest implements IMessage{
 
                 PixelmonAPI.Server.takeMoney(player.getUniqueID(), pixelmonListing.getPrice());
                 PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), pixelmonListing.getPrice());
-
-                pixelmonListing.deleteListing();
             }
             return null;
         }

@@ -82,8 +82,8 @@ public class PixelmonListener {
 
             List<PixelmonWrapper> pokemon = event.trainer.getBattleController().getActivePokemon();
 
-            double playerPokemonCP = PixelmonAPI.getCP(new PixelmonData(pokemon.get(0).pokemon));
-            double trainerPokemonCP = PixelmonAPI.getCP(new PixelmonData(pokemon.get(1).pokemon));
+            double playerPokemonCP = PixelmonAPI.getCP(pokemon.get(0).pokemon);
+            double trainerPokemonCP = PixelmonAPI.getCP(pokemon.get(1).pokemon);
 
             if (gym.getTeam() == TeamMod.getPlayerTeam(event.player.getUniqueID())) {
                 gym.setPrestige(gym.getPrestige() + (trainerPokemonCP <= playerPokemonCP ? 100 : 500));
