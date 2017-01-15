@@ -52,7 +52,15 @@ public class LandControlAPI {
         }
 
         public static Region getRegion(UUID id) {
-            for(Region region : regions) if(region.getID().equals(id)) return region;
+            for(Region region : regions) {
+                if(region.getID().equals(id)) {
+                    return region;
+                }
+
+                for(SubRegion subRegion : region.getSubRegions()) {
+                    if(subRegion.getID().equals(id)) return subRegion;
+                }
+            }
 
             return null;
         }
@@ -60,7 +68,11 @@ public class LandControlAPI {
         public static Region getRegionAt(World world, BlockPos pos) {
             for (Region region : LandControlAPI.Server.regions) {
                 if(region.getWorld().equals(world)) {
-                    if (region.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) {
+                    Vec3 vec3 = new Vec3(pos.getX(), pos.getY(), pos.getZ());
+                    if (region.getBounds().isVecInside(vec3)) {
+                        for(SubRegion subRegion : region.getSubRegions()) {
+                            if(subRegion.getBounds().isVecInside(vec3)) return subRegion;
+                        }
                         return region;
                     }
                 }
@@ -102,6 +114,7 @@ public class LandControlAPI {
 
             Region region;
             regions.add(region = new Region(id));
+            region.init();
 
             return region;
         }
@@ -122,17 +135,28 @@ public class LandControlAPI {
                 }
             }
 
+            System.out.println("BOOM");
+
             /**
              * Did not find a parent region
              */
             if (parentRegion == null) return null;
 
+            System.out.println("Parent Region found.");
+
+            System.out.println(parentRegion.getSubRegions().size());
+
             for (SubRegion subRegion : parentRegion.getSubRegions()) {
                 /**
                  * Overlaps another SubRegion
                  */
-                if (subRegion.getBounds().intersectsWith(bounds)) return null;
+                if (subRegion.getBounds().intersectsWith(bounds)) {
+                    System.out.println("Intersects");
+                    return null;
+                }
             }
+
+            System.out.println("Doesn't intersect");
 
             UUID id = UUID.randomUUID();
 
@@ -141,6 +165,7 @@ public class LandControlAPI {
             insertForm.add("owner", parentRegion.getOwner().toString());
             insertForm.add("parentID", parentRegion.getID().toString());
             insertForm.add("members", ArrayUtil.toString(new String[]{}));
+            insertForm.add("world", parentRegion.getWorld().getWorldInfo().getWorldName());
 
             insertForm.add("min", ArrayUtil.toString(new String[]{
                     String.valueOf(minPos.getX()),
@@ -156,8 +181,9 @@ public class LandControlAPI {
 
             iPixelmon.mysql.insert(LandControl.class, insertForm);
 
-            SubRegion region;
-            parentRegion.getSubRegions().add(region = new SubRegion(parentRegion.getID(), id));
+            SubRegion region = new SubRegion(parentRegion.getID(), id);
+            region.init();
+            parentRegion.getSubRegions().add(region);
 
             return region;
         }
@@ -204,8 +230,11 @@ public class LandControlAPI {
 
             ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class, new SelectionForm("Regions"));
             try {
-                while (result.next())
-                    regions.add(new Region(UUID.fromString(result.getString("id"))));
+                Region region;
+                while (result.next()) {
+                    regions.add(region = new Region(UUID.fromString(result.getString("id"))));
+                    region.init();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }

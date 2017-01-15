@@ -22,10 +22,17 @@ public class SubRegion extends Region {
 
     @Override
     protected ResultSet getResult() {
+        System.out.println("CADADWDAD");
+        System.out.println(parentID == null);
         ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class,
                 new SelectionForm("SubRegions").where("parentID", parentID.toString()).where("id", id.toString()));
 
         return result;
+    }
+
+    @Override
+    protected ResultSet getResultSubRegions() {
+        return null;
     }
 
     @Override

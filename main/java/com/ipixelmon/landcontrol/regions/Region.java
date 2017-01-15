@@ -47,7 +47,9 @@ public class Region implements Comparable<Region> {
 
     public Region(UUID id) {
         this.id = id;
+    }
 
+    public void init() {
         ResultSet result = getResult();
 
         try {
@@ -70,7 +72,7 @@ public class Region implements Comparable<Region> {
                 owner = UUID.fromString(result.getString("owner"));
                 world = result.getString("world");
 
-                for(EnumRegionProperty propertyType : EnumRegionProperty.values())
+                for (EnumRegionProperty propertyType : EnumRegionProperty.values())
                     properties.put(propertyType, result.getBoolean(propertyType.name()));
             }
 
@@ -78,8 +80,13 @@ public class Region implements Comparable<Region> {
              * Init SubRegions
              */
             ResultSet subRegionResult = getResultSubRegions();
-            while (subRegionResult.next()) {
-                subRegions.add(new SubRegion(id, UUID.fromString(subRegionResult.getString("id"))));
+
+            if (subRegionResult != null) {
+                SubRegion subRegion;
+                while (subRegionResult.next()) {
+                    subRegions.add(subRegion = new SubRegion(id, UUID.fromString(subRegionResult.getString("id"))));
+                    subRegion.init();
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,7 +116,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getEnterMsg() {
-        if(enterMsg.equalsIgnoreCase("null")) return null;
+        if (enterMsg.equalsIgnoreCase("null")) return null;
         return enterMsg;
     }
 
@@ -119,7 +126,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getLeaveMsg() {
-        if(leaveMsg.equalsIgnoreCase("null")) return null;
+        if (leaveMsg.equalsIgnoreCase("null")) return null;
         return leaveMsg;
     }
 
@@ -135,14 +142,14 @@ public class Region implements Comparable<Region> {
     public void addMember(UUID id) {
         members.add(id);
         List<String> membersArray = Lists.newArrayList();
-        for(UUID uuid : members) membersArray.add(uuid.toString());
+        for (UUID uuid : members) membersArray.add(uuid.toString());
         setViaMySQL("members", ArrayUtil.toString(membersArray.toArray(new String[membersArray.size()])));
     }
 
     public void removeMember(UUID id) {
         members.remove(id);
         List<String> membersArray = Lists.newArrayList();
-        for(UUID uuid : members) membersArray.add(uuid.toString());
+        for (UUID uuid : members) membersArray.add(uuid.toString());
         setViaMySQL("members", ArrayUtil.toString(membersArray.toArray(new String[membersArray.size()])));
     }
 
@@ -186,21 +193,23 @@ public class Region implements Comparable<Region> {
 
     @SideOnly(Side.SERVER)
     public World getWorld() {
-        for(World w : MinecraftServer.getServer().worldServers) {
-            if(w.getWorldInfo().getWorldName().equals(world)) return w;
+        for (World w : MinecraftServer.getServer().worldServers) {
+            if (w.getWorldInfo().getWorldName().equals(world)) return w;
         }
         return null;
     }
 
-    public String getWorldName() { return world; }
+    public String getWorldName() {
+        return world;
+    }
 
     public UUID getID() {
         return id;
     }
 
     public SubRegion getSubRegionAt(BlockPos pos) {
-        for(SubRegion subRegion : getSubRegions()) {
-            if(subRegion.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) return subRegion;
+        for (SubRegion subRegion : getSubRegions()) {
+            if (subRegion.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) return subRegion;
         }
         return null;
     }
@@ -212,7 +221,7 @@ public class Region implements Comparable<Region> {
         return result;
     }
 
-    private ResultSet getResultSubRegions() {
+    protected ResultSet getResultSubRegions() {
         ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class,
                 new SelectionForm("SubRegions").where("parentID", id.toString()));
 
@@ -234,7 +243,7 @@ public class Region implements Comparable<Region> {
 
     public void toBytes(ByteBuf buf) {
         // write all properties
-        for(EnumRegionProperty property : EnumRegionProperty.values()) {
+        for (EnumRegionProperty property : EnumRegionProperty.values()) {
             buf.writeByte(property.ordinal());
             buf.writeBoolean(getProperty(property));
         }
@@ -255,7 +264,7 @@ public class Region implements Comparable<Region> {
 
         // write members
         buf.writeInt(members.size());
-        for(UUID member : members) {
+        for (UUID member : members) {
             ByteBufUtils.writeUTF8String(buf, member.toString());
             ByteBufUtils.writeUTF8String(buf, UUIDManager.getPlayerName(member));
         }
@@ -268,7 +277,7 @@ public class Region implements Comparable<Region> {
     public static Region fromBytes(ByteBuf buf) {
         Region region = new Region();
 
-        for(EnumRegionProperty property : EnumRegionProperty.values()) {
+        for (EnumRegionProperty property : EnumRegionProperty.values()) {
             region.properties.put(EnumRegionProperty.fromOrdinal(buf.readByte()), buf.readBoolean());
         }
 
@@ -281,7 +290,7 @@ public class Region implements Comparable<Region> {
         region.max = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
         int membersSize = buf.readInt();
-        for(int i = 0; i < membersSize; i++) {
+        for (int i = 0; i < membersSize; i++) {
             region.membersMapClient.put(UUID.fromString(ByteBufUtils.readUTF8String(buf)), ByteBufUtils.readUTF8String(buf));
         }
 

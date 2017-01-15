@@ -46,11 +46,15 @@ public class CommandRegion extends CommandBase {
             System.out.println(LandControlAPI.Server.regions.size());
             // TODO: Test
             if(LandControlAPI.Server.getRegionAt(player.worldObj, center) != null) {
+                System.out.println("AHA1");
                 SubRegion s = LandControlAPI.Server.createSubRegion(min, max);
                 if(s != null) {
+                    System.out.println("AHA");
                     s.setOwner(player.getUniqueID());
                     player.addChatComponentMessage(new ChatComponentText("SubRegion created."));
                     return;
+                } else {
+                    player.addChatComponentMessage(new ChatComponentText("Region could not be created."));
                 }
             } else {
                 Region r = LandControlAPI.Server.createRegion(player.worldObj, min, max);
