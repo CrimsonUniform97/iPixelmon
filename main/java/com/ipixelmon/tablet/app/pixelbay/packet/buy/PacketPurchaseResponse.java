@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Created by colby on 1/4/2017.
@@ -29,7 +30,7 @@ public class PacketPurchaseResponse implements IMessage {
         if(isItem) {
             object = ItemListing.fromBytes(buf);
         } else {
-            object = PixelmonListing.fromBytes(buf);
+            object = PixelmonListing.fromBytes(buf, Side.CLIENT);
         }
     }
 
@@ -39,7 +40,7 @@ public class PacketPurchaseResponse implements IMessage {
         if(isItem) {
             ((ItemListing) object).toBytes(buf);
         } else {
-            ((PixelmonListing) object).toBytes(buf);
+            ((PixelmonListing) object).toBytes(buf, Side.SERVER);
         }
     }
 

@@ -106,7 +106,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     public void writeToNBT(NBTTagCompound tagCompund) {
         super.writeToNBT(tagCompund);
         tagCompund.setString("pixelmonName", pixelmon.getName());
-        tagCompund.setString("pixelmon", PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon)));
+        tagCompund.setString("pixelmon", PixelmonAPI.pixelmonDataToString(new PixelmonData(pixelmon), pixelmon.getName()));
         tagCompund.setString("playerName", playerName);
         tagCompund.setString("playerID", playerID.toString());
     }

@@ -100,6 +100,7 @@ public class GymCommand implements ICommand {
             player.addChatComponentMessage(new ChatComponentText("Spawned."));
         }
     }
+// TODO: Add permissions
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {

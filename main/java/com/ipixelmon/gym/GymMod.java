@@ -27,7 +27,7 @@ public class GymMod implements IMod {
         EntityRegistry.registerModEntity(EntityTrainer.class, "entityTrainer", 489, iPixelmon.instance, 80, 3, false);
         iPixelmon.registerPacket(PacketOpenGymGuiToClient.Handler.class, PacketOpenGymGuiToClient.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketOpenGymGuiToServer.Handler.class, PacketOpenGymGuiToServer.class, Side.SERVER);
-        iPixelmon.registerPacket(PacketClaimGymToServer.Handler.class, PacketClaimGymToServer.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketJoinGym.Handler.class, PacketJoinGym.class, Side.SERVER);
         iPixelmon.registerPacket(EntityTrainerSyncPacket.Handler.class, EntityTrainerSyncPacket.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketBattle.Handler.class, PacketBattle.class, Side.SERVER);
     }

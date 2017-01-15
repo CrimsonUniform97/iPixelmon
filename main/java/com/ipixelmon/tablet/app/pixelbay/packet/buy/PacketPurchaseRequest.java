@@ -5,16 +5,25 @@ import com.ipixelmon.tablet.app.pixelbay.ItemListing;
 import com.ipixelmon.tablet.app.pixelbay.PixelmonListing;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.Pixelmon;
+import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Add;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
+import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PCServer;
+import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
+import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Created by colby on 1/4/2017.
@@ -38,7 +47,7 @@ public class PacketPurchaseRequest implements IMessage{
         if(isItem) {
             object = ItemListing.fromBytes(buf);
         } else {
-            object = PixelmonListing.fromBytes(buf);
+            object = PixelmonListing.fromBytes(buf, Side.SERVER);
         }
     }
 
@@ -48,7 +57,7 @@ public class PacketPurchaseRequest implements IMessage{
         if(isItem) {
             ((ItemListing) object).toBytes(buf);
         } else {
-            ((PixelmonListing) object).toBytes(buf);
+            ((PixelmonListing) object).toBytes(buf, Side.CLIENT);
         }
     }
 
@@ -81,7 +90,17 @@ public class PacketPurchaseRequest implements IMessage{
 
                 if(balance < pixelmonListing.getPrice()) return null;
 
-                Pixelmon.network.sendTo(new Add(pixelmonListing.getPixelmon()), player);
+                EntityPixelmon entityPixelmon = pixelmonListing.getPixelmon();
+
+                entityPixelmon.caughtBall = EnumPokeballs.PokeBall;
+                entityPixelmon.friendship.initFromCapture();
+
+                try {
+                    PixelmonStorage.PokeballManager.getPlayerStorage(player).addToParty(entityPixelmon);
+                } catch (PlayerNotLoadedException e) {
+                    e.printStackTrace();
+                    return null;
+                }
 
                 PixelmonAPI.Server.takeMoney(player.getUniqueID(), pixelmonListing.getPrice());
                 PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), pixelmonListing.getPrice());

@@ -13,6 +13,7 @@ import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,8 +50,6 @@ public class PixelbayAPI {
                 query = "SELECT * FROM tabletItems ORDER BY price ASC LIMIT " + (page * maxResults) + "," + maxResults + ";";
             }
 
-            System.out.println(query);
-
             ResultSet result = iPixelmon.mysql.query(query);
 
             List<ItemListing> items = Lists.newArrayList();
@@ -71,11 +70,12 @@ public class PixelbayAPI {
         }
 
         public static List<PixelmonListing> getPixelmonForSale(int page, String searchFor) {
+
             String query = "SELECT * FROM tabletPixelmon WHERE pixelmonName LIKE '%" + searchFor + "%' " +
-                    "LIMIT " + (page * maxResults) + "," + maxResults + ";";
+                    "ORDER BY price LIMIT " + (page * maxResults) + "," + maxResults + ";";
 
             if(searchFor == null || searchFor.isEmpty()) {
-                query = "SELECT * FROM tabletPixelmon LIMIT " + (page * maxResults) + "," + maxResults + ";";
+                query = "SELECT * FROM tabletPixelmon ORDER BY price ASC LIMIT " + (page * maxResults) + "," + maxResults + ";";
             }
 
             ResultSet result = iPixelmon.mysql.query(query);
@@ -88,10 +88,9 @@ public class PixelbayAPI {
                 while (result.next()) {
                     tagCompound = NBTUtil.fromString(result.getString("pixelmonData"));
                     uuid = UUID.fromString(result.getString("player"));
-                    PixelmonData pixelmonData = new PixelmonData(tagCompound);
-                    pixelmonData.name = result.getString("pixelmonName");
+                    EntityPixelmon pixelmon = PixelmonAPI.getPokemonEntity(tagCompound, MinecraftServer.getServer().getEntityWorld());
                     pixelmonListings.add(new PixelmonListing(uuid, UUIDManager.getPlayerName(uuid),
-                            result.getInt("price"), pixelmonData));
+                            result.getInt("price"), pixelmon));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -153,12 +152,12 @@ public class PixelbayAPI {
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 
-        public static void postPixelmon(UUID player, PixelmonData pixelmonData, int price) {
+        public static void postPixelmon(UUID player, EntityPixelmon pixelmon, int price) {
             InsertForm insertForm = new InsertForm("Pixelmon");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);
-            insertForm.add("pixelmonName", pixelmonData.name);
-            insertForm.add("pixelmonData", PixelmonAPI.pixelmonDataToString(pixelmonData));
+            insertForm.add("pixelmonName", pixelmon.getName());
+            insertForm.add("pixelmonData", PixelmonAPI.getNBT(pixelmon).toString());
             iPixelmon.mysql.insert(Tablet.class, insertForm);
         }
 

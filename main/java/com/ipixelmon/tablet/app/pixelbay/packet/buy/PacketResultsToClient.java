@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class PacketResultsToClient implements IMessage {
             this.pixelmons = Lists.newArrayList();
 
             for(int i = 0; i < size; i++) {
-                this.pixelmons.add(PixelmonListing.fromBytes(buf));
+                this.pixelmons.add(PixelmonListing.fromBytes(buf, Side.CLIENT));
             }
         }
     }
@@ -72,7 +73,7 @@ public class PacketResultsToClient implements IMessage {
             buf.writeInt(pixelmons.size());
 
             for (PixelmonListing pixelmonListing : pixelmons) {
-                pixelmonListing.toBytes(buf);
+                pixelmonListing.toBytes(buf, Side.SERVER);
             }
         }
     }

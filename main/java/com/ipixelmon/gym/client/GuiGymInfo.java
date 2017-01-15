@@ -1,10 +1,10 @@
 package com.ipixelmon.gym.client;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.ipixelmon.gym.EntityTrainer;
 import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.packet.PacketBattle;
-import com.ipixelmon.gym.packet.PacketClaimGymToServer;
+import com.ipixelmon.gym.packet.PacketJoinGym;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.util.PixelmonAPI;
@@ -16,13 +16,13 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class GuiGymInfo extends GuiScreen {
@@ -31,8 +31,8 @@ public class GuiGymInfo extends GuiScreen {
     private static final int BG_HEIGHT = 234, BG_WIDTH = 256;
     private int POS_X, POS_Y;
     private int page = 0;
-    private List<PixelmonAPI.Client.PixelmonRenderer> pixelmonRendererList = Lists.newArrayList();
     private GuiPickPixelmon guiPickPixelmon;
+    private Map<UUID, PixelmonAPI.Client.PixelmonRenderer> renderers = Maps.newHashMap();
 
     private Gym gym;
 
@@ -46,11 +46,12 @@ public class GuiGymInfo extends GuiScreen {
                     Minecraft.getMinecraft().theWorld);
             pixelmonData.updatePokemon(entityPixelmon.getEntityData());
 
-            gym.getTrainerEntities().add(new EntityTrainer(Minecraft.getMinecraft().theWorld,
-                    Minecraft.getMinecraft().thePlayer.getPosition(), id, entityPixelmon));
+            EntityTrainer entityTrainer = new EntityTrainer(Minecraft.getMinecraft().theWorld,
+                    Minecraft.getMinecraft().thePlayer.getPosition(), id, entityPixelmon);
 
-            pixelmonRendererList.add(pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(gym.getTrainers().get(id),
-                    true, this));
+            gym.getTrainerEntities().add(entityTrainer);
+
+            renderers.put(entityTrainer.getPlayerID(), pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmonData, true, this));
             new Thread(pixelmonRenderer).start();
         }
     }
@@ -92,13 +93,16 @@ public class GuiGymInfo extends GuiScreen {
              */
             int x = (this.width / 2) - 30;
             int y = POS_Y + BG_HEIGHT - 90;
-            GuiUtil.drawEntityOnScreen(x, y, 50,
-                    -(mouseX - x), -(mouseY - y) - 40, (EntityTrainer) gym.getTrainerEntities().toArray()[page]);
+
+            EntityTrainer entityTrainer = (EntityTrainer) gym.getTrainerEntities().toArray()[page];
+
+            GuiUtil.drawEntityOnScreen(x, y, 50, -(mouseX - x), -(mouseY - y) - 40, entityTrainer);
 
             /**
              * Draw pokemon
              */
-            pixelmonRendererList.get(page).render((this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 30);
+            PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer = renderers.get(entityTrainer.getPlayerID());
+            pixelmonRenderer.render((this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 30);
             PixelmonAPI.Client.renderPixelmonTip((PixelmonData) gym.getTrainers().values().toArray()[page], POS_X,
                     POS_Y + 24, this.width, this.height);
         }
@@ -139,10 +143,12 @@ public class GuiGymInfo extends GuiScreen {
                 iPixelmon.network.sendToServer(new PacketBattle(gym));
                 break;
             }
+            case 4: {
+                guiPickPixelmon.enabled = true;
+                break;
+            }
         }
     }
-
-    // TODO: Start battle
 
     @Override
     public void initGui() {
@@ -162,19 +168,23 @@ public class GuiGymInfo extends GuiScreen {
 
         this.buttonList.add(new GuiButton(3, POS_X + ((BG_WIDTH - 50) / 2), POS_Y + BG_HEIGHT - 25,
                 50, 20, EnumChatFormatting.BOLD + "BATTLE"));
+        this.buttonList.add(new GuiButton(4, POS_X + (BG_WIDTH - 45), POS_Y + BG_HEIGHT - 25,
+                40, 20, EnumChatFormatting.BOLD + "JOIN!"));
 
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;
+        this.buttonList.get(4).enabled = false;
 
-        this.buttonList.get(3).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(0).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(1).visible = !gym.getTrainerEntities().isEmpty();
         this.buttonList.get(2).visible = gym.getTrainerEntities().isEmpty();
+        this.buttonList.get(3).visible = !gym.getTrainerEntities().isEmpty();
+        this.buttonList.get(4).visible = !gym.getTrainerEntities().isEmpty();
 
         guiPickPixelmon = new GuiPickPixelmon(this) {
             @Override
             public void onSelect(PixelmonData pixelmonData) {
-                iPixelmon.network.sendToServer(new PacketClaimGymToServer(gym.getID(), pixelmonData.pokemonID));
+                iPixelmon.network.sendToServer(new PacketJoinGym(gym.getID(), pixelmonData.pokemonID));
             }
         };
 
@@ -187,6 +197,7 @@ public class GuiGymInfo extends GuiScreen {
         guiPickPixelmon.updateScreen();
         this.buttonList.get(0).enabled = !(page <= 0);
         this.buttonList.get(1).enabled = !(page >= gym.getTrainers().size() - 1);
+        this.buttonList.get(4).enabled = gym.getAvailableSeats() > 0 && !gym.getTrainers().containsKey(mc.thePlayer.getUniqueID());
     }
 
     private class MCButton extends GuiButton {

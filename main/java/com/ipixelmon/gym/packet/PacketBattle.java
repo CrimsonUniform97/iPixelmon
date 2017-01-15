@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -49,6 +50,12 @@ public class PacketBattle implements IMessage {
             MinecraftServer.getServer().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
+
+                    if(message.gym.getQue().contains(player.getUniqueID())) {
+                        player.addChatComponentMessage(new ChatComponentText("You are already in que."));
+                        return;
+                    }
+
                     message.gym.battle(player);
                 }
             });

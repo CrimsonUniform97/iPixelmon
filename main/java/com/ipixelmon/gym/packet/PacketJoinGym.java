@@ -2,15 +2,16 @@ package com.ipixelmon.gym.packet;
 
 import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.GymAPI;
-import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
+import com.ipixelmon.team.EnumTeam;
+import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,15 +19,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.UUID;
 
-public class PacketClaimGymToServer implements IMessage{
+public class PacketJoinGym implements IMessage{
 
     private UUID gymID;
     private int[] pixelmonID;
 
-    public PacketClaimGymToServer() {
+    public PacketJoinGym() {
     }
 
-    public PacketClaimGymToServer(UUID gymID, int[] pixelmonID) {
+    public PacketJoinGym(UUID gymID, int[] pixelmonID) {
         this.gymID = gymID;
         this.pixelmonID = pixelmonID;
     }
@@ -46,20 +47,27 @@ public class PacketClaimGymToServer implements IMessage{
         buf.writeInt(pixelmonID[1]);
     }
 
-    public static class Handler implements IMessageHandler<PacketClaimGymToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketJoinGym, IMessage> {
 
         @Override
-        public IMessage onMessage(PacketClaimGymToServer message, MessageContext ctx) {
+        public IMessage onMessage(PacketJoinGym message, MessageContext ctx) {
             Gym gym = GymAPI.Server.getGym(message.gymID);
             if(gym == null) return null;
 
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+
+            if(gym.getTeam() != EnumTeam.None && TeamMod.getPlayerTeam(player.getUniqueID()) != gym.getTeam()) {
+                player.addChatComponentMessage(new ChatComponentText("You are not a " + gym.getTeam().name() + " member."));
+                return null;
+            }
 
             if(PixelmonAPI.Server.getPixelmon(player, true).size() == 1) return null;
 
             try {
                 EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
                         .getPokemon(message.pixelmonID, player.worldObj);
+
+                if(gym.getAvailableSeats() <= 0) return null;
 
                 gym.addTrainer(player.getUniqueID(), entityPixelmon);
 

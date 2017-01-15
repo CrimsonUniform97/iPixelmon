@@ -3,6 +3,7 @@ package com.ipixelmon.util;
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.pixelmonmod.pixelmon.Pixelmon;
+import com.pixelmonmod.pixelmon.PixelmonMethods;
 import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
@@ -28,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -44,6 +46,31 @@ import static org.lwjgl.opengl.GL11.*;
  * Created by colby on 12/31/2016.
  */
 public class PixelmonAPI {
+
+    // TODO: Update everything to the new AI
+
+    public static String pixelmonToString(EntityPixelmon p) {
+        NBTTagCompound n = new NBTTagCompound();
+        p.func_70014_b(n);
+        p.writeToNBT(n);
+        n.setString("id", p.getPokemonName());
+        n.setBoolean("IsInBall", true);
+        n.setBoolean("IsShiny", p.getIsShiny());
+        return n.toString();
+    }
+
+    public static EntityPixelmon pixelmonFromString(String s, World worldObj) {
+        NBTTagCompound n = NBTUtil.fromString(s);
+        if (n != null) {
+            n.setFloat("FallDistance", 0.0F);
+            n.setBoolean("IsInBall", false);
+            EntityPixelmon e = (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(n, worldObj);
+            e.playerOwned = true;
+            return e;
+        }
+
+        return null;
+    }
 
     public static final ItemStack makePokemonItem(final EnumPokemon pokemon) {
         final ItemStack stack = new ItemStack(PixelmonItems.itemPixelmonSprite);
@@ -64,31 +91,6 @@ public class PixelmonAPI {
         double Defense = (pixelmon.getBaseStats().defence + pixelmon.Defence) * TotalBpMultiplier;
         return Math.max(10, Math.floor(Math.pow(Stamina, 0.5) * Attack * Math.pow(Defense, 0.5) / 10));
     }
-
-    public static String entityPixelmonToString(EntityPixelmon pixelmon) {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        pixelmon.writeToNBT(tagCompound);
-        return tagCompound.toString();
-    }
-
-    public static EntityPixelmon entityPixelmonFromString(String s, World world) {
-        return (EntityPixelmon) PixelmonEntityList.createEntityFromNBT(NBTUtil.fromString(s), world);
-    }
-
-    public static PixelmonData pixelmonDataFromString(String str) {
-        NBTTagCompound tagCompound = NBTUtil.fromString(str);
-        PixelmonData pixelmonData = new PixelmonData(tagCompound);
-        pixelmonData.name = tagCompound.getString("name");
-        return pixelmonData;
-    }
-
-    public static String pixelmonDataToString(PixelmonData pixelmonData) {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        pixelmonData.updatePokemon(tagCompound);
-        tagCompound.setString("name", pixelmonData.name);
-        return tagCompound.toString();
-    }
-
 
     public static int getPixelmonMaxHealth(PixelmonData pixelmonData) {
         return pixelmonData.HP;
@@ -121,7 +123,7 @@ public class PixelmonAPI {
                 float alpha = (float) (color >> 24 & 255) / 255.0F;
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
                 GlStateManager.color(red, blue, green, 1);
-                mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id + ":pixelbay/textures/gui/pokedollar.png"));
+                mc.getTextureManager().bindTexture(new ResourceLocation(iPixelmon.id,"textures/gui/pokedollar.png"));
                 int width = 6;
                 int height = 10;
                 GuiHelper.drawImageQuad(x, y, width * scale, height * scale, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
@@ -147,8 +149,8 @@ public class PixelmonAPI {
             pixelmonInfo.add("");
             pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmon.lvl);
             pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmon.xp + "/" + pixelmon.nextLvlXP);
-            float half =PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 2;
-            float third =PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 3;
+            float half = PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 2;
+            float third = PixelmonAPI.getPixelmonMaxHealth(pixelmon) / 3;
             float health = PixelmonAPI.getPixelmonHealth(pixelmon);
             EnumChatFormatting healthColor = health <= half ? EnumChatFormatting.RED : health <= third ?
                     EnumChatFormatting.GOLD : EnumChatFormatting.GREEN;

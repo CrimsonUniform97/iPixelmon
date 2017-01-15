@@ -5,6 +5,7 @@ import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.regions.EnterRegionEvent;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.PixelmonAPI;
+import com.ipixelmon.util.PlayerUtil;
 import com.pixelmonmod.pixelmon.api.events.*;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
@@ -12,6 +13,7 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -88,6 +90,18 @@ public class PixelmonListener {
             } else {
                 gym.setPrestige(gym.getPrestige() - 500);
             }
+
+            gym.getQue().remove(event.player.getUniqueID());
+
+            EntityPlayerMP player = PlayerUtil.getPlayer(gym.getNextInQue());
+
+            while(player == null && !gym.getQue().isEmpty()) {
+                gym.getQue().remove(gym.getNextInQue());
+                player = PlayerUtil.getPlayer(gym.getNextInQue());
+            }
+
+            if(player != null) gym.battle(player);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
