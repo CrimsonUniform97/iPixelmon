@@ -108,6 +108,29 @@ public class PixelmonListener {
     }
 
     @SubscribeEvent
+    public void onLose(LostToTrainerEvent event) {
+        if (!(event.trainer instanceof EntityTrainer)) return;
+
+        try {
+            Gym gym = GymAPI.Server.getGym(event.trainer.getPosition());
+
+            gym.getQue().remove(event.player.getUniqueID());
+
+            EntityPlayerMP player = PlayerUtil.getPlayer(gym.getNextInQue());
+
+            while(player == null && !gym.getQue().isEmpty()) {
+                gym.getQue().remove(gym.getNextInQue());
+                player = PlayerUtil.getPlayer(gym.getNextInQue());
+            }
+
+            if(player != null) gym.battle(player);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
     public void onTick(TickEvent.WorldTickEvent event) {
         for(Gym gym : GymAPI.Server.gyms) {
             if(gym.getRegion().getWorld().equals(event.world)) {

@@ -40,9 +40,11 @@ public class RegionGui extends GuiScreen {
     private ColorPopupWindow colorPopupWindow = new ColorPopupWindow();
 
     private Region region;
+    private boolean isSubRegion;
 
-    public RegionGui(Region region) {
+    public RegionGui(Region region, boolean isSubRegion) {
         this.region = region;
+        this.isSubRegion = isSubRegion;
     }
 
     @Override
@@ -141,7 +143,7 @@ public class RegionGui extends GuiScreen {
                 + region.getMin().getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 56, 0xFFFFFF);
         fontRendererObj.drawStringWithShadow("Max: " + region.getMax().getX() + ", " + region.getMax().getY() + ", "
                 + region.getMax().getZ(), POS_X + 10, POS_Y + BG_HEIGHT - 43, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Region Type: " + ((region instanceof SubRegion) ? "SubRegion" : "Region"),
+        fontRendererObj.drawStringWithShadow("Region Type: " + (isSubRegion ? "SubRegion" : "Region"),
                 POS_X + 10, POS_Y + BG_HEIGHT - 30, 0xFFFFFF);
         fontRendererObj.drawStringWithShadow("Owner: " + region.ownerNameClient, POS_X + 10,
                 POS_Y + BG_HEIGHT - 17, 0xFFFFFF);

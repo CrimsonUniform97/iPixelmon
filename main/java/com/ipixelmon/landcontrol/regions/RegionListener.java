@@ -1,6 +1,5 @@
 package com.ipixelmon.landcontrol.regions;
 
-import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.regions.packet.PacketOpenRegionGui;
@@ -9,17 +8,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.List;
+import java.util.Iterator;
 
-/**
- * Created by colby on 1/8/2017.
- */
 public class RegionListener {
 
     @SubscribeEvent
@@ -43,12 +41,10 @@ public class RegionListener {
         Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
         if (region == null) return;
 
-        // TODO: Test sub regions
         if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather) {
             SubRegion subRegion = region.getSubRegionAt(event.pos);
             if (subRegion != null) {
                 iPixelmon.network.sendTo(new PacketOpenRegionGui(subRegion), (EntityPlayerMP) event.entityPlayer);
-                System.out.println("CALLED");
             } else {
                 iPixelmon.network.sendTo(new PacketOpenRegionGui(region), (EntityPlayerMP) event.entityPlayer);
             }
@@ -81,34 +77,53 @@ public class RegionListener {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.PlayerTickEvent event) {
-        // TODO: May send exit message twice...
-        for (Region region : LandControlAPI.Server.regions) {
-            List<EntityPlayer> toRemove = Lists.newArrayList();
-            for (EntityPlayer player : region.playersInside) {
-                if (!region.getBounds().isVecInside(player.getPositionVector())) {
-                    toRemove.add(player);
-                    if (region.getLeaveMsg() != null) {
-                        player.addChatComponentMessage(new ChatComponentText(region.getLeaveMsg()));
-                        LandControlAPI.Server.EVENT_BUS.post(new ExitRegionEvent((EntityPlayerMP) player, region));
-                    }
-                }
-            }
-
-            region.playersInside.removeAll(toRemove);
-        }
-
-        Region region = LandControlAPI.Server.getRegionAt(event.player.worldObj, event.player.getPosition());
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        EntityPlayer player = event.player;
+        World world = event.player.getEntityWorld();
+        Region region = LandControlAPI.Server.getRegionAt(world, player.getPosition());
 
         if (region == null) return;
 
-        if (!region.playersInside.contains(event.player)) {
-            if (region.getEnterMsg() != null) {
-                event.player.addChatComponentMessage(new ChatComponentText(region.getEnterMsg()));
-                LandControlAPI.Server.EVENT_BUS.post(new EnterRegionEvent((EntityPlayerMP) event.player, region));
+        if (region.getEnterMsg() == null || region.getEnterMsg().isEmpty()) return;
+
+        if (region.playersInside.contains(player)) return;
+        region.playersInside.add(player);
+        player.addChatComponentMessage(new ChatComponentText(region.getEnterMsg()));
+    }
+
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        // go through all regions
+        for (Region r : LandControlAPI.Server.regions) {
+            for (SubRegion s : r.getSubRegions()) {
+                if (doLeave(s)) break;
             }
-            region.playersInside.add(event.player);
+
+            doLeave(r);
         }
+    }
+
+    private boolean doLeave(Region r) {
+        // check if it has a leave message
+        if (r.getLeaveMsg() != null && !r.getLeaveMsg().isEmpty()) {
+            // get players that are inside the region
+            Iterator<EntityPlayer> iterator = r.playersInside.listIterator();
+            // loop through the players
+            while (iterator.hasNext()) {
+                EntityPlayer p = iterator.next();
+
+                // check if the player is inside the region
+                if (p.getEntityWorld() != r.getWorld() ||
+                        !r.getBounds().isVecInside(new Vec3(p.getPosition().getX(), p.getPosition().getY(), p.getPosition().getZ()))) {
+                    // if not remove the player and send the leave message
+                    p.addChatComponentMessage(new ChatComponentText(r.getLeaveMsg()));
+                    iterator.remove();
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 }

@@ -3,7 +3,9 @@ package com.ipixelmon.tablet.app.pixelbay.gui.sell;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.tablet.app.pixelbay.packet.sell.PacketSellPixelmon;
 import com.ipixelmon.util.PixelmonAPI;
+import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.io.IOException;
 
@@ -13,19 +15,19 @@ import java.io.IOException;
 public class SellGuiPixelmon extends SellGuiPopup {
 
     private EntityPixelmon pixelmon;
-    private PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
+    private float pixelmonDisplayRotY = 0.0F;
 
     public SellGuiPixelmon(Object[] objects) {
         super(objects);
         pixelmon = (EntityPixelmon) objects[0];
-        pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmon, true, this);
-        new Thread(pixelmonRenderer).start();
     }
 
     @Override
     public void drawObject(int mouseX, int mouseY, float partialTicks) {
         this.amountField.setText("1");
-        pixelmonRenderer.render(screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, priceField.yPosition - 2, 50);
+
+        PixelmonAPI.Client.renderPixelmon3D(pixelmon,screenBounds.getX() + (screenBounds.getWidth() / 2) - 5,
+                priceField.yPosition - 2, 40.0F, pixelmonDisplayRotY += 0.66F, this);
         PixelmonAPI.Client.renderPixelmonTip(pixelmon, screenBounds.getX() - 7, screenBounds.getY() + 17, this.width, this.height);
     }
 

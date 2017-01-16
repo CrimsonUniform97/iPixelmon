@@ -38,23 +38,16 @@ public class FriendsAPI {
     @SideOnly(Side.SERVER)
     public static class Server {
 
-        public static boolean storeFriendRequest(FriendRequest friendRequest) {
+        public static void storeFriendRequest(FriendRequest friendRequest) throws Exception {
             SelectionForm selectionForm = new SelectionForm("FriendRequests");
             selectionForm.where("sender", friendRequest.getSenderUUID().toString());
             selectionForm.where("receiver", friendRequest.getReceiverUUID().toString());
             ResultSet result = iPixelmon.mysql.selectAllFrom(Tablet.class, selectionForm);
 
-            try {
-                if (result.next()) {
-                    return false;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
+            if (result.next()) throw new Exception("Friend request already pending.");
 
             if (areFriends(friendRequest.getSenderUUID(), friendRequest.getReceiverUUID())) {
-                return false;
+                throw new Exception("Already friends.");
             }
 
             InsertForm insertForm = new InsertForm("FriendRequests");
@@ -62,7 +55,6 @@ public class FriendsAPI {
             insertForm.add("receiver", friendRequest.getReceiverUUID().toString());
 
             iPixelmon.mysql.insert(Tablet.class, insertForm);
-            return true;
         }
 
         public static boolean makeFriends(FriendRequest friendRequest) {
@@ -188,9 +180,9 @@ public class FriendsAPI {
         public Friend get(Friend friend) {
             Friend f;
             Object[] array = toArray();
-            for(int i = 0; i < size(); i++) {
+            for (int i = 0; i < size(); i++) {
                 f = (Friend) array[i];
-                if(f.compareTo(friend) == 0) return f;
+                if (f.compareTo(friend) == 0) return f;
             }
 
             return null;
@@ -198,7 +190,7 @@ public class FriendsAPI {
 
         @Override
         public boolean add(Friend friend) {
-            if(get(friend) != null) {
+            if (get(friend) != null) {
                 get(friend).setOnline(friend.isOnline());
                 get(friend).setName(friend.getName());
                 return true;

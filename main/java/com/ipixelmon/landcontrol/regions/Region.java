@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControl;
+import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.ArrayUtil;
@@ -74,6 +76,9 @@ public class Region implements Comparable<Region> {
 
                 for (EnumRegionProperty propertyType : EnumRegionProperty.values())
                     properties.put(propertyType, result.getBoolean(propertyType.name()));
+
+                enterMsg = result.getString("enterMsg");
+                leaveMsg = result.getString("leaveMsg");
             }
 
             /**
@@ -116,7 +121,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getEnterMsg() {
-        if (enterMsg.equalsIgnoreCase("null")) return null;
+        if (enterMsg == null || enterMsg.isEmpty()) return null;
         return enterMsg;
     }
 
@@ -126,7 +131,7 @@ public class Region implements Comparable<Region> {
     }
 
     public String getLeaveMsg() {
-        if (leaveMsg.equalsIgnoreCase("null")) return null;
+        if (leaveMsg == null || leaveMsg.isEmpty()) return null;
         return leaveMsg;
     }
 
@@ -270,8 +275,8 @@ public class Region implements Comparable<Region> {
         }
 
         // write enterMsg and leaveMsg
-        ByteBufUtils.writeUTF8String(buf, enterMsg);
-        ByteBufUtils.writeUTF8String(buf, leaveMsg);
+        ByteBufUtils.writeUTF8String(buf, enterMsg == null ? "" : enterMsg);
+        ByteBufUtils.writeUTF8String(buf, leaveMsg == null ? "" : leaveMsg);
     }
 
     public static Region fromBytes(ByteBuf buf) {
@@ -298,6 +303,12 @@ public class Region implements Comparable<Region> {
         region.leaveMsg = ByteBufUtils.readUTF8String(buf);
 
         return region;
+    }
+
+    public void delete() {
+        iPixelmon.mysql.delete(LandControl.class, new DeleteForm("Regions").add("id", id.toString()));
+        iPixelmon.mysql.delete(LandControl.class, new DeleteForm("SubRegions").add("parentID", id.toString()));
+        LandControlAPI.Server.regions.remove(this);
     }
 
 }

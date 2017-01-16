@@ -14,12 +14,15 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.util.UUID;
 
 public class TeamMod implements IMod
 {
+
+    protected static EnumTeam clientSideTeam = EnumTeam.None;
 
     @Override
     public String getID()
@@ -38,6 +41,7 @@ public class TeamMod implements IMod
     {
         iPixelmon.registerPacket(PacketOpenTeamMenu.Handler.class, PacketOpenTeamMenu.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketChooseTeam.Handler.class, PacketChooseTeam.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketClientTeam.Handler.class, PacketClientTeam.class, Side.CLIENT);
     }
 
     @Override
@@ -69,6 +73,7 @@ public class TeamMod implements IMod
         return null;
     }
 
+    @SideOnly(Side.SERVER)
     public static EnumTeam getPlayerTeam(UUID playerUUID)
     {
         ResultSet result = iPixelmon.mysql.selectAllFrom(TeamMod.class, new SelectionForm("Players").where("uuid", playerUUID.toString()));
@@ -85,5 +90,10 @@ public class TeamMod implements IMod
         }
 
         return EnumTeam.None;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static EnumTeam getClientSideTeam() {
+        return clientSideTeam;
     }
 }

@@ -2,6 +2,7 @@ package com.ipixelmon.team.server;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.team.EnumTeam;
+import com.ipixelmon.team.PacketClientTeam;
 import com.ipixelmon.team.TeamMod;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
@@ -26,6 +27,8 @@ public class PlayerListener
         if(TeamMod.getPlayerTeam(event.player.getUniqueID()) == EnumTeam.None)
         {
             iPixelmon.network.sendTo(new PacketOpenTeamMenu(), (EntityPlayerMP) event.player);
+        } else {
+            iPixelmon.network.sendTo(new PacketClientTeam(TeamMod.getPlayerTeam(event.player.getUniqueID())), (EntityPlayerMP) event.player);
         }
     }
 

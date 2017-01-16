@@ -146,6 +146,7 @@ public class Gym implements Comparable<Gym> {
         List<String> trainers = Lists.newArrayList();
 
         if (this.trainers.isEmpty()) {
+            reset();
             setTeam(TeamMod.getPlayerTeam(player));
             updateColoredBlocks();
         }
@@ -154,6 +155,8 @@ public class Gym implements Comparable<Gym> {
         for (UUID p : this.trainers.keySet()) {
             trainers.add(p.toString() + ";" + PixelmonAPI.pixelmonToString(this.trainers.get(p)));
         }
+
+        setPrestige(getPrestige() + 2000);
 
         setViaMySQL("trainers", ArrayUtil.toString(trainers.toArray(new String[trainers.size()])));
     }
@@ -209,6 +212,11 @@ public class Gym implements Comparable<Gym> {
     public void setPrestige(int prestige) {
         int prevLevel = getLevel();
 
+        if(prestige < 0) {
+            reset();
+            return;
+        }
+
         this.prestige = prestige;
         this.prestige = this.prestige < 0 ? 0 : this.prestige > LEVELS[LEVELS.length - 1] ? LEVELS[LEVELS.length - 1] : this.prestige;
 
@@ -223,6 +231,19 @@ public class Gym implements Comparable<Gym> {
         }
 
         setViaMySQL("prestige", String.valueOf(this.prestige));
+    }
+
+    public void reset() {
+        for(EntityTrainer trainer : getTrainerEntities()) getRegion().getWorld().removeEntity(trainer);
+        getTrainerEntities().clear();
+
+        for(UUID id : getTrainers().keySet()) removeTrainer(id);
+
+        this.prestige = 0;
+
+        setTeam(EnumTeam.None);
+
+        updateColoredBlocks();
     }
 
     public Set<UUID> getQue() {
@@ -379,6 +400,11 @@ public class Gym implements Comparable<Gym> {
             gym.seats.put(new BlockPos(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2])), 0f);
         }
 
+        int entitySize = buf.readInt();
+        for(int i = 0; i < entitySize; i++) {
+            gym.getTrainerEntities().add((EntityTrainer) iPixelmon.proxy.getDefaultWorld().getEntityByID(buf.readInt()));
+        }
+
         return gym;
     }
 
@@ -397,6 +423,12 @@ public class Gym implements Comparable<Gym> {
         buf.writeInt(getSeats().size());
         for (BlockPos pos : getSeats().keySet()) {
             ByteBufUtils.writeUTF8String(buf, pos.getX() + ";" + pos.getY() + ";" + pos.getZ());
+        }
+
+        buf.writeInt(getTrainerEntities().size());
+
+        for(EntityTrainer trainer : getTrainerEntities()) {
+            buf.writeInt(trainer.getEntityId());
         }
     }
 

@@ -3,6 +3,7 @@ package com.ipixelmon.gym.client;
 import com.google.common.collect.Lists;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.util.PixelmonAPI;
+import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
@@ -20,23 +21,19 @@ public abstract class GuiPickPixelmon extends Gui {
     private static final int BG_HEIGHT = 234, BG_WIDTH = 256;
     private int POS_X, POS_Y;
 
-    private List<PixelmonAPI.Client.PixelmonRenderer> pixelmonRendererList = Lists.newArrayList();
     private List<EntityPixelmon> pixelmonList = Lists.newArrayList();
     private int page = 0;
     private GuiButton left, right, select;
     private GuiScreen parent;
     public boolean enabled = true;
 
+    private RenderPixelmon renderPixelmon;
+    private float pixelmonDisplayRotY = 0.0F;
+
     public GuiPickPixelmon(GuiScreen parent) {
         this.parent = parent;
         pixelmonList = PixelmonAPI.Client.getPixelmon(true);
-
-        PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
-        for (EntityPixelmon pixelmon : pixelmonList) {
-            pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(pixelmon, true, parent);
-            pixelmonRendererList.add(pixelmonRenderer);
-            new Thread(pixelmonRenderer).start();
-        }
+        renderPixelmon = new RenderPixelmon(parent.mc.getRenderManager());
     }
 
     public void drawScreen(Minecraft mc, int mouseX, int mouseY) {
@@ -53,8 +50,9 @@ public abstract class GuiPickPixelmon extends Gui {
         /**
          * Draw pokemon
          */
-        if (!pixelmonRendererList.isEmpty()) {
-            pixelmonRendererList.get(page).render(parent.width / 2, POS_Y + BG_HEIGHT - 40, 50);
+        if (!pixelmonList.isEmpty()) {
+            PixelmonAPI.Client.renderPixelmon3D(pixelmonList.get(page), parent.width / 2, POS_Y + BG_HEIGHT - 40, 40.0F,
+                    pixelmonDisplayRotY += 0.66F, parent);
             PixelmonAPI.Client.renderPixelmonTip(pixelmonList.get(page), POS_X, POS_Y + 24, parent.width, parent.height);
         }
 

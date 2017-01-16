@@ -41,7 +41,7 @@ public class EntityTrainerRenderer extends RenderNPC {
                 float scale = 0.05f;
                 GlStateManager.translate(scale, scale, scale);
                 GlStateManager.rotate(trainer.pixelmonDisplayRotY += 0.66F, 0f, 1f, 0f);
-                renderPixelmon.renderPixelmon(trainer.getPixelmon(), 0, 0, 0, f, f1, false);
+                renderPixelmon.renderPixelmon(trainer.getPixelmon(), 0, 0, 0, 0, 0, false);
                 GlStateManager.translate(-scale, -scale, -scale);
                 GlStateManager.popMatrix();
 

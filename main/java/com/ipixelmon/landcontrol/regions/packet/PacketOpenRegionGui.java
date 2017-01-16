@@ -2,6 +2,7 @@ package com.ipixelmon.landcontrol.regions.packet;
 
 import com.ipixelmon.landcontrol.client.gui.RegionGui;
 import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.landcontrol.regions.SubRegion;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PacketOpenRegionGui implements IMessage {
 
     private Region region;
+    private boolean isSubRegion;
 
     public PacketOpenRegionGui() {
     }
@@ -27,11 +29,13 @@ public class PacketOpenRegionGui implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         region = Region.fromBytes(buf);
+        isSubRegion = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         region.toBytes(buf);
+        buf.writeBoolean(region instanceof SubRegion);
     }
 
     public static class Handler implements IMessageHandler<PacketOpenRegionGui, IMessage> {
@@ -47,7 +51,7 @@ public class PacketOpenRegionGui implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new RegionGui(message.region));
+                    Minecraft.getMinecraft().displayGuiScreen(new RegionGui(message.region, message.isSubRegion));
                 }
             });
         }

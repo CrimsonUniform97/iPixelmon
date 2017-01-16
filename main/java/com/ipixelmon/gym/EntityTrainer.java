@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import java.util.UUID;
 
 public class EntityTrainer extends NPCTrainer implements Comparable<EntityTrainer> {
@@ -73,12 +74,12 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         if (!worldObj.isRemote) {
             Gym gym = GymAPI.Server.getGym(getPosition());
 
-            if(gym == null) {
+            if (gym == null) {
                 worldObj.removeEntity(this);
                 return;
             }
 
-            if(!gym.getSeats().containsKey(getPosition().down(1))) {
+            if (!gym.getSeats().containsKey(getPosition().down(1))) {
                 worldObj.removeEntity(this);
                 return;
             }
@@ -93,7 +94,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @Override
     public void readFromNBT(NBTTagCompound tagCompund) {
         super.readFromNBT(tagCompund);
-        if(pixelmon == null) {
+        if (pixelmon == null) {
             pixelmon = PixelmonAPI.pixelmonFromString(tagCompund.getString("pixelmon"), worldObj);
             playerName = tagCompund.getString("playerName");
             playerID = UUID.fromString(tagCompund.getString("playerID"));

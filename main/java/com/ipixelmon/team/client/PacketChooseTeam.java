@@ -1,6 +1,7 @@
 package com.ipixelmon.team.client;
 
 import com.ipixelmon.team.EnumTeam;
+import com.ipixelmon.team.PacketClientTeam;
 import io.netty.buffer.ByteBuf;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
@@ -62,6 +63,9 @@ public class PacketChooseTeam implements IMessage
             insertForm.add("team", EnumTeam.getTeamFromID(message.teamID).name());
             iPixelmon.mysql.insert(TeamMod.class, insertForm);
             ctx.getServerHandler().playerEntity.closeScreen();
+
+            iPixelmon.network.sendTo(new PacketClientTeam(EnumTeam.getTeamFromID(message.teamID)), ctx.getServerHandler().playerEntity);
+
             return null;
         }
 

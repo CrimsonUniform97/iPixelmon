@@ -44,8 +44,6 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class PixelmonAPI {
 
-    // TODO: Update everything to the new AI
-
     public static PixelmonData entityToData(EntityPixelmon pixelmon) {
         NBTTagCompound n = new NBTTagCompound();
         pixelmon.writeToNBT(n);
@@ -167,8 +165,31 @@ public class PixelmonAPI {
             GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         }
 
-        public static PixelmonRenderer renderPixelmon3D(EntityPixelmon pixelmon, boolean spin, GuiScreen screen) {
-            return new PixelmonRenderer(pixelmon, spin, screen);
+        public static void renderPixelmon3D(EntityPixelmon pixelmon, int x, int y, float scale, float spin, GuiScreen screen) {
+            RenderPixelmon renderPixelmon = new RenderPixelmon(Minecraft.getMinecraft().getRenderManager());
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x, y, 400.0F);
+            float width = pixelmon.widthDiff / 2;
+            float height = pixelmon.heightDiff / 2;
+            GlStateManager.translate(width, height, 0.0F);
+            GlStateManager.scale(scale, scale, scale);
+            GlStateManager.rotate(180, 1, 0, 0);
+            GlStateManager.rotate(spin, 0, 1, 0);
+
+            if (pixelmon.baseStats.canSurf) {
+                GlStateManager.translate(0.0F, 1.5F, 0.0F);
+            }
+
+            if (pixelmon.baseStats.canFly) {
+                GlStateManager.translate(0.0F, -1.5F, 0.0f);
+            }
+
+            GlStateManager.translate(-width, -height, 0.0F);
+            GuiUtil.setBrightness(0.5F, 0.8F, 0.8F);
+            renderPixelmon.renderPixelmon(pixelmon, 0, 0, 0, 0, 0, false);
+            GlStateManager.popMatrix();
+            RenderHelper.disableStandardItemLighting();
         }
 
         public static int[] renderPixelmonTip(EntityPixelmon pixelmon, int x, int y, int width, int height) {
@@ -188,71 +209,6 @@ public class PixelmonAPI {
             pixelmonInfo.add(healthColor + "HP: " + pixelmonData.health + "/" + pixelmonData.HP);
             pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
             return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
-        }
-
-        public static class PixelmonRenderer implements Runnable {
-            private EntityPixelmon pixelmon;
-            private boolean spin, countDown;
-            private float partialTicks, spinCount;
-            private RenderPixelmon renderPixelmon;
-            private GuiScreen screen;
-
-            public PixelmonRenderer(EntityPixelmon pixelmon, boolean spin, GuiScreen screen) {
-                this.pixelmon = pixelmon;
-                renderPixelmon = new RenderPixelmon(Minecraft.getMinecraft().getRenderManager());
-                this.spin = spin;
-                this.screen = screen;
-            }
-
-
-            @Override
-            public void run() {
-                while (Minecraft.getMinecraft().currentScreen == screen) {
-                    if (countDown) {
-                        partialTicks -= 0.08F;
-                    } else {
-                        partialTicks += 0.08F;
-                    }
-
-                    if (partialTicks >= 1.0F) {
-                        partialTicks = 1.0F;
-                        countDown = true;
-                    } else if (partialTicks <= 0.0F) {
-                        partialTicks = 0.0F;
-                        countDown = false;
-                    }
-
-                    spinCount += 0.66F;
-
-                    try {
-                        Thread.sleep(20L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            // TODO: Fix spin
-            public void render(int x, int y, float scale) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(x, y, 400.0F);
-                float width = pixelmon.widthDiff / 2;
-                float height = pixelmon.heightDiff / 2;
-                GlStateManager.translate(width, height, 0.0F);
-                GlStateManager.scale(scale, scale, scale);
-                GlStateManager.rotate(180, 1, 0, 0);
-                GlStateManager.rotate(spinCount, 0, 1, 0);
-
-                if (pixelmon.baseStats.canSurf) {
-                    GlStateManager.translate(0.0F, 1.0F, 0.0F);
-                }
-
-                GlStateManager.translate(-width, -height, 0.0F);
-                GuiUtil.setBrightness(0.5F, 0.8F, 0.8F);
-                renderPixelmon.renderPixelmon(pixelmon, 0, 0, 0, 0, partialTicks, false);
-                GlStateManager.popMatrix();
-                RenderHelper.disableStandardItemLighting();
-            }
         }
 
     }
@@ -283,6 +239,7 @@ public class PixelmonAPI {
             return pixelmonList;
         }
 
+        // TODO: Not working when claiming Gym
         public static void removePixelmon(EntityPixelmon pixelmon, EntityPlayerMP player) {
             MinecraftServer.getServer().addScheduledTask(new Runnable() {
                 @Override

@@ -2,6 +2,8 @@ package com.ipixelmon.landcontrol.regions;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControl;
+import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 
@@ -22,8 +24,6 @@ public class SubRegion extends Region {
 
     @Override
     protected ResultSet getResult() {
-        System.out.println("CADADWDAD");
-        System.out.println(parentID == null);
         ResultSet result = iPixelmon.mysql.selectAllFrom(LandControl.class,
                 new SelectionForm("SubRegions").where("parentID", parentID.toString()).where("id", id.toString()));
 
@@ -41,4 +41,9 @@ public class SubRegion extends Region {
                 .where("parentID", parentID.toString()).where("id", id.toString()));
     }
 
+    @Override
+    public void delete() {
+        iPixelmon.mysql.delete(LandControl.class, new DeleteForm("SubRegions").add("id", id.toString()));
+        LandControlAPI.Server.getRegion(parentID).getSubRegions().remove(this);
+    }
 }

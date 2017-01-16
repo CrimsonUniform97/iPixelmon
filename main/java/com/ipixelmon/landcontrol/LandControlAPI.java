@@ -52,13 +52,13 @@ public class LandControlAPI {
         }
 
         public static Region getRegion(UUID id) {
-            for(Region region : regions) {
-                if(region.getID().equals(id)) {
+            for (Region region : regions) {
+                if (region.getID().equals(id)) {
                     return region;
                 }
 
-                for(SubRegion subRegion : region.getSubRegions()) {
-                    if(subRegion.getID().equals(id)) return subRegion;
+                for (SubRegion subRegion : region.getSubRegions()) {
+                    if (subRegion.getID().equals(id)) return subRegion;
                 }
             }
 
@@ -67,11 +67,11 @@ public class LandControlAPI {
 
         public static Region getRegionAt(World world, BlockPos pos) {
             for (Region region : LandControlAPI.Server.regions) {
-                if(region.getWorld().equals(world)) {
+                if (region.getWorld().equals(world)) {
                     Vec3 vec3 = new Vec3(pos.getX(), pos.getY(), pos.getZ());
                     if (region.getBounds().isVecInside(vec3)) {
-                        for(SubRegion subRegion : region.getSubRegions()) {
-                            if(subRegion.getBounds().isVecInside(vec3)) return subRegion;
+                        for (SubRegion subRegion : region.getSubRegions()) {
+                            if (subRegion.getBounds().isVecInside(vec3)) return subRegion;
                         }
                         return region;
                     }
@@ -81,7 +81,7 @@ public class LandControlAPI {
         }
 
 
-        public static Region createRegion(World world, BlockPos min, BlockPos max) {
+        public static Region createRegion(World world, BlockPos min, BlockPos max) throws Exception {
             BlockPos minPos = new BlockPos(Math.min(min.getX(), max.getX()), Math.min(min.getY(), max.getY()), Math.min(min.getZ(), max.getZ()));
             BlockPos maxPos = new BlockPos(Math.max(min.getX(), max.getX()), Math.max(min.getY(), max.getY()), Math.max(min.getZ(), max.getZ()));
             UUID id = UUID.randomUUID();
@@ -108,7 +108,8 @@ public class LandControlAPI {
             AxisAlignedBB bounds = AxisAlignedBB.fromBounds(minPos.getX(), minPos.getY(), minPos.getZ(),
                     maxPos.getX(), maxPos.getY(), maxPos.getZ());
 
-            for (Region region : regions) if (region.getBounds().intersectsWith(bounds)) return null;
+            for (Region region : regions) if (region.getBounds().intersectsWith(bounds))
+                throw new Exception("Intersects with another region.");
 
             iPixelmon.mysql.insert(LandControl.class, insertForm);
 
@@ -119,7 +120,7 @@ public class LandControlAPI {
             return region;
         }
 
-        public static SubRegion createSubRegion(BlockPos min, BlockPos max) {
+        public static SubRegion createSubRegion(BlockPos min, BlockPos max) throws Exception {
             BlockPos minPos = new BlockPos(Math.min(min.getX(), max.getX()), Math.min(min.getY(), max.getY()), Math.min(min.getZ(), max.getZ()));
             BlockPos maxPos = new BlockPos(Math.max(min.getX(), max.getX()), Math.max(min.getY(), max.getY()), Math.max(min.getZ(), max.getZ()));
 
@@ -135,28 +136,19 @@ public class LandControlAPI {
                 }
             }
 
-            System.out.println("BOOM");
-
             /**
              * Did not find a parent region
              */
-            if (parentRegion == null) return null;
-
-            System.out.println("Parent Region found.");
-
-            System.out.println(parentRegion.getSubRegions().size());
+            if (parentRegion == null) throw new Exception("Parent region not found.");
 
             for (SubRegion subRegion : parentRegion.getSubRegions()) {
                 /**
                  * Overlaps another SubRegion
                  */
                 if (subRegion.getBounds().intersectsWith(bounds)) {
-                    System.out.println("Intersects");
-                    return null;
+                    throw new Exception("Intersects with another SubRegion.");
                 }
             }
-
-            System.out.println("Doesn't intersect");
 
             UUID id = UUID.randomUUID();
 
@@ -203,7 +195,7 @@ public class LandControlAPI {
 
                 StringBuilder builder = new StringBuilder(columns);
 
-                for(EnumRegionProperty property : EnumRegionProperty.values())
+                for (EnumRegionProperty property : EnumRegionProperty.values())
                     builder.append(" " + property.name() + " boolean NOT NULL DEFAULT 1,");
 
                 builder.deleteCharAt(builder.length() - 1);
@@ -216,7 +208,7 @@ public class LandControlAPI {
                 builder = new StringBuilder(columns);
                 builder.insert(1, "parentID text NOT NULL, ");
 
-                for(EnumRegionProperty property : EnumRegionProperty.values())
+                for (EnumRegionProperty property : EnumRegionProperty.values())
                     builder.append(" " + property.name() + " boolean NOT NULL DEFAULT 1,");
 
                 builder.deleteCharAt(builder.length() - 1);

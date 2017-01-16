@@ -1,15 +1,15 @@
 package com.ipixelmon.gym.client;
 
-import com.google.common.collect.Maps;
 import com.ipixelmon.gym.EntityTrainer;
 import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.packet.PacketBattle;
 import com.ipixelmon.gym.packet.PacketJoinGym;
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.team.EnumTeam;
+import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
+import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,9 +21,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class GuiGymInfo extends GuiScreen {
 
@@ -32,26 +29,12 @@ public class GuiGymInfo extends GuiScreen {
     private int POS_X, POS_Y;
     private int page = 0;
     private GuiPickPixelmon guiPickPixelmon;
-    private Map<UUID, PixelmonAPI.Client.PixelmonRenderer> renderers = Maps.newHashMap();
+    private float pixelmonDisplayRotY = 0.0F;
 
     private Gym gym;
 
     public GuiGymInfo(Gym gym) {
         this.gym = gym;
-
-        PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer;
-        for (UUID id : gym.getTrainers().keySet()) {
-
-            EntityPixelmon entityPixelmon = gym.getTrainers().get(id);
-
-            EntityTrainer entityTrainer = new EntityTrainer(Minecraft.getMinecraft().theWorld,
-                    Minecraft.getMinecraft().thePlayer.getPosition(), id, entityPixelmon);
-
-            gym.getTrainerEntities().add(entityTrainer);
-
-            renderers.put(entityTrainer.getPlayerID(), pixelmonRenderer = PixelmonAPI.Client.renderPixelmon3D(entityPixelmon, true, this));
-            new Thread(pixelmonRenderer).start();
-        }
     }
 
     @Override
@@ -63,27 +46,30 @@ public class GuiGymInfo extends GuiScreen {
             return;
         }
 
+
         /**
          * Draw background
          */
         mc.getTextureManager().bindTexture(BG_TEXTURE);
         drawTexturedModalRect(POS_X, POS_Y, 0, 0, BG_WIDTH, BG_HEIGHT);
 
-        /**
-         * Draw team name
-         */
-        String teamTxt = gym.getTeam().colorChat().toString() + EnumChatFormatting.BOLD.toString() + gym.getTeam().name();
-        mc.fontRendererObj.drawString(teamTxt, (this.width - fontRendererObj.getStringWidth(teamTxt)) / 2, POS_Y + 10,
-                0xFFFFFF, true);
+        if (gym.getTeam() != EnumTeam.None) {
+            /**
+             * Draw team name
+             */
+            String teamTxt = gym.getTeam().colorChat().toString() + EnumChatFormatting.BOLD.toString() + gym.getTeam().name();
+            mc.fontRendererObj.drawString(teamTxt, (this.width - fontRendererObj.getStringWidth(teamTxt)) / 2, POS_Y + 10,
+                    0xFFFFFF, true);
 
-        /**
-         * Draw prestige stats
-         */
-        int level = gym.getLevel() + 1;
-        level = level > 9 ? 9 : level;
-        String prestigeTxt = (gym.getPrestige() / 1000D) + "K/" + (Gym.LEVELS[level] / 1000) + "K Prestige";
-        fontRendererObj.drawString(EnumChatFormatting.YELLOW + prestigeTxt,
-                POS_X + BG_WIDTH - fontRendererObj.getStringWidth(prestigeTxt) - 5, POS_Y + 5, 0xFFFFFF, true);
+            /**
+             * Draw prestige stats
+             */
+            int level = gym.getLevel() + 1;
+            level = level > 9 ? 9 : level;
+            String prestigeTxt = (gym.getPrestige() / 1000D) + "K/" + (Gym.LEVELS[level] / 1000) + "K Prestige";
+            fontRendererObj.drawString(EnumChatFormatting.YELLOW + prestigeTxt,
+                    POS_X + BG_WIDTH - fontRendererObj.getStringWidth(prestigeTxt) - 5, POS_Y + 5, 0xFFFFFF, true);
+        }
 
         if (!gym.getTrainerEntities().isEmpty()) {
             /**
@@ -94,13 +80,15 @@ public class GuiGymInfo extends GuiScreen {
 
             EntityTrainer entityTrainer = (EntityTrainer) gym.getTrainerEntities().toArray()[page];
 
+            GlStateManager.color(1f, 1f, 1f, 1f);
             GuiUtil.drawEntityOnScreen(x, y, 50, -(mouseX - x), -(mouseY - y) - 40, entityTrainer);
 
             /**
              * Draw pokemon
              */
-            PixelmonAPI.Client.PixelmonRenderer pixelmonRenderer = renderers.get(entityTrainer.getPlayerID());
-            pixelmonRenderer.render((this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 30);
+            EntityPixelmon pixelmon = (EntityPixelmon) gym.getTrainers().values().toArray()[page];
+            PixelmonAPI.Client.renderPixelmon3D(pixelmon, (this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 40.0F,
+                    pixelmonDisplayRotY += 0.66F, this);
             PixelmonAPI.Client.renderPixelmonTip(entityTrainer.getPixelmon(), POS_X, POS_Y + 24, this.width, this.height);
         }
 
@@ -194,7 +182,8 @@ public class GuiGymInfo extends GuiScreen {
         guiPickPixelmon.updateScreen();
         this.buttonList.get(0).enabled = !(page <= 0);
         this.buttonList.get(1).enabled = !(page >= gym.getTrainers().size() - 1);
-        this.buttonList.get(4).enabled = gym.getAvailableSeats() > 0 && !gym.getTrainers().containsKey(mc.thePlayer.getUniqueID());
+        this.buttonList.get(4).enabled = gym.getTeam() == TeamMod.getClientSideTeam() && gym.getAvailableSeats() > 0 &&
+                !gym.getTrainers().containsKey(mc.thePlayer.getUniqueID());
     }
 
     private class MCButton extends GuiButton {

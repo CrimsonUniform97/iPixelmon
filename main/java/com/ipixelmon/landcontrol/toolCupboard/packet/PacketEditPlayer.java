@@ -76,7 +76,6 @@ public class PacketEditPlayer implements IMessage {
             // stop players that aren't in the network from adding players
             if(network.exists() && !network.getPlayers().contains(player.getUniqueID())) return null;
 
-            // TODO: Update client side immediately, and test if player is not the ID of the network what happens, but they are added
             /**
              * ADD
              */
@@ -98,6 +97,8 @@ public class PacketEditPlayer implements IMessage {
               if(!network.exists()) return null;
 
               UUID playerToEdit = UUID.fromString(message.player);
+
+              if(playerToEdit.equals(network.getID())) return null;
 
               network.removePlayer(playerToEdit);
 
