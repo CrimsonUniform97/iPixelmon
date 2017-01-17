@@ -1,5 +1,6 @@
 package com.ipixelmon.party;
 
+import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -50,7 +51,7 @@ public class PacketJoinedParty implements IMessage {
                 PartyAPI.Client.setPartyID(message.partyID);
             }
             PartyAPI.Client.addPlayerToParty(message.playerID, message.playerName);
-            new SimpleTextNotification(message.playerName + " joined the party.");
+            NotificationMod.newSimpleNotification(message.playerName + " joined the party.", 3);
             return null;
         }
 

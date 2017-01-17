@@ -46,7 +46,7 @@ public class PacketNotification implements IMessage {
 
         @SideOnly(Side.CLIENT)
         private void doMessage(PacketNotification message) {
-            new SimpleTextNotification(message.text);
+            NotificationMod.newSimpleNotification(message.text, 5);
         }
     }
 

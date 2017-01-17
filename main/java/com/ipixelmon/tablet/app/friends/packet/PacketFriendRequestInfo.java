@@ -2,6 +2,7 @@ package com.ipixelmon.tablet.app.friends.packet;
 
 import com.ipixelmon.notification.SimpleTextNotification;
 import com.ipixelmon.tablet.app.friends.FriendRequest;
+import com.ipixelmon.tablet.app.friends.FriendRequestNotification;
 import com.ipixelmon.tablet.app.friends.FriendsAPI;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -46,9 +47,9 @@ public class PacketFriendRequestInfo implements IMessage {
         public IMessage onMessage(PacketFriendRequestInfo message, MessageContext ctx) {
             if(message.response == 0) {
                 FriendsAPI.Client.friendRequests.add(message.friendRequest);
-                new SimpleTextNotification(message.friendRequest.getSenderName() + " sent you a friend request.");
+                new FriendRequestNotification(message.friendRequest.getSenderName() + " sent you a friend request.", 5);
             } else if(message.response == 1) {
-                new SimpleTextNotification(message.friendRequest.getReceiverName() + " accepted your friend request.");
+                new FriendRequestNotification(message.friendRequest.getReceiverName() + " accepted your friend request.", 5);
                 FriendsAPI.Client.friendRequests.remove(message.friendRequest);
             } else {
                 FriendsAPI.Client.friendRequests.remove(message.friendRequest);

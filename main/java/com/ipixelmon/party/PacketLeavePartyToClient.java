@@ -1,5 +1,6 @@
 package com.ipixelmon.party;
 
+import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.notification.SimpleTextNotification;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -44,7 +45,7 @@ public class PacketLeavePartyToClient implements IMessage {
         @Override
         public IMessage onMessage(PacketLeavePartyToClient message, MessageContext ctx) {
             PartyAPI.Client.removePlayerFromParty(message.playerID);
-            new SimpleTextNotification(message.player + " left the party.");
+            NotificationMod.newSimpleNotification(message.player + " left the party.", 3);
             return null;
         }
 

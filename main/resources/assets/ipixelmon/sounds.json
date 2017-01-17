@@ -1,0 +1,4 @@
+{
+  "friendRequest": { "category": "player", "sounds": [ "friendRequest" ] },
+  "simpleNotification":  { "category": "player", "sounds": [ "simpleNotification" ] }
+}

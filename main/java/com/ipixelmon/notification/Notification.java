@@ -1,5 +1,6 @@
 package com.ipixelmon.notification;
 
+import com.sun.istack.internal.NotNull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -34,6 +35,11 @@ public abstract class Notification extends Gui {
     public void actionPerformed() {}
 
     public void mouseClicked(int mouseX, int mouseY){}
+
+    @NotNull
+    public String getSoundFile() {
+        return "simpleNotification";
+    }
 
 
 }

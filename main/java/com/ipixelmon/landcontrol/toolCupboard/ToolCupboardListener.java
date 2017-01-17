@@ -29,6 +29,9 @@ public class ToolCupboardListener {
 
     @SubscribeEvent
     public void onPlace(BlockEvent.PlaceEvent event) {
+        // TODO: Play sound only on client side in notifications
+        event.world.playSoundAtEntity(event.player, iPixelmon.id + ":friendRequest", 1.0F, 1.0F);
+
         if(event.placedBlock.getBlock() != ToolCupboardBlock.instance) return;
 
         Chunk chunk = event.world.getChunkFromBlockCoords(event.pos);

@@ -1,8 +1,11 @@
 package com.ipixelmon.notification;
 
+import com.ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
@@ -105,6 +108,10 @@ public class NotificationOverlay {
     protected synchronized void addNotification(Notification notification) {
         Notification.notificationsForRendering.addLast(new NotificationProperties(notification));
         Notification.notifications.addLast(new NotificationProperties(notification));
+
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        World world = player.getEntityWorld();
+        world.playSoundAtEntity(player, iPixelmon.id + ":" + notification.getSoundFile(), 1.0F, 1.0F);
     }
 
     public class NotificationProperties {
