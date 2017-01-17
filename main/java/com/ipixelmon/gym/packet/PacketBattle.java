@@ -42,11 +42,14 @@ public class PacketBattle implements IMessage {
         @Override
         public IMessage onMessage(PacketBattle message, MessageContext ctx) {
             onMessage(message, ctx.getServerHandler().playerEntity);
+            ctx.getServerHandler().playerEntity.closeScreen();
             return null;
         }
 
         @SideOnly(Side.SERVER)
         public void onMessage(PacketBattle message, EntityPlayerMP player) {
+
+
             MinecraftServer.getServer().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {

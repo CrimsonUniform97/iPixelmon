@@ -209,10 +209,12 @@ public class Gym implements Comparable<Gym> {
         return prestige;
     }
 
+    // TODO: Test batteling two trainers at gym
+
     public void setPrestige(int prestige) {
         int prevLevel = getLevel();
 
-        if(prestige < 0) {
+        if(prestige <= 0) {
             reset();
             return;
         }
@@ -222,7 +224,7 @@ public class Gym implements Comparable<Gym> {
 
         int postLevel = getLevel();
 
-        if (postLevel < prevLevel) {
+        if (postLevel < prevLevel && postLevel != 0) {
             removeTrainer((UUID) trainers.keySet().toArray()[trainers.size() - 1]);
         }
 

@@ -16,6 +16,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.Rectangle;
@@ -46,7 +47,7 @@ public class GuiGymInfo extends GuiScreen {
             return;
         }
 
-
+        GlStateManager.color(1, 1, 1, 1);
         /**
          * Draw background
          */
@@ -87,8 +88,8 @@ public class GuiGymInfo extends GuiScreen {
              * Draw pokemon
              */
             EntityPixelmon pixelmon = (EntityPixelmon) gym.getTrainers().values().toArray()[page];
-            PixelmonAPI.Client.renderPixelmon3D(pixelmon, (this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 40.0F,
-                    pixelmonDisplayRotY += 0.66F, this);
+            PixelmonAPI.Client.renderPixelmon3D(pixelmon, (this.width / 2) + 30, POS_Y + BG_HEIGHT - 40, 400, 40.0F,
+                    pixelmonDisplayRotY += 0.66F);
             PixelmonAPI.Client.renderPixelmonTip(entityTrainer.getPixelmon(), POS_X, POS_Y + 24, this.width, this.height);
         }
 
@@ -124,7 +125,6 @@ public class GuiGymInfo extends GuiScreen {
                 break;
             }
             case 3: {
-                Minecraft.getMinecraft().displayGuiScreen(null);
                 iPixelmon.network.sendToServer(new PacketBattle(gym));
                 break;
             }

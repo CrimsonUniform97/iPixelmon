@@ -27,7 +27,7 @@ public class SellGuiPixelmon extends SellGuiPopup {
         this.amountField.setText("1");
 
         PixelmonAPI.Client.renderPixelmon3D(pixelmon,screenBounds.getX() + (screenBounds.getWidth() / 2) - 5,
-                priceField.yPosition - 2, 40.0F, pixelmonDisplayRotY += 0.66F, this);
+                priceField.yPosition - 2, 400, 40.0F, pixelmonDisplayRotY += 0.66F);
         PixelmonAPI.Client.renderPixelmonTip(pixelmon, screenBounds.getX() - 7, screenBounds.getY() + 17, this.width, this.height);
     }
 

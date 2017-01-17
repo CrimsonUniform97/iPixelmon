@@ -153,6 +153,10 @@ public class PixelbayAPI {
         }
 
         public static void postPixelmon(UUID player, EntityPixelmon pixelmon, int price) {
+            if(pixelmon == null) return;
+
+            if(pixelmon.getName() == null) return;
+
             InsertForm insertForm = new InsertForm("Pixelmon");
             insertForm.add("player", player.toString());
             insertForm.add("price", price);

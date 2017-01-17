@@ -1,6 +1,7 @@
 package com.ipixelmon.gym.client;
 
 import com.ipixelmon.gym.EntityTrainer;
+import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.client.render.RenderNPC;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.entities.npcs.EntityNPC;
@@ -30,25 +31,16 @@ public class EntityTrainerRenderer extends RenderNPC {
         if (!(npc instanceof EntityTrainer)) return;
         EntityTrainer trainer = (EntityTrainer) npc;
 
-        if(trainer.getPlayerID() == null) return;
+        if (trainer.getPlayerID() == null) return;
 
         if (com.pixelmonmod.pixelmon.client.ClientProxy.battleManager.battleEnded) {
             if (trainer.getPixelmon() != null) {
-                if(d == 0.0 && d1 == 0.0 && d2 == 0.0) return;
+                if (d == 0.0 && d1 == 0.0 && d2 == 0.0) return;
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(d, d1 + 1.3D, d2);
-
-                float scale = 0.05f;
-                GlStateManager.translate(scale, scale, scale);
-                GlStateManager.rotate(trainer.pixelmonDisplayRotY += 0.66F, 0f, 1f, 0f);
-                renderPixelmon.renderPixelmon(trainer.getPixelmon(), 0, 0, 0, 0, 0, false);
-                GlStateManager.translate(-scale, -scale, -scale);
+                GlStateManager.rotate(180, 1, 0, 0);
+                PixelmonAPI.Client.renderPixelmon3D(trainer.getPixelmon(), 0, 0, 0,0.3F, trainer.pixelmonDisplayRotY += 0.66F);
                 GlStateManager.popMatrix();
-
-                if (trainer.pixelmonDisplayRotY >= 360f) {
-                    trainer.pixelmonDisplayRotY = 0F;
-                }
-
             }
         }
 

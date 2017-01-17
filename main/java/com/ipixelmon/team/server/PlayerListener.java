@@ -24,11 +24,14 @@ public class PlayerListener
     @SubscribeEvent
     public void onJoin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        if(TeamMod.getPlayerTeam(event.player.getUniqueID()) == EnumTeam.None)
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+
+        if(TeamMod.getPlayerTeam(player.getUniqueID()) == EnumTeam.None)
         {
-            iPixelmon.network.sendTo(new PacketOpenTeamMenu(), (EntityPlayerMP) event.player);
+            iPixelmon.network.sendTo(new PacketOpenTeamMenu(), player);
         } else {
-            iPixelmon.network.sendTo(new PacketClientTeam(TeamMod.getPlayerTeam(event.player.getUniqueID())), (EntityPlayerMP) event.player);
+            iPixelmon.network.sendTo(new PacketClientTeam(TeamMod.getPlayerTeam(player.getUniqueID())), player);
+            player.setCustomNameTag(TeamMod.getPlayerTeam(player.getUniqueID()).colorChat().toString() + player.getName());
         }
     }
 

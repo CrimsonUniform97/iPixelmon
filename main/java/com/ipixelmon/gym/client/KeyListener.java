@@ -14,7 +14,7 @@ import org.lwjgl.input.Keyboard;
 
 public class KeyListener {
 
-    private static KeyBinding gymKey = new KeyBinding("ipixelmon.gym", Keyboard.KEY_G, "key.ipixelmon.category");
+    private static KeyBinding gymKey = new KeyBinding("Open Gym Info", Keyboard.KEY_G, "key.ipixelmon");
 
     public static void registerKeyBindings() {
         ClientRegistry.registerKeyBinding(gymKey);

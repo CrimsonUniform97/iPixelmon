@@ -19,6 +19,8 @@ import java.util.UUID;
  */
 public class PlayerListener {
 
+    // TODO: Don't allow placing and claiming if their is a Region at the chunk
+
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
         ToolCupboardTileEntity tileEntity = LandControlAPI.Server.getTileEntity(event.world, event.pos);

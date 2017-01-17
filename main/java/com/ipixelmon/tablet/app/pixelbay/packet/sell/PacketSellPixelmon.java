@@ -58,6 +58,11 @@ public class PacketSellPixelmon implements IMessage {
             try {
                 EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
                         .getPokemon(message.pixelmonID, player.worldObj);
+
+                if(entityPixelmon == null) return null;
+
+                if(entityPixelmon.getName() == null) return null;
+
                 PixelbayAPI.Server.postPixelmon(player.getUniqueID(), entityPixelmon, message.price);
                 PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
             } catch (PlayerNotLoadedException e) {

@@ -35,8 +35,8 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
     public void drawObject(int mouseX, int mouseY, int dWheel, float partialTicks) {
 
         PixelmonAPI.Client.renderPixelmon3D(pixelmonListing.getPixelmon(),
-                screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, screenBounds.getY() + 150, 40.0F,
-                pixelmonDisplayRotY += 0.66F, this);
+                screenBounds.getX() + (screenBounds.getWidth() / 2) - 5, screenBounds.getY() + 150, 400, 40.0F,
+                pixelmonDisplayRotY += 0.66F);
 
 
         int[] bounds = PixelmonAPI.Client.renderPixelmonTip(pixelmonListing.getPixelmon(), screenBounds.getX() - 7,

@@ -58,6 +58,8 @@ public class PacketChooseTeam implements IMessage
                 return null;
             }
 
+            player.setCustomNameTag(EnumTeam.getTeamFromID(message.teamID).colorChat() + player.getDisplayName().getFormattedText());
+
             InsertForm insertForm = new InsertForm("Players");
             insertForm.add("uuid", player.getUniqueID().toString());
             insertForm.add("team", EnumTeam.getTeamFromID(message.teamID).name());

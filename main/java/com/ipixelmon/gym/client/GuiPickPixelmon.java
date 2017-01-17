@@ -51,8 +51,8 @@ public abstract class GuiPickPixelmon extends Gui {
          * Draw pokemon
          */
         if (!pixelmonList.isEmpty()) {
-            PixelmonAPI.Client.renderPixelmon3D(pixelmonList.get(page), parent.width / 2, POS_Y + BG_HEIGHT - 40, 40.0F,
-                    pixelmonDisplayRotY += 0.66F, parent);
+            PixelmonAPI.Client.renderPixelmon3D(pixelmonList.get(page), parent.width / 2, POS_Y + BG_HEIGHT - 40, 400, 40.0F,
+                    pixelmonDisplayRotY += 0.66F);
             PixelmonAPI.Client.renderPixelmonTip(pixelmonList.get(page), POS_X, POS_Y + 24, parent.width, parent.height);
         }
 

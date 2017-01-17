@@ -135,6 +135,16 @@ public class PixelmonAPI {
                 pixelmonData.updatePokemon(tagCompound);
                 entityPixelmon.readFromNBT(tagCompound);
                 entityPixelmon.setPokemonId(pixelmonData.pokemonID);
+
+                entityPixelmon.setHealth(pixelmonData.health);
+                entityPixelmon.getLvl().setExp(pixelmonData.xp);
+                entityPixelmon.stats.HP = pixelmonData.HP;
+                entityPixelmon.stats.Defence = pixelmonData.Defence;
+                entityPixelmon.stats.Attack = pixelmonData.Attack;
+                entityPixelmon.stats.Speed = pixelmonData.Speed;
+                entityPixelmon.stats.SpecialAttack = pixelmonData.SpecialAttack;
+                entityPixelmon.stats.SpecialDefence = pixelmonData.SpecialDefence;
+
                 entityPixelmons.add(entityPixelmon);
             }
 
@@ -165,11 +175,14 @@ public class PixelmonAPI {
             GuiHelper.drawImageQuad(x, y, width, height, 0.0D, 0.0D, 1.0D, 1.0D, 0.0F);
         }
 
-        public static void renderPixelmon3D(EntityPixelmon pixelmon, int x, int y, float scale, float spin, GuiScreen screen) {
+        public static void renderPixelmon3D(EntityPixelmon pixelmon, int x, int y, int z, float scale, float spin) {
             RenderPixelmon renderPixelmon = new RenderPixelmon(Minecraft.getMinecraft().getRenderManager());
 
+            pixelmon.deathTime = 0;
+
+            GlStateManager.pushAttrib();
             GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, 400.0F);
+            GlStateManager.translate(x, y, z);
             float width = pixelmon.widthDiff / 2;
             float height = pixelmon.heightDiff / 2;
             GlStateManager.translate(width, height, 0.0F);
@@ -178,18 +191,14 @@ public class PixelmonAPI {
             GlStateManager.rotate(spin, 0, 1, 0);
 
             if (pixelmon.baseStats.canSurf) {
-                GlStateManager.translate(0.0F, 1.5F, 0.0F);
-            }
-
-            if (pixelmon.baseStats.canFly) {
-                GlStateManager.translate(0.0F, -1.5F, 0.0f);
+                GlStateManager.translate(0.0F, 1.0F, 0.0F);
             }
 
             GlStateManager.translate(-width, -height, 0.0F);
             GuiUtil.setBrightness(0.5F, 0.8F, 0.8F);
             renderPixelmon.renderPixelmon(pixelmon, 0, 0, 0, 0, 0, false);
             GlStateManager.popMatrix();
-            RenderHelper.disableStandardItemLighting();
+            GlStateManager.popAttrib();
         }
 
         public static int[] renderPixelmonTip(EntityPixelmon pixelmon, int x, int y, int width, int height) {
@@ -201,10 +210,9 @@ public class PixelmonAPI {
             pixelmonInfo.add("");
             pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmonData.lvl);
             pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmonData.xp + "/" + pixelmonData.nextLvlXP);
-            float half = pixelmonData.HP / 2;
-            float third = pixelmonData.HP / 3;
-            float health = pixelmonData.HP;
-            EnumChatFormatting healthColor = health <= half ? EnumChatFormatting.RED : health <= third ?
+            float halfHealth = pixelmonData.HP / 2;
+            float thirdHealth = pixelmonData.HP / 3;
+            EnumChatFormatting healthColor = pixelmonData.health <= halfHealth ? EnumChatFormatting.RED : pixelmonData.health <= thirdHealth ?
                     EnumChatFormatting.GOLD : EnumChatFormatting.GREEN;
             pixelmonInfo.add(healthColor + "HP: " + pixelmonData.health + "/" + pixelmonData.HP);
             pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
@@ -244,11 +252,11 @@ public class PixelmonAPI {
             MinecraftServer.getServer().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    PixelmonData pixelmonData = new PixelmonData(pixelmon);
-                    PCServer.deletePokemon(player, -1, pixelmonData.order);
-                    Pixelmon.network.sendTo(new Remove(pixelmonData.pokemonID), player);
+                    PCServer.deletePokemon(player, -1, Math.max(0, pixelmon.getPartyPosition()));
                 }
             });
+
+            Pixelmon.network.sendTo(new Remove(pixelmon.getPokemonId()), player);
         }
 
         public static final void giveMoney(final UUID player, final int balance) {

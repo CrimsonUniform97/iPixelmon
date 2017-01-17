@@ -1,7 +1,6 @@
 package com.ipixelmon.tablet.client;
 
 import com.ipixelmon.CommonProxy;
-import com.ipixelmon.notification.NotificationOverlay;
 import com.ipixelmon.tablet.AppBase;
 import com.ipixelmon.tablet.Tablet;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,7 +35,7 @@ public class ClientProxy extends CommonProxy {
             }
         }
 
-        MinecraftForge.EVENT_BUS.register(new KeyListener());
+        MinecraftForge.EVENT_BUS.register(new KeyAndRenderListener());
         // TODO
 //
 //        try {

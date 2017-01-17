@@ -67,11 +67,11 @@ public class PacketJoinGym implements IMessage{
                 EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
                         .getPokemon(message.pixelmonID, player.worldObj);
 
-                System.out.println(entityPixelmon.getName());
-
                 if(gym.getAvailableSeats() <= 0) return null;
 
                 gym.addTrainer(player.getUniqueID(), entityPixelmon);
+
+                PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
 
                 MinecraftServer.getServer().addScheduledTask(new Runnable() {
                     @Override
@@ -80,7 +80,7 @@ public class PacketJoinGym implements IMessage{
                     }
                 });
 
-                PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
+                player.closeScreen();
             } catch (PlayerNotLoadedException e) {
                 e.printStackTrace();
             }
