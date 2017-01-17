@@ -45,7 +45,7 @@ public class ServerProxy extends CommonProxy {
 //
 //        Pixelbay.registerSQL();
 //
-//        MinecraftForge.EVENT_BUS.register(new PlayerListener());
-//        MinecraftForge.EVENT_BUS.register(new com.ipixelmon.tablet.apps.friends.PlayerListener());
+//        MinecraftForge.EVENT_BUS.register(new ToolCupboardListener());
+//        MinecraftForge.EVENT_BUS.register(new com.ipixelmon.tablet.apps.friends.ToolCupboardListener());
     }
 }

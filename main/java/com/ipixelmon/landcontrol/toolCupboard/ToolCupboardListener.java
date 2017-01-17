@@ -1,13 +1,21 @@
-package com.ipixelmon.landcontrol.server;
+package com.ipixelmon.landcontrol.toolCupboard;
 
 import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.landcontrol.toolCupboard.packet.PacketOpenGui;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardBlock;
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketSetSelectedTile;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,9 +25,25 @@ import java.util.UUID;
 /**
  * Created by colby on 1/6/2017.
  */
-public class PlayerListener {
+public class ToolCupboardListener {
 
-    // TODO: Don't allow placing and claiming if their is a Region at the chunk
+    @SubscribeEvent
+    public void onPlace(BlockEvent.PlaceEvent event) {
+        if(event.placedBlock.getBlock() != ToolCupboardBlock.instance) return;
+
+        Chunk chunk = event.world.getChunkFromBlockCoords(event.pos);
+        int x = chunk.xPosition * 16;
+        int y = 0;
+        int z = chunk.zPosition * 16;
+        AxisAlignedBB chunkBounds = AxisAlignedBB.fromBounds(x, y, z, x + 16, event.world.getHeight(), z + 16);
+
+        for(Region r : LandControlAPI.Server.regions) {
+            if(r.getBounds().intersectsWith(chunkBounds)) {
+                event.player.addChatComponentMessage(new ChatComponentText("There is a region in that chunk."));
+                event.setCanceled(true);
+            }
+        }
+    }
 
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
@@ -48,8 +72,11 @@ public class PlayerListener {
                     }
 
                     iPixelmon.network.sendTo(new PacketOpenGui(tileEntity, players), (EntityPlayerMP) event.entityPlayer);
-                    return;
+                } else {
+                    iPixelmon.network.sendTo(new PacketSetSelectedTile(tileEntity.getPos()), (EntityPlayerMP) event.entityPlayer);
                 }
+
+                return;
             }
         }
 

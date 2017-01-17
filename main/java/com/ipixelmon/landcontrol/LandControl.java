@@ -41,6 +41,7 @@ public class LandControl implements IMod {
         iPixelmon.registerPacket(PacketEditPlayer.Handler.class, PacketEditPlayer.class, Side.SERVER);
         iPixelmon.registerPacket(PacketGuiResponse.Handler.class, PacketGuiResponse.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketBindNetwork.Handler.class, PacketBindNetwork.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketSetSelectedTile.Handler.class, PacketSetSelectedTile.class, Side.CLIENT);
 
         iPixelmon.registerPacket(PacketOpenRegionGui.Handler.class, PacketOpenRegionGui.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketModifyRegion.Handler.class, PacketModifyRegion.class, Side.SERVER);

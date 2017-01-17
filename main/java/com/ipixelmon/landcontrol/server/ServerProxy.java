@@ -5,6 +5,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.landcontrol.regions.RegionListener;
+import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardListener;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +22,7 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        MinecraftForge.EVENT_BUS.register(new PlayerListener());
+        MinecraftForge.EVENT_BUS.register(new ToolCupboardListener());
         MinecraftForge.EVENT_BUS.register(new RegionListener());
 
         CreateForm networksForm = new CreateForm("Networks");

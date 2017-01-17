@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by colby on 12/31/2016.
@@ -52,4 +54,10 @@ public class NotificationMod implements IMod {
     public IGuiHandler getGuiHandler() {
         return null;
     }
+
+    @SideOnly(Side.CLIENT)
+    public static void newSimpleNotification(String text, int seconds) {
+        new SimpleTextNotification(text, seconds);
+    }
+
 }

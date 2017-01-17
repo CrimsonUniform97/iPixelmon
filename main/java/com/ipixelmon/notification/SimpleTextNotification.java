@@ -12,10 +12,12 @@ public class SimpleTextNotification extends Notification {
 
     private String text;
     private static final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+    private int seconds;
 
-    public SimpleTextNotification(String text) {
+    protected SimpleTextNotification(String text, int seconds) {
         super();
         this.text = text;
+        this.seconds = seconds;
     }
 
     @Override
@@ -47,6 +49,6 @@ public class SimpleTextNotification extends Notification {
 
     @Override
     public long getDuration() {
-        return 10 * 1000L;
+        return seconds * 1000L;
     }
 }

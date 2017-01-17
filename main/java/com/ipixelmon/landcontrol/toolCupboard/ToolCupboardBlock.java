@@ -77,27 +77,6 @@ public class ToolCupboardBlock extends BlockContainer {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(worldIn.isRemote) {
-            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof ToolCupboardTileEntity) {
-                ToolCupboardTileEntity tileEntity = (ToolCupboardTileEntity) worldIn.getTileEntity(pos);
-                if (tileEntity.getBaseTile() != null && playerIn.isSneaking()) {
-                    if (PlayerListener.selectedTile != null && PlayerListener.selectedTile == tileEntity.getBaseTile()) {
-                        PlayerListener.selectedTile = null;
-                    } else {
-                        PlayerListener.selectedTile = tileEntity.getBaseTile();
-                    }
-                }
-            } else {
-                PlayerListener.selectedTile = null;
-            }
-            return true;
-        }
-
-        return true;
-    }
-
-    @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         if(worldIn.getBlockState(pos.up()).getBlock() == instance) {
             worldIn.setBlockToAir(pos.up());
