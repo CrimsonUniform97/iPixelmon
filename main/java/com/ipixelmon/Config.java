@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Config {
 
-    private final File configFile;
+    protected final File configFile;
 
     public Config(File parFile) {
         configFile = parFile;
@@ -89,7 +89,7 @@ public class Config {
         return map;
     }
 
-    private void set(String parKey, Object parValue) {
+    protected void set(String parKey, Object parValue) {
         try {
             Scanner scanner = new Scanner(configFile);
 
@@ -118,7 +118,7 @@ public class Config {
         }
     }
 
-    private String getValue(String parKey) {
+    protected String getValue(String parKey) {
         try {
             Scanner scanner = new Scanner(configFile);
             while (scanner.hasNextLine()) {

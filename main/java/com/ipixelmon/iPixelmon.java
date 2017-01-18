@@ -5,6 +5,7 @@ import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.party.PartyMod;
+import com.ipixelmon.permission.PermissionMod;
 import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.quest.QuestMod;
 import com.ipixelmon.tablet.Tablet;
@@ -51,6 +52,7 @@ public final class iPixelmon {
     public static iPixelmon instance;
 
     public iPixelmon() {
+        loadMod(new PermissionMod());
         loadMod(new UUIDManager());
         loadMod(new NotificationMod());
         loadMod(new TeamMod());
