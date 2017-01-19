@@ -6,22 +6,16 @@ import com.ipixelmon.TimedMessage;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.regions.EnumRegionProperty;
 import com.ipixelmon.landcontrol.regions.Region;
-import com.ipixelmon.landcontrol.regions.SubRegion;
 import com.ipixelmon.landcontrol.regions.packet.PacketModifyRegion;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by colby on 1/8/2017.
@@ -176,7 +170,7 @@ public class RegionGui extends GuiScreen {
     private void drawInfoMessage() {
         if (infoMessage.hasMessage()) {
             int xOffset = (BG_WIDTH - fontRendererObj.getStringWidth(infoMessage.getMessage())) / 2;
-            fontRendererObj.drawString(EnumChatFormatting.RED.toString() + EnumChatFormatting.ITALIC.toString() +
+            fontRendererObj.drawString(TextFormatting.RED.toString() + TextFormatting.ITALIC.toString() +
                     infoMessage.getMessage(), POS_X + xOffset, POS_Y - fontRendererObj.FONT_HEIGHT, 0xFFFFFF);
         }
     }

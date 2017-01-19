@@ -1,9 +1,8 @@
 package com.ipixelmon.mcstats;
 
 import com.ipixelmon.mcstats.client.EXPAnimation;
-import com.ipixelmon.mcstats.client.PlayerListener;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

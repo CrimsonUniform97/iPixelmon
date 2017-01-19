@@ -5,7 +5,8 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -46,7 +47,7 @@ public class PacketSendPartyInvite implements IMessage{
 
             // player does not exist
             if(playerUUID == null) {
-                sender.addChatComponentMessage(new ChatComponentText("Player not found."));
+                sender.addChatComponentMessage(new TextComponentString("Player not found."));
                 return null;
             }
 
@@ -54,7 +55,8 @@ public class PacketSendPartyInvite implements IMessage{
 
             // player is not online
             if(player == null) {
-                sender.addChatComponentMessage(new ChatComponentText("Player not online."));
+                sender.addChatComponentMessage(new TextComponentString("Player not online.") {
+                });
                 return null;
             }
 

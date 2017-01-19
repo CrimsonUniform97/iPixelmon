@@ -3,11 +3,12 @@ package com.ipixelmon.landcontrol.toolCupboard;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -21,29 +22,35 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
     private Network network = new Network(UUID.randomUUID());
     private EnumFacing facing = EnumFacing.NORTH;
 
+
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         write(compound);
+        return compound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
         read(compound);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         read(pkt.getNbtCompound());
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         write(tagCompound);
-        return new S35PacketUpdateTileEntity(getPos(), getBlockMetadata(), tagCompound);
+        return tagCompound;
     }
 
     @Override
@@ -108,14 +115,14 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
         this.network = network;
         markDirty();
         if (getWorld() != null)
-            getWorld().markBlockForUpdate(getPos());
+            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 2);
     }
 
     public void setFacing(EnumFacing facing) {
         this.facing = facing;
         markDirty();
         if (getWorld() != null)
-            getWorld().markBlockForUpdate(getPos());
+            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 2);
     }
 
 

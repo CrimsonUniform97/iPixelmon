@@ -5,7 +5,7 @@ import com.ipixelmon.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.util.Rectangle;
 
 import java.awt.*;
@@ -17,16 +17,16 @@ import java.util.Map;
 public class ColorPopupWindow extends Gui {
 
     private int xPosition, yPosition;
-    private EnumChatFormatting selectedColor = EnumChatFormatting.RESET;
-    private Map<Rectangle, EnumChatFormatting> colors = Maps.newHashMap();
-    private Map<EnumChatFormatting, Integer> colorHexs = Maps.newHashMap();
+    private TextFormatting selectedColor = TextFormatting.RESET;
+    private Map<Rectangle, TextFormatting> colors = Maps.newHashMap();
+    private Map<TextFormatting, Integer> colorHexs = Maps.newHashMap();
     private boolean enabled = false;
 
     public ColorPopupWindow() {
         int x = 0;
         int y = 0;
         int width = 8 * 8;
-        for(EnumChatFormatting color : EnumChatFormatting.values()) {
+        for(TextFormatting color : TextFormatting.values()) {
             if(color.isColor()) {
                 if (x >= width) {
                     y += 10;
@@ -43,22 +43,22 @@ public class ColorPopupWindow extends Gui {
             x += 8;
         }
 
-        colorHexs.put(EnumChatFormatting.BLACK, 0x000000);
-        colorHexs.put(EnumChatFormatting.DARK_BLUE, 0x0000AA);
-        colorHexs.put(EnumChatFormatting.DARK_GREEN, 0x00AA00);
-        colorHexs.put(EnumChatFormatting.DARK_AQUA, 0x00AAAA);
-        colorHexs.put(EnumChatFormatting.DARK_RED, 0xAA0000);
-        colorHexs.put(EnumChatFormatting.DARK_PURPLE, 0xAA00AA);
-        colorHexs.put(EnumChatFormatting.GOLD, 0xFFAA00);
-        colorHexs.put(EnumChatFormatting.GRAY, 0xAAAAAA);
-        colorHexs.put(EnumChatFormatting.DARK_GRAY, 0x555555);
-        colorHexs.put(EnumChatFormatting.BLUE, 0x5555FF);
-        colorHexs.put(EnumChatFormatting.GREEN, 0x55FF55);
-        colorHexs.put(EnumChatFormatting.AQUA, 0x55FFFF);
-        colorHexs.put(EnumChatFormatting.RED, 0xFF5555);
-        colorHexs.put(EnumChatFormatting.LIGHT_PURPLE, 0xFF55FF);
-        colorHexs.put(EnumChatFormatting.YELLOW, 0xFFFF55);
-        colorHexs.put(EnumChatFormatting.WHITE, 0xFFFFFF);
+        colorHexs.put(TextFormatting.BLACK, 0x000000);
+        colorHexs.put(TextFormatting.DARK_BLUE, 0x0000AA);
+        colorHexs.put(TextFormatting.DARK_GREEN, 0x00AA00);
+        colorHexs.put(TextFormatting.DARK_AQUA, 0x00AAAA);
+        colorHexs.put(TextFormatting.DARK_RED, 0xAA0000);
+        colorHexs.put(TextFormatting.DARK_PURPLE, 0xAA00AA);
+        colorHexs.put(TextFormatting.GOLD, 0xFFAA00);
+        colorHexs.put(TextFormatting.GRAY, 0xAAAAAA);
+        colorHexs.put(TextFormatting.DARK_GRAY, 0x555555);
+        colorHexs.put(TextFormatting.BLUE, 0x5555FF);
+        colorHexs.put(TextFormatting.GREEN, 0x55FF55);
+        colorHexs.put(TextFormatting.AQUA, 0x55FFFF);
+        colorHexs.put(TextFormatting.RED, 0xFF5555);
+        colorHexs.put(TextFormatting.LIGHT_PURPLE, 0xFF55FF);
+        colorHexs.put(TextFormatting.YELLOW, 0xFFFF55);
+        colorHexs.put(TextFormatting.WHITE, 0xFFFFFF);
     }
 
     public void draw() {
@@ -70,7 +70,7 @@ public class ColorPopupWindow extends Gui {
         GlStateManager.translate(xPosition, yPosition, 0);
         GlStateManager.disableTexture2D();
         for(Rectangle r : colors.keySet()) {
-            EnumChatFormatting format = colors.get(r);
+            TextFormatting format = colors.get(r);
             if(format.isColor()) {
                 Color color = new Color(colorHexs.get(format));
                 GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1f);
@@ -106,7 +106,7 @@ public class ColorPopupWindow extends Gui {
         enabled = false;
     }
 
-    public EnumChatFormatting getSelectedColor() {
+    public TextFormatting getSelectedColor() {
         return selectedColor;
     }
 

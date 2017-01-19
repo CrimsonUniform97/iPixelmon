@@ -2,16 +2,11 @@ package com.ipixelmon.tablet.app.pixelbay.lists.buy;
 
 import com.ipixelmon.tablet.app.pixelbay.PixelbayAPI;
 import com.ipixelmon.tablet.app.pixelbay.PixelmonListing;
-import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGuiItem;
 import com.ipixelmon.tablet.app.pixelbay.gui.buy.BuyGuiPixelmon;
 import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -45,7 +40,7 @@ public class GuiPixelmonListingList extends IScrollListWithDesign {
         boolean hasEnough = PixelmonAPI.Client.getBalance() >= pixelmonListing.getPrice();
 
         mc.fontRendererObj.drawString("Price:   "
-                        + (hasEnough ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + pixelmonListing.getPrice(),
+                        + (hasEnough ? TextFormatting.GREEN : TextFormatting.RED) + pixelmonListing.getPrice(),
                 x + width + 16, getObjectHeight(index) - 12, 0xFFFFFF);
 
         PixelmonAPI.Client.renderPixelmon2D(pixelmonListing.getPixelmon(), x - 5, y - 12, width + 16, height + 16);

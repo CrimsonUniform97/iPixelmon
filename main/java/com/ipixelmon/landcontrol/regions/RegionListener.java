@@ -7,8 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -22,7 +22,7 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onBreak(BlockEvent.BreakEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
+        Region region = LandControlAPI.Server.getRegionAt(event.getWorld(), event.getPos());
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.breakBlocks)) event.setCanceled(true);
@@ -30,7 +30,7 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onPlace(BlockEvent.PlaceEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
+        Region region = LandControlAPI.Server.getRegionAt(event.getWorld(), event.getPos());
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.placeBlocks)) event.setCanceled(true);
@@ -38,15 +38,15 @@ public class RegionListener {
 
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
-        Region region = LandControlAPI.Server.getRegionAt(event.world, event.pos);
+        Region region = LandControlAPI.Server.getRegionAt(event.getWorld(), event.getPos());
         if (region == null) return;
 
-        if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.getHeldItem().getItem() == Items.feather) {
-            SubRegion subRegion = region.getSubRegionAt(event.pos);
+        if (event.getEntityPlayer().getHeldItemMainhand() != null && event.getEntityPlayer().getHeldItemMainhand().getItem() == Items.FEATHER) {
+            SubRegion subRegion = region.getSubRegionAt(event.getPos());
             if (subRegion != null) {
-                iPixelmon.network.sendTo(new PacketOpenRegionGui(subRegion), (EntityPlayerMP) event.entityPlayer);
+                iPixelmon.network.sendTo(new PacketOpenRegionGui(subRegion), (EntityPlayerMP) event.getEntityPlayer());
             } else {
-                iPixelmon.network.sendTo(new PacketOpenRegionGui(region), (EntityPlayerMP) event.entityPlayer);
+                iPixelmon.network.sendTo(new PacketOpenRegionGui(region), (EntityPlayerMP) event.getEntityPlayer());
             }
 
             event.setCanceled(true);
@@ -55,23 +55,23 @@ public class RegionListener {
 
         if (!region.getProperty(EnumRegionProperty.interact)) event.setCanceled(true);
 
-        if (event.world.getBlockState(event.pos).getBlock() == Blocks.chest) {
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.CHEST) {
             if (!region.getProperty(EnumRegionProperty.chestAccess)) event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public void onDamage(LivingHurtEvent event) {
-        if (!(event.entity instanceof EntityPlayer)) return;
+        if (!(event.getEntity() instanceof EntityPlayer)) return;
 
-        Region region = LandControlAPI.Server.getRegionAt(event.entity.worldObj, event.entity.getPosition());
+        Region region = LandControlAPI.Server.getRegionAt(event.getEntity().worldObj, event.getEntity().getPosition());
         if (region == null) return;
 
         if (!region.getProperty(EnumRegionProperty.invincible)) event.setCanceled(true);
 
         if (!region.getProperty(EnumRegionProperty.pvp)) {
-            if (event.source.getEntity() != null) {
-                if (event.source.getEntity() instanceof EntityPlayer) event.setCanceled(true);
+            if (event.getSource().getEntity() != null) {
+                if (event.getSource().getEntity() instanceof EntityPlayer) event.setCanceled(true);
             }
         }
     }
@@ -88,7 +88,7 @@ public class RegionListener {
 
         if (region.playersInside.contains(player)) return;
         region.playersInside.add(player);
-        player.addChatComponentMessage(new ChatComponentText(region.getEnterMsg()));
+        player.addChatComponentMessage(new TextComponentString(region.getEnterMsg()));
     }
 
     @SubscribeEvent
@@ -114,9 +114,9 @@ public class RegionListener {
 
                 // check if the player is inside the region
                 if (p.getEntityWorld() != r.getWorld() ||
-                        !r.getBounds().isVecInside(new Vec3(p.getPosition().getX(), p.getPosition().getY(), p.getPosition().getZ()))) {
+                        !r.getBounds().isVecInside(new Vec3d(p.getPosition().getX(), p.getPosition().getY(), p.getPosition().getZ()))) {
                     // if not remove the player and send the leave message
-                    p.addChatComponentMessage(new ChatComponentText(r.getLeaveMsg()));
+                    p.addChatComponentMessage(new TextComponentString(r.getLeaveMsg()));
                     iterator.remove();
                     return true;
                 }

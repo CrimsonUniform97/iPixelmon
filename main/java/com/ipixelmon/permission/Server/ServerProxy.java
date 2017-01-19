@@ -1,5 +1,6 @@
 package com.ipixelmon.permission.Server;
 
+import com.google.common.collect.Lists;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.permission.Group;
@@ -10,6 +11,8 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ServerProxy extends CommonProxy {
 
@@ -35,26 +38,24 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        List<Group> groups = PermissionMod.getGroups();
-
-        for(Group group : groups) {
-            System.out.println(group.getName() + "," + group.isDefaultGroup());
-
-            for(String s : group.getPermissions()) {
-                System.out.println(s);
-            }
-
-            // TODO: Iterate through all the inheritance, and their inheritance
-            for(String s : group.getInheritance()) {
-                for (Group g : groups) {
-                    if(g.getName().equals(s)) {
-                        for(String p : g.getPermissions()) {
-                            System.out.println(p);
-                        }
-                    }
-                }
-            }
+        for(Group g : PermissionMod.getGroups()) {
+            Set<String> perms = getAllInheritedPermissions(g);
+            perms.addAll(g.getPermissions());
+            System.out.println("\n" + g.getName());
+            for(String s : perms) System.out.println(s);
         }
+    }
+
+    // TODO: Test out if one group inherits another group and that other group inherits the other group that inherited it.
+    public Set<String> getAllInheritedPermissions(Group g) {
+        Set<String> permissions = new TreeSet<>();
+
+        for (String gName : g.getInheritance()) {
+            permissions.addAll(PermissionMod.getGroup(gName).getPermissions());
+            permissions.addAll(getAllInheritedPermissions(PermissionMod.getGroup(gName)));
+        }
+
+        return permissions;
     }
 
 }

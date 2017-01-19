@@ -6,8 +6,8 @@ import com.ipixelmon.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 /**
  * Created by colby on 12/30/2016.
@@ -34,7 +34,7 @@ public class RenderQuestGiver extends RenderLiving<EntityQuestGiver>
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
         // TODO: If done with a quest render a exclamation mark
-        GuiUtil.renderLabel(EnumChatFormatting.YELLOW.toString() + EnumChatFormatting.BOLD.toString() + "?", x,
+        GuiUtil.renderLabel(TextFormatting.YELLOW.toString() + TextFormatting.BOLD.toString() + "?", x,
                 y + 3, z, 5.45f, false, this.getFontRendererFromRenderManager(), this.renderManager);
     }
 

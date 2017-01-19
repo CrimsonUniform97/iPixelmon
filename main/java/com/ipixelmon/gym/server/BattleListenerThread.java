@@ -8,6 +8,7 @@ import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -62,7 +63,7 @@ public class BattleListenerThread implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            MinecraftServer.getServer().stopServer();
+            FMLCommonHandler.instance().getMinecraftServerInstance().stopServer();
         }
     }
 

@@ -7,12 +7,9 @@ import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.mcstats.PacketBrokeBlock;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,23 +29,22 @@ public class PlayerListener {
         if (event.getPlayer() == null) return;
 
         EntityPlayerMP player = (EntityPlayerMP) event.getPlayer();
-        IBlockState blockState = event.world.getBlockState(event.pos);
+        IBlockState blockState = event.getWorld().getBlockState(event.getPos());
         int exp = McStatsAPI.Server.expValueList.getEXP(blockState);
 
         if (exp == 0) return;
 
         McStatsAPI.Server.giveEXP(player.getUniqueID(), exp, McStatsAPI.Server.expValueList.getGatherType(blockState));
-        iPixelmon.network.sendTo(new PacketBrokeBlock(event.pos.getX(), event.pos.getY(), event.pos.getZ(), exp), player);
+        iPixelmon.network.sendTo(new PacketBrokeBlock(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ(), exp), player);
     }
 
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
-        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-
+        // TODO: Check if it's only right click
         try {
-            McStatsAPI.Mining.applySuperBreaker((EntityPlayerMP) event.entityPlayer);
+            McStatsAPI.Mining.applySuperBreaker((EntityPlayerMP) event.getEntityPlayer());
         } catch (Exception e) {
-            event.entityPlayer.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+            event.getEntityPlayer().addChatComponentMessage(new TextComponentString(e.getMessage()));
         }
     }
 

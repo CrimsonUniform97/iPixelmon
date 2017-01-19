@@ -2,13 +2,8 @@ package com.ipixelmon.quest.client;
 
 import com.ipixelmon.GuiScrollList;
 import com.ipixelmon.util.ItemUtil;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 

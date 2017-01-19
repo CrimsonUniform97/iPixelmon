@@ -2,11 +2,8 @@ package com.ipixelmon.landcontrol.client;
 
 import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import com.ipixelmon.util.GuiUtil;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
@@ -28,17 +25,17 @@ public class PlayerListener {
 
             int color = 0xffee00;
 
-            GuiUtil.drawSquareInWorld(x + 16, y, z, 16, 1, 180f, event.partialTicks, color);
-            GuiUtil.drawSquareInWorld(x, y, z, 16, 1, 0f, event.partialTicks, color);
+            GuiUtil.drawSquareInWorld(x + 16, y, z, 16, 1, 180f, event.getPartialTicks(), color);
+            GuiUtil.drawSquareInWorld(x, y, z, 16, 1, 0f, event.getPartialTicks(), color);
 
-            GuiUtil.drawSquareInWorld(x + 16, y, z + 16, 16, 1, 90f, event.partialTicks, color);
-            GuiUtil.drawSquareInWorld(x + 16, y, z, 16, 1, -90f, event.partialTicks, color);
+            GuiUtil.drawSquareInWorld(x + 16, y, z + 16, 16, 1, 90f, event.getPartialTicks(), color);
+            GuiUtil.drawSquareInWorld(x + 16, y, z, 16, 1, -90f, event.getPartialTicks(), color);
 
-            GuiUtil.drawSquareInWorld(x, y, z + 16, 16, 1, 0f, event.partialTicks, color);
-            GuiUtil.drawSquareInWorld(x + 16, y, z + 16, 16, 1, 180f, event.partialTicks, color);
+            GuiUtil.drawSquareInWorld(x, y, z + 16, 16, 1, 0f, event.getPartialTicks(), color);
+            GuiUtil.drawSquareInWorld(x + 16, y, z + 16, 16, 1, 180f, event.getPartialTicks(), color);
 
-            GuiUtil.drawSquareInWorld(x, y, z, 16, 1, -90f, event.partialTicks, color);
-            GuiUtil.drawSquareInWorld(x, y, z + 16, 16, 1, 90f, event.partialTicks, color);
+            GuiUtil.drawSquareInWorld(x, y, z, 16, 1, -90f, event.getPartialTicks(), color);
+            GuiUtil.drawSquareInWorld(x, y, z + 16, 16, 1, 90f, event.getPartialTicks(), color);
         }
     }
 

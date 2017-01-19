@@ -17,7 +17,7 @@ public class Group {
     private boolean defaultGroup = false;
     private String prefix, suffix = "";
 
-    public Group(String name) throws Exception {
+    protected Group(String name) throws Exception {
         JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("groups");
         ListIterator listIterator = jsonArray.listIterator();
 

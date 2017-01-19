@@ -2,7 +2,7 @@ package com.ipixelmon;
 
 import lib.PatPeter.SQLibrary.SQLite;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -11,8 +11,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static com.ipixelmon.iPixelmon.config;
 
 public final class ClientProxy extends CommonProxy {
 
@@ -26,7 +24,7 @@ public final class ClientProxy extends CommonProxy {
         iPixelmon.clientDb = new SQLite(Logger.getLogger("Minecraft"), iPixelmon.id, iPixelmon.path.getAbsolutePath(), "data", ".sqlite");
         iPixelmon.clientDb.open();
 
-        OBJLoader.instance.addDomain(iPixelmon.id);
+        OBJLoader.INSTANCE.addDomain(iPixelmon.id);
 
         try {
             for (IMod mod : iPixelmon.mods) if(mod.clientProxyClass() != null) proxies.add(mod.clientProxyClass().newInstance());

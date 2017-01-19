@@ -8,11 +8,12 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.PlayerUtil;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -134,8 +135,9 @@ public class McStatsAPI {
                 calendar.add(Calendar.SECOND, 10 + (int) getSuperBreakerDuration(player.getUniqueID()));
                 coolDownSuperBreaker.put(player.getUniqueID(), calendar.getTime());
 
-                inHand.addEnchantment(Enchantment.efficiency,
-                        EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand) + 5);
+                // TODO: Figure out how to do enchantments
+//                inHand.addEnchantment(Enchantment.efficiency,
+//                        EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand) + 5);
 
                 superBreakerItems.put(player.getUniqueID(), inHand);
             } else {
@@ -155,15 +157,16 @@ public class McStatsAPI {
 
             if (inHand.isItemEnchanted()) {
                 System.out.println("CALLED");
-                int currentLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand);
-                Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(inHand);
-                if(currentLvl == 5) {
-                    enchantments.remove(Enchantment.efficiency.effectId);
-                } else {
-                    enchantments.put(Enchantment.efficiency.effectId, currentLvl - 5);
-                }
+                // TODO: Figure out
+//                int currentLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, inHand);
+//                Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(inHand);
+//                if(currentLvl == 5) {
+//                    enchantments.remove(Enchantment.efficiency.effectId);
+//                } else {
+//                    enchantments.put(Enchantment.efficiency.effectId, currentLvl - 5);
+//                }
 
-                EnchantmentHelper.setEnchantments(enchantments, inHand);
+//                EnchantmentHelper.setEnchantments(enchantments, inHand);
             }
         }
 

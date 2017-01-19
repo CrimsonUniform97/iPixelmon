@@ -2,14 +2,15 @@ package com.ipixelmon.landcontrol.toolCupboard;
 
 import com.ipixelmon.iPixelmon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,7 +23,7 @@ public class ToolCupboardItem extends Item {
     public static final ToolCupboardItem instance = new ToolCupboardItem();
 
     private ToolCupboardItem() {
-        setCreativeTab(CreativeTabs.tabBlock);
+        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         setUnlocalizedName(iPixelmon.id + ":toolCupboardItem");
         setRegistryName("toolCupboardItem");
     }
@@ -35,13 +36,13 @@ public class ToolCupboardItem extends Item {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (worldIn.isRemote) return true;
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (worldIn.isRemote) return EnumActionResult.SUCCESS;
 
-        if (!ToolCupboardBlock.instance.canPlaceBlockAt(worldIn, pos.offset(side))) return false;
+        if (!ToolCupboardBlock.instance.canPlaceBlockAt(worldIn, pos.offset(facing))) return EnumActionResult.FAIL;
 
-        ToolCupboardBlock.instance.onBlockPlacedBy(worldIn, pos.offset(side), ToolCupboardBlock.instance.getDefaultState(), playerIn, stack);
+        ToolCupboardBlock.instance.onBlockPlacedBy(worldIn, pos.offset(facing), ToolCupboardBlock.instance.getDefaultState(), playerIn, stack);
 
-        return true;
+        return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 }

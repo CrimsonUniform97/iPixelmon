@@ -18,6 +18,8 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -102,11 +104,12 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompund) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompund) {
         super.writeToNBT(tagCompund);
         tagCompund.setString("pixelmon", PixelmonAPI.pixelmonToString(pixelmon));
         tagCompund.setString("playerName", playerName);
         tagCompund.setString("playerID", playerID.toString());
+        return tagCompund;
     }
 
     public EntityPixelmon getPixelmon() {
@@ -122,9 +125,11 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         return playerName;
     }
 
+
+    // TODO: Include level to the NPC of the player's skill level.
     @Override
-    public IChatComponent getDisplayName() {
-        return new ChatComponentText(playerName);
+    public String getName(String langCode) {
+        return playerName;
     }
 
     @Override
@@ -164,7 +169,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
         float scale = 2.0f;
-        return AxisAlignedBB.fromBounds(posX - scale, posY, posZ - scale, posX + scale, posY + scale, posZ + scale);
+        return new AxisAlignedBB(posX - scale, posY, posZ - scale, posX + scale, posY + scale, posZ + scale);
     }
 
 }

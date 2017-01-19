@@ -7,7 +7,7 @@ import com.ipixelmon.tablet.app.pixelbay.lists.IScrollListWithDesign;
 import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -37,7 +37,7 @@ public class GuiItemListingList extends IScrollListWithDesign {
         boolean hasEnough = PixelmonAPI.Client.getBalance() >= itemListing.getPrice();
 
         mc.fontRendererObj.drawString("Price:   "
-                        + (hasEnough ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + itemListing.getPrice(),
+                        + (hasEnough ? TextFormatting.GREEN : TextFormatting.RED) + itemListing.getPrice(),
                 4 + 10 + 16, getObjectHeight(index) - 12, 0xFFFFFF);
     }
 

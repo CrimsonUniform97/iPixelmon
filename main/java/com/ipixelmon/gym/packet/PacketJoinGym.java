@@ -2,6 +2,7 @@ package com.ipixelmon.gym.packet;
 
 import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.GymAPI;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.team.EnumTeam;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.PixelmonAPI;
@@ -11,7 +12,7 @@ import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -57,14 +58,14 @@ public class PacketJoinGym implements IMessage{
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
             if(gym.getTeam() != EnumTeam.None && TeamMod.getPlayerTeam(player.getUniqueID()) != gym.getTeam()) {
-                player.addChatComponentMessage(new ChatComponentText("You are not a " + gym.getTeam().name() + " member."));
+                player.addChatComponentMessage(new TextComponentString("You are not a " + gym.getTeam().name() + " member."));
                 return null;
             }
 
             if(PixelmonAPI.Server.getPixelmon(player, true).size() == 1) return null;
 
             try {
-                EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
+                EntityPixelmon entityPixelmon = PixelmonStorage.pokeBallManager.getPlayerStorage(player).get()
                         .getPokemon(message.pixelmonID, player.worldObj);
 
                 if(gym.getAvailableSeats() <= 0) return null;
@@ -73,7 +74,7 @@ public class PacketJoinGym implements IMessage{
 
                 PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
 
-                MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                iPixelmon.proxy.getDefaultWorld().getMinecraftServer().addScheduledTask(new Runnable() {
                     @Override
                     public void run() {
                         gym.reloadLivingEntities();
@@ -81,7 +82,7 @@ public class PacketJoinGym implements IMessage{
                 });
 
                 player.closeScreen();
-            } catch (PlayerNotLoadedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

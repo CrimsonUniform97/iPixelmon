@@ -9,7 +9,7 @@ import com.ipixelmon.util.ItemUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
@@ -24,11 +24,11 @@ public class BuyGuiItem extends BuyGuiPopup {
     public BuyGuiItem(Object[] objects) {
         super(objects);
         this.itemListing = (ItemListing) objects[0];
-        details.add(EnumChatFormatting.YELLOW + "Seller: " + itemListing.getPlayerName());
+        details.add(TextFormatting.YELLOW + "Seller: " + itemListing.getPlayerName());
 
         boolean hasEnough = PixelmonAPI.Client.getBalance() >= itemListing.getPrice();
 
-        details.add((hasEnough ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + "Price: " + String.valueOf(itemListing.getPrice()));
+        details.add((hasEnough ? TextFormatting.GREEN : TextFormatting.RED) + "Price: " + String.valueOf(itemListing.getPrice()));
     }
 
     @Override

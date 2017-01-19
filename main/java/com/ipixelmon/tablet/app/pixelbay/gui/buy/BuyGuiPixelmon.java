@@ -6,11 +6,7 @@ import com.ipixelmon.tablet.app.pixelbay.PixelmonListing;
 import com.ipixelmon.tablet.app.pixelbay.packet.buy.PacketPurchaseRequest;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
@@ -26,9 +22,9 @@ public class BuyGuiPixelmon extends BuyGuiPopup {
     public BuyGuiPixelmon(Object[] objects) {
         super(objects);
         this.pixelmonListing = (PixelmonListing) objects[0];
-        details.add(EnumChatFormatting.YELLOW + "Seller: " + pixelmonListing.getPlayerName());
+        details.add(TextFormatting.YELLOW + "Seller: " + pixelmonListing.getPlayerName());
         boolean hasEnough = PixelmonAPI.Client.getBalance() >= pixelmonListing.getPrice();
-        details.add((hasEnough ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + "Price: " + String.valueOf(pixelmonListing.getPrice()));
+        details.add((hasEnough ? TextFormatting.GREEN : TextFormatting.RED) + "Price: " + String.valueOf(pixelmonListing.getPrice()));
     }
 
     @Override

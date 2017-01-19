@@ -7,7 +7,6 @@ import com.pixelmonmod.pixelmon.client.ServerStorageDisplay;
 import com.pixelmonmod.pixelmon.client.gui.GuiHelper;
 import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Add;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.Remove;
 import com.pixelmonmod.pixelmon.comm.packetHandlers.clientStorage.UpdateCurrency;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
@@ -16,20 +15,18 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.Entity3HasStats;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.BaseStats;
 import com.pixelmonmod.pixelmon.enums.*;
-import com.pixelmonmod.pixelmon.listener.EntityPlayerExtension;
 import com.pixelmonmod.pixelmon.storage.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -50,8 +47,8 @@ public class PixelmonAPI {
         n.setString("id", "Pixelmon");
         n.setBoolean("IsInBall", true);
         n.setBoolean("IsShiny", pixelmon.getIsShiny());
-        if (pixelmon.getHeldItem() != null) {
-            n.setTag("HeldItem", pixelmon.getHeldItem().getTagCompound());
+        if (pixelmon.getHeldItemMainhand() != null) {
+            n.setTag("HeldItem", pixelmon.getHeldItemMainhand().getTagCompound());
         }
 
 //        PlayerStorage.addToParty()
@@ -93,7 +90,7 @@ public class PixelmonAPI {
         final Optional stats = Entity3HasStats.getBaseStats(pokemon.name);
         tagCompound.setString("SpriteName", "pixelmon:sprites/items/" + String.format("%03d", new Object[]{Integer.valueOf(((BaseStats) stats.get()).nationalPokedexNumber)}));
         final NBTTagCompound display = new NBTTagCompound();
-        display.setString("Name", EntityPixelmon.getLocalizedName(pokemon.name) + " " + StatCollector.translateToLocal("item.PixelmonSprite.name"));
+        display.setString("Name", EntityPixelmon.getLocalizedName(pokemon.name) + " " + I18n.format("item.PixelmonSprite.name"));
         tagCompound.setTag("display", display);
         stack.setTagCompound(tagCompound);
         return stack;
@@ -208,14 +205,14 @@ public class PixelmonAPI {
             List<String> pixelmonInfo = new ArrayList<>();
             pixelmonInfo.add(pixelmonData.name);
             pixelmonInfo.add("");
-            pixelmonInfo.add(EnumChatFormatting.YELLOW + "Lvl: " + pixelmonData.lvl);
-            pixelmonInfo.add(EnumChatFormatting.LIGHT_PURPLE + "XP: " + pixelmonData.xp + "/" + pixelmonData.nextLvlXP);
+            pixelmonInfo.add(TextFormatting.YELLOW + "Lvl: " + pixelmonData.lvl);
+            pixelmonInfo.add(TextFormatting.LIGHT_PURPLE + "XP: " + pixelmonData.xp + "/" + pixelmonData.nextLvlXP);
             float halfHealth = pixelmonData.HP / 2;
             float thirdHealth = pixelmonData.HP / 3;
-            EnumChatFormatting healthColor = pixelmonData.health <= halfHealth ? EnumChatFormatting.RED : pixelmonData.health <= thirdHealth ?
-                    EnumChatFormatting.GOLD : EnumChatFormatting.GREEN;
+            TextFormatting healthColor = pixelmonData.health <= halfHealth ? TextFormatting.RED : pixelmonData.health <= thirdHealth ?
+                    TextFormatting.GOLD : TextFormatting.GREEN;
             pixelmonInfo.add(healthColor + "HP: " + pixelmonData.health + "/" + pixelmonData.HP);
-            pixelmonInfo.add(EnumChatFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
+            pixelmonInfo.add(TextFormatting.BLUE + "CP: " + PixelmonAPI.getCP(pixelmon));
             return GuiUtil.drawHoveringText(pixelmonInfo, x, y, width, height);
         }
 
@@ -228,11 +225,11 @@ public class PixelmonAPI {
             List<EntityPixelmon> pixelmonList = Lists.newArrayList();
             try {
                 if (fromPokeBalls) {
-                    for (int[] pID : PixelmonStorage.PokeballManager.getPlayerStorage(player).getAllAblePokemonIDs()) {
-                        pixelmonList.add(PixelmonStorage.PokeballManager.getPlayerStorage(player).getPokemon(pID, player.worldObj));
+                    for (int[] pID : PixelmonStorage.pokeBallManager.getPlayerStorage(player).get().getAllAblePokemonIDs()) {
+                        pixelmonList.add(PixelmonStorage.pokeBallManager.getPlayerStorage(player).get().getPokemon(pID, player.worldObj));
                     }
                 } else {
-                    for (ComputerBox box : PixelmonStorage.ComputerManager.getPlayerStorage(player).getBoxList()) {
+                    for (ComputerBox box : PixelmonStorage.computerManager.getPlayerStorage(player).getBoxList()) {
                         if (box != null) {
                             for (NBTTagCompound tagCompound : box.getStoredPokemon()) {
                                 if (tagCompound != null)
@@ -249,7 +246,7 @@ public class PixelmonAPI {
 
         // TODO: Not working when claiming Gym
         public static void removePixelmon(EntityPixelmon pixelmon, EntityPlayerMP player) {
-            MinecraftServer.getServer().addScheduledTask(new Runnable() {
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
                     PCServer.deletePokemon(player, -1, Math.max(0, pixelmon.getPartyPosition()));
@@ -261,7 +258,7 @@ public class PixelmonAPI {
 
         public static final void giveMoney(final UUID player, final int balance) {
             try {
-                final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
+                final PlayerStorage targetStorage = PixelmonStorage.pokeBallManager.getPlayerStorageFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance(), player).get();
                 targetStorage.addCurrency(Math.abs(balance));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -270,7 +267,7 @@ public class PixelmonAPI {
 
         public static final void takeMoney(final UUID player, final int balance) {
             try {
-                final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
+                final PlayerStorage targetStorage = PixelmonStorage.pokeBallManager.getPlayerStorageFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance(), player).get();
                 targetStorage.addCurrency(-1 * Math.abs(balance));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -279,7 +276,7 @@ public class PixelmonAPI {
 
         public static final int getBalance(final UUID player) {
             try {
-                final PlayerStorage targetStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player);
+                final PlayerStorage targetStorage = PixelmonStorage.pokeBallManager.getPlayerStorageFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance(), player).get();
                 return targetStorage.getCurrency();
             } catch (Exception e) {
                 e.printStackTrace();

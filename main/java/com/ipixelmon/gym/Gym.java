@@ -13,8 +13,6 @@ import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.util.PixelmonAPI;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumBattleType;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
@@ -24,10 +22,10 @@ import net.minecraft.block.BlockCarpet;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -299,11 +297,11 @@ public class Gym implements Comparable<Gym> {
                     if (world.getBlockState(pos) != null) {
                         block = world.getBlockState(pos).getBlock();
 
-                        if (block == Blocks.wool) {
-                            world.setBlockState(pos, Blocks.wool.getDefaultState().withProperty(BlockCarpet.COLOR,
+                        if (block == Blocks.WOOL) {
+                            world.setBlockState(pos, Blocks.WOOL.getDefaultState().withProperty(BlockCarpet.COLOR,
                                     getTeam().colorDye()));
-                        } else if (block == Blocks.stained_glass) {
-                            world.setBlockState(pos, Blocks.stained_glass.getDefaultState().withProperty(BlockStainedGlass.COLOR,
+                        } else if (block == Blocks.STAINED_GLASS) {
+                            world.setBlockState(pos, Blocks.STAINED_GLASS.getDefaultState().withProperty(BlockStainedGlass.COLOR,
                                     getTeam().colorDye()));
                         }
                     }
@@ -335,14 +333,14 @@ public class Gym implements Comparable<Gym> {
 
     public void battle(EntityPlayerMP player) {
         if (getTeleportPos() == null) {
-            player.addChatComponentMessage(new ChatComponentText("TeleportPos not set! Tell server admin."));
+            player.addChatComponentMessage(new TextComponentString("TeleportPos not set! Tell server admin."));
             return;
         }
 
         if (!getQue().isEmpty()) {
             if (!getQue().contains(player.getUniqueID())) {
                 getQue().add(player.getUniqueID());
-                player.addChatComponentMessage(new ChatComponentText("You are " + (getQue().size() - 1) + " in que."));
+                player.addChatComponentMessage(new TextComponentString("You are " + (getQue().size() - 1) + " in que."));
                 return;
             }
         } else {
@@ -358,7 +356,7 @@ public class Gym implements Comparable<Gym> {
             /**
              * Setup player pokemons
              */
-            players.add(new PlayerParticipant(player, PixelmonStorage.PokeballManager.getPlayerStorage(player).getFirstAblePokemon(player.worldObj)));
+            players.add(new PlayerParticipant(player, PixelmonStorage.pokeBallManager.getPlayerStorage(player).get().getFirstAblePokemon(player.worldObj)));
 
             /**
              * Setup trainer pokemons

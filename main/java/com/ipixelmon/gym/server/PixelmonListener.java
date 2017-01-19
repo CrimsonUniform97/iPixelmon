@@ -1,7 +1,6 @@
 package com.ipixelmon.gym.server;
 
 import com.ipixelmon.gym.*;
-import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.landcontrol.regions.EnterRegionEvent;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.PixelmonAPI;
@@ -11,14 +10,10 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
-import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Vec3i;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -34,11 +29,11 @@ public class PixelmonListener {
 
         if (gym == null) return;
 
-        event.player.addChatComponentMessage(new ChatComponentText(
-                EnumChatFormatting.BOLD.toString() + EnumChatFormatting.GOLD.toString() + "You entered a " +
-                        EnumChatFormatting.RED.toString() + "gym" + EnumChatFormatting.GOLD.toString() + "! " +
-                        "Press " + EnumChatFormatting.BLUE.toString() + "G" +
-                        EnumChatFormatting.GOLD.toString() + " to view gym info."
+        event.player.addChatComponentMessage(new TextComponentString(
+                TextFormatting.BOLD.toString() + TextFormatting.GOLD.toString() + "You entered a " +
+                        TextFormatting.RED.toString() + "gym" + TextFormatting.GOLD.toString() + "! " +
+                        "Press " + TextFormatting.BLUE.toString() + "G" +
+                        TextFormatting.GOLD.toString() + " to view gym info."
         ));
     }
 

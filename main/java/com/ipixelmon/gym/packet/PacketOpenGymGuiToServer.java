@@ -4,7 +4,7 @@ import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.GymAPI;
 import com.ipixelmon.iPixelmon;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -30,7 +30,7 @@ public class PacketOpenGymGuiToServer implements IMessage {
             Gym gym = GymAPI.Server.getGym(ctx.getServerHandler().playerEntity.getPosition());
 
             if(gym == null) {
-                ctx.getServerHandler().playerEntity.addChatComponentMessage(new ChatComponentText("No gym found."));
+                ctx.getServerHandler().playerEntity.addChatComponentMessage(new TextComponentString("No gym found."));
             } else {
                 iPixelmon.network.sendTo(new PacketOpenGymGuiToClient(gym), ctx.getServerHandler().playerEntity);
             }

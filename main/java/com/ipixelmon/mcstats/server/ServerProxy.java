@@ -1,6 +1,5 @@
 package com.ipixelmon.mcstats.server;
 
-import com.google.common.collect.Maps;
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.Config;
 import com.ipixelmon.iPixelmon;
@@ -10,14 +9,9 @@ import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockPlanks;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;
 import java.util.Map;
@@ -66,7 +60,7 @@ public class ServerProxy extends CommonProxy {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            MinecraftServer.getServer().stopServer();
+            FMLCommonHandler.instance().getMinecraftServerInstance().stopServer();
         }
     }
 

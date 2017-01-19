@@ -8,7 +8,7 @@ import com.ipixelmon.landcontrol.toolCupboard.ToolCupboardTileEntity;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -44,7 +44,7 @@ public class ToolCupboardGui extends GuiScreen {
             playerField.drawTextBox();
 
             if (timedMessage.hasMessage()) {
-                mc.fontRendererObj.drawString(EnumChatFormatting.RED.toString() + EnumChatFormatting.ITALIC.toString() +
+                mc.fontRendererObj.drawString(TextFormatting.RED.toString() + TextFormatting.ITALIC.toString() +
                         timedMessage.getMessage(), playerField.xPosition, playerField.yPosition + playerField.height + 4, 0xFFFFFF);
             }
 

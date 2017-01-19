@@ -34,15 +34,14 @@ public class KeyAndRenderListener {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
             Minecraft mc = Minecraft.getMinecraft();
-            ScaledResolution scaledResolution = new ScaledResolution(mc);
 
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             mc.getTextureManager().bindTexture(tablet_icon);
-            int x = scaledResolution.getScaledWidth() - 74;
-            int y = scaledResolution.getScaledHeight() - 36;
+            int x = event.getResolution().getScaledWidth() - 74;
+            int y = event.getResolution().getScaledHeight() - 36;
             GuiUtil.drawImage(x, y, 32, 32);
             mc.fontRendererObj.setUnicodeFlag(true);
             mc.fontRendererObj.drawString(Keyboard.getKeyName(tabletKey.getKeyCode()).replaceAll("KEY_", ""), x + 34,

@@ -9,9 +9,9 @@ import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.util.ArrayUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
@@ -68,7 +68,7 @@ public class LandControlAPI {
         public static Region getRegionAt(World world, BlockPos pos) {
             for (Region region : LandControlAPI.Server.regions) {
                 if (region.getWorld().equals(world)) {
-                    Vec3 vec3 = new Vec3(pos.getX(), pos.getY(), pos.getZ());
+                    Vec3d vec3 = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
                     if (region.getBounds().isVecInside(vec3)) {
                         for (SubRegion subRegion : region.getSubRegions()) {
                             if (subRegion.getBounds().isVecInside(vec3)) return subRegion;
@@ -105,7 +105,7 @@ public class LandControlAPI {
             }));
 
 
-            AxisAlignedBB bounds = AxisAlignedBB.fromBounds(minPos.getX(), minPos.getY(), minPos.getZ(),
+            AxisAlignedBB bounds = new AxisAlignedBB(minPos.getX(), minPos.getY(), minPos.getZ(),
                     maxPos.getX(), maxPos.getY(), maxPos.getZ());
 
             for (Region region : regions) if (region.getBounds().intersectsWith(bounds))
@@ -124,7 +124,7 @@ public class LandControlAPI {
             BlockPos minPos = new BlockPos(Math.min(min.getX(), max.getX()), Math.min(min.getY(), max.getY()), Math.min(min.getZ(), max.getZ()));
             BlockPos maxPos = new BlockPos(Math.max(min.getX(), max.getX()), Math.max(min.getY(), max.getY()), Math.max(min.getZ(), max.getZ()));
 
-            AxisAlignedBB bounds = AxisAlignedBB.fromBounds(minPos.getX(), minPos.getY(), minPos.getZ(),
+            AxisAlignedBB bounds = new AxisAlignedBB(minPos.getX(), minPos.getY(), minPos.getZ(),
                     maxPos.getX(), maxPos.getY(), maxPos.getZ());
 
             Region parentRegion = null;

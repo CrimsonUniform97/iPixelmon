@@ -7,7 +7,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.team.TeamMod;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -48,13 +48,13 @@ public class PacketChooseTeam implements IMessage
 
             if(TeamMod.getPlayerTeam(player.getUniqueID()) != EnumTeam.None)
             {
-                player.addChatComponentMessage(new ChatComponentText("You have already chosen your team. You cannot be reassigned."));
+                player.addChatComponentMessage(new TextComponentString("You have already chosen your team. You cannot be reassigned."));
                 return null;
             }
 
             if(EnumTeam.getTeamFromID(message.teamID) == EnumTeam.None)
             {
-                player.addChatComponentMessage(new ChatComponentText("Invalid teamID."));
+                player.addChatComponentMessage(new TextComponentString("Invalid teamID."));
                 return null;
             }
 

@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -19,7 +20,7 @@ public class PlayerUtil {
     }
 
     public static final EntityPlayerMP getPlayer(UUID playerUUID) {
-        for (WorldServer worldServer : MinecraftServer.getServer().worldServers)
+        for (WorldServer worldServer : FMLCommonHandler.instance().getMinecraftServerInstance().worldServers)
             for (EntityPlayer player : worldServer.playerEntities)
                 if (player.getUniqueID().equals(playerUUID)) return (EntityPlayerMP) player;
 

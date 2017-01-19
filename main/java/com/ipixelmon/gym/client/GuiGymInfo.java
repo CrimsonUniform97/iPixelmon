@@ -9,16 +9,14 @@ import com.ipixelmon.team.EnumTeam;
 import com.ipixelmon.team.TeamMod;
 import com.ipixelmon.util.GuiUtil;
 import com.ipixelmon.util.PixelmonAPI;
-import com.pixelmonmod.pixelmon.client.render.RenderPixelmon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.util.Rectangle;
 
 import java.io.IOException;
@@ -58,7 +56,7 @@ public class GuiGymInfo extends GuiScreen {
             /**
              * Draw team name
              */
-            String teamTxt = gym.getTeam().colorChat().toString() + EnumChatFormatting.BOLD.toString() + gym.getTeam().name();
+            String teamTxt = gym.getTeam().colorChat().toString() + TextFormatting.BOLD.toString() + gym.getTeam().name();
             mc.fontRendererObj.drawString(teamTxt, (this.width - fontRendererObj.getStringWidth(teamTxt)) / 2, POS_Y + 10,
                     0xFFFFFF, true);
 
@@ -68,7 +66,7 @@ public class GuiGymInfo extends GuiScreen {
             int level = gym.getLevel() + 1;
             level = level > 9 ? 9 : level;
             String prestigeTxt = (gym.getPrestige() / 1000D) + "K/" + (Gym.LEVELS[level] / 1000) + "K Prestige";
-            fontRendererObj.drawString(EnumChatFormatting.YELLOW + prestigeTxt,
+            fontRendererObj.drawString(TextFormatting.YELLOW + prestigeTxt,
                     POS_X + BG_WIDTH - fontRendererObj.getStringWidth(prestigeTxt) - 5, POS_Y + 5, 0xFFFFFF, true);
         }
 
@@ -152,9 +150,9 @@ public class GuiGymInfo extends GuiScreen {
                 "Claim Gym!", 4));
 
         this.buttonList.add(new GuiButton(3, POS_X + ((BG_WIDTH - 50) / 2), POS_Y + BG_HEIGHT - 25,
-                50, 20, EnumChatFormatting.BOLD + "BATTLE"));
+                50, 20, TextFormatting.BOLD + "BATTLE"));
         this.buttonList.add(new GuiButton(4, POS_X + (BG_WIDTH - 45), POS_Y + BG_HEIGHT - 25,
-                40, 20, EnumChatFormatting.BOLD + "JOIN!"));
+                40, 20, TextFormatting.BOLD + "JOIN!"));
 
         this.buttonList.get(0).enabled = false;
         this.buttonList.get(1).enabled = false;
@@ -217,7 +215,7 @@ public class GuiGymInfo extends GuiScreen {
                 {
 
                     FontRenderer fontrenderer = mc.fontRendererObj;
-                    mc.getTextureManager().bindTexture(buttonTextures);
+                    mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     this.hovered = bounds.contains(mouseX, mouseY);
                     int i = this.getHoverState(this.hovered);

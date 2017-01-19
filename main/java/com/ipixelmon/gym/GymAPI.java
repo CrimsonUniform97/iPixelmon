@@ -7,8 +7,8 @@ import com.ipixelmon.mysql.CreateForm;
 import com.ipixelmon.mysql.DataType;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,7 +55,7 @@ public class GymAPI {
 
         public static Gym getGym(BlockPos pos) {
             for (Gym gym : gyms) {
-                if (gym.getRegion().getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) {
+                if (gym.getRegion().getBounds().isVecInside(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) {
                     return gym;
                 }
             }

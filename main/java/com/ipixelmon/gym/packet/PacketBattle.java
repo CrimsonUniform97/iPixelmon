@@ -2,11 +2,11 @@ package com.ipixelmon.gym.packet;
 
 import com.ipixelmon.gym.Gym;
 import com.ipixelmon.gym.GymAPI;
+import com.ipixelmon.iPixelmon;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -50,12 +50,12 @@ public class PacketBattle implements IMessage {
         public void onMessage(PacketBattle message, EntityPlayerMP player) {
 
 
-            MinecraftServer.getServer().addScheduledTask(new Runnable() {
+            iPixelmon.proxy.getDefaultWorld().getMinecraftServer().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
 
                     if(message.gym.getQue().contains(player.getUniqueID())) {
-                        player.addChatComponentMessage(new ChatComponentText("You are already in que."));
+                        player.addChatComponentMessage(new TextComponentString("You are already in que."));
                         return;
                     }
 

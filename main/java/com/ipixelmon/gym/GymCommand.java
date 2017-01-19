@@ -6,9 +6,10 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,84 +34,85 @@ public class GymCommand implements ICommand {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         EntityPlayerMP player = (EntityPlayerMP) sender;
         Gym gym = GymAPI.Server.getGym(player.getPosition());
 
         if (args[0].equalsIgnoreCase("create")) {
             if (gym != null) {
-                player.addChatComponentMessage(new ChatComponentText("Gym already exists here."));
+                player.addChatComponentMessage(new TextComponentString("Gym already exists here."));
                 return;
             } else {
                 if (LandControlAPI.Server.getRegionAt(player.worldObj, player.getPosition()) == null) {
-                    player.addChatComponentMessage(new ChatComponentText("No region there."));
+                    player.addChatComponentMessage(new TextComponentString("No region there."));
                     return;
                 }
 
-                MinecraftServer.getServer().addScheduledTask(new Runnable() {
+                server.addScheduledTask(new Runnable() {
                     @Override
                     public void run() {
                         Gym g = GymAPI.Server.createGym(player.worldObj, player.getPosition());
                         g.updateColoredBlocks();
                     }
                 });
-                player.addChatComponentMessage(new ChatComponentText("Gym created."));
+                player.addChatComponentMessage(new TextComponentString("Gym created."));
             }
         } else if (args[0].equalsIgnoreCase("addseat")) {
             if (gym == null) {
-                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                player.addChatComponentMessage(new TextComponentString("Gym not found."));
                 return;
             }
 
             if (gym.getSeats().size() >= 10) {
-                player.addChatComponentMessage(new ChatComponentText("Max seats set."));
+                player.addChatComponentMessage(new TextComponentString("Max seats set."));
                 return;
             }
 
             gym.addSeat(player.getPosition(), player.rotationYaw);
-            player.addChatComponentMessage(new ChatComponentText("Seat added."));
+            player.addChatComponentMessage(new TextComponentString("Seat added."));
         } else if (args[0].equalsIgnoreCase("delseat")) {
             if (gym == null) {
-                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                player.addChatComponentMessage(new TextComponentString("Gym not found."));
                 return;
             }
 
             if (!gym.getSeats().containsKey(player.getPosition())) {
-                player.addChatComponentMessage(new ChatComponentText("Seat not found."));
+                player.addChatComponentMessage(new TextComponentString("Seat not found."));
                 return;
             }
 
             gym.removeSeat(player.getPosition());
-            player.addChatComponentMessage(new ChatComponentText("Seat removed."));
+            player.addChatComponentMessage(new TextComponentString("Seat removed."));
         } else if (args[0].equalsIgnoreCase("teleportpos")) {
             if (gym == null) {
-                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                player.addChatComponentMessage(new TextComponentString("Gym not found."));
                 return;
             }
 
             gym.setTeleportPos(player.getPosition());
-            player.addChatComponentMessage(new ChatComponentText("TeleportPos set."));
+            player.addChatComponentMessage(new TextComponentString("TeleportPos set."));
         } else if (args[0].equalsIgnoreCase("respawn")) {
             if (gym == null) {
-                player.addChatComponentMessage(new ChatComponentText("Gym not found."));
+                player.addChatComponentMessage(new TextComponentString("Gym not found."));
                 return;
             }
 
             gym.reloadLivingEntities();
-            player.addChatComponentMessage(new ChatComponentText("Spawned."));
+            player.addChatComponentMessage(new TextComponentString("Spawned."));
         }
     }
-// TODO: Add permissions
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return sender instanceof EntityPlayerMP;
     }
 
     @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        return null;
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
+        return new ArrayList<>();
     }
+// TODO: Add permissions
+
 
     @Override
     public boolean isUsernameIndex(String[] args, int index) {

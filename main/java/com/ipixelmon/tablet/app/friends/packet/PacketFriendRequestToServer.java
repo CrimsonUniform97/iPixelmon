@@ -8,7 +8,7 @@ import com.ipixelmon.util.PlayerUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -85,7 +85,7 @@ public class PacketFriendRequestToServer implements IMessage {
                 try {
                     FriendsAPI.Server.storeFriendRequest(friendRequest);
                 } catch (Exception e) {
-                    ctx.getServerHandler().playerEntity.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+                    ctx.getServerHandler().playerEntity.addChatComponentMessage(new TextComponentString(e.getMessage()));
                 }
 
                 if (PlayerUtil.isPlayerOnline(receiverUUID)) {

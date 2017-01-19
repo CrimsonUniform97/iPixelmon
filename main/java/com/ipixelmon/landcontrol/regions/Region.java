@@ -10,21 +10,20 @@ import com.ipixelmon.mysql.SelectionForm;
 import com.ipixelmon.mysql.UpdateForm;
 import com.ipixelmon.util.ArrayUtil;
 import com.ipixelmon.uuidmanager.UUIDManager;
-import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -171,7 +170,7 @@ public class Region implements Comparable<Region> {
     }
 
     public AxisAlignedBB getBounds() {
-        return AxisAlignedBB.fromBounds(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+        return new AxisAlignedBB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
     }
 
     public BlockPos getCenter() {
@@ -197,9 +196,9 @@ public class Region implements Comparable<Region> {
     }
 
     @SideOnly(Side.SERVER)
-    public World getWorld() {
-        for (World w : MinecraftServer.getServer().worldServers) {
-            if (w.getWorldInfo().getWorldName().equals(world)) return w;
+    public WorldServer getWorld() {
+        for (World w : iPixelmon.proxy.getDefaultWorld().getMinecraftServer().worldServers) {
+            if (w.getWorldInfo().getWorldName().equals(world)) return (WorldServer) w;
         }
         return null;
     }
@@ -214,7 +213,7 @@ public class Region implements Comparable<Region> {
 
     public SubRegion getSubRegionAt(BlockPos pos) {
         for (SubRegion subRegion : getSubRegions()) {
-            if (subRegion.getBounds().isVecInside(new Vec3(pos.getX(), pos.getY(), pos.getZ()))) return subRegion;
+            if (subRegion.getBounds().isVecInside(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) return subRegion;
         }
         return null;
     }

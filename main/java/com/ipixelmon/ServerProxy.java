@@ -2,6 +2,7 @@ package com.ipixelmon;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,6 @@ public final class ServerProxy extends CommonProxy {
 
     @Override
     public World getDefaultWorld() {
-        return MinecraftServer.getServer().getEntityWorld();
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
     }
 }

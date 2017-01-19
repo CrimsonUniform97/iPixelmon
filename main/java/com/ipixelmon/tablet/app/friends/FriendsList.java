@@ -1,7 +1,7 @@
 package com.ipixelmon.tablet.app.friends;
 
 import com.ipixelmon.GuiScrollList;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 /**
  * Created by colby on 1/5/2017.
@@ -20,7 +20,7 @@ public class FriendsList extends GuiScrollList {
     @Override
     public void drawObject(int index, int mouseX, int mouseY, boolean isHovering) {
         Friend friend = (Friend) FriendsAPI.Client.friends.toArray()[index];
-        mc.fontRendererObj.drawString((friend.isOnline() ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) +
+        mc.fontRendererObj.drawString((friend.isOnline() ? TextFormatting.GREEN : TextFormatting.RED) +
                 friend.getName(), 0, 0, 0xFFFFFF);
     }
 

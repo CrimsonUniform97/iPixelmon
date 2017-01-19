@@ -70,9 +70,11 @@ public class PermissionMod implements IMod {
     public static List<Group> getGroups() {
         JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("groups");
 
-        ListIterator listIterator = jsonArray.listIterator();
-
         List<Group> groups = Lists.newArrayList();
+
+        if(jsonArray == null) return groups;
+
+        ListIterator listIterator = jsonArray.listIterator();
 
         while(listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
@@ -86,6 +88,11 @@ public class PermissionMod implements IMod {
     }
 
     public static String getGroup(UUID player) {
+        return null;
+    }
+
+    public static Group getGroup(String name) {
+        for(Group group : getGroups()) if(group.getName().equalsIgnoreCase(name)) return group;
         return null;
     }
 }

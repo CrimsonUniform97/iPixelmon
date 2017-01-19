@@ -49,25 +49,21 @@ public class PacketSellPixelmon implements IMessage {
         public IMessage onMessage(PacketSellPixelmon message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
-            if(message.price <= 0) return null;
+            if (message.price <= 0) return null;
 
-            if(PixelbayAPI.Server.getListingCount(player.getUniqueID()) > PixelbayAPI.maxListings) return null;
+            if (PixelbayAPI.Server.getListingCount(player.getUniqueID()) > PixelbayAPI.maxListings) return null;
 
-            if(PixelmonAPI.Server.getPixelmon(player, true).size() == 1) return null;
+            if (PixelmonAPI.Server.getPixelmon(player, true).size() == 1) return null;
 
-            try {
-                EntityPixelmon entityPixelmon = PixelmonStorage.PokeballManager.getPlayerStorage(player)
-                        .getPokemon(message.pixelmonID, player.worldObj);
+            EntityPixelmon entityPixelmon = PixelmonStorage.pokeBallManager.getPlayerStorage(player).get()
+                    .getPokemon(message.pixelmonID, player.worldObj);
 
-                if(entityPixelmon == null) return null;
+            if (entityPixelmon == null) return null;
 
-                if(entityPixelmon.getName() == null) return null;
+            if (entityPixelmon.getName() == null) return null;
 
-                PixelbayAPI.Server.postPixelmon(player.getUniqueID(), entityPixelmon, message.price);
-                PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
-            } catch (PlayerNotLoadedException e) {
-                e.printStackTrace();
-            }
+            PixelbayAPI.Server.postPixelmon(player.getUniqueID(), entityPixelmon, message.price);
+            PixelmonAPI.Server.removePixelmon(entityPixelmon, player);
             return null;
         }
 

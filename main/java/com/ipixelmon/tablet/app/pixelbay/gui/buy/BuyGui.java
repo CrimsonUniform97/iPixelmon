@@ -7,11 +7,10 @@ import com.ipixelmon.tablet.app.pixelbay.gui.sell.SellGui;
 import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiItemListingList;
 import com.ipixelmon.tablet.app.pixelbay.lists.buy.GuiPixelmonListingList;
 import com.ipixelmon.tablet.app.pixelbay.packet.buy.PacketRequestPage;
-import com.ipixelmon.util.PixelmonAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -61,12 +60,12 @@ public class BuyGui extends AppGui {
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
         if (isItemPageBtn(button)) {
-            int page = Integer.parseInt(EnumChatFormatting.getTextWithoutFormattingCodes(button.displayString.replaceAll("\\...", "")));
+            int page = Integer.parseInt(TextFormatting.getTextWithoutFormattingCodes(button.displayString.replaceAll("\\...", "")));
             page -= 1;
             activePageItem = page;
             iPixelmon.network.sendToServer(new PacketRequestPage(page, itemSearchField.getText(), true));
         } else {
-            int page = Integer.parseInt(EnumChatFormatting.getTextWithoutFormattingCodes(button.displayString.replaceAll("\\...", "")));
+            int page = Integer.parseInt(TextFormatting.getTextWithoutFormattingCodes(button.displayString.replaceAll("\\...", "")));
             page -= 1;
             activePagePixelmon = page;
             iPixelmon.network.sendToServer(new PacketRequestPage(page, pixelmonSearchField.getText(), false));
@@ -140,7 +139,7 @@ public class BuyGui extends AppGui {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     itemList.xPosition + (xOffsetItem * index) + (xOffsetItem / 2),
                     itemList.yPosition + itemList.height + 8,
-                    ((activePageItem + 1) == page ? EnumChatFormatting.UNDERLINE : "") + String.valueOf(page)));
+                    ((activePageItem + 1) == page ? TextFormatting.UNDERLINE : "") + String.valueOf(page)));
 
             index++;
         }
@@ -149,7 +148,7 @@ public class BuyGui extends AppGui {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     itemList.xPosition + (xOffsetItem * index) + (xOffsetItem / 2),
                     itemList.yPosition + itemList.height + 8,
-                    ((activePageItem + 1) == (minPageItem + 1 + index) ? EnumChatFormatting.UNDERLINE : "") +
+                    ((activePageItem + 1) == (minPageItem + 1 + index) ? TextFormatting.UNDERLINE : "") +
                             String.valueOf((minPageItem + 1 + index) == PixelbayAPI.Client.maxItemPages ?
                                     (minPageItem + 1 + index) :
                             PixelbayAPI.Client.maxItemPages + "...")));
@@ -160,7 +159,7 @@ public class BuyGui extends AppGui {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     pixelmonList.xPosition + (xOffsetPixelmon * index) + (xOffsetPixelmon / 2),
                     pixelmonList.yPosition + pixelmonList.height + 8,
-                    ((activePagePixelmon + 1) == page ? EnumChatFormatting.UNDERLINE : "") + String.valueOf(page)));
+                    ((activePagePixelmon + 1) == page ? TextFormatting.UNDERLINE : "") + String.valueOf(page)));
 
             index++;
         }
@@ -169,7 +168,7 @@ public class BuyGui extends AppGui {
             this.buttonList.add(new PageBtn(this.buttonList.size() + index,
                     pixelmonList.xPosition + (xOffsetPixelmon * index) + (xOffsetPixelmon / 2),
                     pixelmonList.yPosition + pixelmonList.height + 8,
-                    ((activePagePixelmon + 1) == (minPagePixelmon + 1 + index) ? EnumChatFormatting.UNDERLINE : "") +
+                    ((activePagePixelmon + 1) == (minPagePixelmon + 1 + index) ? TextFormatting.UNDERLINE : "") +
                             String.valueOf((minPagePixelmon + 1 + index) == PixelbayAPI.Client.maxPixelmonPages ?
                                     (minPagePixelmon + 1 + index) :
                                     PixelbayAPI.Client.maxPixelmonPages + "...")));

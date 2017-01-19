@@ -4,20 +4,16 @@ import com.ipixelmon.pixelegg.PacketOpenGuiPixelEgg;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.achievement.PixelmonAchievements;
 import com.pixelmonmod.pixelmon.api.enums.ReceiveType;
-import com.pixelmonmod.pixelmon.api.events.PixelmonRecievedEvent;
+import com.pixelmonmod.pixelmon.api.events.PixelmonReceivedEvent;
 import com.pixelmonmod.pixelmon.comm.PixelmonData;
 import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
-import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
 import com.ipixelmon.iPixelmon;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,6 +21,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,7 +42,7 @@ public class PixelEggItem extends Item
     {
         setUnlocalizedName("pixelegg");
         setRegistryName("pixelegg");
-        setCreativeTab(CreativeTabs.tabBlock);
+        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 
     @SideOnly(Side.CLIENT)
@@ -74,12 +74,12 @@ public class PixelEggItem extends Item
         {
             if (stack.getTagCompound().hasKey("pixelEggDistance"))
             {
-                return EnumChatFormatting.GOLD + "" + stack.getTagCompound().getInteger("pixelEggDistance") + "Km PixelEgg";
+                return TextFormatting.GOLD + "" + stack.getTagCompound().getInteger("pixelEggDistance") + "Km PixelEgg";
             }
         } else {
             initTag(stack);
         }
-        return EnumChatFormatting.GOLD + "PixelEgg";
+        return TextFormatting.GOLD + "PixelEgg";
     }
 
     @Override
@@ -94,11 +94,11 @@ public class PixelEggItem extends Item
     }
 
     @Override
-    public boolean onItemUse(final ItemStack stack, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumFacing side, final float hitX, final float hitY, final float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, final float hitX, final float hitY, final float hitZ)
     {
         if(worldIn.isRemote)
         {
-            return false;
+            return EnumActionResult.SUCCESS;
         }
 
         if(stack.getTagCompound().getDouble("pixelEggWalked") >= stack.getTagCompound().getInteger("pixelEggDistance") * 1000)
@@ -110,20 +110,20 @@ public class PixelEggItem extends Item
             pokemon.friendship.initFromCapture();
             try
             {
-                PixelmonStorage.PokeballManager.getPlayerStorage((EntityPlayerMP) playerIn).addToParty(pokemon);
-            } catch (PlayerNotLoadedException e)
+                PixelmonStorage.pokeBallManager.getPlayerStorage((EntityPlayerMP) playerIn).get().addToParty(pokemon);
+            } catch (Exception e)
             {
                 e.printStackTrace();
-                playerIn.addChatComponentMessage(new ChatComponentText("An error occurred. Tell an admin."));
-                return false;
+                playerIn.addChatComponentMessage(new TextComponentString("An error occurred. Tell an admin."));
+                return EnumActionResult.FAIL;
             }
-            PixelmonAchievements.pokedexChieves(playerIn);
-            Pixelmon.EVENT_BUS.post(new PixelmonRecievedEvent(playerIn, ReceiveType.Command, pokemon));
+            PixelmonAchievements.pokedexChieves((EntityPlayerMP) playerIn);
+            Pixelmon.EVENT_BUS.post(new PixelmonReceivedEvent((EntityPlayerMP) playerIn, ReceiveType.Command, pokemon));
             iPixelmon.network.sendTo(new PacketOpenGuiPixelEgg(new PixelmonData(pokemon)), (EntityPlayerMP) playerIn);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
             ((EntityPlayerMP) playerIn).updateHeldItem();
         }
-        return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+        return EnumActionResult.SUCCESS;
     }
 
     private void initTag(ItemStack stack)

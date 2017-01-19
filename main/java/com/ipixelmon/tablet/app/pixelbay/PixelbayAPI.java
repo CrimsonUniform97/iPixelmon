@@ -14,6 +14,7 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -88,7 +89,7 @@ public class PixelbayAPI {
                 while (result.next()) {
                     uuid = UUID.fromString(result.getString("player"));
                     EntityPixelmon pixelmon = PixelmonAPI.pixelmonFromString(result.getString("pixelmonData"),
-                            MinecraftServer.getServer().getEntityWorld());
+                            FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld());
                     pixelmonListings.add(new PixelmonListing(uuid, UUIDManager.getPlayerName(uuid),
                             result.getInt("price"), pixelmon));
                 }

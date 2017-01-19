@@ -1,12 +1,11 @@
 package com.ipixelmon.quest;
 
-import io.netty.util.internal.MathUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 /**
  * Created by colby on 12/30/2016.
@@ -66,8 +65,8 @@ public class EntityAITalk extends EntityAIBase {
             }
 
             if(isNull && this.closestEntity != null) {
-                this.closestEntity.addChatMessage(new ChatComponentText(
-                        EnumChatFormatting.YELLOW.toString() + "[QuestGiver] "));
+                this.closestEntity.addChatMessage(new TextComponentString(
+                        TextFormatting.YELLOW.toString() + "[QuestGiver] "));
             }
 
             return this.closestEntity != null;

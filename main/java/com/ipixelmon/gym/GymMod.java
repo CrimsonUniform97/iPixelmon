@@ -44,7 +44,8 @@ public class GymMod implements IMod {
 
     @Override
     public void serverStarted(FMLServerStartedEvent event) {
-        new Thread(new BattleListenerThread()).start();
+        // TODO: May not need this, need to test.
+//        new Thread(new BattleListenerThread()).start();
         GymAPI.Server.loadGyms();
     }
 

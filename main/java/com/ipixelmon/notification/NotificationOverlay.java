@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,7 +34,7 @@ public class NotificationOverlay {
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent event) {
 
-        if (event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
+        if (event.getType() != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
 
         Iterator<NotificationProperties> iterator = Notification.notificationsForRendering.descendingIterator();
 
@@ -46,7 +48,7 @@ public class NotificationOverlay {
 
             GlStateManager.pushMatrix();
             {
-                int posX = event.resolution.getScaledWidth();
+                int posX = event.getResolution().getScaledWidth();
 
                 n.posX = n.posX == 0 ? posX : n.posX;
 
@@ -68,8 +70,8 @@ public class NotificationOverlay {
 
                 GlStateManager.translate(n.posX, n.posY, 100f);
 
-                int mouseX = Mouse.getX() / event.resolution.getScaleFactor();
-                int mouseY = event.resolution.getScaledHeight() - (Mouse.getY() / event.resolution.getScaleFactor());
+                int mouseX = Mouse.getX() / event.getResolution().getScaleFactor();
+                int mouseY = event.getResolution().getScaledHeight() - (Mouse.getY() / event.getResolution().getScaleFactor());
 
                 int mX = mouseX - (int) n.posX;
                 int mY = mouseY - (int) n.posY;
@@ -110,7 +112,9 @@ public class NotificationOverlay {
         Notification.notifications.addLast(new NotificationProperties(notification));
 
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        player.playSound(iPixelmon.id + ":" + notification.getSoundFile(), 0.5F, 1.0F);
+        // TODO: May not work...
+        player.playSound(new SoundEvent(new ResourceLocation(iPixelmon.id + ":" + notification.getSoundFile())),
+                0.5F, 1.0F);
     }
 
     public class NotificationProperties {

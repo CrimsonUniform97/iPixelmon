@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * Created by colby on 1/4/2017.
  */
-public class PacketPurchaseRequest implements IMessage{
+public class PacketPurchaseRequest implements IMessage {
 
     private Object object;
     private boolean isItem;
@@ -44,7 +44,7 @@ public class PacketPurchaseRequest implements IMessage{
     @Override
     public void fromBytes(ByteBuf buf) {
         isItem = buf.readBoolean();
-        if(isItem) {
+        if (isItem) {
             object = ItemListing.fromBytes(buf);
         } else {
             object = PixelmonListing.fromBytes(buf);
@@ -54,7 +54,7 @@ public class PacketPurchaseRequest implements IMessage{
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeBoolean(isItem);
-        if(isItem) {
+        if (isItem) {
             ((ItemListing) object).toBytes(buf);
         } else {
             ((PixelmonListing) object).toBytes(buf);
@@ -68,30 +68,30 @@ public class PacketPurchaseRequest implements IMessage{
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             long balance = PixelmonAPI.Server.getBalance(player.getUniqueID());
 
-            if(message.isItem) {
+            if (message.isItem) {
                 ItemListing itemListing = (ItemListing) message.object;
 
-                if(!itemListing.confirmListing()) return null;
+                if (!itemListing.confirmListing()) return null;
 
-                if(balance < itemListing.getPrice()) return null;
+                if (balance < itemListing.getPrice()) return null;
 
-                if(!player.inventory.addItemStackToInventory(itemListing.getItem())) {
+                if (!player.inventory.addItemStackToInventory(itemListing.getItem())) {
                     return null;
                 }
 
-                PixelmonAPI.Server.takeMoney(player.getUniqueID(),itemListing.getPrice());
-                PixelmonAPI.Server.giveMoney(itemListing.getPlayer(),itemListing.getPrice());
+                PixelmonAPI.Server.takeMoney(player.getUniqueID(), itemListing.getPrice());
+                PixelmonAPI.Server.giveMoney(itemListing.getPlayer(), itemListing.getPrice());
 
                 itemListing.deleteListing();
             } else {
                 PixelmonListing pixelmonListing = (PixelmonListing) message.object;
 
-                if(!pixelmonListing.confirmListing()) {
+                if (!pixelmonListing.confirmListing()) {
                     pixelmonListing.deleteListing();
                     return null;
                 }
 
-                if(balance < pixelmonListing.getPrice()) return null;
+                if (balance < pixelmonListing.getPrice()) return null;
 
                 EntityPixelmon entityPixelmon = pixelmonListing.getPixelmon();
 
@@ -100,12 +100,7 @@ public class PacketPurchaseRequest implements IMessage{
                 entityPixelmon.caughtBall = EnumPokeballs.PokeBall;
                 entityPixelmon.friendship.initFromCapture();
 
-                try {
-                    PixelmonStorage.PokeballManager.getPlayerStorage(player).addToParty(entityPixelmon);
-                } catch (PlayerNotLoadedException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                PixelmonStorage.pokeBallManager.getPlayerStorage(player).get().addToParty(entityPixelmon);
 
                 PixelmonAPI.Server.takeMoney(player.getUniqueID(), pixelmonListing.getPrice());
                 PixelmonAPI.Server.giveMoney(pixelmonListing.getPlayer(), pixelmonListing.getPrice());

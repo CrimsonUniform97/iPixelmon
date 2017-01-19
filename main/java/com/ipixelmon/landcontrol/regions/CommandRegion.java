@@ -1,17 +1,15 @@
 package com.ipixelmon.landcontrol.regions;
 
 import com.ipixelmon.landcontrol.LandControlAPI;
-import com.ipixelmon.landcontrol.regions.Region;
-import com.ipixelmon.landcontrol.regions.SubRegion;
 import com.ipixelmon.util.WorldEditAPI;
-import com.sk89q.worldedit.Vector;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 
 /**
  * Created by colby on 1/8/2017.
@@ -29,7 +27,7 @@ public class CommandRegion extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         EntityPlayerMP player = (EntityPlayerMP) sender;
 
         if(args[0].equalsIgnoreCase("create")) {
@@ -50,12 +48,12 @@ public class CommandRegion extends CommandBase {
                     try {
                         s = LandControlAPI.Server.createSubRegion(min, max);
                     } catch (Exception e) {
-                        player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+                        player.addChatComponentMessage(new TextComponentString(e.getMessage()));
                         return;
                     }
 
                     s.setOwner(player.getUniqueID());
-                    player.addChatComponentMessage(new ChatComponentText("SubRegion created."));
+                    player.addChatComponentMessage(new TextComponentString("SubRegion created."));
                 } else {
                     /**
                      * Create Region
@@ -64,12 +62,12 @@ public class CommandRegion extends CommandBase {
                     try {
                         r = LandControlAPI.Server.createRegion(player.worldObj, min, max);
                     } catch (Exception e) {
-                        player.addChatComponentMessage(new ChatComponentText(e.getMessage()));
+                        player.addChatComponentMessage(new TextComponentString(e.getMessage()));
                         return;
                     }
 
                     r.setOwner(player.getUniqueID());
-                    player.addChatComponentMessage(new ChatComponentText("Region created."));
+                    player.addChatComponentMessage(new TextComponentString("Region created."));
                 }
             }
         } else if(args[0].equalsIgnoreCase("delete")) {
@@ -77,15 +75,16 @@ public class CommandRegion extends CommandBase {
             region.delete();
 
             if(region instanceof SubRegion) {
-                player.addChatComponentMessage(new ChatComponentText("SubRegion deleted."));
+                player.addChatComponentMessage(new TextComponentString("SubRegion deleted."));
             } else {
-                player.addChatComponentMessage(new ChatComponentText("Region deleted."));
+                player.addChatComponentMessage(new TextComponentString("Region deleted."));
             }
         }
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return sender instanceof EntityPlayer;
     }
+
 }
