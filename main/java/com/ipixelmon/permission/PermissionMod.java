@@ -13,9 +13,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.List;
-import java.util.ListIterator;
-import java.util.UUID;
+import java.util.*;
 
 public class PermissionMod implements IMod {
 
@@ -59,12 +57,44 @@ public class PermissionMod implements IMod {
         return null;
     }
 
-    public static boolean hasPermission(UUID player) {
+    public static boolean hasPermission(UUID player, String permission) {
+        Group g = getGroup(player);
+
+        if(g.getPermissions().contains("-" + permission)) return false;
+        if(getPlayerPermissions(player).contains("-" + permission)) return false;
+        if(g.getPermissions().contains(permission)) return true;
+        if(getPlayerPermissions(player).contains(permission)) return true;
         return false;
     }
 
-    public static List<String> getPermissions(UUID player) {
-        return null;
+    public static Set<String> getPlayerPermissions(UUID player) {
+        JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("players");
+
+        if (jsonArray == null) return null;
+
+        ListIterator listIterator = jsonArray.listIterator();
+
+        Set<String> permSet = new TreeSet<>();
+
+        while (listIterator.hasNext()) {
+            JSONObject object = (JSONObject) listIterator.next();
+            try {
+                if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
+                    JSONArray permArray = (JSONArray) object.get("permissions");
+
+                    ListIterator permIterator = permArray.listIterator();
+
+                    while(permIterator.hasNext()) {
+                        permSet.add(String.valueOf(permIterator.next()));
+                    }
+
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return permSet;
     }
 
     public static List<Group> getGroups() {
@@ -72,11 +102,11 @@ public class PermissionMod implements IMod {
 
         List<Group> groups = Lists.newArrayList();
 
-        if(jsonArray == null) return groups;
+        if (jsonArray == null) return groups;
 
         ListIterator listIterator = jsonArray.listIterator();
 
-        while(listIterator.hasNext()) {
+        while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
                 groups.add(new Group(String.valueOf(object.get("name"))));
@@ -87,12 +117,30 @@ public class PermissionMod implements IMod {
         return groups;
     }
 
-    public static String getGroup(UUID player) {
+    public static Group getGroup(UUID player) {
+        JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("players");
+
+        if (jsonArray == null) return null;
+
+        ListIterator listIterator = jsonArray.listIterator();
+
+        while (listIterator.hasNext()) {
+            JSONObject object = (JSONObject) listIterator.next();
+            try {
+                if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
+                    return getGroup(String.valueOf(object.get("group")));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
     public static Group getGroup(String name) {
-        for(Group group : getGroups()) if(group.getName().equalsIgnoreCase(name)) return group;
+        for (Group group : getGroups()) if (group.getName().equalsIgnoreCase(name)) return group;
         return null;
     }
+
+
 }

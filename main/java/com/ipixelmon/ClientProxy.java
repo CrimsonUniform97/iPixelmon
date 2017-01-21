@@ -1,5 +1,6 @@
 package com.ipixelmon;
 
+import com.ipixelmon.util.SkinUtil;
 import lib.PatPeter.SQLibrary.SQLite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -18,6 +19,8 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void preInit() {
+        SkinUtil.skinCacheDir.deleteOnExit();
+
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(HiddenBlock.instance), 0 , new ModelResourceLocation(HiddenBlock.instance.getRegistryName(), "inventory"));
 
 

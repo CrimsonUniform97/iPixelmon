@@ -1,6 +1,7 @@
 package com.ipixelmon.gym;
 
 import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.permission.PermissionMod;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -104,15 +105,15 @@ public class GymCommand implements ICommand {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return sender instanceof EntityPlayerMP;
+        if(!(sender instanceof EntityPlayerMP)) return false;
+
+        return PermissionMod.hasPermission(((EntityPlayerMP) sender).getUniqueID(), "gym");
     }
 
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         return new ArrayList<>();
     }
-// TODO: Add permissions
-
 
     @Override
     public boolean isUsernameIndex(String[] args, int index) {

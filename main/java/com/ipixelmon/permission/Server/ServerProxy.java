@@ -38,24 +38,8 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        for(Group g : PermissionMod.getGroups()) {
-            Set<String> perms = getAllInheritedPermissions(g);
-            perms.addAll(g.getPermissions());
-            System.out.println("\n" + g.getName());
-            for(String s : perms) System.out.println(s);
-        }
-    }
-
-    // TODO: Test out if one group inherits another group and that other group inherits the other group that inherited it.
-    public Set<String> getAllInheritedPermissions(Group g) {
-        Set<String> permissions = new TreeSet<>();
-
-        for (String gName : g.getInheritance()) {
-            permissions.addAll(PermissionMod.getGroup(gName).getPermissions());
-            permissions.addAll(getAllInheritedPermissions(PermissionMod.getGroup(gName)));
-        }
-
-        return permissions;
+        Group g = PermissionMod.getGroup("admin");
+        for(String s : g.getPermissions()) System.out.println(s);
     }
 
 }

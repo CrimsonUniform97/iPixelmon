@@ -19,7 +19,7 @@ import java.util.UUID;
 public class SkinUtil {
 
     private static final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-    private static final File skinCacheDir = new File("skinCache");
+    public static final File skinCacheDir = new File("skinCache");
 
     // TODO: Delete all cached skins once game ends
 

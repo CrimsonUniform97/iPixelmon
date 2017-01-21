@@ -1,7 +1,10 @@
 package com.ipixelmon.landcontrol.toolCupboard;
 
+import com.google.common.collect.Maps;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketOpenGui;
+import com.ipixelmon.landcontrol.toolCupboard.packet.PacketSetSelectedTile;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
@@ -14,16 +17,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by colby on 1/6/2017.
@@ -78,7 +89,7 @@ public class ToolCupboardBlock extends BlockContainer {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if(worldIn.getBlockState(pos.up()).getBlock() == instance) {
+        if (worldIn.getBlockState(pos.up()).getBlock() == instance) {
             worldIn.setBlockToAir(pos.up());
         } else if (worldIn.getBlockState(pos.down()).getBlock() == instance) {
             worldIn.setBlockToAir(pos.down());
@@ -87,10 +98,10 @@ public class ToolCupboardBlock extends BlockContainer {
         super.breakBlock(worldIn, pos, state);
     }
 
-
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ToolCupboardTileEntity cupboardTileEntity = (ToolCupboardTileEntity) world.getTileEntity(pos);
+        System.out.println(cupboardTileEntity.getFacing().name());
         return getDefaultState().withProperty(MODEL, state.getValue(MODEL)).withProperty(FACING, cupboardTileEntity.getFacing());
     }
 
@@ -107,8 +118,42 @@ public class ToolCupboardBlock extends BlockContainer {
     }
 
     @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (worldIn.isRemote) return true;
+
+        ToolCupboardTileEntity tileEntity = (ToolCupboardTileEntity) worldIn.getTileEntity(pos);
+
+        if (tileEntity == null) return false;
+        if (tileEntity.getBaseTile() == null) return false;
+        tileEntity = tileEntity.getBaseTile();
+
+        if (!playerIn.isSneaking()) {
+            /**
+             * Add access to modify this tileEntity if player is in the network
+             */
+            tileEntity.getAccessSet().add(playerIn.getUniqueID());
+
+            Map<UUID, String> players = Maps.newHashMap();
+
+            /**
+             * Only send players if the player is in the network
+             */
+            if (tileEntity.getNetwork().exists()
+                    && tileEntity.getNetwork().getPlayers().contains(playerIn.getUniqueID())) {
+                players = tileEntity.getNetwork().getPlayerMap();
+            }
+
+            iPixelmon.network.sendTo(new PacketOpenGui(tileEntity, players), (EntityPlayerMP) playerIn);
+        } else {
+            iPixelmon.network.sendTo(new PacketSetSelectedTile(tileEntity.getPos()), (EntityPlayerMP) playerIn);
+        }
+
+        return true;
+    }
+
+    @Override
     public int getMetaFromState(IBlockState state) {
-        if(state.getBlock() == this) {
+        if (state.getBlock() == this) {
             return state.getValue(MODEL);
         }
 
@@ -116,13 +161,13 @@ public class ToolCupboardBlock extends BlockContainer {
     }
 
     @Override
-    public boolean isVisuallyOpaque() {
+    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return false;
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return true;
     }
 
     @Override

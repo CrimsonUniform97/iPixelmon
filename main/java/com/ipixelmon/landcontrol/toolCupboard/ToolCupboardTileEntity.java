@@ -54,7 +54,14 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
     }
 
     @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        read(tag);
+    }
+
+    @Override
     public void update() {
+        if(getWorld().isRemote) return;
+
         int meta = ToolCupboardBlock.instance.getMetaFromState(getWorld().getBlockState(getPos()));
 
         if (meta == 1) {
@@ -121,8 +128,11 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
     public void setFacing(EnumFacing facing) {
         this.facing = facing;
         markDirty();
-        if (getWorld() != null)
+        System.out.println("CALLED");
+        if (getWorld() != null) {
             getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 2);
+
+        }
     }
 
 

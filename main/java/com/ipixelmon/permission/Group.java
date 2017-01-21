@@ -7,12 +7,14 @@ import org.json.simple.JSONObject;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Group {
 
     private String name = null;
-    private List<String> permissions = Lists.newArrayList();
-    private List<String> inheritance = Lists.newArrayList();
+    private Set<String> permissions = new TreeSet<>();
+    private Set<String> inheritance = new TreeSet<>();
 
     private boolean defaultGroup = false;
     private String prefix, suffix = "";
@@ -37,7 +39,11 @@ public class Group {
                     JSONArray permissionArray = (JSONArray) object.get("permissions");
                     ListIterator permissionIterator = permissionArray.listIterator();
 
-                    while (permissionIterator.hasNext()) permissions.add(String.valueOf(permissionIterator.next()));
+                    while (permissionIterator.hasNext()) {
+                        String perm = String.valueOf(permissionIterator.next());
+                        System.out.println(name + ":" + perm);
+                        permissions.add(perm);
+                    }
                 }
 
                 if (object.get("inheritance") != null) {
@@ -58,11 +64,11 @@ public class Group {
         return name;
     }
 
-    public List<String> getPermissions() {
-        return permissions;
+    public Set<String> getPermissions() {
+        return getAllInheritedPermissions();
     }
 
-    public List<String> getInheritance() {
+    public Set<String> getInheritance() {
         return inheritance;
     }
 
@@ -76,5 +82,17 @@ public class Group {
 
     public String getSuffix() {
         return suffix;
+    }
+
+    private Set<String> getAllInheritedPermissions() {
+        Set<String> permissions = new TreeSet<>();
+        permissions.addAll(this.permissions);
+
+        for (String gName : getInheritance()) {
+            permissions.addAll(PermissionMod.getGroup(gName).permissions);
+            permissions.addAll(PermissionMod.getGroup(gName).getAllInheritedPermissions());
+        }
+
+        return permissions;
     }
 }
