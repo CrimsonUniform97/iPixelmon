@@ -41,7 +41,6 @@ public class Group {
 
                     while (permissionIterator.hasNext()) {
                         String perm = String.valueOf(permissionIterator.next());
-                        System.out.println(name + ":" + perm);
                         permissions.add(perm);
                     }
                 }
@@ -84,15 +83,76 @@ public class Group {
         return suffix;
     }
 
+    public void addPermission(String permission) {
+        JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("groups");
+        ListIterator listIterator = jsonArray.listIterator();
+
+        while (listIterator.hasNext()) {
+            JSONObject object = (JSONObject) listIterator.next();
+
+            if (object.get("name") != null && String.valueOf(object.get("name")).equals(name)) {
+                if (object.get("permissions") != null) {
+                    JSONArray permissionArray = (JSONArray) object.get("permissions");
+                    permissionArray.add(permission.toLowerCase());
+                }
+            }
+        }
+
+        ServerProxy.config.write(ServerProxy.jsonObject);
+    }
+
+    public void removePermission(String permission) {
+        JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("groups");
+        ListIterator listIterator = jsonArray.listIterator();
+
+        while (listIterator.hasNext()) {
+            JSONObject object = (JSONObject) listIterator.next();
+
+            if (object.get("name") != null && String.valueOf(object.get("name")).equals(name)) {
+                if (object.get("permissions") != null) {
+                    JSONArray permissionArray = (JSONArray) object.get("permissions");
+                    permissionArray.remove(permission.toLowerCase());
+                }
+            }
+        }
+
+        ServerProxy.config.write(ServerProxy.jsonObject);
+    }
+
     private Set<String> getAllInheritedPermissions() {
         Set<String> permissions = new TreeSet<>();
         permissions.addAll(this.permissions);
 
         for (String gName : getInheritance()) {
-            permissions.addAll(PermissionMod.getGroup(gName).permissions);
-            permissions.addAll(PermissionMod.getGroup(gName).getAllInheritedPermissions());
+            permissions.addAll(getGroup(gName).permissions);
+            permissions.addAll(getGroup(gName).getAllInheritedPermissions());
         }
 
         return permissions;
+    }
+
+    public static Group getGroup(String name) {
+        for (Group group : getGroups()) if (group.getName().equalsIgnoreCase(name)) return group;
+        return null;
+    }
+
+    public static List<Group> getGroups() {
+        JSONArray jsonArray = (JSONArray) ServerProxy.jsonObject.get("groups");
+
+        List<Group> groups = Lists.newArrayList();
+
+        if (jsonArray == null) return groups;
+
+        ListIterator listIterator = jsonArray.listIterator();
+
+        while (listIterator.hasNext()) {
+            JSONObject object = (JSONObject) listIterator.next();
+            try {
+                groups.add(new Group(String.valueOf(object.get("name"))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return groups;
     }
 }

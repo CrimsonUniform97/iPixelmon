@@ -38,8 +38,6 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        Group g = PermissionMod.getGroup("admin");
-        for(String s : g.getPermissions()) System.out.println(s);
     }
 
 }

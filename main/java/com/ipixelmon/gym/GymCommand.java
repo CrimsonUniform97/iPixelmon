@@ -1,6 +1,7 @@
 package com.ipixelmon.gym;
 
 import com.ipixelmon.landcontrol.LandControlAPI;
+import com.ipixelmon.permission.PermissionAPI;
 import com.ipixelmon.permission.PermissionMod;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -107,7 +108,7 @@ public class GymCommand implements ICommand {
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         if(!(sender instanceof EntityPlayerMP)) return false;
 
-        return PermissionMod.hasPermission(((EntityPlayerMP) sender).getUniqueID(), "gym");
+        return PermissionAPI.hasPermission(((EntityPlayerMP) sender).getUniqueID(), "gym");
     }
 
     @Override

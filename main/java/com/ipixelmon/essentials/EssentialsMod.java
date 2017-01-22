@@ -1,20 +1,18 @@
-package com.ipixelmon.permission;
+package com.ipixelmon.essentials;
 
 import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
-import com.ipixelmon.permission.Client.ClientProxy;
-import com.ipixelmon.permission.Server.ServerProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-public class PermissionMod implements IMod {
+public class EssentialsMod implements IMod {
 
     @Override
     public String getID() {
-        return "permission";
+        return "essentials";
     }
 
     @Override
@@ -29,35 +27,27 @@ public class PermissionMod implements IMod {
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
-        event.registerServerCommand(new CommandPermission());
+
     }
 
     @Override
     public void serverStarted(FMLServerStartedEvent event) {
+
     }
 
     @Override
     public Class<? extends CommonProxy> clientProxyClass() {
-        return ClientProxy.class;
+        return null;
     }
 
     @Override
     public Class<? extends CommonProxy> serverProxyClass() {
-        return ServerProxy.class;
+        return null;
     }
 
     @Override
     public IGuiHandler getGuiHandler() {
         return null;
     }
-
-
-
-
-
-
-
-
-
 
 }
