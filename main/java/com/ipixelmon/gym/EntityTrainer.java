@@ -14,6 +14,8 @@ import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class EntityTrainer extends NPCTrainer implements Comparable<EntityTrainer> {
@@ -57,13 +60,14 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         this.playerName = TeamMod.getPlayerTeam(playerID).colorChat().toString() + UUIDManager.getPlayerName(playerID);
         enablePersistence();
 
+        // TODO: Allow customization of this
         update(new SetTrainerData(playerName, "Bring it on!", "Eat shit!", "Damn you!", 12, new ItemStack[]{}));
     }
 
-    @Override
-    public float getEyeHeight() {
-        return this.height * 0.35f;
-    }
+//    @Override
+//    public float getEyeHeight() {
+//        return this.height * 0.35f;
+//    }
 
     @Override
     public void initAI() {
@@ -81,8 +85,9 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
                 return;
             }
 
-            if (!gym.getSeats().containsKey(getPosition().down(1))) {
+            if (!gym.getSeats().containsKey(getPosition().down()) && !gym.getSeats().containsKey(getPosition())) {
                 worldObj.removeEntity(this);
+                System.out.println(((BlockPos)gym.getSeats().keySet().toArray()[0]).toString() + ":" + getPosition().down().toString());
                 return;
             }
 
@@ -125,8 +130,6 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         return playerName;
     }
 
-
-    // TODO: Include level to the NPC of the player's skill level.
     @Override
     public String getName(String langCode) {
         return playerName;
@@ -160,16 +163,16 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
         return resourcelocation;
     }
 
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox() {
-        return null;
-    }
-
-
-    @Override
-    public AxisAlignedBB getEntityBoundingBox() {
-        float scale = 2.0f;
-        return new AxisAlignedBB(posX - scale, posY, posZ - scale, posX + scale, posY + scale, posZ + scale);
-    }
+//    @Override
+//    public AxisAlignedBB getCollisionBoundingBox() {
+//        return null;
+//    }
+//
+//
+//    @Override
+//    public AxisAlignedBB getEntityBoundingBox() {
+//        float scale = 2.0f;
+//        return new AxisAlignedBB(posX - scale, posY, posZ - scale, posX + scale, posY + scale, posZ + scale);
+//    }
 
 }

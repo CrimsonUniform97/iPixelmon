@@ -27,6 +27,7 @@ public class PacketOpenGymGuiToServer implements IMessage {
 
         @Override
         public IMessage onMessage(PacketOpenGymGuiToServer message, MessageContext ctx) {
+            System.out.println("CALLED");
             Gym gym = GymAPI.Server.getGym(ctx.getServerHandler().playerEntity.getPosition());
 
             if(gym == null) {

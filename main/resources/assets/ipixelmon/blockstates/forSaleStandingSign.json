@@ -2,18 +2,11 @@
   "forge_marker": 1,
   "defaults": {
     "transform": "forge:default-block",
-    "custom": {
-      "flip-v": true
-    },
-    "textures": {
-      "#Material.001": "ipixelmon:items/pixelegg_crack2"
-    },
-    "model": "ipixelmon:pixelegg.obj"
+    "custom": { "flip-v": true },
+    "model": "ipixelmon:sign.obj"
   },
   "variants": {
-    "normal": [
-      {}
-    ],
+    "normal": [{}],
     "inventory": [
       {
         "transform": {
@@ -25,7 +18,7 @@
             ],
             "rotation": [
               {
-                "y": 0
+                "y": 180
               },
               {
                 "x": 0
@@ -63,7 +56,7 @@
             ],
             "rotation": [
               {
-                "y": 0
+                "y": 270
               },
               {
                 "x": 0
@@ -72,7 +65,7 @@
                 "z": 0
               }
             ],
-            "scale": 0.8
+            "scale": 1
           }
         }
       }

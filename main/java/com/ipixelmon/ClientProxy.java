@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import org.apache.commons.io.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,9 @@ public final class ClientProxy extends CommonProxy {
 
     @Override
     public final void preInit() {
-        SkinUtil.skinCacheDir.deleteOnExit();
+//        SkinUtil.skinCacheDir.delete();
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(HiddenBlock.instance), 0 , new ModelResourceLocation(HiddenBlock.instance.getRegistryName(), "inventory"));
-
 
         iPixelmon.clientDb = new SQLite(Logger.getLogger("Minecraft"), iPixelmon.id, iPixelmon.path.getAbsolutePath(), "data", ".sqlite");
         iPixelmon.clientDb.open();

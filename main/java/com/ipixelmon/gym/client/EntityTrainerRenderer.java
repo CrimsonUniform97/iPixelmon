@@ -23,10 +23,7 @@ public class EntityTrainerRenderer extends RenderNPC {
 
     @Override
     public void doRender(EntityNPC npc, double d, double d1, double d2, float f, float f1) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, -1, 0);
         super.doRender(npc, d, d1, d2, f, f1);
-        GlStateManager.popMatrix();
 
         if (!(npc instanceof EntityTrainer)) return;
         EntityTrainer trainer = (EntityTrainer) npc;
@@ -37,7 +34,7 @@ public class EntityTrainerRenderer extends RenderNPC {
             if (trainer.getPixelmon() != null) {
                 if (d == 0.0 && d1 == 0.0 && d2 == 0.0) return;
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(d, d1 + 1.3D, d2);
+                GlStateManager.translate(d, d1 + 2.3D, d2);
                 GlStateManager.rotate(180, 1, 0, 0);
                 PixelmonAPI.Client.renderPixelmon3D(trainer.getPixelmon(), 0, 0, 0,0.3F, trainer.pixelmonDisplayRotY += 0.66F);
                 GlStateManager.popMatrix();

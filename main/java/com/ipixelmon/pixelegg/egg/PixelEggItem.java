@@ -11,6 +11,7 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumPokeballs;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.ipixelmon.iPixelmon;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -33,8 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 
-public class PixelEggItem extends Item
-{
+public class PixelEggItem extends Item {
 
     public static final PixelEggItem instance = new PixelEggItem();
 
@@ -47,24 +47,26 @@ public class PixelEggItem extends Item
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        final ModelResourceLocation normalModel = new ModelResourceLocation(iPixelmon.id + ":pixelegg", "inventory");
-        final ModelResourceLocation crackedModel = new ModelResourceLocation(iPixelmon.id + ":pixelegg_crack1", "inventory");
-        final ModelResourceLocation cracked2Model = new ModelResourceLocation(iPixelmon.id + ":pixelegg_crack2", "inventory");
-
-        ModelBakery.registerItemVariants(this, normalModel, crackedModel, cracked2Model);
-
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                if (stack.getMetadata() == 0) {
-                    return normalModel;
-                } else if (stack.getMetadata() == 1) {
-                    return crackedModel;
-                } else {
-                    return cracked2Model;
-                }
-            }
-        });
+         ModelResourceLocation normalModel = new ModelResourceLocation(
+                 iPixelmon.id + ":pixelegg", "inventory");
+         ModelResourceLocation crackedModel = new ModelResourceLocation(
+                 iPixelmon.id + ":pixelegg_crack1", "inventory");
+         ModelResourceLocation cracked2Model = new ModelResourceLocation(
+                 iPixelmon.id + ":pixelegg_crack2", "inventory");
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(instance, 0, normalModel);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(instance, 1, crackedModel);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(instance, 2, cracked2Model);
+//        ModelBakery.registerItemVariants(instance, normalModel, crackedModel, cracked2Model);
+//
+//        ModelLoader.setCustomMeshDefinition(instance, stack -> {
+//            if (stack.getMetadata() == 0) {
+//                return normalModel;
+//            } else if (stack.getMetadata() == 1) {
+//                return crackedModel;
+//            } else {
+//                return cracked2Model;
+//            }
+//        });
     }
 
     @Override

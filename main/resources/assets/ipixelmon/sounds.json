@@ -1,4 +1,4 @@
 {
-  "friendRequest": { "category": "player", "sounds": [ "friendRequest" ] },
-  "simpleNotification":  { "category": "player", "sounds": [ "simpleNotification" ] }
+  "friendRequest": { "category": "player", "sounds": [ "ipixelmon:friendRequest" ] },
+  "simpleNotification":  { "category": "player", "sounds": [ "ipixelmon:simpleNotification" ] }
 }

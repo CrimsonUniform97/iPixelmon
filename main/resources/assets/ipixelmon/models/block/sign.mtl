@@ -1,0 +1,8 @@
+# Blender MTL File: 'sign.blend'
+# Material Count: 2
+
+newmtl SignMount
+map_Kd ipixelmon:blocks/sign_face
+
+newmtl SignStem
+map_Kd ipixelmon:blocks/sign_stem

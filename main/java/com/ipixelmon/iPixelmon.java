@@ -8,6 +8,7 @@ import com.ipixelmon.party.PartyMod;
 import com.ipixelmon.permission.PermissionMod;
 import com.ipixelmon.pixelegg.PixelEgg;
 import com.ipixelmon.quest.QuestMod;
+import com.ipixelmon.realestate.RealEstateMod;
 import com.ipixelmon.tablet.Tablet;
 import com.ipixelmon.uuidmanager.UUIDManager;
 import com.ipixelmon.mysql.MySQLHandler;
@@ -63,6 +64,7 @@ public final class iPixelmon {
         loadMod(new McStatsMod());
         loadMod(new QuestMod());
         loadMod(new GymMod());
+        loadMod(new RealEstateMod());
     }
 
     @Mod.EventHandler

@@ -25,7 +25,7 @@ public class PixelEgg implements IMod
     @Override
     public void preInit(FMLPreInitializationEvent event)
     {
-        GameRegistry.registerItem(PixelEggItem.instance);
+        GameRegistry.register(PixelEggItem.instance);
     }
 
     @Override

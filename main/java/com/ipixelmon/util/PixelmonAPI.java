@@ -244,7 +244,6 @@ public class PixelmonAPI {
             return pixelmonList;
         }
 
-        // TODO: Not working when claiming Gym
         public static void removePixelmon(EntityPixelmon pixelmon, EntityPlayerMP player) {
             FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
                 @Override

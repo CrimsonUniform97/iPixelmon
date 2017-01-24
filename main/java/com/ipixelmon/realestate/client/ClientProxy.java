@@ -1,16 +1,16 @@
-package com.ipixelmon.pixelegg.client;
+package com.ipixelmon.realestate.client;
 
 import com.ipixelmon.CommonProxy;
-import com.ipixelmon.pixelegg.egg.PixelEggItem;
+import com.ipixelmon.realestate.RealEstateMod;
 
 public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
-//        PixelEggItem.instance.initModel();
+
     }
 
     @Override
     public void init() {
-        PixelEggItem.instance.initModel();
+        RealEstateMod.saleSignStanding.initModel();
     }
 }
