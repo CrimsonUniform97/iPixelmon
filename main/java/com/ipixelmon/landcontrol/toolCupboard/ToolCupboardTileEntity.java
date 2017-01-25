@@ -1,5 +1,6 @@
 package com.ipixelmon.landcontrol.toolCupboard;
 
+import com.ipixelmon.BaseTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -16,7 +17,7 @@ import java.util.UUID;
 /**
  * Created by colby on 1/7/2017.
  */
-public class ToolCupboardTileEntity extends TileEntity implements ITickable {
+public class ToolCupboardTileEntity extends BaseTileEntity implements ITickable {
 
     private Set<UUID> access = new TreeSet<>();
     private Network network = new Network(UUID.randomUUID());
@@ -25,42 +26,20 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        write(compound);
+        compound.setString("facing", getFacing().name());
+        compound.setString("network", getNetwork().getID().toString());
         return compound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        read(compound);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        super.onDataPacket(net, pkt);
-        read(pkt.getNbtCompound());
-    }
-
-    @Nullable
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        write(tagCompound);
-        return tagCompound;
-    }
-
-    @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        read(tag);
+        setFacing(EnumFacing.valueOf(compound.getString("facing")));
+        setNetwork(new Network(UUID.fromString(compound.getString("network"))));
     }
 
     @Override
     public void update() {
-        if(getWorld().isRemote) return;
+        if (getWorld().isRemote) return;
 
         int meta = ToolCupboardBlock.instance.getMetaFromState(getWorld().getBlockState(getPos()));
 
@@ -73,16 +52,6 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
                 getWorld().destroyBlock(getPos(), false);
             }
         }
-    }
-
-    private void write(NBTTagCompound tagCompound) {
-        tagCompound.setString("facing", getFacing().name());
-        tagCompound.setString("network", getNetwork().getID().toString());
-    }
-
-    private void read(NBTTagCompound tagCompound) {
-        setFacing(EnumFacing.valueOf(tagCompound.getString("facing")));
-        setNetwork(new Network(UUID.fromString(tagCompound.getString("network"))));
     }
 
     /**
@@ -120,19 +89,12 @@ public class ToolCupboardTileEntity extends TileEntity implements ITickable {
      */
     public void setNetwork(Network network) {
         this.network = network;
-        markDirty();
-        if (getWorld() != null)
-            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 2);
+        sync();
     }
 
     public void setFacing(EnumFacing facing) {
         this.facing = facing;
-        markDirty();
-        System.out.println("CALLED");
-        if (getWorld() != null) {
-            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 2);
-
-        }
+        sync();
     }
 
 

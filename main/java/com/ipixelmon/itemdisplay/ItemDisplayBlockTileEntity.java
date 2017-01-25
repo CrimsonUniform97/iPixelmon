@@ -1,23 +1,26 @@
 package com.ipixelmon.itemdisplay;
 
+import com.ipixelmon.BaseTileEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 
-import javax.annotation.Nullable;
-
-public class ItemDisplayBlockTileEntity extends TileEntity {
+public class ItemDisplayBlockTileEntity extends BaseTileEntity {
 
     private ItemStack itemStack = new ItemStack(Items.FEATHER);
+    private int scale = 1;
+    private double xOffset, yOffset, zOffset;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("item", itemStack.writeToNBT(new NBTTagCompound()));
+        compound.setInteger("scale", scale);
+        compound.setDouble("xOffset", xOffset);
+        compound.setDouble("yOffset", yOffset);
+        compound.setDouble("zOffset", zOffset);
         return compound;
     }
 
@@ -25,26 +28,15 @@ public class ItemDisplayBlockTileEntity extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         itemStack = ItemStack.loadItemStackFromNBT((NBTTagCompound) compound.getTag("item"));
-    }
-
-    @Nullable
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), this.getUpdateTag());
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return this.writeToNBT(new NBTTagCompound());
+        scale = compound.getInteger("scale");
+        xOffset = compound.getDouble("xOffset");
+        yOffset = compound.getDouble("yOffset");
+        zOffset = compound.getDouble("zOffset");
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        this.readFromNBT(pkt.getNbtCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        readFromNBT(tag);
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 
     public ItemStack getItemStack() {
@@ -57,9 +49,42 @@ public class ItemDisplayBlockTileEntity extends TileEntity {
 
     public void setItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
-        markDirty();
-        if (getWorld() != null)
-            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()),
-                    getWorld().getBlockState(getPos()), 2);
+        sync();
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+        sync();
+    }
+
+    public void setxOffset(double xOffset) {
+        this.xOffset = xOffset;
+        sync();
+    }
+
+    public void setyOffset(double yOffset) {
+        this.yOffset = yOffset;
+        sync();
+    }
+
+    public void setzOffset(double zOffset) {
+        this.zOffset = zOffset;
+        sync();
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public double getxOffset() {
+        return xOffset;
+    }
+
+    public double getyOffset() {
+        return yOffset;
+    }
+
+    public double getzOffset() {
+        return zOffset;
     }
 }

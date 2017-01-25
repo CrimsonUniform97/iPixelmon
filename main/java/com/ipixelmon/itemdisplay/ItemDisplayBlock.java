@@ -1,5 +1,6 @@
 package com.ipixelmon.itemdisplay;
 
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.realestate.client.ForSaleSignTileEntity;
 import com.ipixelmon.realestate.client.RenderForSaleSignTileEntity;
 import net.minecraft.block.BlockContainer;
@@ -11,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -42,9 +44,6 @@ public class ItemDisplayBlock extends BlockContainer {
         return new BlockStateContainer(this, new IProperty[]{facing});
     }
 
-    /**
-     * Called by ItemBlocks after a block is set in the world, to allow post-place logic
-     */
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         worldIn.setBlockState(pos, state.withProperty(facing, placer.getHorizontalFacing().getOpposite()), 2);
@@ -57,6 +56,11 @@ public class ItemDisplayBlock extends BlockContainer {
         if(worldIn.getTileEntity(pos) == null) return false;
         if(!(worldIn.getTileEntity(pos) instanceof ItemDisplayBlockTileEntity)) return false;
 
+        if(playerIn.isSneaking()) {
+            iPixelmon.network.sendTo(new PacketOpenGui(pos), (EntityPlayerMP) playerIn);
+            return true;
+        }
+
         ItemDisplayBlockTileEntity te = (ItemDisplayBlockTileEntity) worldIn.getTileEntity(pos);
 
         if(heldItem == null) return false;
@@ -66,9 +70,6 @@ public class ItemDisplayBlock extends BlockContainer {
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
-    /**
-     * Convert the given metadata into a BlockState for this Block
-     */
     @Override
     public IBlockState getStateFromMeta(int meta) {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
@@ -80,9 +81,6 @@ public class ItemDisplayBlock extends BlockContainer {
         return this.getDefaultState().withProperty(facing, enumfacing);
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
     @Override
     public int getMetaFromState(IBlockState state) {
         return ((EnumFacing) state.getValue(facing)).getIndex();

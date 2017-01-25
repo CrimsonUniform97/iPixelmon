@@ -78,32 +78,32 @@ public final class iPixelmon {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(id);
 
         config = proxy.getConfig();
-        mysql = proxy.getMySQL();
+
+        if (event.getSide() == Side.SERVER)
+            mysql = proxy.getMySQL();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
         proxy.preInit();
 
-        for(IMod mod : mods) mod.preInit(event);
+        for (IMod mod : mods) mod.preInit(event);
     }
 
     @Mod.EventHandler
     public final void init(final FMLInitializationEvent event) {
         proxy.init();
 
-        for(IMod mod : mods) mod.init(event);
+        for (IMod mod : mods) mod.init(event);
     }
 
     @Mod.EventHandler
-    public void serverLoad(FMLServerStartingEvent event)
-    {
-        for(IMod mod : mods) mod.serverStarting(event);
+    public void serverLoad(FMLServerStartingEvent event) {
+        for (IMod mod : mods) mod.serverStarting(event);
     }
 
     @Mod.EventHandler
-    public void serverLoaded(FMLServerStartedEvent event)
-    {
-        for(IMod mod : mods) mod.serverStarted(event);
+    public void serverLoaded(FMLServerStartedEvent event) {
+        for (IMod mod : mods) mod.serverStarted(event);
     }
 
     public static final void registerPacket(final Class handlerClass, final Class messageClass, final Side side) {

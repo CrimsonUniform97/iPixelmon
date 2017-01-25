@@ -1,5 +1,6 @@
 package com.ipixelmon.realestate.client;
 
+import com.ipixelmon.BaseTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -9,7 +10,7 @@ import net.minecraft.util.ITickable;
 
 import javax.annotation.Nullable;
 
-public class ForSaleSignTileEntity extends TileEntity implements ITickable{
+public class ForSaleSignTileEntity extends BaseTileEntity implements ITickable{
 
     private int price;
     private boolean rentable;
@@ -35,26 +36,6 @@ public class ForSaleSignTileEntity extends TileEntity implements ITickable{
         direction = EnumDirection.values()[compound.getInteger("facing")];
     }
 
-    @Nullable
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), this.getUpdateTag());
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return this.writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        this.readFromNBT(pkt.getNbtCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        readFromNBT(tag);
-    }
-
     public int getPrice() {
         return price;
     }
@@ -73,10 +54,7 @@ public class ForSaleSignTileEntity extends TileEntity implements ITickable{
 
     public void setDirection(EnumDirection direction) {
         this.direction = direction;
-        markDirty();
-        if (getWorld() != null)
-            getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()),
-                    getWorld().getBlockState(getPos()), 2);
+        sync();
     }
 
     @Override

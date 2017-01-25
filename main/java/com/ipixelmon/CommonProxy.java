@@ -15,13 +15,8 @@ public abstract class CommonProxy {
     public abstract void preInit();
     public abstract void init();
 
-    public final MySQLHandler getMySQL() {
-        if(!config.hasKey("dbHost")) config.setString("dbHost", "");
-        if(!config.hasKey("dbPort")) config.setString("dbPort", "");
-        if(!config.hasKey("dbName")) config.setString("dbName", "");
-        if(!config.hasKey("dbUser")) config.setString("dbUser", "");
-        if(!config.hasKey("dbPass")) config.setString("dbPass", "");
-         return new MySQLHandler(new MySQL(Logger.getLogger("Minecraft"), "[" + id + "]", config.getString("dbHost"), config.getInt("dbPort"), config.getString("dbName"), config.getString("dbUser"), config.getString("dbPass")));
+    public MySQLHandler getMySQL() {
+       return null;
     }
 
     public final Config getConfig() {

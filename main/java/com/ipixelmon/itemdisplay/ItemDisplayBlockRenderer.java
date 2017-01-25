@@ -19,7 +19,6 @@ public class ItemDisplayBlockRenderer extends TileEntitySpecialRenderer<ItemDisp
         renderMob(te, x, y, z, partialTicks);
         GlStateManager.popMatrix();
     }
-    // TODO: Add gym.
     /**
      * Render the mob inside the mob spawner.
      */
@@ -33,7 +32,7 @@ public class ItemDisplayBlockRenderer extends TileEntitySpecialRenderer<ItemDisp
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.0F, 0.5F, 0.0F);
             GlStateManager.rotate(te.getDirection().getHorizontalAngle(), 0.0F, 1.0F, 0.0F);
-            GlStateManager.scale(2, 2, 2);
+            GlStateManager.scale(te.getScale(), te.getScale(), te.getScale());
             entity.setLocationAndAngles(posX, posY, posZ, 0.0F, 0.0F);
 
             RenderHelper.enableStandardItemLighting();
