@@ -1,6 +1,7 @@
 package com.ipixelmon;
 
 import com.ipixelmon.gym.GymMod;
+import com.ipixelmon.itemdisplay.ItemDisplayMod;
 import com.ipixelmon.landcontrol.LandControl;
 import com.ipixelmon.mcstats.McStatsMod;
 import com.ipixelmon.notification.NotificationMod;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public final class iPixelmon {
     @SidedProxy(clientSide = "com.ipixelmon.ClientProxy", serverSide = "com.ipixelmon.ServerProxy")
     public static CommonProxy proxy;
 
+    @SideOnly(Side.SERVER)
     public static MySQLHandler mysql;
     public static Config config;
     public static final File path = new File(System.getProperty("user.dir") + "/" + id + "/");
@@ -46,8 +49,6 @@ public final class iPixelmon {
     public static SimpleNetworkWrapper network;
 
     private static int packetID = 0;
-
-    public static Database clientDb;
 
     @Mod.Instance(id)
     public static iPixelmon instance;
@@ -65,6 +66,7 @@ public final class iPixelmon {
         loadMod(new QuestMod());
         loadMod(new GymMod());
         loadMod(new RealEstateMod());
+        loadMod(new ItemDisplayMod());
     }
 
     @Mod.EventHandler

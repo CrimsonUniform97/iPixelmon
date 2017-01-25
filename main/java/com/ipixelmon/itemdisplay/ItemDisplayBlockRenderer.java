@@ -1,6 +1,5 @@
-package com.ipixelmon.realestate.client;
+package com.ipixelmon.itemdisplay;
 
-import com.ipixelmon.realestate.RealEstateMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -8,26 +7,23 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
-public class RenderForSaleSignTileEntity extends TileEntitySpecialRenderer<ForSaleSignTileEntity> {
+public class ItemDisplayBlockRenderer extends TileEntitySpecialRenderer<ItemDisplayBlockTileEntity> {
 
     static Entity entity = null;
 
-
     @Override
-    public void renderTileEntityAt(ForSaleSignTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+    public void renderTileEntityAt(ItemDisplayBlockTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
         GlStateManager.pushMatrix();
         GlStateManager.translate((float)x + 0.5F, (float)y, (float)z + 0.5F);
         renderMob(te, x, y, z, partialTicks);
         GlStateManager.popMatrix();
     }
-
+    // TODO: Add gym.
     /**
      * Render the mob inside the mob spawner.
      */
-    public static void renderMob(ForSaleSignTileEntity te, double posX, double posY, double posZ, float partialTicks){
+    public static void renderMob(ItemDisplayBlockTileEntity te, double posX, double posY, double posZ, float partialTicks){
 
 
         if(entity == null)
@@ -36,8 +32,8 @@ public class RenderForSaleSignTileEntity extends TileEntitySpecialRenderer<ForSa
         if (entity != null){
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.0F, 0.5F, 0.0F);
-            GlStateManager.rotate(te.getDirection().getDegree(), 0.0F, 1.0F, 0.0F);
-            GlStateManager.scale(1, 1, 1);
+            GlStateManager.rotate(te.getDirection().getHorizontalAngle(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.scale(2, 2, 2);
             entity.setLocationAndAngles(posX, posY, posZ, 0.0F, 0.0F);
 
             RenderHelper.enableStandardItemLighting();
@@ -50,12 +46,10 @@ public class RenderForSaleSignTileEntity extends TileEntitySpecialRenderer<ForSa
 
             GlStateManager.popMatrix();
 
-            // TODO: IT hasn't been working use the META DATA HERE!!! HAHAHA
-            Minecraft.getMinecraft().getRenderItem().renderItem(
-                    new ItemStack(Item.getItemFromBlock(RealEstateMod.saleSignStanding)),
-                    ItemCameraTransforms.TransformType.NONE);
+            Minecraft.getMinecraft().getRenderItem().renderItem(te.getItemStack(), ItemCameraTransforms.TransformType.NONE);
 
             GlStateManager.popMatrix();
         }
     }
+
 }

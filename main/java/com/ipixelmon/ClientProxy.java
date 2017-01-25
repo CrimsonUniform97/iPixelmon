@@ -21,11 +21,7 @@ public final class ClientProxy extends CommonProxy {
     @Override
     public final void preInit() {
 //        SkinUtil.skinCacheDir.delete();
-
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(HiddenBlock.instance), 0 , new ModelResourceLocation(HiddenBlock.instance.getRegistryName(), "inventory"));
-
-        iPixelmon.clientDb = new SQLite(Logger.getLogger("Minecraft"), iPixelmon.id, iPixelmon.path.getAbsolutePath(), "data", ".sqlite");
-        iPixelmon.clientDb.open();
 
         OBJLoader.INSTANCE.addDomain(iPixelmon.id);
 
