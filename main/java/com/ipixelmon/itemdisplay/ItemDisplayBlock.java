@@ -45,6 +45,8 @@ public class ItemDisplayBlock extends BlockContainer {
         return new BlockStateContainer(this, new IProperty[]{facing});
     }
 
+    // TODO: Add item icon, look into the RealEstate mod and check out the block for adding item model
+
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         worldIn.setBlockState(pos, state.withProperty(facing, placer.getHorizontalFacing().getOpposite()), 2);

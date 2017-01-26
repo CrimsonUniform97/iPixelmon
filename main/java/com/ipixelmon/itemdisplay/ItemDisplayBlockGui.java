@@ -48,7 +48,8 @@ public class ItemDisplayBlockGui extends GuiScreen {
                 keyCode != Keyboard.KEY_BACK &&
                 keyCode != Keyboard.KEY_PERIOD &&
                 keyCode != Keyboard.KEY_LEFT &&
-                keyCode != Keyboard.KEY_RIGHT) return;
+                keyCode != Keyboard.KEY_RIGHT &&
+                keyCode != Keyboard.KEY_MINUS) return;
 
         this.scale.textboxKeyTyped(typedChar, keyCode);
         this.xOffset.textboxKeyTyped(typedChar, keyCode);
