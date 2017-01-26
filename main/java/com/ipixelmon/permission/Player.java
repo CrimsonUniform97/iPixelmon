@@ -1,6 +1,10 @@
 package com.ipixelmon.permission;
 
 import com.ipixelmon.permission.Server.ServerProxy;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,9 +17,11 @@ import java.util.UUID;
 public class Player {
 
     private UUID player;
+    private GameProfile gameProfile;
 
     protected Player(UUID uuid) {
         this.player = uuid;
+        gameProfile = new GameProfile(player, null);
     }
 
     public void setGroup(Group group) {
@@ -38,7 +44,7 @@ public class Player {
         while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
-                if(object.get("uuid") != null) {
+                if (object.get("uuid") != null) {
                     if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
                         object.put("group", group.getName());
                         ServerProxy.config.write(ServerProxy.jsonObject);
@@ -62,13 +68,18 @@ public class Player {
     public boolean hasPermission(String permission) {
         Group g = getGroup();
 
-        if(FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(2, null)) return true;
+        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-        if(g == null) return false;
-        if(g.getPermissions().contains("-" + permission)) return false;
-        if(getPermissions().contains("-" + permission)) return false;
-        if(g.getPermissions().contains(permission)) return true;
-        if(getPermissions().contains(permission)) return true;
+        if (mcServer.getPlayerList().canSendCommands(gameProfile)) {
+            UserListOpsEntry userlistopsentry = mcServer.getPlayerList().getOppedPlayers().getEntry(gameProfile);
+            if(userlistopsentry != null) return true;
+        }
+
+        if (g == null) return false;
+        if (g.getPermissions().contains("-" + permission)) return false;
+        if (getPermissions().contains("-" + permission)) return false;
+        if (g.getPermissions().contains(permission)) return true;
+        if (getPermissions().contains(permission)) return true;
         return false;
     }
 
@@ -84,9 +95,9 @@ public class Player {
         while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
-                if(object.get("uuid") != null) {
+                if (object.get("uuid") != null) {
                     if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
-                        if(object.get("permissions") != null) {
+                        if (object.get("permissions") != null) {
                             JSONArray permArray = (JSONArray) object.get("permissions");
 
                             ListIterator permIterator = permArray.listIterator();
@@ -116,9 +127,9 @@ public class Player {
         while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
-                if(object.get("uuid") != null) {
+                if (object.get("uuid") != null) {
                     if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
-                        if(object.get("group") != null) {
+                        if (object.get("group") != null) {
                             return Group.getGroup(String.valueOf(object.get("group")));
                         }
                     }
@@ -140,9 +151,9 @@ public class Player {
         while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
-                if(object.get("uuid") != null) {
+                if (object.get("uuid") != null) {
                     if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
-                        if(object.get("permissions") != null) {
+                        if (object.get("permissions") != null) {
                             JSONArray permArray = (JSONArray) object.get("permissions");
                             permArray.add(permission.toLowerCase());
                             break;
@@ -172,9 +183,9 @@ public class Player {
         while (listIterator.hasNext()) {
             JSONObject object = (JSONObject) listIterator.next();
             try {
-                if(object.get("uuid") != null) {
+                if (object.get("uuid") != null) {
                     if (UUID.fromString(String.valueOf(object.get("uuid"))).equals(player)) {
-                        if(object.get("permissions") != null) {
+                        if (object.get("permissions") != null) {
                             JSONArray permArray = (JSONArray) object.get("permissions");
                             permArray.remove(permission.toLowerCase());
                             break;

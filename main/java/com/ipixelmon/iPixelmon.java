@@ -8,6 +8,7 @@ import com.ipixelmon.notification.NotificationMod;
 import com.ipixelmon.party.PartyMod;
 import com.ipixelmon.permission.PermissionMod;
 import com.ipixelmon.pixelegg.PixelEgg;
+import com.ipixelmon.poketournament.PokeTournamentMod;
 import com.ipixelmon.quest.QuestMod;
 import com.ipixelmon.realestate.RealEstateMod;
 import com.ipixelmon.tablet.Tablet;
@@ -67,6 +68,7 @@ public final class iPixelmon {
         loadMod(new GymMod());
         loadMod(new RealEstateMod());
         loadMod(new ItemDisplayMod());
+        loadMod(new PokeTournamentMod());
     }
 
     @Mod.EventHandler

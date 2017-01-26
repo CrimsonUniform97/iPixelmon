@@ -11,7 +11,7 @@ public class ItemDisplayBlockTileEntity extends BaseTileEntity {
 
     private ItemStack itemStack = new ItemStack(Items.FEATHER);
     private int scale = 1;
-    private double xOffset, yOffset, zOffset;
+    private double xOffset = 0, yOffset = 0, zOffset = 0;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {

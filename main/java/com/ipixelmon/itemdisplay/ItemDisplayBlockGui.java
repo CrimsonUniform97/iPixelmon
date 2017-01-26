@@ -11,11 +11,11 @@ import java.io.IOException;
 
 public class ItemDisplayBlockGui extends GuiScreen {
 
-    private BlockPos tilePos;
+    private ItemDisplayBlockTileEntity tileEntity;
     private GuiTextField scale, xOffset, yOffset, zOffset;
 
-    public ItemDisplayBlockGui(BlockPos tilePos) {
-        this.tilePos = tilePos;
+    public ItemDisplayBlockGui(ItemDisplayBlockTileEntity tileEntity) {
+        this.tileEntity = tileEntity;
     }
 
     @Override
@@ -25,12 +25,17 @@ public class ItemDisplayBlockGui extends GuiScreen {
         this.xOffset.drawTextBox();
         this.yOffset.drawTextBox();
         this.zOffset.drawTextBox();
+
+        fontRendererObj.drawStringWithShadow("Scale", scale.xPosition, scale.yPosition - 10, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("X", xOffset.xPosition, xOffset.yPosition - 10, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Y", yOffset.xPosition, yOffset.yPosition - 10, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Z", zOffset.xPosition, zOffset.yPosition - 10, 0xFFFFFF);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
-        iPixelmon.network.sendToServer(new PacketUpdateTileEntity(tilePos, getScale(), getxOffset(), getyOffset(), getzOffset()));
+        iPixelmon.network.sendToServer(new PacketUpdateTileEntity(tileEntity.getPos(), getScale(), getxOffset(), getyOffset(), getzOffset()));
     }
 
     @Override
@@ -39,7 +44,11 @@ public class ItemDisplayBlockGui extends GuiScreen {
 
         String text = "" + typedChar;
 
-        if(!(text).matches("[0-9]+") && keyCode != Keyboard.KEY_BACK && keyCode != Keyboard.KEY_PERIOD) return;
+        if(!(text).matches("[0-9]+") &&
+                keyCode != Keyboard.KEY_BACK &&
+                keyCode != Keyboard.KEY_PERIOD &&
+                keyCode != Keyboard.KEY_LEFT &&
+                keyCode != Keyboard.KEY_RIGHT) return;
 
         this.scale.textboxKeyTyped(typedChar, keyCode);
         this.xOffset.textboxKeyTyped(typedChar, keyCode);
@@ -65,10 +74,20 @@ public class ItemDisplayBlockGui extends GuiScreen {
 
         this.buttonList.add(new GuiButton(0, (this.width - 30) / 2, this.height - yOffset, 30, 20, "Set"));
 
-        this.scale = new GuiTextField(0, fontRendererObj, ((this.width - 20) / 2), this.height - (yOffset + 30), 20, 20);
-        this.xOffset = new GuiTextField(1, fontRendererObj, ((this.width - 20) / 2) - 80, this.height - (yOffset + 30), 20, 20);
-        this.yOffset = new GuiTextField(2, fontRendererObj, ((this.width - 20) / 2) - 60, this.height - (yOffset + 30), 20, 20);
-        this.zOffset = new GuiTextField(3, fontRendererObj, ((this.width - 20) / 2) - 40, this.height - (yOffset + 30), 20, 20);
+        int totalWidth = this.width / 2;
+        int section = totalWidth / 4;
+        int x = (this.width - totalWidth) / 2;
+
+        int boxWidth = 30;
+        this.scale = new GuiTextField(0, fontRendererObj, x + (section * 0), this.height - (yOffset + 30), boxWidth, 20);
+        this.xOffset = new GuiTextField(1, fontRendererObj, x + (section * 1), this.height - (yOffset + 30), boxWidth, 20);
+        this.yOffset = new GuiTextField(2, fontRendererObj, x + (section * 2), this.height - (yOffset + 30), boxWidth, 20);
+        this.zOffset = new GuiTextField(3, fontRendererObj, x + (section * 3), this.height - (yOffset + 30), boxWidth, 20);
+
+        this.scale.setText(String.valueOf(tileEntity.getScale()));
+        this.xOffset.setText(String.valueOf(tileEntity.getxOffset()));
+        this.yOffset.setText(String.valueOf(tileEntity.getyOffset()));
+        this.zOffset.setText(String.valueOf(tileEntity.getzOffset()));
     }
 
     @Override

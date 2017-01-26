@@ -1,8 +1,11 @@
 package com.ipixelmon.itemdisplay;
 
+import com.ipixelmon.iPixelmon;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -45,7 +48,14 @@ public class PacketOpenGui implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new ItemDisplayBlockGui(message.tilePos));
+                    World world = iPixelmon.proxy.getDefaultWorld();
+                    if(world == null) return;
+
+                    TileEntity te = world.getTileEntity(message.tilePos);
+                    if(te == null) return;
+                    if(!(te instanceof ItemDisplayBlockTileEntity)) return;
+
+                    Minecraft.getMinecraft().displayGuiScreen(new ItemDisplayBlockGui((ItemDisplayBlockTileEntity) te));
                 }
             });
         }

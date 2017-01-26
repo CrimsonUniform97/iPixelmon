@@ -1,6 +1,7 @@
 package com.ipixelmon.itemdisplay;
 
 import com.ipixelmon.iPixelmon;
+import com.ipixelmon.permission.PermissionAPI;
 import com.ipixelmon.realestate.client.ForSaleSignTileEntity;
 import com.ipixelmon.realestate.client.RenderForSaleSignTileEntity;
 import net.minecraft.block.BlockContainer;
@@ -55,6 +56,8 @@ public class ItemDisplayBlock extends BlockContainer {
 
         if(worldIn.getTileEntity(pos) == null) return false;
         if(!(worldIn.getTileEntity(pos) instanceof ItemDisplayBlockTileEntity)) return false;
+
+        if(!PermissionAPI.hasPermission(playerIn.getUniqueID(), "itemdisplay.interact")) return false;
 
         if(playerIn.isSneaking()) {
             iPixelmon.network.sendTo(new PacketOpenGui(pos), (EntityPlayerMP) playerIn);
