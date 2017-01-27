@@ -59,6 +59,7 @@ public final class ServerProxy extends CommonProxy {
                         }
                     }
 
+                    // TODO: Causes error if server restarts quickly. Need to fix this by possibly using another API or something.
                     final NameFetcher fetcher = new NameFetcher(uuids);
                     final Map<UUID, String> map = fetcher.call();
 

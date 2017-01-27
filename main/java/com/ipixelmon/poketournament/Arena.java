@@ -29,6 +29,13 @@ public class Arena implements Comparable<Arena> {
         this.region = region;
     }
 
+    // TODO: Display bracket after each game to players so they can see
+    public void bracket(List<Team> objects) {
+        int secondRoundCount = Integer.highestOneBit(objects.size()) - objects.size();
+        int numberOfRealGames = (objects.size() / 2) - secondRoundCount;
+        int firstRoundCount = numberOfRealGames * 2;
+    }
+
     // TODO: Add bracket rounds, not winner of first game keeps going on and on. Need to have brackets
     public void start() throws Exception {
         currentTeam1 = (Team) teams.toArray()[round];

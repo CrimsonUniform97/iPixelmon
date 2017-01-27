@@ -87,7 +87,7 @@ public class EntityTrainer extends NPCTrainer implements Comparable<EntityTraine
 
             if (!gym.getSeats().containsKey(getPosition().down()) && !gym.getSeats().containsKey(getPosition())) {
                 worldObj.removeEntity(this);
-                System.out.println(((BlockPos)gym.getSeats().keySet().toArray()[0]).toString() + ":" + getPosition().down().toString());
+//                System.out.println(((BlockPos)gym.getSeats().keySet().toArray()[0]).toString() + ":" + getPosition().down().toString());
                 return;
             }
 

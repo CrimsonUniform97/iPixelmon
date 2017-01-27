@@ -4,7 +4,9 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.permission.PermissionAPI;
 import com.ipixelmon.realestate.client.ForSaleSignTileEntity;
 import com.ipixelmon.realestate.client.RenderForSaleSignTileEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -86,6 +88,7 @@ public class ItemDisplayBlock extends BlockContainer {
         return this.getDefaultState().withProperty(facing, enumfacing);
     }
 
+
     @Override
     public int getMetaFromState(IBlockState state) {
         return ((EnumFacing) state.getValue(facing)).getIndex();
@@ -110,5 +113,15 @@ public class ItemDisplayBlock extends BlockContainer {
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return false;
+    }
+
+    @Override
+    public BlockStateContainer getBlockState() {
+        return new BlockStateContainer(this, new IProperty[] {facing});
     }
 }
