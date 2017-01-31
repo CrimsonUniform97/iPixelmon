@@ -2,7 +2,8 @@ package com.ipixelmon.poketournament;
 
 public class Match implements Comparable<Match>{
 
-    protected Match prevMatch;
+    protected Match prevMatch1, prevMatch2;
+    protected int round = 0;
     protected Team team1, team2;
     protected Team winner = null;
 
