@@ -125,10 +125,14 @@ public class SingleEliminationTournament {
 
             System.out.println(getTeamCountSecondRound());
 
-            if(getTeamCountFirstRound() != getTeams().size()) {
+            if (getTeamCountFirstRound() != getTeams().size()) {
             /* Setup unlucky teams for second round */
                 for (int i = getTeamCountFirstRound(); i < getTeamCountFirstRound() + getTeamCountSecondRound() - 1; i++) {
+                    // TODO: May not need unluckyTeams, we just go ahead and assign them to round 2.
                     unluckyTeams.add(teamArray[i]);
+                    m = new Match();
+                    m.team1 = teamArray[i];
+                    m.round = round + 1;
                 }
             }
         } else {
