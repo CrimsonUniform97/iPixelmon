@@ -1,9 +1,11 @@
 package com.ipixelmon.poketournament;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SingleElimationTournament {
+public class SingleEliminationTournament {
 
     /* All participating teams */
     protected Set<Team> teams = new TreeSet<>();
@@ -63,6 +65,11 @@ public class SingleElimationTournament {
         return currentMatches;
     }
 
+    /* Returns all matches */
+    public Set<Match> getMatches() {
+        return matches;
+    }
+
     /* Gets all the previous matches */
     public Set<Match> getPreviousMatches() {
         Set<Match> prevMatches = new TreeSet<>();
@@ -87,6 +94,7 @@ public class SingleElimationTournament {
 
     /* Setups up matches after all current matches are complete */
     public void setupRound() throws Exception {
+        if(getTeams().isEmpty() || getTeams().size() < 2) throw new Exception("Not enough participants.");
 
         /* Check for any active matches */
         if(getActiveMatches().size() != 0) throw new Exception("There are still matches active.");
@@ -142,5 +150,30 @@ public class SingleElimationTournament {
         }
 
         round++;
+    }
+
+    /* Convert all data to bytes for packet sending */
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(round);
+        buf.writeInt(getTeams().size());
+        for(Team team : getTeams()) team.toBytes(buf);
+        buf.writeInt(getMatches().size());
+        for(Match match : getMatches()) match.toBytes(buf);
+        buf.writeInt(getUnluckyTeams().size());
+        for(Team team : getUnluckyTeams()) team.toBytes(buf);
+    }
+
+    /* Convert bytes into a tournament for packet receiving */
+    public static SingleEliminationTournament fromBytes(ByteBuf buf) {
+        SingleEliminationTournament tournament = new SingleEliminationTournament();
+        tournament.round = buf.readInt();
+        int teams = buf.readInt();
+        for(int i = 0; i < teams; i++) tournament.addTeam(Team.fromBytes(buf));
+        int matches = buf.readInt();
+        for(int i = 0; i < matches; i++) tournament.matches.add(Match.fromBytes(buf));
+        int unluckyTeams = buf.readInt();
+        for(int i = 0; i < unluckyTeams; i++) tournament.unluckyTeams.add(Team.fromBytes(buf));
+
+        return tournament;
     }
 }

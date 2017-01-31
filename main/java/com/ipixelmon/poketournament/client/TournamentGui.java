@@ -2,18 +2,17 @@ package com.ipixelmon.poketournament.client;
 
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.poketournament.Match;
-import com.ipixelmon.poketournament.SingleElimationTournament;
+import com.ipixelmon.poketournament.SingleEliminationTournament;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
 public class TournamentGui extends GuiScreen {
 
-    private SingleElimationTournament tournament;
+    private SingleEliminationTournament tournament;
 
     private static final ResourceLocation bgResource = new ResourceLocation(iPixelmon.id,
             "textures/gui/landcontrol/RegionBG.png");
@@ -22,7 +21,7 @@ public class TournamentGui extends GuiScreen {
 
     private int xPosition, yPosition;
 
-    public TournamentGui(SingleElimationTournament tournament) {
+    public TournamentGui(SingleEliminationTournament tournament) {
         this.tournament = tournament;
     }
 

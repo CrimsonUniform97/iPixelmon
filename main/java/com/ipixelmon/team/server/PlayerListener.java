@@ -24,6 +24,7 @@ public class PlayerListener
     @SubscribeEvent
     public void onJoin(PlayerEvent.PlayerLoggedInEvent event)
     {
+        // TODO: Not working some times
         EntityPlayerMP player = (EntityPlayerMP) event.player;
 
         if(TeamMod.getPlayerTeam(player.getUniqueID()) == EnumTeam.None)

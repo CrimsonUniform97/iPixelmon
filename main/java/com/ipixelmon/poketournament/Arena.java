@@ -1,7 +1,12 @@
 package com.ipixelmon.poketournament;
 
 import com.ipixelmon.gym.BattleController;
+import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.regions.Region;
+import com.ipixelmon.mysql.SelectionForm;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,14 +18,31 @@ public class Arena implements Comparable<Arena> {
     private Region region;
     private BattleController currentBattle;
     private Date startTime;
-    private SingleElimationTournament tournament;
+    private SingleEliminationTournament tournament;
+    private String name;
 
     public Arena(Region region) {
         this.region = region;
-        tournament = new SingleElimationTournament();
+        tournament = new SingleEliminationTournament();
+        ResultSet resultSet = iPixelmon.mysql.selectAllFrom(PokeTournamentMod.class,
+                new SelectionForm("Arenas").where("region", region.getID().toString()));
+
+        try {
+            if (resultSet.next()) {
+                name = resultSet.getString("name");
+            } else {
+                throw new SQLException("Failed to find region.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public SingleElimationTournament getTournament() {
+    public String getName() {
+        return name;
+    }
+
+    public SingleEliminationTournament getTournament() {
         return tournament;
     }
 
