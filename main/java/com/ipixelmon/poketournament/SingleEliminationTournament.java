@@ -20,19 +20,22 @@ public class SingleEliminationTournament {
 
     protected int getTeamCountFirstRound() {
         int N = teams.size();
-        int P = Integer.highestOneBit(teams.size());
+        int P = N;
+        P = (int) Math.pow(2, Math.ceil(Math.log((double) P) / Math.log(2)));
         return (N - (P - N));
     }
 
     protected int getMatchCountFirstRound() {
         int N = teams.size();
-        int P = Integer.highestOneBit(teams.size());
+        int P = N;
+        P = (int) Math.pow(2, Math.ceil(Math.log((double) P) / Math.log(2)));
         return (N - P / 2);
     }
 
     protected int getTeamCountSecondRound() {
         int N = teams.size();
-        int P = Integer.highestOneBit(teams.size());
+        int P = N;
+        P = (int) Math.pow(2, Math.ceil(Math.log((double) P) / Math.log(2)));
         return N - P / 2 + P - N;
     }
 
@@ -60,7 +63,7 @@ public class SingleEliminationTournament {
     public Set<Match> getActiveMatches() {
         Set<Match> currentMatches = new TreeSet<>();
 
-        for (Match match : matches) if (match.winner == null) currentMatches.add(match);
+        for (Match match : matches) if (match.active) currentMatches.add(match);
 
         return currentMatches;
     }
@@ -92,17 +95,21 @@ public class SingleEliminationTournament {
         return round;
     }
 
+    public void setRound(int round) {
+        this.round = round;
+    }
+
     /* Setups up matches after all current matches are complete */
     public void setupRound() throws Exception {
-        if(getTeams().isEmpty() || getTeams().size() < 2) throw new Exception("Not enough participants.");
+        if (getTeams().isEmpty() || getTeams().size() < 2) throw new Exception("Not enough participants.");
 
         /* Check for any active matches */
-        if(getActiveMatches().size() != 0) throw new Exception("There are still matches active.");
+        if (getActiveMatches().size() != 0) throw new Exception("There are still matches active.");
 
-        Team[] teamArray = (Team[]) teams.toArray();
-
+        Team[] teamArray = teams.toArray(new Team[teams.size()]);
+        // TODO: Setup empty matches for display and pre assigning for each round before hand.
         /* If there are no matches, setup the first round of matches and the second matches */
-        if(matches.isEmpty()) {
+        if (matches.isEmpty()) {
             Match m;
             for (int i = 0; i < getTeamCountFirstRound(); i++) {
                 if (i + 1 < getTeamCountFirstRound()) {
@@ -114,17 +121,23 @@ public class SingleEliminationTournament {
                 }
             }
 
+            System.out.println(getTeamCountFirstRound() + "," + (getTeamCountFirstRound() + getTeamCountSecondRound()));
+
+            System.out.println(getTeamCountSecondRound());
+
+            if(getTeamCountFirstRound() != getTeams().size()) {
             /* Setup unlucky teams for second round */
-            for (int i = getTeamCountFirstRound(); i < getTeamCountSecondRound(); i++) {
-                unluckyTeams.add(teamArray[i]);
+                for (int i = getTeamCountFirstRound(); i < getTeamCountFirstRound() + getTeamCountSecondRound() - 1; i++) {
+                    unluckyTeams.add(teamArray[i]);
+                }
             }
         } else {
             /* If there are unlucky matches we need to set them up */
-            if(!unluckyTeams.isEmpty()) {
-                Match[] prevMatchArray = (Match[]) getPreviousMatches().toArray();
-                Team[] unluckyTeamArray = (Team[]) unluckyTeams.toArray();
+            if (!unluckyTeams.isEmpty()) {
+                Match[] prevMatchArray = getPreviousMatches().toArray(new Match[getPreviousMatches().size()]);
+                Team[] unluckyTeamArray = unluckyTeams.toArray(new Team[unluckyTeams.size()]);
                 Match m;
-                for(int i = 0; i < prevMatchArray.length; i++) {
+                for (int i = 0; i < prevMatchArray.length; i++) {
                     m = new Match();
                     m.team1 = prevMatchArray[i].winner;
                     m.team2 = unluckyTeamArray[i];
@@ -133,11 +146,11 @@ public class SingleEliminationTournament {
                 }
             } else {
                 /* We are past the second round, now we need to pair winner against winner */
-                Match[] prevMatchArray = (Match[]) getPreviousMatches().toArray();
+                Match[] prevMatchArray = getPreviousMatches().toArray(new Match[getPreviousMatches().size()]);
 
                 Match m;
-                for(int i = 0; i < prevMatchArray.length; i++) {
-                    if(i + 1 < prevMatchArray.length) {
+                for (int i = 0; i < prevMatchArray.length; i++) {
+                    if (i + 1 < prevMatchArray.length) {
                         m = new Match();
                         m.team1 = prevMatchArray[i].winner;
                         m.team2 = prevMatchArray[i + 1].winner;
@@ -156,11 +169,11 @@ public class SingleEliminationTournament {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(round);
         buf.writeInt(getTeams().size());
-        for(Team team : getTeams()) team.toBytes(buf);
+        for (Team team : getTeams()) team.toBytes(buf);
         buf.writeInt(getMatches().size());
-        for(Match match : getMatches()) match.toBytes(buf);
+        for (Match match : getMatches()) match.toBytes(buf);
         buf.writeInt(getUnluckyTeams().size());
-        for(Team team : getUnluckyTeams()) team.toBytes(buf);
+        for (Team team : getUnluckyTeams()) team.toBytes(buf);
     }
 
     /* Convert bytes into a tournament for packet receiving */
@@ -168,11 +181,11 @@ public class SingleEliminationTournament {
         SingleEliminationTournament tournament = new SingleEliminationTournament();
         tournament.round = buf.readInt();
         int teams = buf.readInt();
-        for(int i = 0; i < teams; i++) tournament.addTeam(Team.fromBytes(buf));
+        for (int i = 0; i < teams; i++) tournament.addTeam(Team.fromBytes(buf));
         int matches = buf.readInt();
-        for(int i = 0; i < matches; i++) tournament.matches.add(Match.fromBytes(buf));
+        for (int i = 0; i < matches; i++) tournament.matches.add(Match.fromBytes(buf));
         int unluckyTeams = buf.readInt();
-        for(int i = 0; i < unluckyTeams; i++) tournament.unluckyTeams.add(Team.fromBytes(buf));
+        for (int i = 0; i < unluckyTeams; i++) tournament.unluckyTeams.add(Team.fromBytes(buf));
 
         return tournament;
     }

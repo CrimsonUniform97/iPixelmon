@@ -3,6 +3,7 @@ package com.ipixelmon.poketournament.client;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.poketournament.Match;
 import com.ipixelmon.poketournament.SingleEliminationTournament;
+import com.ipixelmon.poketournament.Team;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,14 +32,20 @@ public class TournamentGui extends GuiScreen {
         mc.getTextureManager().bindTexture(bgResource);
         drawTexturedModalRect(xPosition, yPosition, 0, 0, BG_WIDTH, BG_HEIGHT);
 
-        int x = xPosition;
-        int y = yPosition;
+        int x = xPosition + 4;
+        int y = yPosition + 12;
+
+        // TODO: Implement click hold drag to move around screen
+
         for(int round = 0; round < tournament.getRound(); round++) {
             for(Match match : tournament.getMatchesForRound(round)) {
                 drawLine(x, y, 50, 1);
                 drawLine(x, y + 20, 50, 1);
-                y += 60;
+                drawLine(x + 50, y, 1, 21);
+                y += 30;
             }
+
+            x += 75;
         }
     }
 

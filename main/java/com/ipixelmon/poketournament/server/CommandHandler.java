@@ -49,6 +49,7 @@ public class CommandHandler implements ICommand {
         try {
             switch (args[0].toLowerCase()) {
                 case "create": {
+                    if(args.length < 2) throw new Exception("Invalid name.");
                     TournamentAPI.Server.createArena(region, args[1]);
                     player.addChatMessage(new TextComponentString("Arena created."));
                     break;
