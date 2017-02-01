@@ -24,13 +24,11 @@ public class PacketOpenTournamentGui implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         this.tournament = SingleEliminationTournament.fromBytes(buf);
-        System.out.println(this.tournament.getTeams().size());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         this.tournament.toBytes(buf);
-        System.out.println(this.tournament.getTeams().size());
     }
 
     public static class Handler implements IMessageHandler<PacketOpenTournamentGui, IMessage> {

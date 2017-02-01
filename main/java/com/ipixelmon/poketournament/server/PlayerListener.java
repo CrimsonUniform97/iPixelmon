@@ -21,13 +21,12 @@ public class PlayerListener {
 
         arena.getTournament().getTeams().clear();
         arena.getTournament().getMatches().clear();
-        arena.getTournament().getUnluckyTeams().clear();
         arena.getTournament().setRound(0);
 
-        for(int i = 1; i < 17; i++) arena.getTournament().addTeam(new Team("Team" + i));
+        for(int i = 1; i < 18; i++) arena.getTournament().addTeam(new Team("Team" + i));
 
         try {
-            arena.getTournament().setupRound();
+            arena.getTournament().setupRounds();
         } catch (Exception e) {
             e.printStackTrace();
         }

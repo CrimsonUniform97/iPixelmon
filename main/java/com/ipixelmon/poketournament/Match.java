@@ -56,6 +56,6 @@ public class Match implements Comparable<Match> {
 
     @Override
     public int compareTo(Match o) {
-        return o.team1 == team1 && o.team2 == team2 ? 0 : -999;
+        return team1 == null && team2 == null ? -999 : o.team1 == team1 && o.team2 == team2 ? 0 : -999;
     }
 }
