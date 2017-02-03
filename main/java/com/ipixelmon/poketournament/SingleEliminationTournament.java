@@ -2,8 +2,7 @@ package com.ipixelmon.poketournament;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class SingleEliminationTournament {
 
@@ -78,18 +77,21 @@ public class SingleEliminationTournament {
     public Set<Match> getPreviousMatches() {
         Set<Match> prevMatches = new TreeSet<>();
 
-        for (Match match : matches) if (match.winner != null && match.prevMatch1 == null) prevMatches.add(match);
+        for (Match match : matches) if (match.winner != null && match.prevMatch == null) prevMatches.add(match);
 
         return prevMatches;
     }
 
     /* Gets all the matches for the given round */
-    public Set<Match> getMatchesForRound(int round) {
+    public List<Match> getMatchesForRound(int round) {
         Set<Match> matchesForRound = new TreeSet<>();
 
         for (Match match : matches) if (match.round == round) matchesForRound.add(match);
 
-        return matchesForRound;
+        List<Match> arrayList = new ArrayList<>();
+        arrayList.addAll(matchesForRound);
+
+        return arrayList;
     }
 
     public int getRound() {
@@ -117,51 +119,48 @@ public class SingleEliminationTournament {
         Team[] teamArray = teams.toArray(new Team[teams.size()]);
 
         Match m;
-//        for (int i = 0; i < getTeamCountFirstRound(); i++) {
-//            if (i + 1 < getTeamCountFirstRound()) {
-//                m = new Match();
-//                m.team1 = teamArray[i];
-//                m.team2 = teamArray[i + 1];
-//                m.round = 1;
-//                matches.add(m);
-//            }
-//        }
-//
-//            /* Setup unlucky teams for second round */
-//        if (getTeamCountFirstRound() != getTeams().size()) {
-//            for (int i = 0; i < getTeamCountSecondRound() / 2; i++) {
-//                // TODO: May not need unluckyTeams, we just go ahead and assign them to round 2.
-//                m = new Match();
-//                if (getTeamCountFirstRound() + i < teamArray.length)
-//                    m.team1 = teamArray[getTeamCountFirstRound() + i];
-//
-//                if (getTeamCountFirstRound() + i + 1 < teamArray.length)
-//                    m.team2 = teamArray[getTeamCountFirstRound() + i + 1];
-//                m.round = 2;
-//                matches.add(m);
-//            }
-//        }
 
-        int teamIndex = 0;
+        int round1Count = 0;
 
-        // TODO: Link previous matches
-        for (int i = 0; i < getTotalNumberOfRounds(); i++) {
+        int unluckies = (getTeamCountFirstRound() + getTeamCountSecondRound()) - teams.size();
+
+        for (int i = 1; i < getTotalNumberOfRounds(); i++) {
             for (int t = 0; t < getTeamCountForRound(i) / 2; t++) {
                 m = new Match();
                 m.round = i;
 
-                if(teamIndex + 1 < teamArray.length - 1) {
-                    m.team1 = teamArray[teamIndex];
-                    m.team2 = teamArray[teamIndex + 1];
-                    System.out.println(m.team1.name);
-                    System.out.println(m.team2.name);
+                // TODO: Maybe make it a little more dispersed like the website?
+                if (i == 2) {
+                    if (round1Count < unluckies) {
+                        m.prevMatch = (Match) getMatchesForRound(1).toArray()[round1Count];
+                        round1Count += 1;
+                    }
                 }
-
-                teamIndex += 2;
 
                 matches.add(m);
             }
         }
+
+        int i = 0;
+        for (Match match : getMatchesForRound(1)) {
+            match.team1 = teamArray[i];
+            match.team2 = teamArray[i + 1];
+            i += 2;
+        }
+
+        for (Match match : getMatchesForRound(2)) {
+            if (i <= teamArray.length - 1) {
+                match.team1 = teamArray[i];
+            }
+            if (match.prevMatch == null) {
+                if (i + 1 <= teamArray.length - 1)
+                    match.team2 = teamArray[i + 1];
+                i += 2;
+            } else {
+                i += 1;
+            }
+        }
+
     }
 
     /* Convert all data to bytes for packet sending */

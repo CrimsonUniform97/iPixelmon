@@ -23,7 +23,7 @@ public class PlayerListener {
         arena.getTournament().getMatches().clear();
         arena.getTournament().setRound(0);
 
-        for(int i = 1; i < 18; i++) arena.getTournament().addTeam(new Team("Team" + i));
+        for(int i = 1; i < 42; i++) arena.getTournament().addTeam(new Team("Team" + i));
 
         try {
             arena.getTournament().setupRounds();

@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 public class Match implements Comparable<Match> {
 
-    public Match prevMatch1, prevMatch2;
+    public Match prevMatch;
     public int round = 0;
     public Team team1, team2;
     public Team winner = null;
@@ -15,8 +15,7 @@ public class Match implements Comparable<Match> {
         buf.writeBoolean(team1 == null);
         buf.writeBoolean(team2 == null);
         buf.writeBoolean(winner == null);
-        buf.writeBoolean(prevMatch1 == null);
-        buf.writeBoolean(prevMatch2 == null);
+        buf.writeBoolean(prevMatch == null);
         buf.writeBoolean(active);
         if (team1 != null)
             team1.toBytes(buf);
@@ -24,10 +23,8 @@ public class Match implements Comparable<Match> {
             team2.toBytes(buf);
         if (winner != null)
             winner.toBytes(buf);
-        if (prevMatch1 != null)
-            prevMatch1.toBytes(buf);
-        if (prevMatch2 != null)
-            prevMatch2.toBytes(buf);
+        if (prevMatch != null)
+            prevMatch.toBytes(buf);
     }
 
     public static Match fromBytes(ByteBuf buf) {
@@ -36,8 +33,7 @@ public class Match implements Comparable<Match> {
         boolean team1Null = buf.readBoolean();
         boolean team2Null = buf.readBoolean();
         boolean winnerNull = buf.readBoolean();
-        boolean prevMatch1Null = buf.readBoolean();
-        boolean prevMatch2Null = buf.readBoolean();
+        boolean prevMatchNull = buf.readBoolean();
         match.active = buf.readBoolean();
 
         if(!team1Null)
@@ -46,10 +42,8 @@ public class Match implements Comparable<Match> {
             match.team2 = Team.fromBytes(buf);
         if(!winnerNull)
             match.winner = Team.fromBytes(buf);
-        if(!prevMatch1Null)
-            match.prevMatch1 = Match.fromBytes(buf);
-        if(!prevMatch2Null)
-            match.prevMatch2 = Match.fromBytes(buf);
+        if(!prevMatchNull)
+            match.prevMatch = Match.fromBytes(buf);
 
         return match;
     }
