@@ -1,9 +1,9 @@
 package com.ipixelmon.poketournament;
 
-import com.ipixelmon.gym.BattleController;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.mysql.SelectionForm;
+import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,6 @@ public class Arena implements Comparable<Arena> {
     public static Set<Arena> arenas = new TreeSet<>();
 
     private Region region;
-    private BattleController currentBattle;
     private Date startTime;
     private SingleEliminationTournament tournament;
     private String name;
@@ -51,8 +50,6 @@ public class Arena implements Comparable<Arena> {
         this.startTime = startTime;
     }
 
-
-
     public Date getStartTime() {
         return startTime;
     }
@@ -66,14 +63,16 @@ public class Arena implements Comparable<Arena> {
     }
 
     public void reset() {
-        if (currentBattle != null)
-            currentBattle.endBattle();
-        currentBattle = null;
         startTime = null;
+        started = false;
     }
 
     public Region getRegion() {
         return region;
+    }
+
+    public void start() {
+        for(Match match : tournament.getMatchesForRound(tournament.getRound())) match.start();
     }
 
     @Override
@@ -81,8 +80,10 @@ public class Arena implements Comparable<Arena> {
         return o.getRegion().getID().equals(getRegion().getID()) ? 0 : -999;
     }
 
-    public static Arena getArena(BattleController battleController) {
-        for (Arena arena : arenas) if (arena.currentBattle.equals(battleController)) return arena;
-        return null;
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Arena)) return false;
+        return ((Arena) obj).getRegion().getID().equals(getRegion().getID());
     }
+
 }

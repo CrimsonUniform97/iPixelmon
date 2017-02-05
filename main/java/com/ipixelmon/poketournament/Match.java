@@ -1,8 +1,16 @@
 package com.ipixelmon.poketournament;
 
+import com.google.common.collect.Lists;
+import com.ipixelmon.gym.BattleController;
+import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
+import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
+import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
+import com.pixelmonmod.pixelmon.battles.controller.participants.TrainerParticipant;
+import com.pixelmonmod.pixelmon.enums.EnumBattleType;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Match implements Comparable<Match> {
@@ -13,6 +21,30 @@ public class Match implements Comparable<Match> {
     public Team team1, team2;
     public Team winner = null;
     public boolean active = false;
+    public BattleControllerBase battleController;
+
+    public void start() {
+        try {
+            PlayerParticipant[] team1Par = team1.getParticipants();
+            PlayerParticipant[] team2Par = team2.getParticipants();
+
+            List<BattleParticipant> battleParticipants1 = Lists.newArrayList();
+            List<BattleParticipant> battleParticipants2 = Lists.newArrayList();
+
+            for (PlayerParticipant p : team1Par) {
+                p.startedBattle = true;
+                battleParticipants1.add(p);
+            }
+            for (PlayerParticipant p : team2Par){
+                p.startedBattle = true;
+                battleParticipants2.add(p);
+            }
+
+            battleController = new BattleControllerBase(battleParticipants1.toArray(new BattleParticipant[battleParticipants1.size()]), battleParticipants2.toArray(new BattleParticipant[battleParticipants2.size()]));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void toBytes(ByteBuf buf) {
         buf.writeInt(round);

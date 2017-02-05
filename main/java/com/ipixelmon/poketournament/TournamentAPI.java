@@ -6,6 +6,7 @@ import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.mysql.DeleteForm;
 import com.ipixelmon.mysql.InsertForm;
 import com.ipixelmon.mysql.SelectionForm;
+import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -72,6 +73,23 @@ public class TournamentAPI {
             for (Arena a : ARENAS)
                 if (a.getRegion().getID().equals(region.getID()))
                     return a;
+
+            return null;
+        }
+
+        /* Get arena from BattleController */
+        public static Arena getArena(BattleControllerBase controller) {
+            for(Arena arena : ARENAS) {
+                if(arena.getTournament() != null) {
+                    if(!arena.getTournament().getMatches().isEmpty()) {
+                        for(Match match : arena.getTournament().getMatches()) {
+                            if(match.battleController != null) {
+                                if(match.battleController.equals(controller)) return arena;
+                            }
+                        }
+                    }
+                }
+            }
 
             return null;
         }

@@ -1,9 +1,12 @@
 package com.ipixelmon.poketournament;
 
 import com.google.common.collect.Lists;
+import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
+import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Team implements Comparable<Team> {
 
@@ -26,13 +30,27 @@ public class Team implements Comparable<Team> {
     }
 
     @SideOnly(Side.SERVER)
-    public BattleParticipant[] getParticipants() {
+    public PlayerParticipant[] getParticipants() {
+
         List<PlayerParticipant> playerParticipants = Lists.newArrayList();
 
-        // TODO: Change this to where the player picks the pokemon to use
-        for (EntityPlayerMP player : players)
-            playerParticipants.add(new PlayerParticipant(player,
-                    PixelmonStorage.pokeBallManager.getPlayerStorage(player).get().getFirstAblePokemon(player.worldObj)));
+        for(EntityPlayerMP player : players) {
+            Optional optstorage1 = PixelmonStorage.pokeBallManager.getPlayerStorage(player);
+
+            if(optstorage1.isPresent()) {
+                PlayerStorage storage1 = (PlayerStorage)optstorage1.get();
+                EntityPixelmon player1FirstPokemon = storage1.getFirstAblePokemon(player.worldObj);
+                playerParticipants.add(new PlayerParticipant(player, new EntityPixelmon[]{player1FirstPokemon}));
+            }
+        }
+
+//            if(args.length == 3) {
+//                int team1 = Integer.parseInt(args[2]);
+//                if(team1 > 0) {
+//                    this.player1.setTempLevels(team1);
+//                    this.player2.setTempLevels(team1);
+//                }
+//            }
 
         return playerParticipants.toArray(new PlayerParticipant[playerParticipants.size()]);
     }
@@ -49,7 +67,7 @@ public class Team implements Comparable<Team> {
         Team team = new Team(ByteBufUtils.readUTF8String(buf));
         int playerSize = buf.readInt();
 
-        for(int i = 0; i < playerSize; i++) {
+        for (int i = 0; i < playerSize; i++) {
             team.playerNames.add(ByteBufUtils.readUTF8String(buf));
         }
 
@@ -59,5 +77,11 @@ public class Team implements Comparable<Team> {
     @Override
     public int compareTo(Team o) {
         return o.name.equalsIgnoreCase(name) ? 0 : -999;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Team)) return false;
+        return ((Team) obj).name.equalsIgnoreCase(name);
     }
 }

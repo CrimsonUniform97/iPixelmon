@@ -31,4 +31,44 @@ public class DateUtil {
         return null;
     }
 
+    public static String getDifferenceFormatted(Date d2) {
+        Date d1 = Calendar.getInstance().getTime();
+        long seconds = getDifferenceInSeconds(d1, d2);
+        long minutes = getDifferenceInMinutes(d1, d2);
+        long hours = getDifferenceInHours(d1, d2);
+
+        String text = "";
+
+        if(hours > 0 || (hours <= 0 && minutes <= 0 && seconds <= 0)) {
+            text += hours + " hours, ";
+            text += minutes - (hours * 60) + " minutes, ";
+            text += seconds - (minutes * 60) + " seconds.";
+        } else if (minutes > 0) {
+            text += minutes + " minutes, ";
+            text += seconds - (minutes * 60) + " seconds.";
+        } else if (seconds > 0) {
+            text += seconds + " seconds.";
+        } else {
+            text += "Something went wrong.";
+        }
+
+        return text;
+    }
+
+    public static long getDifferenceInMilliSeconds(Date d1, Date d2) {
+        return d2.getTime() - d1.getTime();
+    }
+
+    public static long getDifferenceInSeconds(Date d1, Date d2) {
+        return (d2.getTime() - d1.getTime()) / 1000;
+    }
+
+    public static long getDifferenceInMinutes(Date d1, Date d2) {
+        return getDifferenceInSeconds(d1, d2) / 60;
+    }
+
+    public static long getDifferenceInHours(Date d1, Date d2) {
+        return getDifferenceInMinutes(d1, d2) / 60;
+    }
+
 }

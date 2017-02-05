@@ -17,7 +17,7 @@ public class ServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-//        Pixelmon.EVENT_BUS.register( new BattleListener());
+        Pixelmon.EVENT_BUS.register(new BattleListener());
         MinecraftForge.EVENT_BUS.register( new PlayerListener());
 
         CreateForm arenaForm = new CreateForm("Arenas");
