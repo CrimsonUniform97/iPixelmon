@@ -12,7 +12,7 @@ public class SingleEliminationTournament {
     /* All matches, current and history */
     protected Set<Match> matches = new TreeSet<>();
 
-    protected int round = 0;
+    protected int round = 1;
 
     /* Calculates the number of teams participating in the first round */
     protected int getTeamCountFirstRound() {
@@ -73,15 +73,6 @@ public class SingleEliminationTournament {
         return matches;
     }
 
-    /* Gets all the previous matches */
-    public Set<Match> getPreviousMatches() {
-        Set<Match> prevMatches = new TreeSet<>();
-
-        for (Match match : matches) if (match.winner != null && match.prevMatch == null) prevMatches.add(match);
-
-        return prevMatches;
-    }
-
     /* Gets all the matches for the given round */
     public List<Match> getMatchesForRound(int round) {
         Set<Match> matchesForRound = new TreeSet<>();
@@ -99,7 +90,9 @@ public class SingleEliminationTournament {
     }
 
     public void setRound(int round) {
-        this.round = round;
+        this.round = round < 1 ? 1 : round;
+        if (getTotalNumberOfRounds() > 0)
+            this.round = this.round > getTotalNumberOfRounds() ? getTotalNumberOfRounds() : this.round;
     }
 
     public int getTotalNumberOfRounds() {
@@ -108,6 +101,13 @@ public class SingleEliminationTournament {
         }
 
         return 0;
+    }
+
+    public Team getWinner() {
+        if(getMatchesForRound(getTotalNumberOfRounds() - 1).isEmpty()) return null;
+        Match match = getMatchesForRound(getTotalNumberOfRounds() - 1).get(0);
+        if (match != null && match.winner != null) return match.winner;
+        return null;
     }
 
     /* Setups up matches after all current matches are complete */
@@ -120,47 +120,57 @@ public class SingleEliminationTournament {
 
         Match m;
 
-        int round1Count = 0;
-
-        int unluckies = (getTeamCountFirstRound() + getTeamCountSecondRound()) - teams.size();
-
         for (int i = 1; i < getTotalNumberOfRounds(); i++) {
             for (int t = 0; t < getTeamCountForRound(i) / 2; t++) {
                 m = new Match();
                 m.round = i;
-
-                // TODO: Maybe make it a little more dispersed like the website?
-                if (i == 2) {
-                    if (round1Count < unluckies) {
-                        m.prevMatch = (Match) getMatchesForRound(1).toArray()[round1Count];
-                        round1Count += 1;
-                    }
-                }
-
                 matches.add(m);
+            }
+        }
+
+        for (int i = 2; i < getTotalNumberOfRounds(); i++) {
+            int matchCount = 0;
+            Match[] prevMatches = getMatchesForRound(i - 1).toArray(new Match[getMatchesForRound(i - 1).size()]);
+            for (Match match : getMatchesForRound(i)) {
+                if(matchCount < prevMatches.length)
+                match.prevMatch1 = prevMatches[matchCount++];
+                if(matchCount < prevMatches.length)
+                match.prevMatch2 = prevMatches[matchCount++];
             }
         }
 
         int i = 0;
         for (Match match : getMatchesForRound(1)) {
-            match.team1 = teamArray[i];
-            match.team2 = teamArray[i + 1];
-            i += 2;
+            match.team1 = teamArray[i++];
+            match.team2 = teamArray[i++];
         }
 
-        for (Match match : getMatchesForRound(2)) {
-            if (i <= teamArray.length - 1) {
-                match.team1 = teamArray[i];
-            }
-            if (match.prevMatch == null) {
-                if (i + 1 <= teamArray.length - 1)
-                    match.team2 = teamArray[i + 1];
-                i += 2;
-            } else {
-                i += 1;
-            }
+        for(Match match : getMatchesForRound(2)) {
+            if(match.prevMatch1 == null)
+                match.team1 = teamArray[i++];
+            if(match.prevMatch2 == null)
+                match.team2 = teamArray[i++];
         }
 
+    }
+
+    public void setWinner(Match match, Team team) {
+        match.winner = team;
+        for (Match m : getMatchesForRound(match.round + 1)) {
+            if (m.prevMatch1 != null && m.prevMatch1 == match) {
+                if (match.round == 1) {
+                    m.team1 = team;
+                } else {
+                    m.team2 = team;
+                }
+            } else if (m.prevMatch2 != null && m.prevMatch2 == match) {
+                if (match.round == 1) {
+                    m.team2 = team;
+                } else {
+                    m.team1 = team;
+                }
+            }
+        }
     }
 
     /* Convert all data to bytes for packet sending */

@@ -20,6 +20,7 @@ public class Arena implements Comparable<Arena> {
     private Date startTime;
     private SingleEliminationTournament tournament;
     private String name;
+    private boolean started = false;
 
     public Arena(Region region) {
         this.region = region;
@@ -50,12 +51,18 @@ public class Arena implements Comparable<Arena> {
         this.startTime = startTime;
     }
 
-    public Region getRegion() {
-        return region;
-    }
+
 
     public Date getStartTime() {
         return startTime;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     public void reset() {
@@ -63,6 +70,10 @@ public class Arena implements Comparable<Arena> {
             currentBattle.endBattle();
         currentBattle = null;
         startTime = null;
+    }
+
+    public Region getRegion() {
+        return region;
     }
 
     @Override

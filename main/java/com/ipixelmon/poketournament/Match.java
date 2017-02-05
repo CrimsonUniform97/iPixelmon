@@ -1,10 +1,14 @@
 package com.ipixelmon.poketournament;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+import java.util.UUID;
 
 public class Match implements Comparable<Match> {
 
-    public Match prevMatch;
+    public UUID id = UUID.randomUUID();
+    public Match prevMatch1, prevMatch2;
     public int round = 0;
     public Team team1, team2;
     public Team winner = null;
@@ -15,7 +19,8 @@ public class Match implements Comparable<Match> {
         buf.writeBoolean(team1 == null);
         buf.writeBoolean(team2 == null);
         buf.writeBoolean(winner == null);
-        buf.writeBoolean(prevMatch == null);
+        buf.writeBoolean(prevMatch1 == null);
+        buf.writeBoolean(prevMatch2 == null);
         buf.writeBoolean(active);
         if (team1 != null)
             team1.toBytes(buf);
@@ -23,8 +28,12 @@ public class Match implements Comparable<Match> {
             team2.toBytes(buf);
         if (winner != null)
             winner.toBytes(buf);
-        if (prevMatch != null)
-            prevMatch.toBytes(buf);
+        if (prevMatch1 != null)
+            prevMatch1.toBytes(buf);
+        if (prevMatch2 != null)
+            prevMatch2.toBytes(buf);
+
+        ByteBufUtils.writeUTF8String(buf, id.toString());
     }
 
     public static Match fromBytes(ByteBuf buf) {
@@ -33,7 +42,8 @@ public class Match implements Comparable<Match> {
         boolean team1Null = buf.readBoolean();
         boolean team2Null = buf.readBoolean();
         boolean winnerNull = buf.readBoolean();
-        boolean prevMatchNull = buf.readBoolean();
+        boolean prevMatch1Null = buf.readBoolean();
+        boolean prevMatch2Null = buf.readBoolean();
         match.active = buf.readBoolean();
 
         if(!team1Null)
@@ -42,14 +52,25 @@ public class Match implements Comparable<Match> {
             match.team2 = Team.fromBytes(buf);
         if(!winnerNull)
             match.winner = Team.fromBytes(buf);
-        if(!prevMatchNull)
-            match.prevMatch = Match.fromBytes(buf);
+        if(!prevMatch1Null)
+            match.prevMatch1 = Match.fromBytes(buf);
+        if(!prevMatch2Null)
+            match.prevMatch2 = Match.fromBytes(buf);
 
+        match.id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
         return match;
     }
 
     @Override
     public int compareTo(Match o) {
-        return team1 == null && team2 == null ? -999 : o.team1 == team1 && o.team2 == team2 ? 0 : -999;
+        return o.id.equals(id) ? 0 : -999;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Match)) return false;
+
+        Match m = (Match) obj;
+        return m.id.equals(id);
     }
 }

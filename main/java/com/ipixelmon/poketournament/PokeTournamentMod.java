@@ -4,6 +4,8 @@ import com.ipixelmon.CommonProxy;
 import com.ipixelmon.IMod;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.poketournament.client.ClientProxy;
+import com.ipixelmon.poketournament.client.PacketResponeForGui;
+import com.ipixelmon.poketournament.client.PacketSubmitTeam;
 import com.ipixelmon.poketournament.server.CommandHandler;
 import com.ipixelmon.poketournament.server.PacketOpenTournamentGui;
 import com.ipixelmon.poketournament.server.ServerProxy;
@@ -24,6 +26,8 @@ public class PokeTournamentMod implements IMod {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         iPixelmon.registerPacket(PacketOpenTournamentGui.Handler.class, PacketOpenTournamentGui.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketSubmitTeam.Handler.class, PacketSubmitTeam.class, Side.SERVER);
+        iPixelmon.registerPacket(PacketResponeForGui.Handler.class, PacketResponeForGui.class, Side.CLIENT);
     }
 
     @Override

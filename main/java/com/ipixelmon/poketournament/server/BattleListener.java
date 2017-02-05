@@ -31,13 +31,4 @@ public class BattleListener {
 
     }
 
-    @SubscribeEvent
-    public void onPlace(BlockEvent.PlaceEvent event) {
-        Arena arena = TournamentAPI.Server.getArena(LandControlAPI.Server.getRegionAt(event.getWorld(), event.getPos()));
-
-        if(arena == null) return;
-
-        iPixelmon.network.sendTo(new PacketOpenTournamentGui(arena.getTournament()), (EntityPlayerMP) event.getPlayer());
-    }
-
 }
