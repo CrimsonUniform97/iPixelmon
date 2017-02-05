@@ -1,4 +1,13 @@
 {
   "friendRequest": { "category": "player", "sounds": [ "ipixelmon:friendRequest" ] },
-  "simpleNotification":  { "category": "player", "sounds": [ "ipixelmon:simpleNotification" ] }
+  "simpleNotification":  { "category": "player", "sounds": [ "ipixelmon:simpleNotification" ] },
+  "tournamentSong":  {
+    "category": "music",
+    "sounds": [
+      {
+        "name":"ipixelmon:tournamentSong",
+        "stream":true
+      }
+    ]
+  }
 }

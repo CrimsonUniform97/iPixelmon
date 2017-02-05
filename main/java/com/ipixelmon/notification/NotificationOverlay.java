@@ -112,7 +112,6 @@ public class NotificationOverlay {
         Notification.notifications.addLast(new NotificationProperties(notification));
 
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        // TODO: May not work...
         player.playSound(new SoundEvent(new ResourceLocation(iPixelmon.id + ":" + notification.getSoundFile())),
                 0.5F, 1.0F);
     }

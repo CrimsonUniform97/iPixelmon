@@ -5,6 +5,7 @@ import com.ipixelmon.landcontrol.LandControlAPI;
 import com.ipixelmon.poketournament.Arena;
 import com.ipixelmon.poketournament.Team;
 import com.ipixelmon.poketournament.TournamentAPI;
+import com.ipixelmon.poketournament.server.PacketPlaySound;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -64,7 +65,11 @@ public class PacketSubmitTeam implements IMessage {
                 arena.getTournament().setupRounds();
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
+
+            iPixelmon.network.sendTo(new PacketPlaySound("tournamentSong"), ctx.getServerHandler().playerEntity);
+
             return null;
         }
     }

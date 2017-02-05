@@ -59,7 +59,7 @@ public final class iPixelmon {
         loadMod(new UUIDManager());
         loadMod(new NotificationMod());
         loadMod(new TeamMod());
-        loadMod(new PixelEgg());
+//        loadMod(new PixelEgg());
         loadMod(new LandControl());
         loadMod(new PartyMod());
         loadMod(new Tablet());

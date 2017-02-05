@@ -6,9 +6,7 @@ import com.ipixelmon.iPixelmon;
 import com.ipixelmon.poketournament.client.ClientProxy;
 import com.ipixelmon.poketournament.client.PacketResponeForGui;
 import com.ipixelmon.poketournament.client.PacketSubmitTeam;
-import com.ipixelmon.poketournament.server.CommandHandler;
-import com.ipixelmon.poketournament.server.PacketOpenTournamentGui;
-import com.ipixelmon.poketournament.server.ServerProxy;
+import com.ipixelmon.poketournament.server.*;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -28,11 +26,12 @@ public class PokeTournamentMod implements IMod {
         iPixelmon.registerPacket(PacketOpenTournamentGui.Handler.class, PacketOpenTournamentGui.class, Side.CLIENT);
         iPixelmon.registerPacket(PacketSubmitTeam.Handler.class, PacketSubmitTeam.class, Side.SERVER);
         iPixelmon.registerPacket(PacketResponeForGui.Handler.class, PacketResponeForGui.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketPlaySound.Handler.class, PacketPlaySound.class, Side.CLIENT);
+        iPixelmon.registerPacket(PacketStopSound.Handler.class, PacketStopSound.class, Side.CLIENT);
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
-
     }
 
     @Override

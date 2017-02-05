@@ -74,7 +74,7 @@ public class PlayerListener {
 
         if (arena.getTournament().getTeams().isEmpty()) {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MINUTE, 1);
+            calendar.add(Calendar.MINUTE, 3);
             arena.setStartTime(calendar.getTime());
         }
 

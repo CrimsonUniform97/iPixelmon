@@ -3,7 +3,12 @@ package com.ipixelmon.poketournament;
 import com.ipixelmon.iPixelmon;
 import com.ipixelmon.landcontrol.regions.Region;
 import com.ipixelmon.mysql.SelectionForm;
+import com.ipixelmon.poketournament.server.PacketStopSound;
 import com.pixelmonmod.pixelmon.battles.controller.BattleControllerBase;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,8 +76,19 @@ public class Arena implements Comparable<Arena> {
         return region;
     }
 
+    @SideOnly(Side.SERVER)
     public void start() {
-        for(Match match : tournament.getMatchesForRound(tournament.getRound())) match.start();
+        for(Match match : tournament.getMatchesForRound(tournament.getRound())){
+            match.start();
+
+            for(EntityPlayerMP player : match.team1.players) {
+                iPixelmon.network.sendTo(new PacketStopSound("tournamentSong", SoundCategory.MUSIC), player);
+            }
+
+            for(EntityPlayerMP player : match.team2.players) {
+                iPixelmon.network.sendTo(new PacketStopSound("tournamentSong", SoundCategory.MUSIC), player);
+            }
+        }
     }
 
     @Override
