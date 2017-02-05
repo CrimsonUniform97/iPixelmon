@@ -52,6 +52,11 @@ public class PacketSubmitTeam implements IMessage {
                 }
             }
 
+            if(arena.isStarted()) {
+                iPixelmon.network.sendTo(new PacketResponeForGui("Tournament has already started."), ctx.getServerHandler().playerEntity);
+                return null;
+            }
+
             Team team = new Team(message.teamName);
             team.players.add(ctx.getServerHandler().playerEntity);
             arena.getTournament().addTeam(team);

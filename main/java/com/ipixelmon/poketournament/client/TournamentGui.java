@@ -185,8 +185,8 @@ public class TournamentGui extends GuiScreen {
         int viewHeight = BG_HEIGHT - 4;
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (left * scaleW), (int) (mc.displayHeight - (bottom * scaleH)),
-                (int) (listWidth * scaleW), (int) (viewHeight * scaleH));
+        GL11.glScissor((int) (left * scaleW) + 8, (int) (mc.displayHeight - (bottom * scaleH)),
+                (int) (listWidth * scaleW) - 16, (int) (viewHeight * scaleH) - 6);
     }
 
     private void handleMouseOffset() {
@@ -201,36 +201,46 @@ public class TournamentGui extends GuiScreen {
         for (Match match : tournament.getMatchesForRound(round)) {
             /* Draw first 2 rounds */
 
-//            if(match.prevMatch1 != null && match.prevMatch1.round == 1) {
-//                drawLine(round1x, round1Y - bracketHeight, w, 1);
-//                drawLine(round1x, round1Y + round1h - bracketHeight, w, 1);
-//                drawLine(round1x + w, round1Y - bracketHeight, 1, round1h + 1);
-//
-//                if (match.prevMatch1.team1 != null)
-//                    fontRendererObj.drawString(match.prevMatch1.team1.name, round1x, round1Y - 8 - bracketHeight, 0xFFFFFF);
-//                if (match.prevMatch1.team2 != null)
-//                    fontRendererObj.drawString(match.prevMatch1.team2.name, round1x, round1Y + round1h - 8 - bracketHeight, 0xFFFFFF);
-//            }
-//
-//
-//            if (match.prevMatch2 != null && match.prevMatch2.round == 1) {
-//                drawLine(round1x, round1Y, w, 1);
-//                drawLine(round1x, round1Y + round1h, w, 1);
-//                drawLine(round1x + w, round1Y, 1, round1h + 1);
-//
-//                if (match.prevMatch2.team1 != null)
-//                    fontRendererObj.drawString(match.prevMatch2.team1.name, round1x, round1Y - 8, 0xFFFFFF);
-//                if (match.prevMatch2.team2 != null)
-//                    fontRendererObj.drawString(match.prevMatch2.team2.name, round1x, round1Y + round1h - 8, 0xFFFFFF);
-//            }
 
+            /** Draw the first round FIXED if the game has more than 4 players **/
+            if (tournament.getTeams().size() > 4) {
+                if (round == 1) return;
 
+                if (round == 2) {
+
+                    bracketHeight /= 2;
+
+                    if (match.prevMatch1 != null) {
+                        drawLine(x - w, y - (bracketHeight / 2), w, 1);
+                        drawLine(x - w, y + bracketHeight - (bracketHeight / 2), w, 1);
+                        drawLine(x + w - w, y - (bracketHeight / 2), 1, bracketHeight + 1);
+
+                        if(match.prevMatch1.team1 != null)
+                            fontRendererObj.drawString(match.prevMatch1.team1.name, x - w, y - (bracketHeight / 2) - 8, 0xFFFFFF);
+                        if(match.prevMatch1.team2 != null)
+                            fontRendererObj.drawString(match.prevMatch1.team2.name, x - w, y - (bracketHeight / 2) - 8 + bracketHeight, 0xFFFFFF);
+                    }
+
+                    if (match.prevMatch2 != null) {
+                        drawLine(x - w, y + bracketHeight + (bracketHeight / 2), w, 1);
+                        drawLine(x - w, y + bracketHeight + bracketHeight + (bracketHeight / 2), w, 1);
+                        drawLine(x + w - w, y + bracketHeight + (bracketHeight / 2), 1, bracketHeight + 1);
+
+                        if(match.prevMatch2.team1 != null)
+                            fontRendererObj.drawString(match.prevMatch2.team1.name, x - w, y + bracketHeight + (bracketHeight / 2) - 8, 0xFFFFFF);
+                        if(match.prevMatch2.team2 != null)
+                            fontRendererObj.drawString(match.prevMatch2.team2.name, x - w, y + bracketHeight + (bracketHeight / 2) - 8 + bracketHeight, 0xFFFFFF);
+                    }
+
+                    bracketHeight *= 2;
+                }
+            }
 
             drawLine(x, y, w, 1);
             drawLine(x, y + bracketHeight, w, 1);
             drawLine(x + w, y, 1, bracketHeight + 1);
 
-            /* Draw winner */
+            /* Draw winner line and winner*/
             if (match.round == tournament.getTotalNumberOfRounds() - 1) {
                 drawLine(x + w, y + (bracketHeight / 2), w, 1);
                 if (match.winner != null)
