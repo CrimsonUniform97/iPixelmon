@@ -13,12 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class Arena implements Comparable<Arena> {
-
-    public static Set<Arena> arenas = new TreeSet<>();
 
     private Region region;
     private Date startTime;

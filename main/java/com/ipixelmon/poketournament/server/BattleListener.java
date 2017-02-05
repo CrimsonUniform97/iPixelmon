@@ -56,13 +56,15 @@ public class BattleListener {
 
         if(event.result == BattleResults.VICTORY){
             arena.getTournament().setWinner(match, team);
-        } else if (event.result == BattleResults.FLEE){
+        } else if (event.result == BattleResults.FLEE) {
             if(match.team1.equals(team)) {
                 arena.getTournament().setWinner(match, match.team2);
             } else {
                 arena.getTournament().setWinner(match, match.team1);
             }
         }
+
+
 
     }
 
