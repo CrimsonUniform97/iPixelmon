@@ -39,33 +39,35 @@ public class PixelmonListener {
 
     @SubscribeEvent
     public void battleStarted(BattleStartedEvent event) {
-        try {
-            List<BattleParticipant> participants = new ArrayList<>();
-            participants.addAll(Arrays.asList(event.participant1));
-            participants.addAll(Arrays.asList(event.participant2));
+//        try {
+//            List<BattleParticipant> participants = new ArrayList<>();
+//            participants.addAll(Arrays.asList(event.participant1));
+//            participants.addAll(Arrays.asList(event.participant2));
+//
 
-            for (BattleParticipant participant : participants) {
-                if (participant instanceof TrainerParticipant) {
-                    if (GymAPI.Server.getGym(participant.getEntity().getPosition()) != null) {
-                        event.setCanceled(true);
-                        return;
-                    }
-                }
-            }
-
-            boolean foundPlayer = false;
-            for (BattleParticipant participant : participants) {
-                if (participant instanceof PlayerParticipant) {
-                    foundPlayer = true;
-                }
-            }
-
-            if (!foundPlayer) {
-                event.setCanceled(true);
-                return;
-            }
-        } catch (Exception e) {
-        }
+//            for (BattleParticipant participant : participants) {
+//                if (participant instanceof TrainerParticipant) {
+//                    if (GymAPI.Server.getGym(participant.getEntity().getPosition()) != null) {
+        //TODO: Why are we cancelling here?
+//                        event.setCanceled(true);
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            boolean foundPlayer = false;
+//            for (BattleParticipant participant : participants) {
+//                if (participant instanceof PlayerParticipant) {
+//                    foundPlayer = true;
+//                }
+//            }
+//
+//            if (!foundPlayer) {
+//                event.setCanceled(true);
+//                return;
+//            }
+//        } catch (Exception e) {
+//        }
     }
 
     @SubscribeEvent

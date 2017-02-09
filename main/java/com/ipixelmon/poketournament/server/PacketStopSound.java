@@ -46,6 +46,7 @@ public class PacketStopSound implements IMessage {
 
         @SideOnly(Side.CLIENT)
         public void doMessage(PacketStopSound message) {
+            // TODO: Not working... Sadly
         }
 
     }

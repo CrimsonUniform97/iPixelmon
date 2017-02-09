@@ -17,6 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class PlayerListener {
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getWorld().getBlockState(event.getPos()) == null) return;
 

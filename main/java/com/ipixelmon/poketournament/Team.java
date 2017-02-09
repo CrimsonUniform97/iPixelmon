@@ -44,14 +44,6 @@ public class Team implements Comparable<Team> {
             }
         }
 
-//            if(args.length == 3) {
-//                int team1 = Integer.parseInt(args[2]);
-//                if(team1 > 0) {
-//                    this.player1.setTempLevels(team1);
-//                    this.player2.setTempLevels(team1);
-//                }
-//            }
-
         return playerParticipants.toArray(new PlayerParticipant[playerParticipants.size()]);
     }
 

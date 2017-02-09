@@ -173,6 +173,11 @@ public class SingleEliminationTournament {
         }
     }
 
+    public boolean isRoundOver(int round) {
+        for(Match m : getMatchesForRound(round)) if(m.winner == null) return false;
+        return true;
+    }
+
     /* Convert all data to bytes for packet sending */
     public void toBytes(ByteBuf buf) {
         buf.writeInt(round);

@@ -1,17 +1,9 @@
 package com.ipixelmon.poketournament.server;
 
-import com.ipixelmon.gym.BattleController;
-import com.ipixelmon.iPixelmon;
-import com.ipixelmon.landcontrol.LandControlAPI;
-import com.ipixelmon.poketournament.Arena;
-import com.ipixelmon.poketournament.Match;
-import com.ipixelmon.poketournament.Team;
-import com.ipixelmon.poketournament.TournamentAPI;
+import com.ipixelmon.poketournament.*;
 import com.pixelmonmod.pixelmon.api.enums.BattleResults;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import com.pixelmonmod.pixelmon.api.events.SpectateEvent;
 import com.pixelmonmod.pixelmon.api.events.BattleStartedEvent;
 import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedEvent;
 
@@ -22,8 +14,9 @@ public class BattleListener {
 
     }
 
-    // TODO: Fix loser crashing...
+    // TODO: Fix loser crashing... FIX THIS, THE GAMES ARE NOT SETTING UP PROPERLY!!!!!!
     // TODO: Need to advance round once all matches are over
+    // TODO: What to do if a player leaves
     @SubscribeEvent
     public void onEnd(PlayerBattleEndedEvent event) throws Exception {
         Arena arena = TournamentAPI.Server.getArena(event.battleController);
@@ -32,7 +25,12 @@ public class BattleListener {
         Match match = null;
         Team team = null;
 
-        for(Match m : arena.getTournament().getMatchesForRound(arena.getTournament().getRound())) {
+        SingleEliminationTournament tournament = arena.getTournament();
+
+        /**
+         * Goes through all matches and fins which match and which team the player is on
+         */
+        for(Match m : tournament.getMatchesForRound(tournament.getRound())) {
 
             for(EntityPlayerMP playerMP : m.team1.players) {
                 if(playerMP.getUniqueID().equals(event.player.getUniqueID())) {
@@ -54,18 +52,23 @@ public class BattleListener {
 
         if(match == null || team == null) return;
 
-        if(event.result == BattleResults.VICTORY){
-            arena.getTournament().setWinner(match, team);
+        /* If victory, set their team as the winner of the match */
+        if(event.result == BattleResults.VICTORY ){
+            tournament.setWinner(match, team);
         } else if (event.result == BattleResults.FLEE) {
+            // TODO: Test if player disconnects, what happens
             if(match.team1.equals(team)) {
-                arena.getTournament().setWinner(match, match.team2);
+                tournament.setWinner(match, match.team2);
             } else {
-                arena.getTournament().setWinner(match, match.team1);
+                tournament.setWinner(match, match.team1);
             }
         }
 
+        if(!tournament.isRoundOver(tournament.getRound())) return;
 
+        tournament.setRound(tournament.getRound() + 1);
 
+        arena.start();
     }
 
 }

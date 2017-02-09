@@ -31,14 +31,8 @@ public class Match implements Comparable<Match> {
             List<BattleParticipant> battleParticipants1 = Lists.newArrayList();
             List<BattleParticipant> battleParticipants2 = Lists.newArrayList();
 
-            for (PlayerParticipant p : team1Par) {
-                p.startedBattle = true;
-                battleParticipants1.add(p);
-            }
-            for (PlayerParticipant p : team2Par){
-                p.startedBattle = true;
-                battleParticipants2.add(p);
-            }
+            for (PlayerParticipant p : team1Par) battleParticipants1.add(p);
+            for (PlayerParticipant p : team2Par) battleParticipants2.add(p);
 
             battleController = new BattleControllerBase(battleParticipants1.toArray(new BattleParticipant[battleParticipants1.size()]), battleParticipants2.toArray(new BattleParticipant[battleParticipants2.size()]));
         } catch (Exception e) {
@@ -78,15 +72,15 @@ public class Match implements Comparable<Match> {
         boolean prevMatch2Null = buf.readBoolean();
         match.active = buf.readBoolean();
 
-        if(!team1Null)
+        if (!team1Null)
             match.team1 = Team.fromBytes(buf);
-        if(!team2Null)
+        if (!team2Null)
             match.team2 = Team.fromBytes(buf);
-        if(!winnerNull)
+        if (!winnerNull)
             match.winner = Team.fromBytes(buf);
-        if(!prevMatch1Null)
+        if (!prevMatch1Null)
             match.prevMatch1 = Match.fromBytes(buf);
-        if(!prevMatch2Null)
+        if (!prevMatch2Null)
             match.prevMatch2 = Match.fromBytes(buf);
 
         match.id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
@@ -100,7 +94,7 @@ public class Match implements Comparable<Match> {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Match)) return false;
+        if (!(obj instanceof Match)) return false;
 
         Match m = (Match) obj;
         return m.id.equals(id);

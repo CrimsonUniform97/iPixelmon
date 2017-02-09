@@ -198,12 +198,13 @@ public class TournamentGui extends GuiScreen {
 
     // TODO: Draw Round 1 correctly.
     private void drawMatch(int x, int y, int w, int bracketHeight, int bracketYOffsets, int round) {
+
         for (Match match : tournament.getMatchesForRound(round)) {
             /* Draw first 2 rounds */
 
 
             /** Draw the first round FIXED if the game has more than 4 players **/
-            if (tournament.getTeams().size() > 4) {
+            if (tournament.getTeams().size() > 3) {
                 if (round == 1) return;
 
                 if (round == 2) {
